@@ -7,7 +7,7 @@
         <Error Condition="'$(Revision)' == ''" Text="Revision is not defined" />
         <Message Text='Revision=$(Revision)' />
 
-        <Exec Command='"$(SolutionDir)..\..\Assemblies\VersionStamper.exe" $(SolutionDir) $(Revision)' />
-        <!--<Message Text='"$(SolutionDir)..\Assemblies\VersionStamper.exe" $(SolutionDir)Front done!' />-->
+        <Exec Command='"$(SolutionDir)..\Assemblies\VersionStamper.exe" $(SolutionDir) $(Revision)' />
+        <!--<Message Text='"$(SolutionDir)Assemblies\VersionStamper.exe" $(SolutionDir)Front done!' />-->
     </Target>
 </Project>
