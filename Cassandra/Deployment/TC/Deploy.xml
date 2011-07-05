@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project DefaultTargets="Deploy" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Common.xml" />
+    <Target Name="Deploy">
+        <MSBuild Projects="VersionStamper.xml" Properties="Confguration=$(Confguration);RootDir=$(RootDir);SolutionDir=$(SolutionDir);DeployDir=$(DeployDir);Revision=$(Revision)" />
+        <MSBuild Projects="Build.xml" Properties="Confguration=$(Confguration);RootDir=$(RootDir);SolutionDir=$(SolutionDir);DeployDir=$(DeployDir)" />
+        <MSBuild Projects="RunUnitTests.xml" Properties="Confguration=$(Confguration);RootDir=$(RootDir);SolutionDir=$(SolutionDir);DeployDir=$(DeployDir)" />
+        <MSBuild Projects="BuildFunctionalTests.xml" Properties="Confguration=$(Confguration);RootDir=$(RootDir);SolutionDir=$(SolutionDir);DeployDir=$(DeployDir)" />
+        <MSBuild Projects="RunFunctionalTests.xml" Properties="Confguration=$(Confguration);RootDir=$(RootDir);SolutionDir=$(SolutionDir);DeployDir=$(DeployDir)" />
+    </Target>
+</Project>
