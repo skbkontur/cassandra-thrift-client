@@ -4,7 +4,7 @@
     <UsingTask Condition="'$(teamcity_dotnet_nunitlauncher_msbuild_task)' != ''" TaskName="NUnit" AssemblyFile="$(teamcity_dotnet_nunitlauncher_msbuild_task)" />
 
     <PropertyGroup>
-        <SolutionDir Condition="'$(SolutionDir)' == '' And '$(RootDir)' != ''">$(RootDir)CassandraClient\Cassandra\</SolutionDir>
+        <SolutionDir Condition="'$(SolutionDir)' == '' And '$(RootDir)' != ''">$(RootDir)Cassandra\</SolutionDir>
         <DeployDir Condition="'$(DeployDir)' == '' And '$(SolutionDir)' != ''">
             $(SolutionDir).deploy\
         </DeployDir>
