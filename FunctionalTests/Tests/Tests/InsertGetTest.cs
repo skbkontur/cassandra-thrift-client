@@ -22,6 +22,30 @@ namespace Tests.Tests
         }
 
         [Test]
+        public void TestAddDelete()
+        {
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
+            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            CheckNotFound("someRow", "someColumnName");
+        }
+
+        [Test]
+        public void TestDoubleDelete()
+        {
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
+            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            CheckNotFound("someRow", "someColumnName");
+        }
+
+        [Test]
+        public void TestDeleteNotExistingColumn()
+        {
+            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            CheckNotFound("someRow", "someColumnName");
+        }
+
+        [Test]
         public void TestNotFound()
         {
             CheckNotFound("qxx", "zzz");
