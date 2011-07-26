@@ -29,6 +29,13 @@ namespace CassandraClient.StorageCore.KeyValueTables
                 connection.AddBatch(link.Id, GetColumns(link));
         }
 
+        public void DeleteLink(string key, string value)
+        {
+            var link = new KeyToValue {Key = key, Value = value};
+            using(IColumnFamilyConnection connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, GetColumnFamilyName()))
+                connection.DeleteBatch(link.Id, new[] {"Key", "Value"});
+        }
+
         public string[] GetKeys(string value)
         {
             using(IColumnFamilyConnection connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, GetColumnFamilyName()))
