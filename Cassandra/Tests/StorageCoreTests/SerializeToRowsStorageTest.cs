@@ -39,9 +39,11 @@ namespace Cassandra.Tests.StorageCoreTests
             columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
+            cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             var collection = new NameValueCollection {{"A", "2"}, {"B", "4"}};
             serializer.Expect(writer => writer.SerializeToNameValueCollection(intvar)).Return(collection);
+            columnFamilyConnection.Expect(connection => connection.GetRow("q", null, 1234)).Return(new Column[0]);
             columnFamilyConnection.Expect(
                 familyConnection => familyConnection.AddBatch(ARG.EqualsTo("q"),
                                                               ARG.EqualsTo(new[]
@@ -74,11 +76,13 @@ namespace Cassandra.Tests.StorageCoreTests
             columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
+            cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             var collection1 = new NameValueCollection {{"A", "2"}, {"B", "4"}};
             var collection2 = new NameValueCollection {{"C", "6"}, {"D", "8"}};
             serializer.Expect(writer => writer.SerializeToNameValueCollection(int1)).Return(collection1);
             serializer.Expect(writer => writer.SerializeToNameValueCollection(int2)).Return(collection2);
+            columnFamilyConnection.Expect(connection => connection.GetRows(ARG.EqualsTo(new[] { "q", "z" }), ARG.EqualsTo<string>(null), ARG.EqualsTo(1234))).Return(new List<KeyValuePair<string, Column[]>>());
             IEnumerable<KeyValuePair<string, IEnumerable<Column>>> keyValuePairs = new[]
                 {
                     new KeyValuePair<string, IEnumerable<Column>>("q",

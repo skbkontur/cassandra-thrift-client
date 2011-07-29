@@ -41,6 +41,11 @@ namespace CassandraClient.Connections
             implementation.DeleteBatch(StringHelpers.StringToBytes(key), columnNames.Select(StringHelpers.StringToBytes));
         }
 
+        public void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data)
+        {
+            implementation.BatchDelete(data.Select(pair => new KeyValuePair<byte[], IEnumerable<byte[]>>(StringHelpers.StringToBytes(pair.Key), pair.Value.Select(StringHelpers.StringToBytes))));
+        }
+
         public void AddBatch(string key, IEnumerable<Column> columns)
         {
             implementation.AddBatch(StringHelpers.StringToBytes(key), columns);

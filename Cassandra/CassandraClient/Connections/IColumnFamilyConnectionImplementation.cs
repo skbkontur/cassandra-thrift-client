@@ -13,6 +13,7 @@ namespace CassandraClient.Connections
         Column GetColumn(byte[] key, byte[] columnName);
         bool TryGetColumn(byte[] key, byte[] columnName, out Column result);
         void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames);
+        void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data);
         void AddBatch(byte[] key, IEnumerable<Column> columns);
         void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data);
         Column[] GetRow(byte[] key, byte[] startColumnName, int count);

@@ -135,12 +135,7 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return
-                multiGetSliceCommand.Output.Results.Select(
-                    item =>
-                    new KeyValuePair<byte[], Column[]>(item.Key,
-                                                       item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).
-                    ToList();
+            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).ToList();
         }
 
         public void Truncate()
@@ -181,19 +176,28 @@ namespace CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
+        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data)
+        {
+            List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(
+                row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key,
+                                                                        new List<IAquilesMutation>
+                                                                            {
+                                                                                new AquilesDeletionMutation
+                                                                                    {
+                                                                                        Predicate = new AquilesSlicePredicate
+                                                                                            {
+                                                                                                Columns = row.Value.ToList()
+                                                                                            }
+                                                                                    }
+                                                                            })).ToList();
+            ExecuteMutations(mutationsList);
+        }
+
         #endregion
 
         private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns)
         {
-            var mutationsList = new List<IAquilesMutation>();
-            foreach(var column in columns)
-            {
-                mutationsList.Add(new AquilesSetMutation
-                    {
-                        Column = column.ToAquilesColumn()
-                    });
-            }
-            return mutationsList;
+            return columns.Select(column => new AquilesSetMutation {Column = column.ToAquilesColumn()}).Cast<IAquilesMutation>().ToList();
         }
 
         private void ExecuteMutations(byte[] key, List<IAquilesMutation> mutationsList)
@@ -219,10 +223,7 @@ namespace CassandraClient.Connections
 
         private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList)
         {
-            Dictionary<byte[], Dictionary<string, List<IAquilesMutation>>> keyMutations = mutationsList.ToDictionary(item => item.Key,
-                                                                                                                     item =>
-                                                                                                                     new Dictionary<string, List<IAquilesMutation>>
-                                                                                                                         {{columnFamilyName, item.Value}});
+            var keyMutations = mutationsList.ToDictionary(item => item.Key, item => new Dictionary<string, List<IAquilesMutation>> {{columnFamilyName, item.Value}});
 
             var batchMutateCommand = new BatchMutateCommand
                 {
