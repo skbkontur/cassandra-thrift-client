@@ -31,9 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.070beta3, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.070beta3.dll</HintPath>
+    <Reference Include="Apache.Cassandra.078">
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.078.dll</HintPath>
     </Reference>
     <Reference Include="Aquiles">
       <HintPath>..\..\Assemblies\Cassandra\Aquiles.dll</HintPath>
@@ -49,8 +48,7 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thrift, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
