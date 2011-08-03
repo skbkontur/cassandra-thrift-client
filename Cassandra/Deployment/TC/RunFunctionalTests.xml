@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project DefaultTargets="RunTests" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Common.xml" />
+
+    <Target Name="RunTests">
+        <Error Condition="'$(FunctionalTestsSolutionDir)' == ''" Text="FunctionalTestsSolutionDir is not defined" />
+        <NUnit Assemblies="$(FunctionalTestsSolutionDir)Tests\bin\$(Configuration)\Tests.dll" />
+    </Target>
+</Project>

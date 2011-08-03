@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{16FB4761-5F8E-41FB-BAC2-FB155865C827}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CassandraClient</RootNamespace>
+    <AssemblyName>CassandraClient</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Apache.Cassandra.070beta3, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.070beta3.dll</HintPath>
+    </Reference>
+    <Reference Include="Aquiles">
+      <HintPath>..\..\Assemblies\Cassandra\Aquiles.dll</HintPath>
+    </Reference>
+    <Reference Include="GroboSerializer">
+      <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net">
+      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Thrift, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Abstractions\AquilesCommandAdaptor.cs" />
+    <Compile Include="Abstractions\Column.cs" />
+    <Compile Include="Abstractions\ColumnFamily.cs" />
+    <Compile Include="Abstractions\ConsistencyLevel.cs" />
+    <Compile Include="Abstractions\ICommand.cs" />
+    <Compile Include="Abstractions\IndexDefinition.cs" />
+    <Compile Include="Abstractions\IndexExpression.cs" />
+    <Compile Include="Abstractions\IndexOperator.cs" />
+    <Compile Include="Abstractions\Keyspace.cs" />
+    <Compile Include="Abstractions\ValidationClass.cs" />
+    <Compile Include="Abstractions\ValidationResult.cs" />
+    <Compile Include="Abstractions\ValidationStatus.cs" />
+    <Compile Include="Clusters\CassandraCluster.cs" />
+    <Compile Include="Clusters\ICassandraCluster.cs" />
+    <Compile Include="Clusters\ICassandraClusterSettings.cs" />
+    <Compile Include="Connections\ClusterConnection.cs" />
+    <Compile Include="Connections\ColumnFamilyConnection.cs" />
+    <Compile Include="Connections\ColumnFamilyConnectionImplementation.cs" />
+    <Compile Include="Connections\IClusterConnection.cs" />
+    <Compile Include="Connections\IColumnFamilyConnection.cs" />
+    <Compile Include="Connections\IColumnFamilyConnectionImplementation.cs" />
+    <Compile Include="Connections\IKeyspaceConnection.cs" />
+    <Compile Include="Connections\KeyspaceConnection.cs" />
+    <Compile Include="Core\Badlist.cs" />
+    <Compile Include="Core\CommandExecuter.cs" />
+    <Compile Include="Core\Pools\ClusterConnectionPool.cs" />
+    <Compile Include="Core\EndpointManager.cs" />
+    <Compile Include="Core\Pools\ConnectionPoolKey.cs" />
+    <Compile Include="Core\Pools\IKeyspaceConnectionPool.cs" />
+    <Compile Include="Exceptions\FailedReleaseException.cs" />
+    <Compile Include="Exceptions\GuidCollisionException.cs" />
+    <Compile Include="Core\IBadlist.cs" />
+    <Compile Include="Core\ICommandExecuter.cs" />
+    <Compile Include="Core\Pools\IClusterConnectionPool.cs" />
+    <Compile Include="Core\IEndpointManager.cs" />
+    <Compile Include="Core\Pools\KeyspaceConnectionPool.cs" />
+    <Compile Include="Core\PooledThriftConnection.cs" />
+    <Compile Include="Core\ThriftConnection.cs" />
+    <Compile Include="Exceptions\CassandraClientApplicationException.cs" />
+    <Compile Include="Exceptions\CassandraClientAuthenticationException.cs" />
+    <Compile Include="Exceptions\CassandraClientAuthorizationException.cs" />
+    <Compile Include="Exceptions\CassandraClientException.cs" />
+    <Compile Include="Exceptions\CassandraClientInvalidRequestException.cs" />
+    <Compile Include="Exceptions\CassandraClientIOException.cs" />
+    <Compile Include="Exceptions\CassandraClientSomethingNotFoundException.cs" />
+    <Compile Include="Exceptions\CassandraClientTimedOutException.cs" />
+    <Compile Include="Exceptions\CassandraClientTransportException.cs" />
+    <Compile Include="Exceptions\CassandraClientUnavailableException.cs" />
+    <Compile Include="Exceptions\CassandraExceptionTransformer.cs" />
+    <Compile Include="Exceptions\ColumnIsNotFoundException.cs" />
+    <Compile Include="Exceptions\CassandraClientExceptionTypeRecognizer.cs" />
+    <Compile Include="Exceptions\CassandraUnknownException.cs" />
+    <Compile Include="Helpers\AquilesColumnDefinitionConverter.cs" />
+    <Compile Include="Helpers\ByteArrayComparer.cs" />
+    <Compile Include="Helpers\IndexExpressionConverter.cs" />
+    <Compile Include="Helpers\IndexOperatorConverter.cs" />
+    <Compile Include="Helpers\KeyspaceConverter.cs" />
+    <Compile Include="Helpers\ColumnConverter.cs" />
+    <Compile Include="Helpers\ColumnFamilyConverter.cs" />
+    <Compile Include="Helpers\ConsistencyLevelConverter.cs" />
+    <Compile Include="Helpers\StringHelpers.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StorageCore\BlobStorage\SerializeToBlobStorage.cs" />
+    <Compile Include="StorageCore\CassandraStringHelpers.cs" />
+    <Compile Include="StorageCore\CassandraTimedSortedStorageBase.cs" />
+    <Compile Include="StorageCore\BlobStorage\ISerializeToBlobStorage.cs" />
+    <Compile Include="StorageCore\Exceptions\ColumnFamilyNotRegisteredException.cs" />
+    <Compile Include="StorageCore\IColumnFamilyNameGetter.cs" />
+    <Compile Include="StorageCore\IdSetRepository.cs" />
+    <Compile Include="StorageCore\Exceptions\EmptySearchRequestException.cs" />
+    <Compile Include="StorageCore\Exceptions\StorageCoreException.cs" />
+    <Compile Include="StorageCore\Extender\ExtenderImpl.cs" />
+    <Compile Include="StorageCore\Extender\PublicPropertiesExtender.cs" />
+    <Compile Include="StorageCore\ICassandraCoreSettings.cs" />
+    <Compile Include="StorageCore\ICassandraLogger.cs" />
+    <Compile Include="StorageCore\ICassandraLogManager.cs" />
+    <Compile Include="StorageCore\IColumnFamilyIndexesDefinition.cs" />
+    <Compile Include="StorageCore\IColumnFamilyRegistry.cs" />
+    <Compile Include="StorageCore\IIdSetRepository.cs" />
+    <Compile Include="StorageCore\IOneValueRepository.cs" />
+    <Compile Include="StorageCore\BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="StorageCore\RowsStorage\ISerializeToRowsStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="StorageCore\RowsStorage\ISerializeToRowsStorage.cs" />
+    <Compile Include="StorageCore\ITimedSortedStorage.cs" />
+    <Compile Include="StorageCore\KeyValueTables\IKeyValueIndexTable.cs" />
+    <Compile Include="StorageCore\KeyValueTables\KeyToValue.cs" />
+    <Compile Include="StorageCore\KeyValueTables\KeyToValueSearchQuery.cs" />
+    <Compile Include="StorageCore\KeyValueTables\KeyValueIndexesDefinition.cs" />
+    <Compile Include="StorageCore\KeyValueTables\KeyValueIndexTable.cs" />
+    <Compile Include="StorageCore\Exceptions\ObjectNotFoundException.cs" />
+    <Compile Include="StorageCore\OneValueRepository.cs" />
+    <Compile Include="StorageCore\SearchQueryIndexesDefinition.cs" />
+    <Compile Include="StorageCore\RowsStorage\SerializeToRowsStorage.cs" />
+    <Compile Include="StorageCore\TimedStorageElement.cs" />
+    <Compile Include="StorageCore\Exceptions\TypeNotRegisteredException.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)\..\Assemblies"
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

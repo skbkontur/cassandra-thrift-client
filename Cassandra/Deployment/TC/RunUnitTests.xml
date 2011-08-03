@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Project DefaultTargets="RunUnitTests" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <Import Project="Common.xml" />
+
+    <Target Name="RunUnitTests">
+        <Error Condition="'$(SolutionDir)' == ''" Text="SolutionDir is not defined" />
+        <NUnit Assemblies="$(SolutionDir)Tests\bin\$(Configuration)\Cassandra.Tests.dll" />
+    </Target>
+</Project>

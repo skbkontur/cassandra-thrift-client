@@ -1,0 +1,25 @@
+using System.Collections.Generic;
+using System.Reflection;
+
+using Cassandra.Tests;
+
+using CassandraClient.Clusters;
+
+using GroboContainer.Core;
+using GroboContainer.Impl;
+
+namespace Tests.Tests
+{
+    public abstract class CassandraFunctionalTestBase : TestBase
+    {
+        public override void SetUp()
+        {
+            base.SetUp();
+            var assemblies = new List<Assembly>(AssembliesLoader.Load()) {Assembly.GetExecutingAssembly()};
+            var container = new Container(new ContainerConfiguration(assemblies));
+            cassandraCluster = container.Get<ICassandraCluster>();
+        }
+
+        protected ICassandraCluster cassandraCluster;
+    }
+}
