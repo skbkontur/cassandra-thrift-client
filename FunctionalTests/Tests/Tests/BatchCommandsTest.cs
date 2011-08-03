@@ -17,6 +17,17 @@ namespace Tests.Tests
         }
 
         [Test]
+        public void TestDoubleDeleteBatch()
+        {
+            var columns = new[] { ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f") };
+            cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
+            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
+            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
+            foreach (var column in columns)
+                CheckNotFound("someKey", column.Name);
+        }
+
+        [Test]
         public void TestAddBatch()
         {
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};

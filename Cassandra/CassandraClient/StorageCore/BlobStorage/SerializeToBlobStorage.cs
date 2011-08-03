@@ -13,7 +13,7 @@ namespace CassandraClient.StorageCore.BlobStorage
 {
     public class SerializeToBlobStorage : ISerializeToBlobStorage
     {
-        protected SerializeToBlobStorage(
+        public SerializeToBlobStorage(
             ICassandraCluster cassandraCluster,
             ICassandraCoreSettings cassandraCoreSettings,
             IColumnFamilyRegistry columnFamilyRegistry,

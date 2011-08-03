@@ -75,6 +75,12 @@ namespace Tests.Tests
             return result;
         }
 
+        public void DeleteColumn(string keySpaceName, string columnFamilyName, string key, string columnName)
+        {
+            using (IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+                columnFamilyConnection.DeleteBatch(key, new[] {columnName});
+        }
+
         private void UnsafeRemoveKeyspaces()
         {
             IList<Keyspace> result;

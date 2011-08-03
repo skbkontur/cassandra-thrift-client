@@ -81,7 +81,7 @@
     <Compile Include="Tests\SecondaryIndexTest.cs" />
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
-    <Compile Include="StorageCoreTests\SyncListTest.cs" />
+    <Compile Include="StorageCoreTests\SerializeToRowsStorageTest.cs" />
     <Compile Include="StorageCoreTests\TestStorageElement.cs" />
     <Compile Include="StorageCoreTests\TestStorageElementSubItem.cs" />
   </ItemGroup>

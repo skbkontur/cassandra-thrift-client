@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Cassandra.Tests;
+
+using CassandraClient.Abstractions;
+using CassandraClient.Clusters;
 using CassandraClient.StorageCore.RowsStorage;
 
 using GroboSerializer;
 
 using NUnit.Framework;
 
+using Tests.Settings;
 using Tests.Tests;
 
 namespace Tests.StorageCoreTests
 {
-    public class SyncListTest : CassandraFunctionalTestBase
+    public class SerializeToRowsStorageTest : CassandraFunctionalTestBase
     {
         #region Setup/Teardown
 
@@ -31,6 +36,30 @@ namespace Tests.StorageCoreTests
         }
 
         #endregion
+
+        [Test]
+        public void TestUpdate()
+        {
+            var element1 = new TestStorageElement{IntProperty = 5, StringProperty = "zzz", Id = "id", Arr = new[]{"arr0", "arr1"}};
+            storage.Write("zzz", element1);
+            var element2 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
+            storage.Write("zzz", element2);
+            storage.Read<TestStorageElement>("zzz").AssertEqualsTo(element2);
+        }
+
+        [Test]
+        public void TestMultiUpdate()
+        {
+            var element11 = new TestStorageElement{IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[]{"arr0", "arr1"}};
+            storage.Write("zzz", element11);
+            var element21 = new TestStorageElement{IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[]{"arr2", "arr3"}};
+            storage.Write("qxx", element21);
+            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
+            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
+            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
+            storage.Read<TestStorageElement>("zzz").AssertEqualsTo(element12);
+            storage.Read<TestStorageElement>("qxx").AssertEqualsTo(element22);
+        }
 
         [Test]
         public void TestSearch()
