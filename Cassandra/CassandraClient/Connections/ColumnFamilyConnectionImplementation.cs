@@ -122,6 +122,19 @@ namespace CassandraClient.Connections
             return getSliceCommand.Output.Results.Select(@out => @out.Column.ToColumn()).ToArray();
         }
 
+        public List<byte[]> GetKeys(byte[] startKey, int count)
+        {
+            var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand
+                {
+                    ColumnFamily = columnFamilyName,
+                    ConsistencyLevel = readConsistencyLevel,
+                    Predicate = new AquilesSlicePredicate {Columns = null},
+                    KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey=new byte[0], Count = count}
+                };
+            ExecuteCommand(getKeyRangeSliceCommand);
+            return getKeyRangeSliceCommand.Output.Select(row => row.Key).ToList();
+        }
+
         public List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
         {
             var multiGetSliceCommand = new MultiGetSliceCommand

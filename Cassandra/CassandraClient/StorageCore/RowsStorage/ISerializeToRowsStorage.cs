@@ -10,6 +10,9 @@ namespace CassandraClient.StorageCore.RowsStorage
         void Delete<T>(string id) where T : class;
         T Read<T>(string id) where T : class;
         T[] Read<T>(string[] ids) where T : class;
+        T ReadOrCreate<T>(string id) where T : class, new();
+        T[] ReadOrCreate<T>(string[] ids) where T : class, new();
+        string[] GetIds<T>(string greaterThanId, int count) where T : class;
 
         string[] Search<TData, TTemplate>(TTemplate template)
             where TTemplate : class
