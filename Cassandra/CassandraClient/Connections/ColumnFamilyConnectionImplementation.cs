@@ -128,7 +128,7 @@ namespace CassandraClient.Connections
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
-                    Predicate = new AquilesSlicePredicate {Columns = null},
+                    Predicate = new AquilesSlicePredicate {Columns = new List<byte[]>()},
                     KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey=new byte[0], Count = count}
                 };
             ExecuteCommand(getKeyRangeSliceCommand);

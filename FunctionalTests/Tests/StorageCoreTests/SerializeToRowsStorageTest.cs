@@ -40,7 +40,7 @@ namespace Tests.StorageCoreTests
         [Test]
         public void TestUpdate()
         {
-            var element1 = new TestStorageElement{IntProperty = 5, StringProperty = "zzz", Id = "id", Arr = new[]{"arr0", "arr1"}};
+            var element1 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id", Arr = new[] { "arr0", "arr1" } };
             storage.Write("zzz", element1);
             var element2 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             storage.Write("zzz", element2);
@@ -50,9 +50,9 @@ namespace Tests.StorageCoreTests
         [Test]
         public void TestMultiUpdate()
         {
-            var element11 = new TestStorageElement{IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[]{"arr0", "arr1"}};
+            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
             storage.Write("zzz", element11);
-            var element21 = new TestStorageElement{IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[]{"arr2", "arr3"}};
+            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
@@ -62,12 +62,52 @@ namespace Tests.StorageCoreTests
         }
 
         [Test]
+        public void TestGetKeys()
+        {
+            const int count = 100;
+            var elements = new List<TestStorageElement>();
+            var rnd = new Random();
+            for (int i = 0; i < count; ++i)
+            {
+                int a = rnd.Next(2);
+                int b = rnd.Next(2);
+                var c = rnd.Next(2);
+                var d = rnd.Next(2);
+                var element = new TestStorageElement
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    StringProperty = "String" + a,
+                    IntProperty = 1234 + b,
+                    ComplexProperty = new TestStorageElementSubItem
+                    {
+                        StringProperty = "String" + c,
+                        IntProperty = 4321 + d,
+                    }
+                };
+                elements.Add(element);
+            }
+            storage.Write(elements.Select(e => new KeyValuePair<string, TestStorageElement>(e.Id, e)).ToArray());
+            string prev = null;
+            var allIds = new List<string>();
+            for (; ; )
+            {
+                var ids = storage.GetIds<TestStorageElement>(prev, 10);
+                if (ids.Length == 0) break;
+                allIds.AddRange(ids);
+                prev = ids.Last();
+            }
+            Assert.AreEqual(allIds.Count, count);
+            Assert.IsTrue(allIds.All(id => elements.Find(element => element.Id == id) != null));
+        }
+
+
+        [Test]
         public void TestSearch()
         {
             const int count = 100;
             var elements = new List<TestStorageElement>();
             var rnd = new Random();
-            for(int i = 0; i < count; ++i)
+            for (int i = 0; i < count; ++i)
             {
                 int a = rnd.Next(2);
                 int b = rnd.Next(2);
@@ -87,15 +127,15 @@ namespace Tests.StorageCoreTests
                 elements.Add(element);
             }
             storage.Write(elements.Select(e => new KeyValuePair<string, TestStorageElement>(e.Id, e)).ToArray());
-            for(int a = 0; a < 3; ++a)
+            for (int a = 0; a < 3; ++a)
             {
-                for(int b = 0; b < 3; ++b)
+                for (int b = 0; b < 3; ++b)
                 {
-                    for(int c = 0; c < 3; ++c)
+                    for (int c = 0; c < 3; ++c)
                     {
-                        for(int d = 0; d < 3; ++d)
+                        for (int d = 0; d < 3; ++d)
                         {
-                            if(a == 0 && b == 0 && c == 0 && d == 0)
+                            if (a == 0 && b == 0 && c == 0 && d == 0)
                                 continue;
                             var query = new TestStorageElementSearchQuery
                                 {
@@ -118,7 +158,7 @@ namespace Tests.StorageCoreTests
                             Array.Sort(expected, (first, second) => first.Id.CompareTo(second.Id));
 
                             Assert.AreEqual(expected.Length, actual.Length);
-                            for(var i = 0; i < expected.Length; ++i)
+                            for (var i = 0; i < expected.Length; ++i)
                             {
                                 Assert.AreEqual(serializer.SerializeToString(expected[i], false, Encoding.UTF8),
                                                 serializer.SerializeToString(actual[i], false, Encoding.UTF8));
@@ -131,16 +171,16 @@ namespace Tests.StorageCoreTests
 
         private static bool Matches(TestStorageElement element, TestStorageElementSearchQuery query)
         {
-            if(query.StringProperty != null && element.StringProperty != query.StringProperty)
+            if (query.StringProperty != null && element.StringProperty != query.StringProperty)
                 return false;
-            if(query.IntProperty != null && element.IntProperty != query.IntProperty)
+            if (query.IntProperty != null && element.IntProperty != query.IntProperty)
                 return false;
-            if(query.ComplexProperty != null)
+            if (query.ComplexProperty != null)
             {
-                if(query.ComplexProperty.StringProperty != null &&
+                if (query.ComplexProperty.StringProperty != null &&
                    element.ComplexProperty.StringProperty != query.ComplexProperty.StringProperty)
                     return false;
-                if(query.ComplexProperty.IntProperty != null &&
+                if (query.ComplexProperty.IntProperty != null &&
                    element.ComplexProperty.IntProperty != query.ComplexProperty.IntProperty)
                     return false;
             }
