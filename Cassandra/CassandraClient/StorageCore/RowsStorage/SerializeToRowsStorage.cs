@@ -126,6 +126,16 @@ namespace CassandraClient.StorageCore.RowsStorage
             return ids.Select(id => rowsDict[id]).Select(row => Read<T>(row.Value)).ToArray();
         }
 
+        public string[] GetIds<T>(string greaterThanId, int count) where T : class
+        {
+            string[] result = null;
+            MakeInConnection<T>(conn =>
+                                    {
+                                        result = conn.GetKeys(greaterThanId, count);
+                                    });
+            return result;
+        }
+
         public string[] Search<TData, TTemplate>(TTemplate template)
             where TTemplate : class
             where TData : class

@@ -70,15 +70,15 @@ namespace CassandraClient.Connections
                     new KeyValuePair<byte[], IEnumerable<Column>>(StringHelpers.StringToBytes(item.Key), item.Value)));
         }
 
-        public Column[] GetRow(string key, string greatThanColumnName, int count)
+        public Column[] GetRow(string key, string greaterThanColumnName, int count)
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new Column[0];
-            Column[] result = implementation.GetRow(StringHelpers.StringToBytes(key), StringHelpers.StringToBytes(greatThanColumnName),
+            Column[] result = implementation.GetRow(StringHelpers.StringToBytes(key), StringHelpers.StringToBytes(greaterThanColumnName),
                                                     count + 1);
             if(result.Length == 0)
                 return result;
-            if(result[0].Name == greatThanColumnName)
+            if(result[0].Name == greaterThanColumnName)
                 result = result.Skip(1).ToArray();
             if(result.Length > count)
             {
@@ -86,6 +86,17 @@ namespace CassandraClient.Connections
                 list.RemoveAt(result.Length - 1);
                 result = list.ToArray();
             }
+            return result;
+        }
+
+        public string[] GetKeys(string greaterThanKey, int count)
+        {
+            if (count == int.MaxValue) count--;
+            if (count <= 0) return new string[0];
+            var result = implementation.GetKeys(StringHelpers.StringToBytes(greaterThanKey), count + 1).Select(StringHelpers.BytesToString).ToArray();
+            if (result.Length == 0) return result;
+            if (result[0] == greaterThanKey) result = result.Skip(1).ToArray();
+            if (result.Length > count) result = result.Take(count).ToArray();
             return result;
         }
 
