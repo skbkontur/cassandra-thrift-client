@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -158,37 +159,32 @@ namespace CassandraClient.StorageCore.RowsStorage
             return result;
         }
 
-        public T ReadOrCreate<T>(string id) where T : class, new()
+        public T ReadOrCreate<T>(string id, Func<T> creator) where T : class
         {
-            return ReadOrCreate<T>(new[] {id}).Single();
+            return ReadOrCreate(new[] {id}, id1 => creator()).Single();
         }
 
-        public T[] ReadOrCreate<T>(string[] ids) where T : class, new()
+        public T[] ReadOrCreate<T>(string[] ids, Func<string, T> creator) where T : class
         {
             if(ids == null) throw new ArgumentNullException("ids");
             if(ids.Length == 0) return new T[0];
             List<KeyValuePair<string, Column[]>> rows = null;
             MakeInConnection<T>(connection => rows = connection.GetRows(ids, null, cassandraCoreSettings.MaximalColumnsCount));
-            var rowsDict = rows.ToDictionary(row => row.Key);
+            var rowsDict = rows.ToDictionary(row => row.Key, row => (IEnumerable<Column>)row.Value);
             var result = new List<T>();
             var newIds = new List<string>();
             foreach(var id in ids)
             {
                 if(!rowsDict.ContainsKey(id))
                 {
-                    result.Add(new T());
+                    var created = creator(id);
+                    result.Add(created);
+                    rowsDict.Add(id, GetRow(id, created));
                     newIds.Add(id);
                 }
-                else result.Add(Read<T>(rowsDict[id].Value));
+                else result.Add(Read<T>(rowsDict[id]));
             }
-            MakeInConnection<T>(
-                conn =>
-                conn.BatchInsert(
-                    newIds.Select(id =>
-                                      {
-                                          var column = new Column {Name = idColumn, Value = CassandraStringHelpers.StringToBytes(id)};
-                                          return new KeyValuePair<string, IEnumerable<Column>>(id, new[] {column});
-                                      })));
+            MakeInConnection<T>(conn => conn.BatchInsert(newIds.Select(id => new KeyValuePair<string, IEnumerable<Column>>(id, rowsDict[id]))));
             return result.ToArray();
         }
 
