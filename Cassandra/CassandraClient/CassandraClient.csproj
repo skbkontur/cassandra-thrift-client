@@ -135,6 +135,8 @@
     <Compile Include="StorageCore\IIdSetRepository.cs" />
     <Compile Include="StorageCore\IOneValueRepository.cs" />
     <Compile Include="StorageCore\BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="StorageCore\RowsStorage\FormatVersions.cs" />
+    <Compile Include="StorageCore\RowsStorage\IObjectReader.cs" />
     <Compile Include="StorageCore\RowsStorage\ISerializeToRowsStorageColumnFamilyNameGetter.cs" />
     <Compile Include="StorageCore\RowsStorage\ISerializeToRowsStorage.cs" />
     <Compile Include="StorageCore\ITimedSortedStorage.cs" />
@@ -145,6 +147,14 @@
     <Compile Include="StorageCore\KeyValueTables\KeyValueIndexTable.cs" />
     <Compile Include="StorageCore\Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="StorageCore\OneValueRepository.cs" />
+    <Compile Include="StorageCore\RowsStorage\IVersionReaderCollection.cs" />
+    <Compile Include="StorageCore\RowsStorage\IVersionReader.cs" />
+    <Compile Include="StorageCore\RowsStorage\ObjectReader.cs" />
+    <Compile Include="StorageCore\RowsStorage\SerializeToRowsStorageConstants.cs" />
+    <Compile Include="StorageCore\RowsStorage\UnknownFormatVersionException.cs" />
+    <Compile Include="StorageCore\RowsStorage\Version1Reader.cs" />
+    <Compile Include="StorageCore\RowsStorage\Version2Reader.cs" />
+    <Compile Include="StorageCore\RowsStorage\VersionReaderCollection.cs" />
     <Compile Include="StorageCore\SearchQueryIndexesDefinition.cs" />
     <Compile Include="StorageCore\RowsStorage\SerializeToRowsStorage.cs" />
     <Compile Include="StorageCore\TimedStorageElement.cs" />

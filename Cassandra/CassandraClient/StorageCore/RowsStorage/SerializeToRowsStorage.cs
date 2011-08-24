@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
@@ -20,13 +20,14 @@ namespace CassandraClient.StorageCore.RowsStorage
             ISerializeToRowsStorageColumnFamilyNameGetter serializeToRowsStorageColumnFamilyNameGetter,
             ICassandraCluster cassandraCluster,
             ICassandraCoreSettings cassandraCoreSettings,
-            ISerializer serializer)
+            ISerializer serializer, IObjectReader objectReader)
         {
             this.columnFamilyRegistry = columnFamilyRegistry;
             this.serializeToRowsStorageColumnFamilyNameGetter = serializeToRowsStorageColumnFamilyNameGetter;
             this.cassandraCluster = cassandraCluster;
             this.cassandraCoreSettings = cassandraCoreSettings;
             this.serializer = serializer;
+            this.objectReader = objectReader;
         }
 
         public void Write<T>(string id, T obj) where T : class
@@ -85,16 +86,12 @@ namespace CassandraClient.StorageCore.RowsStorage
                             connection.BatchDelete(columnNames.Select(pair => new KeyValuePair<string, IEnumerable<string>>(pair.Key, pair.Value.ToArray())));
                     });
         }
-
+        
         public bool TryRead<T>(string id, out T result) where T : class
         {
-            result = null;
             Column[] columns = null;
             MakeInConnection<T>(connection => columns = connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount));
-            if(columns == null || columns.Length == 0)
-                return false;
-            result = Read<T>(columns);
-            return true;
+            return objectReader.TryReadObject(columns, out result);
         }
 
         public void Delete<T>(string id) where T : class
@@ -130,10 +127,7 @@ namespace CassandraClient.StorageCore.RowsStorage
         public string[] GetIds<T>(string greaterThanId, int count) where T : class
         {
             string[] result = null;
-            MakeInConnection<T>(conn =>
-                                    {
-                                        result = conn.GetKeys(greaterThanId, count);
-                                    });
+            MakeInConnection<T>(conn => { result = conn.GetKeys(greaterThanId, count); });
             return result;
         }
 
@@ -154,7 +148,7 @@ namespace CassandraClient.StorageCore.RowsStorage
                                                         IndexOperator = IndexOperator.EQ,
                                                         Value = CassandraStringHelpers.StringToBytes(nameValueCollection[key])
                                                     }).ToArray();
-                                            result = connection.GetRowsWhere(cassandraCoreSettings.MaximalRowsCount, conditions, new[] {idColumn});
+                                            result = connection.GetRowsWhere(cassandraCoreSettings.MaximalRowsCount, conditions, new[] {SerializeToRowsStorageConstants.idColumnName});
                                         });
             return result;
         }
@@ -170,7 +164,7 @@ namespace CassandraClient.StorageCore.RowsStorage
             if(ids.Length == 0) return new T[0];
             List<KeyValuePair<string, Column[]>> rows = null;
             MakeInConnection<T>(connection => rows = connection.GetRows(ids, null, cassandraCoreSettings.MaximalColumnsCount));
-            var rowsDict = rows.ToDictionary(row => row.Key, row => (IEnumerable<Column>)row.Value);
+            var rowsDict = rows.ToDictionary(row => row.Key, row => row.Value);
             var result = new List<T>();
             var newIds = new List<string>();
             foreach(var id in ids)
@@ -188,8 +182,6 @@ namespace CassandraClient.StorageCore.RowsStorage
             return result.ToArray();
         }
 
-        public const string idColumn = "3BB854C5-53E8-4B78-99FA-CCE49B3CC759";
-
         private void MakeInConnection<T>(Action<IColumnFamilyConnection> action)
         {
             string columnFamily = serializeToRowsStorageColumnFamilyNameGetter.GetColumnFamilyName(typeof(T));
@@ -199,23 +191,39 @@ namespace CassandraClient.StorageCore.RowsStorage
                 action(connection);
         }
 
-        private T Read<T>(IEnumerable<Column> columns)
+        private T Read<T>(Column[] columns) where T : class
         {
-            var nameValueCollection = new NameValueCollection();
-            foreach(var column in columns)
-                nameValueCollection.Add(column.Name, CassandraStringHelpers.BytesToString(column.Value));
-            return serializer.Deserialize<T>(nameValueCollection);
+            T result;
+            objectReader.TryReadObject(columns, out result);
+            return result;
         }
 
         private Column[] GetRow<T>(string id, T obj)
         {
-            NameValueCollection nameValueCollection = serializer.SerializeToNameValueCollection(obj);
-            return nameValueCollection.AllKeys.Select(
+            string serializedObject = serializer.SerializeToString(obj, true, Encoding.UTF8);
+            var formatVersionColumn = new Column
+                {
+                    Name = SerializeToRowsStorageConstants.formatVersionColumnName,
+                    Value = CassandraStringHelpers.StringToBytes(FormatVersions.version2)
+                };
+            var fullObjectColumn = new Column
+                {
+                    Name = SerializeToRowsStorageConstants.fullObjectColumnName,
+                    Value = CassandraStringHelpers.StringToBytes(serializedObject)
+                };
+            var idColumn = new Column
+                {
+                    Name = SerializeToRowsStorageConstants.idColumnName,
+                    Value = CassandraStringHelpers.StringToBytes(id)
+                };
+            var nameValueCollection = serializer.SerializeToNameValueCollection(obj);
+            var nameValueColumns = nameValueCollection.AllKeys.Select(
                 key => new Column
                     {
                         Name = key,
                         Value = CassandraStringHelpers.StringToBytes(nameValueCollection[key])
-                    }).Concat(new[] {new Column {Name = idColumn, Value = CassandraStringHelpers.StringToBytes(id)}}).ToArray();
+                    });
+            return new[]{formatVersionColumn, fullObjectColumn, idColumn}.Concat(nameValueColumns).ToArray();
         }
 
         private readonly IColumnFamilyRegistry columnFamilyRegistry;
@@ -223,5 +231,6 @@ namespace CassandraClient.StorageCore.RowsStorage
         private readonly ICassandraCluster cassandraCluster;
         private readonly ICassandraCoreSettings cassandraCoreSettings;
         private readonly ISerializer serializer;
+        private readonly IObjectReader objectReader;
     }
 }

@@ -64,8 +64,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CassandraClusterSettings.cs" />
     <Compile Include="StorageCoreTests\CassandraInitializer.cs" />
+    <Compile Include="StorageCoreTests\SerializeToRowsStorageThreadingTest.cs" />
     <Compile Include="StorageCoreTests\TestCassandraCoreSettings.cs" />
     <Compile Include="StorageCoreTests\TestColumnFamilyRegistry.cs" />
+    <Compile Include="StorageCoreTests\TestObject.cs" />
     <Compile Include="StorageCoreTests\TestStorageElementIndexesDefinition.cs" />
     <Compile Include="StorageCoreTests\TestStorageElementSearchQuery.cs" />
     <Compile Include="StorageCoreTests\TestXmlNamespaceFactory.cs" />
