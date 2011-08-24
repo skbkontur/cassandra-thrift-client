@@ -200,7 +200,6 @@ namespace CassandraClient.StorageCore.RowsStorage
 
         private Column[] GetRow<T>(string id, T obj)
         {
-            string serializedObject = serializer.SerializeToString(obj, true, Encoding.UTF8);
             var formatVersionColumn = new Column
                 {
                     Name = SerializeToRowsStorageConstants.formatVersionColumnName,
@@ -209,7 +208,7 @@ namespace CassandraClient.StorageCore.RowsStorage
             var fullObjectColumn = new Column
                 {
                     Name = SerializeToRowsStorageConstants.fullObjectColumnName,
-                    Value = CassandraStringHelpers.StringToBytes(serializedObject)
+                    Value = serializer.SerializeToBytes(obj, true, Encoding.UTF8)
                 };
             var idColumn = new Column
                 {
