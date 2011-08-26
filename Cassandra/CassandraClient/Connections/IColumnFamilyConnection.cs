@@ -10,7 +10,7 @@ namespace CassandraClient.Connections
         void AddColumn(string key, Column column);
         Column GetColumn(string key, string columnName);
         bool TryGetColumn(string key, string columnName, out Column result);
-        void DeleteBatch(string key, IEnumerable<string> columnNames);
+        void DeleteBatch(string key, IEnumerable<string> columnNames, long? timestamp = null);
         void AddBatch(string key, IEnumerable<Column> columns);
         void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data);
         void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data);

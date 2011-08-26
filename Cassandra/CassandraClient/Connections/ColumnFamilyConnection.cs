@@ -36,9 +36,9 @@ namespace CassandraClient.Connections
                                                out result);
         }
 
-        public void DeleteBatch(string key, IEnumerable<string> columnNames)
+        public void DeleteBatch(string key, IEnumerable<string> columnNames, long? timestamp = null)
         {
-            implementation.DeleteBatch(StringHelpers.StringToBytes(key), columnNames.Select(StringHelpers.StringToBytes));
+            implementation.DeleteBatch(StringHelpers.StringToBytes(key), columnNames.Select(StringHelpers.StringToBytes), timestamp);
         }
 
         public void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data)

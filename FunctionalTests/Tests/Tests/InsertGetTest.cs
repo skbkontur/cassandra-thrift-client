@@ -14,6 +14,18 @@ namespace Tests.Tests
         }
 
         [Test]
+        public void TestDeleteAdd()
+        {
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            Check("someRow", "someColumnName", "someColumnValue");
+            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            CheckNotFound("someRow", "someColumnName");
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            Check("someRow", "someColumnName", "someColumnValue");
+        }
+        
+
+        [Test]
         public void TestDoubleAdd()
         {
             cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");

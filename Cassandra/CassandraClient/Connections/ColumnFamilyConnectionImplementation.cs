@@ -87,7 +87,7 @@ namespace CassandraClient.Connections
             ExecuteMutations(key, mutationsList);
         }
 
-        public void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames)
+        public void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null)
         {
             var mutationsList = new List<IAquilesMutation>
                 {
@@ -95,8 +95,9 @@ namespace CassandraClient.Connections
                         {
                             Predicate = new AquilesSlicePredicate
                                 {
-                                    Columns = columnNames.ToList()
-                                }
+                                    Columns = columnNames.ToList(),
+                                },
+                            Timestamp = timestamp
                         }
                 };
             ExecuteMutations(key, mutationsList);
@@ -152,7 +153,7 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).Where(pair => pair.Value.Length>0).ToList();
+            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()
