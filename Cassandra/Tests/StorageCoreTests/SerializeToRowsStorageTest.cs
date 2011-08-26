@@ -196,7 +196,7 @@ namespace Cassandra.Tests.StorageCoreTests
                             Value = CassandraStringHelpers.StringToBytes("4")
                         }
                 });
-            columnFamilyConnection.Expect(connection => connection.DeleteBatch(ARG.AreSame("q"), ARG.MatchTo<IEnumerable<string>>(names => Check(new[] {"A", "B"}, names))));
+            columnFamilyConnection.Expect(connection => connection.DeleteBatch(ARG.AreSame("q"), ARG.MatchTo<IEnumerable<string>>(names => Check(new[] {"A", "B"}, names)), ARG.EqualsTo((long?)null)));
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cc => cc.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             serializeToRowsStorage.Delete<Int>("q");
