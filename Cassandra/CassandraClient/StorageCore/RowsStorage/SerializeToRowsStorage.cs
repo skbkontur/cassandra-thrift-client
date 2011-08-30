@@ -121,7 +121,17 @@ namespace CassandraClient.StorageCore.RowsStorage
                 throw new StorageCoreException("Objects not found. Expected {0}, but was {1}", ids.Length, rows.Count);
 
             Dictionary<string, KeyValuePair<string, Column[]>> rowsDict = rows.ToDictionary(row => row.Key);
-            return ids.Select(id => rowsDict[id]).Select(row => Read<T>(row.Value)).ToArray();
+            return ids.Select(id => Read<T>(rowsDict[id].Value)).ToArray();
+        }
+
+        public T[] TryRead<T>(string[] ids) where T : class
+        {
+            if (ids == null) throw new ArgumentNullException("ids");
+            if (ids.Length == 0) return new T[0];
+            List<KeyValuePair<string, Column[]>> rows = null;
+            MakeInConnection<T>(connection => rows = connection.GetRows(ids, null, cassandraCoreSettings.MaximalColumnsCount));
+            Dictionary<string, KeyValuePair<string, Column[]>> rowsDict = rows.ToDictionary(row => row.Key);
+            return ids.Where(rowsDict.ContainsKey).Select(id => Read<T>(rowsDict[id].Value)).ToArray();
         }
 
         public string[] GetIds<T>(string greaterThanId, int count) where T : class
