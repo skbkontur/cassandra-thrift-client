@@ -166,13 +166,13 @@ namespace CassandraClient.Connections
             ExecuteCommand(truncateCommand);
         }
 
-        public List<byte[]> GetRowsWhere(int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns)
+        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns)
         {
             var predicate = new AquilesSlicePredicate {Columns = columns};
 
             var indexClause = new AquilesIndexClause();
             indexClause.Count = maximalCount;
-            indexClause.StartKey = new byte[0];
+            indexClause.StartKey = startKey ?? new byte[0];
             indexClause.Expressions = new List<AquilesIndexExpression>();
             indexClause.Expressions.AddRange(conditions);
 

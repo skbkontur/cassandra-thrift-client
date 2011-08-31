@@ -320,9 +320,9 @@ namespace Cassandra.Tests.StorageCoreTests
                 };
             var keys = new[] {"key1", "key2"};
             cassandraCoreSettings.Expect(settings => settings.MaximalRowsCount).Return(4321);
-            columnFamilyConnection.Expect(connection => connection.GetRowsWhere(ARG.EqualsTo(4321), ARG.EqualsTo(indexes), ARG.EqualsTo(new[] {idColumnName}))).Return(keys);
+            columnFamilyConnection.Expect(connection => connection.GetRowsWhere(ARG.EqualsTo((string)null), ARG.EqualsTo(4321), ARG.EqualsTo(indexes), ARG.EqualsTo(new[] {idColumnName}))).Return(keys);
             columnFamilyConnection.Expect(connection => connection.Dispose());
-            serializeToRowsStorage.Search<Int, IntIndexedFields>(template).AssertEqualsTo(keys);
+            serializeToRowsStorage.Search<Int, IntIndexedFields>(null, 1000, template).AssertEqualsTo(keys);
         }
 
         private static bool Check<T>(IEnumerable<T> expected, IEnumerable<T> actual)

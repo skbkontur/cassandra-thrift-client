@@ -134,14 +134,14 @@ namespace CassandraClient.StorageCore.RowsStorage
             return ids.Where(rowsDict.ContainsKey).Select(id => Read<T>(rowsDict[id].Value)).ToArray();
         }
 
-        public string[] GetIds<T>(string greaterThanId, int count) where T : class
+        public string[] GetIds<T>(string exclusiveStartId, int count) where T : class
         {
             string[] result = null;
-            MakeInConnection<T>(conn => { result = conn.GetKeys(greaterThanId, count); });
+            MakeInConnection<T>(conn => { result = conn.GetKeys(exclusiveStartId, count); });
             return result;
         }
 
-        public string[] Search<TData, TTemplate>(TTemplate template)
+        public string[] Search<TData, TTemplate>(string exclusiveStartKey, int count, TTemplate template)
             where TTemplate : class
             where TData : class
         {
@@ -158,7 +158,7 @@ namespace CassandraClient.StorageCore.RowsStorage
                                                         IndexOperator = IndexOperator.EQ,
                                                         Value = CassandraStringHelpers.StringToBytes(nameValueCollection[key])
                                                     }).ToArray();
-                                            result = connection.GetRowsWhere(cassandraCoreSettings.MaximalRowsCount, conditions, new[] {SerializeToRowsStorageConstants.idColumnName});
+                                            result = connection.GetRowsWhere(exclusiveStartKey, count, conditions, new[] {SerializeToRowsStorageConstants.idColumnName});
                                         });
             return result;
         }

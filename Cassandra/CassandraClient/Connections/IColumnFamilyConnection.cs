@@ -15,10 +15,10 @@ namespace CassandraClient.Connections
         void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data);
         void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data);
         List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count);
-        string[] GetRowsWhere(int maximalCount, IndexExpression[] conditions, string[] columns);
+        string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns);
         string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value);
         void Truncate();
-        Column[] GetRow(string key, string greaterThanColumnName, int count);
-        string[] GetKeys(string greaterThanKey, int count);
+        Column[] GetRow(string key, string exclusiveStartColumnName, int count);
+        string[] GetKeys(string exclusiveStartKey, int count);
     }
 }

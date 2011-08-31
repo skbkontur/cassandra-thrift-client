@@ -14,9 +14,9 @@ namespace CassandraClient.StorageCore.RowsStorage
         T[] TryRead<T>(string[] ids) where T : class;
         T ReadOrCreate<T>(string id, Func<T> creator) where T : class;
         T[] ReadOrCreate<T>(string[] ids, Func<string, T> creator) where T : class;
-        string[] GetIds<T>(string greaterThanId, int count) where T : class;
+        string[] GetIds<T>(string exclusiveStartId, int count) where T : class;
 
-        string[] Search<TData, TTemplate>(TTemplate template)
+        string[] Search<TData, TTemplate>(string exclusiveStartKey, int count, TTemplate template)
             where TTemplate : class
             where TData : class;
     }
