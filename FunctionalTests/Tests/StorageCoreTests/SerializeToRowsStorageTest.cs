@@ -247,7 +247,7 @@ namespace Tests.StorageCoreTests
                                 };
                             var actual =
                                 storage.Read<TestStorageElement>(
-                                    storage.Search<TestStorageElement, TestStorageElementSearchQuery>(query));
+                                    storage.Search<TestStorageElement, TestStorageElementSearchQuery>(null, 1000, query));
                             Array.Sort(actual, (first, second) => first.Id.CompareTo(second.Id));
                             var expected = Search(elements, query);
                             Array.Sort(expected, (first, second) => first.Id.CompareTo(second.Id));

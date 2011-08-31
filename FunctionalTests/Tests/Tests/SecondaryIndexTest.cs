@@ -114,7 +114,7 @@ namespace Tests.Tests
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
             {
-                string[] res = conn.GetRowsWhere(1000, new[]
+                string[] res = conn.GetRowsWhere(null, 1000, new[]
                     {
                         new IndexExpression
                             {
@@ -150,7 +150,7 @@ namespace Tests.Tests
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
             {
-                string[] res = conn.GetRowsWhere(1000, new[]
+                string[] res = conn.GetRowsWhere(null, 1000, new[]
                     {
                         new IndexExpression
                             {
@@ -179,7 +179,7 @@ namespace Tests.Tests
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
             {
-                string[] res = conn.GetRowsWhere(1000, new[]
+                string[] res = conn.GetRowsWhere(null, 1000, new[]
                     {
                         new IndexExpression
                             {
