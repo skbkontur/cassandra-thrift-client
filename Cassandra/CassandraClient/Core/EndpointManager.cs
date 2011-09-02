@@ -9,7 +9,6 @@ namespace CassandraClient.Core
         public EndpointManager(IBadlist badlist)
         {
             this.badlist = badlist;
-            random = new Random();
         }
 
         public void Register(IPEndPoint ipEndPoint)
@@ -29,31 +28,30 @@ namespace CassandraClient.Core
 
         public void Bad(IPEndPoint ipEndPoint)
         {
-            badlist.Good(ipEndPoint);
+            badlist.Bad(ipEndPoint);
         }
 
         public IPEndPoint GetEndPoint()
         {
-            var health = badlist.GetHealth();
-            var sum = health.Sum(h => h.Value);
+            var healthes = badlist.GetHealth();
+            var sum = healthes.Sum(h => h.Value);
 
-            double rnd;
-            lock(lockObject)
-            {
-                rnd = random.NextDouble();
-            }
-            foreach(var t in health)
+            double rnd = Random.NextDouble();
+            foreach(var t in healthes)
             {
                 rnd -= t.Value / sum;
-                if(Math.Abs(rnd) < eps)
+                if(rnd < eps)
                     return t.Key;
             }
-            return health.Last().Key;
+            return healthes.Last().Key;
         }
 
         private readonly IBadlist badlist;
-        private readonly Random random;
-        private readonly object lockObject = new object();
-        private const double eps = 1e-9;
+
+        [ThreadStatic]
+        private static Random random;
+        private static Random Random { get { return random ?? (random = new Random()); } }
+
+        private const double eps = 1e-15;
     }
 }
