@@ -1,15 +1,25 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+
+using Apache.Cassandra;
 
 using Aquiles;
 using Aquiles.Command;
+using Aquiles.Exceptions;
 using Aquiles.Model;
 
 using CassandraClient.Abstractions;
 using CassandraClient.Core;
 using CassandraClient.Exceptions;
 using CassandraClient.Helpers;
+
+using Thrift;
+using Thrift.Transport;
+
+using Column = CassandraClient.Abstractions.Column;
+using ConsistencyLevel = CassandraClient.Abstractions.ConsistencyLevel;
 
 namespace CassandraClient.Connections
 {
@@ -87,7 +97,7 @@ namespace CassandraClient.Connections
                                 {
                                     Columns = columnNames.ToList(),
                                 },
-                            Timestamp = timestamp.HasValue ? timestamp.Value : DateTime.UtcNow.Ticks
+                            Timestamp = timestamp
                         }
                 };
             ExecuteMutations(key, mutationsList);
@@ -120,7 +130,7 @@ namespace CassandraClient.Connections
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
                     Predicate = new AquilesSlicePredicate {Columns = new List<byte[]>()},
-                    KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey = new byte[0], Count = count}
+                    KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey=new byte[0], Count = count}
                 };
             ExecuteCommand(getKeyRangeSliceCommand);
             return getKeyRangeSliceCommand.Output.Select(row => row.Key).ToList();
@@ -184,7 +194,7 @@ namespace CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null)
+        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data)
         {
             List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(
                 row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key,
@@ -195,8 +205,7 @@ namespace CassandraClient.Connections
                                                                                         Predicate = new AquilesSlicePredicate
                                                                                             {
                                                                                                 Columns = row.Value.ToList()
-                                                                                            },
-                                                                                        Timestamp = timestamp.HasValue ? timestamp.Value : DateTime.UtcNow.Ticks
+                                                                                            }
                                                                                     }
                                                                             })).ToList();
             ExecuteMutations(mutationsList);
@@ -245,7 +254,7 @@ namespace CassandraClient.Connections
 
         private void ExecuteCommand(IAquilesCommand command)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(command, keyspaceName));
+                commandExecuter.Execute(new AquilesCommandAdaptor(command, keyspaceName));
         }
 
         private readonly ICommandExecuter commandExecuter;

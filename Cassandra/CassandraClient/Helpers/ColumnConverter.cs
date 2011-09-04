@@ -1,6 +1,4 @@
-﻿using System;
-
-using Aquiles.Model;
+﻿using Aquiles.Model;
 
 using CassandraClient.Abstractions;
 
@@ -28,7 +26,7 @@ namespace CassandraClient.Helpers
                        : new AquilesColumn
                            {
                                ColumnName = StringHelpers.StringToBytes(column.Name),
-                               Timestamp = column.Timestamp.HasValue ? column.Timestamp : DateTime.UtcNow.Ticks,
+                               Timestamp = column.Timestamp,
                                TTL = column.TTL,
                                Value = column.Value
                            };
