@@ -20,6 +20,7 @@ namespace Tests.Tests
             Check("someRow", "someColumnName", "someColumnValue");
             cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
             CheckNotFound("someRow", "someColumnName");
+            Thread.Sleep(1);
             cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
         }
