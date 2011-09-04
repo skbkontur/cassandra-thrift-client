@@ -17,6 +17,11 @@ using Tests.Tests;
 
 namespace Tests.StorageCoreTests
 {
+    //TODO: для прохождения тестов вставлены хаки: засыпания в некоторые моменты времени.
+    //Смысл в том, что Cassandra неодинаково себя ведет, если два раза подряд сделать Insert с одним Timestamp-ом или
+    //два раза подряд сделать BatchInsert с одним Timestamp-ом. В случае BatchInsert-а экспериментально выяснилось, что
+    //правым оказывается первая вставка. В случае Insert-а -- наоборот.
+    //Нужно это починить на уровне клиента (напр., возвращать всегда увеличивающееся время).
     public class SerializeToRowsStorageTest : CassandraFunctionalTestBase
     {
         #region Setup/Teardown
