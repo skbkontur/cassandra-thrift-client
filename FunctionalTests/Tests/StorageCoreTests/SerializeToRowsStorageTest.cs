@@ -66,10 +66,10 @@ namespace Tests.StorageCoreTests
         [Test]
         public void TestReadMultiple()
         {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
             var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
             storage.Write("qxx", element21);
+            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
+            storage.Write("zzz", element11);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
 
