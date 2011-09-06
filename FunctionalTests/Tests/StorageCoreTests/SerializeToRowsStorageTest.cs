@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading;
 
 using Cassandra.Tests;
 
@@ -60,7 +59,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement {IntProperty = null, StringProperty = null, Id = null, Arr = new[] {"arr2"}};
             var element22 = new TestStorageElement {IntProperty = null, StringProperty = null, Id = null, Arr = new[] {"arr4"}};
-            Thread.Sleep(1);
             storage.Write(new[] {new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22)});
             storage.Read<TestStorageElement>("zzz").AssertEqualsTo(element12);
             storage.Read<TestStorageElement>("qxx").AssertEqualsTo(element22);
@@ -75,7 +73,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
             storage.Read<TestStorageElement>(new[]{"zzz","qxx"}).AssertEqualsTo(new[]{element12,element22});
         }
@@ -89,7 +86,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
             RunMethodWithException<StorageCoreException>(() => storage.Read<TestStorageElement>(new[] { "zzz", "qxx", "ttt" }), "Objects not found. Expected 3, but was 2");
         }
@@ -103,7 +99,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
             storage.Read<TestStorageElement>(new[] { "zzz", "zzz", "zzz" }).AssertEqualsTo(new[]{element12,element12,element12});
         }
@@ -136,7 +131,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
             storage.TryRead<TestStorageElement>(new[] { "zzz", "qxx" }).AssertEqualsTo(new[] { element12, element22 });
         }
@@ -151,7 +145,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
             storage.TryRead<TestStorageElement>(new[] { "zzz", "qxx", "ttt", "rrr" }).AssertEqualsTo(new[] { element12, element22 });
         }
@@ -165,7 +158,6 @@ namespace Tests.StorageCoreTests
             storage.Write("qxx", element21);
             var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
             storage.TryRead<TestStorageElement>(new[] { "zzz", "zzz", "zzz", "qxx", "qxx" }).AssertEqualsTo(new[] { element12, element12, element12, element22, element22 });
         }

@@ -97,7 +97,7 @@ namespace CassandraClient.Connections
                                 {
                                     Columns = columnNames.ToList(),
                                 },
-                            Timestamp = timestamp
+                            Timestamp = timestamp ?? DateTime.UtcNow.Ticks
                         }
                 };
             ExecuteMutations(key, mutationsList);
@@ -194,7 +194,7 @@ namespace CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data)
+        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null)
         {
             List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(
                 row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key,
@@ -205,7 +205,8 @@ namespace CassandraClient.Connections
                                                                                         Predicate = new AquilesSlicePredicate
                                                                                             {
                                                                                                 Columns = row.Value.ToList()
-                                                                                            }
+                                                                                            },
+                                                                                            Timestamp = timestamp ?? DateTime.UtcNow.Ticks
                                                                                     }
                                                                             })).ToList();
             ExecuteMutations(mutationsList);
