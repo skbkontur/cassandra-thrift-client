@@ -97,7 +97,7 @@ namespace CassandraClient.Connections
                                 {
                                     Columns = columnNames.ToList(),
                                 },
-                            Timestamp = timestamp ?? DateTime.UtcNow.Ticks
+                            Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                         }
                 };
             ExecuteMutations(key, mutationsList);
@@ -206,7 +206,7 @@ namespace CassandraClient.Connections
                                                                                             {
                                                                                                 Columns = row.Value.ToList()
                                                                                             },
-                                                                                            Timestamp = timestamp ?? DateTime.UtcNow.Ticks
+                                                                                            Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                                                                                     }
                                                                             })).ToList();
             ExecuteMutations(mutationsList);

@@ -78,6 +78,7 @@
     <Compile Include="Connections\KeyspaceConnection.cs" />
     <Compile Include="Core\Badlist.cs" />
     <Compile Include="Core\CommandExecuter.cs" />
+    <Compile Include="Core\DateTimeService.cs" />
     <Compile Include="Core\Pools\ClusterConnectionPool.cs" />
     <Compile Include="Core\EndpointManager.cs" />
     <Compile Include="Core\Pools\ConnectionPoolKey.cs" />

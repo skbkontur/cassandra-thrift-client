@@ -56,6 +56,7 @@
     <Compile Include="Arg.cs" />
     <Compile Include="CassandraClientTests\ConnectionTests\ClusterConnectionTest.cs" />
     <Compile Include="CassandraClientTests\ConnectionTests\KeyspaceConnectionTest.cs" />
+    <Compile Include="CassandraClientTests\DateTimeServiceTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\ColumnConverterTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\ColumnFamilyConverterTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\ConsistencyLevelConverterTest.cs" />
