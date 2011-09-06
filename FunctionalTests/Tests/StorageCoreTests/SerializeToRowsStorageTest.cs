@@ -105,7 +105,7 @@ namespace Tests.StorageCoreTests
             var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
             Thread.Sleep(1);
             storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            RunMethodWithException<StorageCoreException>(() => storage.Read<TestStorageElement>(new[] { "zzz", "zzz", "zzz" }), "Objects not found. Expected 3, but was 1");
+            storage.Read<TestStorageElement>(new[] { "zzz", "zzz", "zzz" }).AssertEqualsTo(new[]{element12,element12,element12});
         }
 
         [Test]

@@ -117,11 +117,12 @@ namespace CassandraClient.StorageCore.RowsStorage
             if(ids.Length == 0) return new T[0];
             List<KeyValuePair<string, Column[]>> rows = null;
             MakeInConnection<T>(connection => rows = connection.GetRows(ids, null, cassandraCoreSettings.MaximalColumnsCount));
-            if(rows.Count != ids.Length)
-                throw new StorageCoreException("Objects not found. Expected {0}, but was {1}", ids.Length, rows.Count);
-
+            
             Dictionary<string, KeyValuePair<string, Column[]>> rowsDict = rows.ToDictionary(row => row.Key);
-            return ids.Select(id => Read<T>(rowsDict[id].Value)).ToArray();
+            var result = ids.Where(rowsDict.ContainsKey).Select(id => Read<T>(rowsDict[id].Value)).Where(obj => obj != null).ToArray();
+            if(result.Length != ids.Length)
+                throw new StorageCoreException("Objects not found. Expected {0}, but was {1}", ids.Length, result.Length);
+            return result;
         }
 
         public T[] TryRead<T>(string[] ids) where T : class
@@ -131,7 +132,7 @@ namespace CassandraClient.StorageCore.RowsStorage
             List<KeyValuePair<string, Column[]>> rows = null;
             MakeInConnection<T>(connection => rows = connection.GetRows(ids, null, cassandraCoreSettings.MaximalColumnsCount));
             Dictionary<string, KeyValuePair<string, Column[]>> rowsDict = rows.ToDictionary(row => row.Key);
-            return ids.Where(rowsDict.ContainsKey).Select(id => Read<T>(rowsDict[id].Value)).ToArray();
+            return ids.Where(rowsDict.ContainsKey).Select(id => Read<T>(rowsDict[id].Value)).Where(obj => obj != null).ToArray();
         }
 
         public string[] GetIds<T>(string exclusiveStartId, int count) where T : class
@@ -179,14 +180,17 @@ namespace CassandraClient.StorageCore.RowsStorage
             var newIds = new List<string>();
             foreach(var id in ids)
             {
-                if(!rowsDict.ContainsKey(id))
+                T obj = null;
+                if (rowsDict.ContainsKey(id))
+                    obj = Read<T>(rowsDict[id]);
+                if (obj == null)
                 {
                     var created = creator(id);
                     result.Add(created);
                     rowsDict.Add(id, GetRow(id, created));
                     newIds.Add(id);
                 }
-                else result.Add(Read<T>(rowsDict[id]));
+                else result.Add(obj);
             }
             MakeInConnection<T>(conn => conn.BatchInsert(newIds.Select(id => new KeyValuePair<string, IEnumerable<Column>>(id, rowsDict[id]))));
             return result.ToArray();
