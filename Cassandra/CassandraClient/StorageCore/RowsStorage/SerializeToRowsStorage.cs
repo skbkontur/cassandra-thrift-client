@@ -39,28 +39,16 @@ namespace CassandraClient.StorageCore.RowsStorage
             MakeInConnection<T>(
                 connection =>
                     {
-                        var columns = (connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount) ?? new Column[0]).ToDictionary(column => column.Name);
+                        var columnNames = new HashSet<string>((connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount) ?? new Column[0]).Select(column => column.Name));
                         Column[] row = GetRow(id, obj);
-                        long? timestamp = null;
-                        long ticks = DateTime.UtcNow.Ticks;
-                        foreach(var column in row)
-                        {
-                            Column c;
-                            if (columns.TryGetValue(column.Name, out c))
-                            {
-                                long max = Math.Max(ticks, (c.Timestamp ?? 0) + 1);
-                                column.Timestamp = max;
-                                timestamp = Math.Max(timestamp ?? 0, max);
-                            }
-                        }
                         connection.AddBatch(id, row);
                         foreach(var column in row)
                         {
-                            if(columns.ContainsKey(column.Name))
-                                columns.Remove(column.Name);
+                            if(columnNames.Contains(column.Name))
+                                columnNames.Remove(column.Name);
                         }
-                        if(columns.Count > 0)
-                            connection.DeleteBatch(id, columns.Keys, timestamp);
+                        if(columnNames.Count > 0)
+                            connection.DeleteBatch(id, columnNames);
                     });
         }
 
@@ -78,43 +66,24 @@ namespace CassandraClient.StorageCore.RowsStorage
                 connection =>
                     {
                         var readData = connection.GetRows(rows.Select(row => row.Key).ToArray(), null, cassandraCoreSettings.MaximalColumnsCount);
-                        var columns = readData.ToDictionary(item => item.Key, item => ((item.Value ?? new Column[0]).ToDictionary(column => column.Name)));
-                        long? timestamp = null;
-                        long ticks = DateTime.UtcNow.Ticks;
-                        foreach(var row in rows)
-                        {
-                            Dictionary<string, Column> currentColumns;
-                            if(columns.TryGetValue(row.Key, out currentColumns))
-                            {
-                                foreach (var column in row.Value)
-                                {
-                                    Column c;
-                                    if (currentColumns.TryGetValue(column.Name, out c))
-                                    {
-                                        long max = Math.Max(ticks, (c.Timestamp ?? 0) + 1);
-                                        column.Timestamp = max;
-                                        timestamp = Math.Max(timestamp ?? 0, max);
-                                    }
-                                }
-                            }
-                        }
+                        var columnNames = readData.ToDictionary(item => item.Key, item => new HashSet<string>((item.Value ?? new Column[0]).Select(column => column.Name)));
                         connection.BatchInsert(rows);
                         foreach(var row in rows)
                         {
-                            Dictionary<string, Column> currentColumns;
-                            if(columns.TryGetValue(row.Key, out currentColumns))
+                            if(columnNames.ContainsKey(row.Key))
                             {
+                                var columns = columnNames[row.Key];
                                 foreach(var column in row.Value)
                                 {
-                                    if(currentColumns.ContainsKey(column.Name))
-                                        currentColumns.Remove(column.Name);
+                                    if(columns.Contains(column.Name))
+                                        columns.Remove(column.Name);
                                 }
-                                if(currentColumns.Count == 0)
-                                    columns.Remove(row.Key);
+                                if(columns.Count == 0)
+                                    columnNames.Remove(row.Key);
                             }
                         }
-                        if(columns.Count > 0)
-                            connection.BatchDelete(columns.Select(pair => new KeyValuePair<string, IEnumerable<string>>(pair.Key, pair.Value.Keys.ToArray())), timestamp);
+                        if(columnNames.Count > 0)
+                            connection.BatchDelete(columnNames.Select(pair => new KeyValuePair<string, IEnumerable<string>>(pair.Key, pair.Value.ToArray())));
                     });
         }
         
