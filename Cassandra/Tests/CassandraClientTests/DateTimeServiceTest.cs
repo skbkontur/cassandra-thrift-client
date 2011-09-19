@@ -46,7 +46,7 @@ namespace Cassandra.Tests.CassandraClientTests
                 Console.WriteLine(maxDiff);
             } while (DateTime.UtcNow - start < TimeSpan.FromSeconds(5));
             Console.WriteLine(maxDiff);
-            Assert.That(maxDiff < 30000);
+            Assert.That(maxDiff < 50000);
         }
     }
 }
