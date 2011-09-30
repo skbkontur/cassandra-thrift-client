@@ -40,8 +40,7 @@ namespace Tests.Tests
                                 {
                                     columnFamilyName, new ColumnFamily
                                         {
-                                            Keyspace =
-                                                keySpaceName,
+                                            
                                             Name =
                                                 columnFamilyName
                                         }
@@ -117,11 +116,11 @@ namespace Tests.Tests
                 columnFamilyConnection.AddBatch(key, columns);
         }
 
-        public void DeleteBatch(string keySpaceName, string columnFamilyName, string key, IEnumerable<string> columnNames)
+        public void DeleteBatch(string keySpaceName, string columnFamilyName, string key, IEnumerable<string> columnNames, long? timestamp = null)
         {
             using(IColumnFamilyConnection columnFamilyConnection =
                 cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                columnFamilyConnection.DeleteBatch(key, columnNames);
+                columnFamilyConnection.DeleteBatch(key, columnNames, timestamp);
         }
 
         public Column[] GetRow(string keySpaceName, string columnFamilyName, string key, int count, string startColumnName)

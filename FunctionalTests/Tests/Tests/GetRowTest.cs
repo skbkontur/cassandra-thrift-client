@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 namespace Tests.Tests
 {
-    public class GetRowTest : CassandraFunctionalTestBase
+    public class GetRowTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
         [Test]
         public void TestGetRow()

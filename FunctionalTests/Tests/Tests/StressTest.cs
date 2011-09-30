@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Text;
+using System.Threading;
 
 using CassandraClient.Abstractions;
 
@@ -8,7 +9,7 @@ using NUnit.Framework;
 
 namespace Tests.Tests
 {
-    public class StressTest : CassandraFunctionalTestBase
+    public class StressTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
         [Test, Ignore]
         public void TestStress()
@@ -34,8 +35,10 @@ namespace Tests.Tests
             Log("Start writing...");
             for(int i = 0; i < columnValues.Length; i++)
             {
-                if(i % 1000 == 0)
+                if (i % 1000 == 0)
+                {
                     Log("Writing " + i + " of " + columnValues.Length);
+                }
                 cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, key, columnNames[i],
                                     columnValues[i]);
             }

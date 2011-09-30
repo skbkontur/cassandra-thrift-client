@@ -19,12 +19,6 @@
     <Content Include="TC\Common.xml" />
     <Content Include="TC\Deploy.xml" />
     <Content Include="TC\RunFunctionalTests.xml" />
-    <Content Include="TC\Deploy.xml">
-      <SubType>Designer</SubType>
-    </Content>
-    <Content Include="TC\RunFunctionalTests.xml">
-      <SubType>Designer</SubType>
-    </Content>
     <Content Include="TC\RunUnitTests.xml" />
     <Content Include="TC\VersionStamper.xml" />
   </ItemGroup>

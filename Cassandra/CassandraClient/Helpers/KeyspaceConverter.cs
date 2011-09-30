@@ -15,7 +15,7 @@ namespace CassandraClient.Helpers
                        ? null
                        : new AquilesKeyspace
                            {
-                               ColumnFamilies = ToAquilesColumnFamilies(keyspace.ColumnFamilies),
+                               ColumnFamilies = ToAquilesColumnFamilies(keyspace.ColumnFamilies, keyspace.Name),
                                Name = keyspace.Name,
                                ReplicationFactor = keyspace.ReplicationFactor,
                                ReplicationPlacementStrategy = keyspace.ReplicaPlacementStrategy
@@ -35,12 +35,12 @@ namespace CassandraClient.Helpers
                            };
         }
 
-        private static Dictionary<string, AquilesColumnFamily> ToAquilesColumnFamilies(Dictionary<string, ColumnFamily> columnFamilies)
+        private static Dictionary<string, AquilesColumnFamily> ToAquilesColumnFamilies(Dictionary<string, ColumnFamily> columnFamilies, string keyspaceName)
         {
             if(columnFamilies == null)
                 return null;
             return columnFamilies.ToDictionary(columnFamily => columnFamily.Key,
-                                               columnFamily => columnFamily.Value.ToAquilesColumnFamily());
+                                               columnFamily => columnFamily.Value.ToAquilesColumnFamily(keyspaceName));
         }
 
         private static Dictionary<string, ColumnFamily> ToColumnFamilies(Dictionary<string, AquilesColumnFamily> columnFamilies)

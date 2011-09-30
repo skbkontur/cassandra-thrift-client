@@ -39,12 +39,7 @@ namespace Tests.StorageCoreTests
             return type.Name;
         }
 
-        public Type[] GetRegisteredTypes()
-        {
-            return new[] {typeof(TestStorageElement)};
-        }
-
-        private readonly string[] columnFamilyNames = new[] {typeof(TestStorageElement).Name};
+        private readonly string[] columnFamilyNames = new[] {typeof(TestStorageElement).Name, typeof(TestObject).Name};
         private readonly ISerializer serializer;
     }
 }

@@ -12,12 +12,12 @@ namespace CassandraClient.Connections
         void AddColumn(byte[] key, Column column);
         Column GetColumn(byte[] key, byte[] columnName);
         bool TryGetColumn(byte[] key, byte[] columnName, out Column result);
-        void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames);
-        void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data);
+        void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null);
+        void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null);
         void AddBatch(byte[] key, IEnumerable<Column> columns);
         void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data);
         List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count);
-        List<byte[]> GetRowsWhere(int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns);
+        List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns);
         void Truncate();
         Column[] GetRow(byte[] key, byte[] startColumnName, int count);
         List<byte[]> GetKeys(byte[] startKey, int count);

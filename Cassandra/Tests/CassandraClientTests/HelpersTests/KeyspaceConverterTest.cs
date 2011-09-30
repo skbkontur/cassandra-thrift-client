@@ -26,8 +26,8 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                 {
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
-                            {"a", new ColumnFamily {Keyspace = "z", Name = "q"}},
-                            {"b", new ColumnFamily {Keyspace = "t", Name = "r"}}
+                            {"a", new ColumnFamily {Name = "q"}},
+                            {"b", new ColumnFamily {Name = "r"}}
                         },
                     Name = "name",
                     ReplicationFactor = 56,
@@ -41,12 +41,12 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                             {
                                 "a",
                                 new AquilesColumnFamily
-                                    {Name = "q", Keyspace = "z", Comparator = "UTF8Type"}
+                                    {Name = "q", Keyspace = "name", Comparator = "UTF8Type"}
                                 },
                             {
                                 "b",
                                 new AquilesColumnFamily
-                                    {Name = "r", Keyspace = "t", Comparator = "UTF8Type"}
+                                    {Name = "r", Keyspace = "name", Comparator = "UTF8Type"}
                                 }
                         },
                     Name = "name",
@@ -91,8 +91,8 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                 {
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
-                            {"a", new ColumnFamily {Keyspace = "z", Name = "q"}},
-                            {"b", new ColumnFamily {Keyspace = "t", Name = "r"}}
+                            {"a", new ColumnFamily { Name = "q"}},
+                            {"b", new ColumnFamily { Name = "r"}}
                         },
                     Name = "name",
                     ReplicationFactor = 56,

@@ -10,6 +10,8 @@ using Aquiles.Command;
 using Aquiles.Exceptions;
 using Aquiles.Model;
 
+using CassandraClient.Abstractions;
+using CassandraClient.Core;
 using CassandraClient.Exceptions;
 using CassandraClient.Helpers;
 
@@ -23,13 +25,15 @@ namespace CassandraClient.Connections
 {
     public class ColumnFamilyConnectionImplementation : IColumnFamilyConnectionImplementation
     {
-        public ColumnFamilyConnectionImplementation(string columnFamilyName,
-                                                    IAquilesConnection aquilesConnection,
+        public ColumnFamilyConnectionImplementation(string keyspaceName,
+                                                    string columnFamilyName,
+                                                    ICommandExecuter commandExecuter,
                                                     ConsistencyLevel readConsistencyLevel,
                                                     ConsistencyLevel writeConsistencyLevel)
         {
+            this.keyspaceName = keyspaceName;
             this.columnFamilyName = columnFamilyName;
-            this.aquilesConnection = aquilesConnection;
+            this.commandExecuter = commandExecuter;
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
@@ -38,7 +42,7 @@ namespace CassandraClient.Connections
 
         public void Dispose()
         {
-            aquilesConnection.Dispose();
+            //aquilesConnection.Dispose();
         }
 
         public void AddColumn(byte[] key, Column column)
@@ -83,7 +87,7 @@ namespace CassandraClient.Connections
             ExecuteMutations(key, mutationsList);
         }
 
-        public void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames)
+        public void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null)
         {
             var mutationsList = new List<IAquilesMutation>
                 {
@@ -91,8 +95,9 @@ namespace CassandraClient.Connections
                         {
                             Predicate = new AquilesSlicePredicate
                                 {
-                                    Columns = columnNames.ToList()
-                                }
+                                    Columns = columnNames.ToList(),
+                                },
+                            Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                         }
                 };
             ExecuteMutations(key, mutationsList);
@@ -124,7 +129,7 @@ namespace CassandraClient.Connections
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
-                    Predicate = new AquilesSlicePredicate {Columns = null},
+                    Predicate = new AquilesSlicePredicate {Columns = new List<byte[]>()},
                     KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey=new byte[0], Count = count}
                 };
             ExecuteCommand(getKeyRangeSliceCommand);
@@ -148,7 +153,7 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).ToList();
+            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()
@@ -161,13 +166,13 @@ namespace CassandraClient.Connections
             ExecuteCommand(truncateCommand);
         }
 
-        public List<byte[]> GetRowsWhere(int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns)
+        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns)
         {
             var predicate = new AquilesSlicePredicate {Columns = columns};
 
             var indexClause = new AquilesIndexClause();
             indexClause.Count = maximalCount;
-            indexClause.StartKey = new byte[0];
+            indexClause.StartKey = startKey ?? new byte[0];
             indexClause.Expressions = new List<AquilesIndexExpression>();
             indexClause.Expressions.AddRange(conditions);
 
@@ -189,7 +194,7 @@ namespace CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data)
+        public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null)
         {
             List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(
                 row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key,
@@ -200,7 +205,8 @@ namespace CassandraClient.Connections
                                                                                         Predicate = new AquilesSlicePredicate
                                                                                             {
                                                                                                 Columns = row.Value.ToList()
-                                                                                            }
+                                                                                            },
+                                                                                            Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                                                                                     }
                                                                             })).ToList();
             ExecuteMutations(mutationsList);
@@ -249,37 +255,11 @@ namespace CassandraClient.Connections
 
         private void ExecuteCommand(IAquilesCommand command)
         {
-            try
-            {
-                aquilesConnection.Execute(command);
-            }
-            catch(AquilesException e)
-            {
-                string message = string.Format("An error occured while executing cassandra command '{0}'", command.GetType());
-                Exception innerException = e.InnerException;
-                if(innerException is NotFoundException)
-                    throw new CassandraClientSomethingNotFoundException(message, e);
-                if(innerException is InvalidRequestException)
-                    throw new CassandraClientInvalidRequestException(message, e);
-                if(innerException is UnavailableException)
-                    throw new CassandraClientUnavailableException(message, e);
-                if(innerException is TimedOutException)
-                    throw new CassandraClientTimedOutException(message, e);
-                if(innerException is TApplicationException)
-                    throw new CassandraClientApplicationException(message, e);
-                if(innerException is AuthenticationException)
-                    throw new CassandraClientAuthenticationException(message, e);
-                if(innerException is AuthorizationException)
-                    throw new CassandraClientAuthorizationException(message, e);
-                if(innerException is TTransportException)
-                    throw new CassandraClientTransportException(message, e);
-                if(innerException is IOException)
-                    throw new CassandraClientIOException(message, e);
-                throw;
-            }
+                commandExecuter.Execute(new AquilesCommandAdaptor(command, keyspaceName));
         }
 
-        private readonly IAquilesConnection aquilesConnection;
+        private readonly ICommandExecuter commandExecuter;
+        private readonly string keyspaceName;
         private readonly string columnFamilyName;
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;

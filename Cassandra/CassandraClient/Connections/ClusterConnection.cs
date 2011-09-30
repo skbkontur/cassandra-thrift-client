@@ -9,6 +9,7 @@ using Aquiles.Command.System;
 using Aquiles.Model;
 
 using CassandraClient.Abstractions;
+using CassandraClient.Core;
 using CassandraClient.Helpers;
 
 using log4net;
@@ -17,10 +18,12 @@ namespace CassandraClient.Connections
 {
     public class ClusterConnection : IClusterConnection
     {
-        public ClusterConnection(IAquilesConnection aquilesConnection,
+        private readonly ICommandExecuter commandExecuter;
+
+        public ClusterConnection(ICommandExecuter commandExecuter,
                                  ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel)
         {
-            this.aquilesConnection = aquilesConnection;
+            this.commandExecuter = commandExecuter;
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
@@ -31,13 +34,13 @@ namespace CassandraClient.Connections
                 {
                     ConsistencyLevel = readConsistencyLevel
                 };
-            aquilesConnection.Execute(retrieveKeyspacesCommand);
+            commandExecuter.Execute(new AquilesCommandAdaptor(retrieveKeyspacesCommand));
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
             var result = new List<Keyspace>();
             // ReSharper disable LoopCanBeConvertedToQuery
             foreach(var aquilesKeyspace in retrieveKeyspacesCommand.Keyspaces)
-                // ReSharper restore LoopCanBeConvertedToQuery
+            // ReSharper restore LoopCanBeConvertedToQuery
             {
                 if(!aquilesKeyspace.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
                     result.Add(aquilesKeyspace.ToKeyspace());
@@ -47,97 +50,32 @@ namespace CassandraClient.Connections
 
         public void RemoveKeyspace(string keyspace)
         {
-            aquilesConnection.Execute(new DropKeyspaceCommand
+            commandExecuter.Execute(new AquilesCommandAdaptor(new DropKeyspaceCommand
                 {
                     ConsistencyLevel = writeConsistencyLevel,
                     Keyspace = keyspace
-                });
+                }));
             WaitUntilAgreementIsReached();
         }
 
         public void AddKeyspace(Keyspace keyspace)
         {
-            aquilesConnection.Execute(new AddKeyspaceCommand
+            commandExecuter.Execute(new AquilesCommandAdaptor(new AddKeyspaceCommand
                 {
                     ConsistencyLevel = writeConsistencyLevel,
                     KeyspaceDefinition = keyspace.ToAquilesKeyspace()
-                });
+                }));
             WaitUntilAgreementIsReached();
         }
 
-        public void AddColumnFamily(string keyspace, string columnFamilyName)
-        {
-            aquilesConnection.Execute(new AddColumnFamilyCommand
-                {
-                    ColumnFamilyDefinition = new AquilesColumnFamily
-                        {
-                            Name = columnFamilyName,
-                            Keyspace = keyspace
-                        },
-                    ConsistencyLevel = writeConsistencyLevel,
-                });
-            WaitUntilAgreementIsReached();
-        }
 
-        public Keyspace DescribeKeyspace(string keyspace)
-        {
-            var describeKeyspaceCommand = new DescribeKeyspaceCommand
-                {
-                    Keyspace = keyspace,
-                    ConsistencyLevel = readConsistencyLevel
-                };
-            aquilesConnection.Execute(describeKeyspaceCommand);
-
-            var keyspaceInformation = describeKeyspaceCommand.KeyspaceInformation;
-            var result = new Keyspace
-                {
-                    ColumnFamilies =
-                        keyspaceInformation.ColumnFamilies.ToDictionary(pair => pair.Key,
-                                                                        pair => pair.Value.ToColumnFamily()),
-                    Name = keyspaceInformation.Name,
-                    ReplicaPlacementStrategy = keyspaceInformation.ReplicationPlacementStrategy,
-                    ReplicationFactor = keyspaceInformation.ReplicationFactor
-                };
-            return result;
-        }
 
         public void Dispose()
         {
-            aquilesConnection.Dispose();
+            //aquilesConnection.Dispose();
         }
 
-        public void AddColumnFamily(ColumnFamily columnFamily)
-        {
-            aquilesConnection.Execute(new AddColumnFamilyCommand
-                {
-                    ColumnFamilyDefinition = columnFamily.ToAquilesColumnFamily(),
-                    ConsistencyLevel = writeConsistencyLevel,
-                });
-            WaitUntilAgreementIsReached();
-        }
-
-        public void UpdateColumnFamily(ColumnFamily columnFamily)
-        {
-            var aquilesColumnFamily = columnFamily.ToAquilesColumnFamily();
-            aquilesConnection.Execute(new UpdateColumnFamilyCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    ColumnFamilyDefinition = aquilesColumnFamily
-                });
-            WaitUntilAgreementIsReached();
-        }
-
-        public void RemoveColumnFamily(string columnFamily)
-        {
-            aquilesConnection.Execute(new DropColumnFamilyCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    ColumnFamily = columnFamily
-                });
-            WaitUntilAgreementIsReached();
-        }
-
-        private void WaitUntilAgreementIsReached()
+       private void WaitUntilAgreementIsReached()
         {
             while(true)
             {
@@ -146,7 +84,7 @@ namespace CassandraClient.Connections
                     {
                         ConsistencyLevel = writeConsistencyLevel
                     };
-                aquilesConnection.Execute(schemaAgreementCommand);
+                commandExecuter.Execute(new AquilesCommandAdaptor(schemaAgreementCommand));
 
                 if(schemaAgreementCommand.Output.Count == 1)
                     break;
@@ -170,7 +108,6 @@ namespace CassandraClient.Connections
             logger.Info(stringBuilder.ToString());
         }
 
-        private readonly IAquilesConnection aquilesConnection;
         private readonly ILog logger = LogManager.GetLogger("CassandraClientLogger");
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;

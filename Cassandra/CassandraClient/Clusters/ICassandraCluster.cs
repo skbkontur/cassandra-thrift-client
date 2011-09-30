@@ -5,7 +5,7 @@ namespace CassandraClient.Clusters
     public interface ICassandraCluster
     {
         IClusterConnection RetrieveClusterConnection();
-        IClusterConnection RetrieveKeyspaceConnection(string keyspace);
+        IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName);
         IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName);
     }
 }

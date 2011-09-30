@@ -51,7 +51,7 @@ namespace Tests.StorageCoreTests
         private static void UpdateKeyspace(ICassandraCluster cassandraCluster, Keyspace keyspace)
         {
             IDictionary<string, int> truncatedCfs = ClearKeyspace(cassandraCluster, keyspace.Name);
-            using(IClusterConnection clusterConnection = cassandraCluster.RetrieveKeyspaceConnection(keyspace.Name))
+            using(var clusterConnection = cassandraCluster.RetrieveKeyspaceConnection(keyspace.Name))
             {
                 foreach(var cf in keyspace.ColumnFamilies)
                 {
@@ -80,8 +80,8 @@ namespace Tests.StorageCoreTests
         {
             var truncatedColumnFamilies = new Dictionary<string, int>();
             Keyspace keyspace;
-            using(IClusterConnection conn = cassandraCluster.RetrieveKeyspaceConnection(keyspaceName))
-                keyspace = conn.DescribeKeyspace(keyspaceName);
+            using(var conn = cassandraCluster.RetrieveKeyspaceConnection(keyspaceName))
+                keyspace = conn.DescribeKeyspace();
             foreach(var cf in keyspace.ColumnFamilies)
             {
                 truncatedColumnFamilies.Add(cf.Key, cf.Value.Id);
@@ -98,7 +98,6 @@ namespace Tests.StorageCoreTests
             {
                 columnFamilies.Add(columnFamily, new ColumnFamily
                     {
-                        Keyspace = Constants.KeyspaceName,
                         Name = columnFamily,
                         Indexes =
                             columnFamilyRegistry.GetIndexDefinitions(columnFamily).

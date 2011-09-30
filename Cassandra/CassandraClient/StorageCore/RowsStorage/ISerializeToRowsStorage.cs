@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace CassandraClient.StorageCore.RowsStorage
 {
@@ -10,11 +11,12 @@ namespace CassandraClient.StorageCore.RowsStorage
         void Delete<T>(string id) where T : class;
         T Read<T>(string id) where T : class;
         T[] Read<T>(string[] ids) where T : class;
-        T ReadOrCreate<T>(string id) where T : class, new();
-        T[] ReadOrCreate<T>(string[] ids) where T : class, new();
-        string[] GetIds<T>(string greaterThanId, int count) where T : class;
+        T[] TryRead<T>(string[] ids) where T : class;
+        T ReadOrCreate<T>(string id, Func<T> creator) where T : class;
+        T[] ReadOrCreate<T>(string[] ids, Func<string, T> creator) where T : class;
+        string[] GetIds<T>(string exclusiveStartId, int count) where T : class;
 
-        string[] Search<TData, TTemplate>(TTemplate template)
+        string[] Search<TData, TTemplate>(string exclusiveStartKey, int count, TTemplate template)
             where TTemplate : class
             where TData : class;
     }

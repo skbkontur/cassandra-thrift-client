@@ -4,7 +4,6 @@ namespace CassandraClient.StorageCore
     {
         int MaximalColumnsCount { get; }
         int MaximalRowsCount { get; }
-        string ClusterName { get; }
         string KeyspaceName { get; }
     }
 }

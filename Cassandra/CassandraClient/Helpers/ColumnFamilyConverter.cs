@@ -9,7 +9,7 @@ namespace CassandraClient.Helpers
 {
     public static class ColumnFamilyConverter
     {
-        public static AquilesColumnFamily ToAquilesColumnFamily(this ColumnFamily columnFamily)
+        public static AquilesColumnFamily ToAquilesColumnFamily(this ColumnFamily columnFamily, string keyspace)
         {
             return columnFamily == null
                        ? null
@@ -18,7 +18,7 @@ namespace CassandraClient.Helpers
                                Id = columnFamily.Id,
                                Comparator = "UTF8Type",
                                Name = columnFamily.Name,
-                               Keyspace = columnFamily.Keyspace,
+                               Keyspace = keyspace,
                                Columns = GetColumnDefinitions(columnFamily.Indexes),
                                RowCacheSize = columnFamily.RowCacheSize
                            };
@@ -31,7 +31,6 @@ namespace CassandraClient.Helpers
                        : new ColumnFamily
                            {
                                Id = aquilesColumnFamily.Id,
-                               Keyspace = aquilesColumnFamily.Keyspace,
                                Name = aquilesColumnFamily.Name,
                                Indexes = GetIndexDefinitions(aquilesColumnFamily.Columns),
                                RowCacheSize = (int?)aquilesColumnFamily.RowCacheSize

@@ -36,14 +36,14 @@ namespace CassandraClient.Connections
                                                out result);
         }
 
-        public void DeleteBatch(string key, IEnumerable<string> columnNames)
+        public void DeleteBatch(string key, IEnumerable<string> columnNames, long? timestamp = null)
         {
-            implementation.DeleteBatch(StringHelpers.StringToBytes(key), columnNames.Select(StringHelpers.StringToBytes));
+            implementation.DeleteBatch(StringHelpers.StringToBytes(key), columnNames.Select(StringHelpers.StringToBytes), timestamp);
         }
 
-        public void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data)
+        public void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data, long? timestamp = null)
         {
-            implementation.BatchDelete(data.Select(pair => new KeyValuePair<byte[], IEnumerable<byte[]>>(StringHelpers.StringToBytes(pair.Key), pair.Value.Select(StringHelpers.StringToBytes))));
+            implementation.BatchDelete(data.Select(pair => new KeyValuePair<byte[], IEnumerable<byte[]>>(StringHelpers.StringToBytes(pair.Key), pair.Value.Select(StringHelpers.StringToBytes))), timestamp);
         }
 
         public void AddBatch(string key, IEnumerable<Column> columns)
@@ -70,15 +70,15 @@ namespace CassandraClient.Connections
                     new KeyValuePair<byte[], IEnumerable<Column>>(StringHelpers.StringToBytes(item.Key), item.Value)));
         }
 
-        public Column[] GetRow(string key, string greaterThanColumnName, int count)
+        public Column[] GetRow(string key, string exclusiveStartColumnName, int count)
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new Column[0];
-            Column[] result = implementation.GetRow(StringHelpers.StringToBytes(key), StringHelpers.StringToBytes(greaterThanColumnName),
+            Column[] result = implementation.GetRow(StringHelpers.StringToBytes(key), StringHelpers.StringToBytes(exclusiveStartColumnName),
                                                     count + 1);
             if(result.Length == 0)
                 return result;
-            if(result[0].Name == greaterThanColumnName)
+            if(result[0].Name == exclusiveStartColumnName)
                 result = result.Skip(1).ToArray();
             if(result.Length > count)
             {
@@ -89,13 +89,13 @@ namespace CassandraClient.Connections
             return result;
         }
 
-        public string[] GetKeys(string greaterThanKey, int count)
+        public string[] GetKeys(string exclusiveStartKey, int count)
         {
             if (count == int.MaxValue) count--;
             if (count <= 0) return new string[0];
-            var result = implementation.GetKeys(StringHelpers.StringToBytes(greaterThanKey), count + 1).Select(StringHelpers.BytesToString).ToArray();
+            var result = implementation.GetKeys(StringHelpers.StringToBytes(exclusiveStartKey), count + 1).Select(StringHelpers.BytesToString).ToArray();
             if (result.Length == 0) return result;
-            if (result[0] == greaterThanKey) result = result.Skip(1).ToArray();
+            if (result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
             if (result.Length > count) result = result.Take(count).ToArray();
             return result;
         }
@@ -111,7 +111,7 @@ namespace CassandraClient.Connections
 
         public string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value)
         {
-            return GetRowsWhere(maximalCount, new[] {new IndexExpression {ColumnName = key, IndexOperator = IndexOperator.EQ, Value = value}}, new[] {key});
+            return GetRowsWhere(null, maximalCount, new[] {new IndexExpression {ColumnName = key, IndexOperator = IndexOperator.EQ, Value = value}}, new[] {key});
         }
 
         public void Truncate()
@@ -119,10 +119,15 @@ namespace CassandraClient.Connections
             implementation.Truncate();
         }
 
-        public string[] GetRowsWhere(int maximalCount, IndexExpression[] conditions, string[] columns)
+        public string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns)
         {
-            List<byte[]> result = implementation.GetRowsWhere(maximalCount, conditions.Select(cond => cond.ToAquilesIndexExpression()).ToArray(), columns.Select(StringHelpers.StringToBytes).ToList());
-            return result.Select(StringHelpers.BytesToString).ToArray();
+            if (count == int.MaxValue) count--;
+            if (count <= 0) return new string[0];
+            var result = implementation.GetRowsWhere(StringHelpers.StringToBytes(exclusiveStartKey), count + 1, conditions.Select(cond => cond.ToAquilesIndexExpression()).ToArray(), columns.Select(StringHelpers.StringToBytes).ToList()).Select(StringHelpers.BytesToString).ToArray();
+            if (result.Length == 0) return result;
+            if (result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
+            if (result.Length > count) result = result.Take(count).ToArray();
+            return result;
         }
 
         #endregion

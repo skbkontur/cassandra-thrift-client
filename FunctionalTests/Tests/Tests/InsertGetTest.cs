@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 namespace Tests.Tests
 {
-    public class InsertGetTest : CassandraFunctionalTestBase
+    public class InsertGetTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
         [Test]
         public void TestAddGet()
@@ -12,6 +12,19 @@ namespace Tests.Tests
             cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
         }
+
+        [Test]
+        public void TestDeleteAdd()
+        {
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            Check("someRow", "someColumnName", "someColumnValue");
+            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            CheckNotFound("someRow", "someColumnName");
+            Thread.Sleep(1);
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            Check("someRow", "someColumnName", "someColumnValue");
+        }
+        
 
         [Test]
         public void TestDoubleAdd()

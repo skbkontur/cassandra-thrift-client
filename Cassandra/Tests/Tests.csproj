@@ -55,6 +55,8 @@
   <ItemGroup>
     <Compile Include="Arg.cs" />
     <Compile Include="CassandraClientTests\ConnectionTests\ClusterConnectionTest.cs" />
+    <Compile Include="CassandraClientTests\ConnectionTests\KeyspaceConnectionTest.cs" />
+    <Compile Include="CassandraClientTests\DateTimeServiceTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\ColumnConverterTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\ColumnFamilyConverterTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\ConsistencyLevelConverterTest.cs" />
@@ -74,7 +76,10 @@
     <Compile Include="ObjComparer\TypeHelpers.cs" />
     <Compile Include="ObjComparer\TypeWriterExtensions.cs" />
     <Compile Include="ObjectComparer.cs" />
+    <Compile Include="StorageCoreTests\ObjectReaderTest.cs" />
     <Compile Include="StorageCoreTests\SerializeToRowsStorageTest.cs" />
+    <Compile Include="StorageCoreTests\Version1ReaderTest.cs" />
+    <Compile Include="StorageCoreTests\Version2ReaderTest.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="XmlHelpers.cs" />

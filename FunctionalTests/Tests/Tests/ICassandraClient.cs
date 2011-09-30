@@ -16,7 +16,7 @@ namespace Tests.Tests
                  long? timestamp = null, int? ttl = null);
 
         void AddBatch(string keySpaceName, string columnFamilyName, string key, Column[] columns);
-        void DeleteBatch(string keySpaceName, string columnFamilyName, string key, IEnumerable<string> columnNames);
+        void DeleteBatch(string keySpaceName, string columnFamilyName, string key, IEnumerable<string> columnNames, long? timestamp = null);
 
         Column[] GetRow(string keySpaceName, string columnFamilyName, string key, int count,
                         string startColumnName = null);

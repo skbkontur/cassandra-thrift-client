@@ -4,8 +4,6 @@ using System.Linq;
 
 using Aquiles.Helpers.Encoders;
 
-using Cassandra.Tests;
-
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
@@ -15,21 +13,13 @@ using NUnit.Framework.SyntaxHelpers;
 
 namespace Tests.Tests
 {
-    public class SecondaryIndexTest : TestBase
+    public class SecondaryIndexTest : CassandraFunctionalTestBase
     {
         #region Setup/Teardown
 
         public override void SetUp()
         {
             base.SetUp();
-            cassandraCluster = new CassandraCluster(new CassandraClusterSettings
-                {
-                    ClusterReadConsistencyLevel = ConsistencyLevel.ALL,
-                    ClusterWriteConsistencyLevel = ConsistencyLevel.ALL,
-                    ColumnFamilyReadConsistencyLevel = ConsistencyLevel.QUORUM,
-                    ColumnFamilyWriteConsistencyLevel = ConsistencyLevel.QUORUM,
-                    Name = Constants.ClusterName
-                });
             var cassandraClient = new CassandraClient(cassandraCluster);
             cassandraClient.RemoveAllKeyspaces();
 
@@ -56,7 +46,6 @@ namespace Tests.Tests
                                 {
                                     Constants.ColumnFamilyName, new ColumnFamily
                                         {
-                                            Keyspace = Constants.KeyspaceName,
                                             Name = Constants.ColumnFamilyName,
                                             Indexes = indexes
                                         }
@@ -125,7 +114,7 @@ namespace Tests.Tests
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
             {
-                string[] res = conn.GetRowsWhere(1000, new[]
+                string[] res = conn.GetRowsWhere(null, 1000, new[]
                     {
                         new IndexExpression
                             {
@@ -161,7 +150,7 @@ namespace Tests.Tests
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
             {
-                string[] res = conn.GetRowsWhere(1000, new[]
+                string[] res = conn.GetRowsWhere(null, 1000, new[]
                     {
                         new IndexExpression
                             {
@@ -190,7 +179,7 @@ namespace Tests.Tests
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
             {
-                string[] res = conn.GetRowsWhere(1000, new[]
+                string[] res = conn.GetRowsWhere(null, 1000, new[]
                     {
                         new IndexExpression
                             {
@@ -213,7 +202,6 @@ namespace Tests.Tests
             }
         }
 
-        private CassandraCluster cassandraCluster;
         private const int count = 100;
     }
 }

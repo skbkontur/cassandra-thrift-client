@@ -1,13 +1,16 @@
+using System.Net;
+
 using CassandraClient.Abstractions;
 
 namespace CassandraClient.Clusters
 {
     public interface ICassandraClusterSettings
     {
-        string Name { get; }
-        ConsistencyLevel ClusterReadConsistencyLevel { get; }
-        ConsistencyLevel ClusterWriteConsistencyLevel { get; }
-        ConsistencyLevel ColumnFamilyReadConsistencyLevel { get; }
-        ConsistencyLevel ColumnFamilyWriteConsistencyLevel { get; }
+        string ClusterName { get; }
+        ConsistencyLevel ReadConsistencyLevel { get; }
+        ConsistencyLevel WriteConsistencyLevel { get; }
+        IPEndPoint[] Endpoints { get;  }
+        int Attempts { get; }
+        int Timeout { get; }
     }
 }

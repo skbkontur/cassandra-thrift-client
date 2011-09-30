@@ -31,9 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.070beta3, Version=0.7.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.070beta3.dll</HintPath>
+    <Reference Include="Apache.Cassandra.078">
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.078.dll</HintPath>
     </Reference>
     <Reference Include="Aquiles">
       <HintPath>..\..\Assemblies\Cassandra\Aquiles.dll</HintPath>
@@ -49,22 +48,24 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thrift, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\AquilesCommandAdaptor.cs" />
     <Compile Include="Abstractions\Column.cs" />
     <Compile Include="Abstractions\ColumnFamily.cs" />
     <Compile Include="Abstractions\ConsistencyLevel.cs" />
+    <Compile Include="Abstractions\ICommand.cs" />
     <Compile Include="Abstractions\IndexDefinition.cs" />
     <Compile Include="Abstractions\IndexExpression.cs" />
     <Compile Include="Abstractions\IndexOperator.cs" />
     <Compile Include="Abstractions\Keyspace.cs" />
     <Compile Include="Abstractions\ValidationClass.cs" />
+    <Compile Include="Abstractions\ValidationResult.cs" />
+    <Compile Include="Abstractions\ValidationStatus.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
-    <Compile Include="Clusters\CassandraClusterSettings.cs" />
     <Compile Include="Clusters\ICassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraClusterSettings.cs" />
     <Compile Include="Connections\ClusterConnection.cs" />
@@ -73,6 +74,24 @@
     <Compile Include="Connections\IClusterConnection.cs" />
     <Compile Include="Connections\IColumnFamilyConnection.cs" />
     <Compile Include="Connections\IColumnFamilyConnectionImplementation.cs" />
+    <Compile Include="Connections\IKeyspaceConnection.cs" />
+    <Compile Include="Connections\KeyspaceConnection.cs" />
+    <Compile Include="Core\Badlist.cs" />
+    <Compile Include="Core\CommandExecuter.cs" />
+    <Compile Include="Core\DateTimeService.cs" />
+    <Compile Include="Core\Pools\ClusterConnectionPool.cs" />
+    <Compile Include="Core\EndpointManager.cs" />
+    <Compile Include="Core\Pools\ConnectionPoolKey.cs" />
+    <Compile Include="Core\Pools\IKeyspaceConnectionPool.cs" />
+    <Compile Include="Exceptions\FailedReleaseException.cs" />
+    <Compile Include="Exceptions\GuidCollisionException.cs" />
+    <Compile Include="Core\IBadlist.cs" />
+    <Compile Include="Core\ICommandExecuter.cs" />
+    <Compile Include="Core\Pools\IClusterConnectionPool.cs" />
+    <Compile Include="Core\IEndpointManager.cs" />
+    <Compile Include="Core\Pools\KeyspaceConnectionPool.cs" />
+    <Compile Include="Core\PooledThriftConnection.cs" />
+    <Compile Include="Core\ThriftConnection.cs" />
     <Compile Include="Exceptions\CassandraClientApplicationException.cs" />
     <Compile Include="Exceptions\CassandraClientAuthenticationException.cs" />
     <Compile Include="Exceptions\CassandraClientAuthorizationException.cs" />
@@ -83,8 +102,10 @@
     <Compile Include="Exceptions\CassandraClientTimedOutException.cs" />
     <Compile Include="Exceptions\CassandraClientTransportException.cs" />
     <Compile Include="Exceptions\CassandraClientUnavailableException.cs" />
+    <Compile Include="Exceptions\CassandraExceptionTransformer.cs" />
     <Compile Include="Exceptions\ColumnIsNotFoundException.cs" />
     <Compile Include="Exceptions\CassandraClientExceptionTypeRecognizer.cs" />
+    <Compile Include="Exceptions\CassandraUnknownException.cs" />
     <Compile Include="Helpers\AquilesColumnDefinitionConverter.cs" />
     <Compile Include="Helpers\ByteArrayComparer.cs" />
     <Compile Include="Helpers\IndexExpressionConverter.cs" />
@@ -96,6 +117,10 @@
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StorageCore\Attributes\UsingColumnFamilyAttribute.cs" />
+    <Compile Include="StorageCore\Attributes\UsingColumnFamilyForSerializeToBlobAttribute.cs" />
+    <Compile Include="StorageCore\Attributes\UsingColumnFamilyForSerializeToRowsAttribute.cs" />
+    <Compile Include="StorageCore\Attributes\UsingColumnFamilyForTypeAttribute.cs" />
     <Compile Include="StorageCore\BlobStorage\SerializeToBlobStorage.cs" />
     <Compile Include="StorageCore\CassandraStringHelpers.cs" />
     <Compile Include="StorageCore\CassandraTimedSortedStorageBase.cs" />
@@ -115,6 +140,8 @@
     <Compile Include="StorageCore\IIdSetRepository.cs" />
     <Compile Include="StorageCore\IOneValueRepository.cs" />
     <Compile Include="StorageCore\BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="StorageCore\RowsStorage\FormatVersions.cs" />
+    <Compile Include="StorageCore\RowsStorage\IObjectReader.cs" />
     <Compile Include="StorageCore\RowsStorage\ISerializeToRowsStorageColumnFamilyNameGetter.cs" />
     <Compile Include="StorageCore\RowsStorage\ISerializeToRowsStorage.cs" />
     <Compile Include="StorageCore\ITimedSortedStorage.cs" />
@@ -125,6 +152,14 @@
     <Compile Include="StorageCore\KeyValueTables\KeyValueIndexTable.cs" />
     <Compile Include="StorageCore\Exceptions\ObjectNotFoundException.cs" />
     <Compile Include="StorageCore\OneValueRepository.cs" />
+    <Compile Include="StorageCore\RowsStorage\IVersionReaderCollection.cs" />
+    <Compile Include="StorageCore\RowsStorage\IVersionReader.cs" />
+    <Compile Include="StorageCore\RowsStorage\ObjectReader.cs" />
+    <Compile Include="StorageCore\RowsStorage\SerializeToRowsStorageConstants.cs" />
+    <Compile Include="StorageCore\RowsStorage\UnknownFormatVersionException.cs" />
+    <Compile Include="StorageCore\RowsStorage\Version1Reader.cs" />
+    <Compile Include="StorageCore\RowsStorage\Version2Reader.cs" />
+    <Compile Include="StorageCore\RowsStorage\VersionReaderCollection.cs" />
     <Compile Include="StorageCore\SearchQueryIndexesDefinition.cs" />
     <Compile Include="StorageCore\RowsStorage\SerializeToRowsStorage.cs" />
     <Compile Include="StorageCore\TimedStorageElement.cs" />

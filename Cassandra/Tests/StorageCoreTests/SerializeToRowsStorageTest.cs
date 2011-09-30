@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Text;
 
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
@@ -28,7 +29,8 @@ namespace Cassandra.Tests.StorageCoreTests
             serializer = GetMock<ISerializer>();
             columnFamilyNameGetter = GetMock<ISerializeToRowsStorageColumnFamilyNameGetter>();
             cassandraCoreSettings = GetMock<ICassandraCoreSettings>();
-            serializeToRowsStorage = new SerializeToRowsStorage(columnFamilyRegistry, columnFamilyNameGetter, cassandraCluster, cassandraCoreSettings, serializer);
+            objectReader = GetMock<IObjectReader>();
+            serializeToRowsStorage = new SerializeToRowsStorage(columnFamilyRegistry, columnFamilyNameGetter, cassandraCluster, cassandraCoreSettings, serializer, objectReader);
             columnFamilyConnection = GetMock<IColumnFamilyConnection>();
         }
 
@@ -43,11 +45,27 @@ namespace Cassandra.Tests.StorageCoreTests
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             var collection = new NameValueCollection {{"A", "2"}, {"B", "4"}};
             serializer.Expect(writer => writer.SerializeToNameValueCollection(intvar)).Return(collection);
+            serializer.Expect(s => s.SerializeToBytes(intvar, true, Encoding.UTF8)).Return(new byte[]{5,6,4,3});
             columnFamilyConnection.Expect(connection => connection.GetRow("q", null, 1234)).Return(new Column[0]);
             columnFamilyConnection.Expect(
                 familyConnection => familyConnection.AddBatch(ARG.EqualsTo("q"),
                                                               ARG.EqualsTo(new[]
                                                                   {
+                                                                      new Column
+                                                                          {
+                                                                              Name = formatVersionColumnName,
+                                                                              Value = CassandraStringHelpers.StringToBytes("v2")
+                                                                          },
+                                                                      new Column
+                                                                          {
+                                                                              Name = fullObjectColumnName,
+                                                                              Value = new byte[]{5,6,4,3}
+                                                                          },
+                                                                      new Column
+                                                                          {
+                                                                              Name = idColumnName,
+                                                                              Value = CassandraStringHelpers.StringToBytes("q")
+                                                                          },
                                                                       new Column
                                                                           {
                                                                               Name = "A",
@@ -57,11 +75,6 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                           {
                                                                               Name = "B",
                                                                               Value = CassandraStringHelpers.StringToBytes("4")
-                                                                          },
-                                                                      new Column
-                                                                          {
-                                                                              Name = SerializeToRowsStorage.idColumn,
-                                                                              Value = CassandraStringHelpers.StringToBytes("q")
                                                                           }
                                                                   })));
             columnFamilyConnection.Expect(connection => connection.Dispose());
@@ -80,14 +93,31 @@ namespace Cassandra.Tests.StorageCoreTests
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             var collection1 = new NameValueCollection {{"A", "2"}, {"B", "4"}};
             var collection2 = new NameValueCollection {{"C", "6"}, {"D", "8"}};
+            serializer.Expect(s => s.SerializeToBytes(int1, true, Encoding.UTF8)).Return(new byte[]{1});
+            serializer.Expect(s => s.SerializeToBytes(int2, true, Encoding.UTF8)).Return(new byte[]{2});
             serializer.Expect(writer => writer.SerializeToNameValueCollection(int1)).Return(collection1);
             serializer.Expect(writer => writer.SerializeToNameValueCollection(int2)).Return(collection2);
-            columnFamilyConnection.Expect(connection => connection.GetRows(ARG.EqualsTo(new[] { "q", "z" }), ARG.EqualsTo<string>(null), ARG.EqualsTo(1234))).Return(new List<KeyValuePair<string, Column[]>>());
+            columnFamilyConnection.Expect(connection => connection.GetRows(ARG.EqualsTo(new[] {"q", "z"}), ARG.EqualsTo<string>(null), ARG.EqualsTo(1234))).Return(new List<KeyValuePair<string, Column[]>>());
             IEnumerable<KeyValuePair<string, IEnumerable<Column>>> keyValuePairs = new[]
                 {
                     new KeyValuePair<string, IEnumerable<Column>>("q",
                                                                   new[]
                                                                       {
+                                                                          new Column
+                                                                              {
+                                                                                  Name = formatVersionColumnName,
+                                                                                  Value = CassandraStringHelpers.StringToBytes("v2")
+                                                                              },
+                                                                          new Column
+                                                                              {
+                                                                                  Name = fullObjectColumnName,
+                                                                                  Value = new byte[]{1}
+                                                                              },
+                                                                          new Column
+                                                                              {
+                                                                                  Name = idColumnName,
+                                                                                  Value = CassandraStringHelpers.StringToBytes("q")
+                                                                              },
                                                                           new Column
                                                                               {
                                                                                   Name = "A",
@@ -97,16 +127,26 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                               {
                                                                                   Name = "B",
                                                                                   Value = CassandraStringHelpers.StringToBytes("4")
-                                                                              },
-                                                                          new Column
-                                                                              {
-                                                                                  Name = SerializeToRowsStorage.idColumn,
-                                                                                  Value = CassandraStringHelpers.StringToBytes("q")
                                                                               }
                                                                       }),
                     new KeyValuePair<string, IEnumerable<Column>>("z",
                                                                   new[]
                                                                       {
+                                                                          new Column
+                                                                              {
+                                                                                  Name = formatVersionColumnName,
+                                                                                  Value = CassandraStringHelpers.StringToBytes("v2")
+                                                                              },
+                                                                          new Column
+                                                                              {
+                                                                                  Name = fullObjectColumnName,
+                                                                                  Value = new byte[]{2}
+                                                                              },
+                                                                          new Column
+                                                                              {
+                                                                                  Name = idColumnName,
+                                                                                  Value = CassandraStringHelpers.StringToBytes("z")
+                                                                              },
                                                                           new Column
                                                                               {
                                                                                   Name = "C",
@@ -116,11 +156,6 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                               {
                                                                                   Name = "D",
                                                                                   Value = CassandraStringHelpers.StringToBytes("8")
-                                                                              },
-                                                                          new Column
-                                                                              {
-                                                                                  Name = SerializeToRowsStorage.idColumn,
-                                                                                  Value = CassandraStringHelpers.StringToBytes("z")
                                                                               }
                                                                       })
                 };
@@ -161,7 +196,7 @@ namespace Cassandra.Tests.StorageCoreTests
                             Value = CassandraStringHelpers.StringToBytes("4")
                         }
                 });
-            columnFamilyConnection.Expect(connection => connection.DeleteBatch(ARG.AreSame("q"), ARG.MatchTo<IEnumerable<string>>(names => Check(new[] {"A", "B"}, names))));
+            columnFamilyConnection.Expect(connection => connection.DeleteBatch(ARG.AreSame("q"), ARG.MatchTo<IEnumerable<string>>(names => Check(new[] {"A", "B"}, names)), ARG.EqualsTo((long?)null)));
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cc => cc.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             serializeToRowsStorage.Delete<Int>("q");
@@ -175,24 +210,24 @@ namespace Cassandra.Tests.StorageCoreTests
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
-            columnFamilyConnection.Expect(
-                connection => connection.GetRow("q", null, 1234)).Return(new[]
-                    {
-                        new Column
-                            {
-                                Name = "A",
-                                Value = CassandraStringHelpers.StringToBytes("2")
-                            },
-                        new Column
-                            {
-                                Name = "B",
-                                Value = CassandraStringHelpers.StringToBytes("4")
-                            }
-                    });
-            var collection = new NameValueCollection {{"A", "2"}, {"B", "4"}};
-            serializer.Expect(reader => reader.Deserialize<Int>(ARG.EqualsTo(collection))).Return(new Int {Intf = 3});
+            var columns = new[]
+                {
+                    new Column
+                        {
+                            Name = "A",
+                            Value = CassandraStringHelpers.StringToBytes("2")
+                        },
+                    new Column
+                        {
+                            Name = "B",
+                            Value = CassandraStringHelpers.StringToBytes("4")
+                        }
+                };
+            columnFamilyConnection.Expect(connection => connection.GetRow("q", null, 1234)).Return(columns);
+            var resultObject = new Int {Intf = 123};
+            objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columns), out ARG.Out(resultObject).Dummy)).Return(true);
             columnFamilyConnection.Expect(connection => connection.Dispose());
-            Assert.AreEqual(3, serializeToRowsStorage.Read<Int>("q").Intf);
+            Assert.AreEqual(123, serializeToRowsStorage.Read<Int>("q").Intf);
         }
 
         [Test]
@@ -203,42 +238,42 @@ namespace Cassandra.Tests.StorageCoreTests
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
+            var columnsForQ = new[]
+                {
+                    new Column
+                        {
+                            Name = "A",
+                            Value = CassandraStringHelpers.StringToBytes("2")
+                        },
+                    new Column
+                        {
+                            Name = "B",
+                            Value = CassandraStringHelpers.StringToBytes("4")
+                        }
+                };
+            var columnsForZ = new[]
+                {
+                    new Column
+                        {
+                            Name = "C",
+                            Value = CassandraStringHelpers.StringToBytes("6")
+                        },
+                    new Column
+                        {
+                            Name = "D",
+                            Value = CassandraStringHelpers.StringToBytes("8")
+                        }
+                };
             columnFamilyConnection.Expect(
                 connection => connection.GetRows(new[] {"q", "z"}, null, 1234)).Return(new List<KeyValuePair<string, Column[]>>
                     {
-                        new KeyValuePair<string, Column[]>("q", new[]
-                            {
-                                new Column
-                                    {
-                                        Name = "A",
-                                        Value = CassandraStringHelpers.StringToBytes("2")
-                                    },
-                                new Column
-                                    {
-                                        Name = "B",
-                                        Value = CassandraStringHelpers.StringToBytes("4")
-                                    }
-                            }),
-                        new KeyValuePair<string, Column[]>("z", new[]
-                            {
-                                new Column
-                                    {
-                                        Name = "C",
-                                        Value = CassandraStringHelpers.StringToBytes("6")
-                                    },
-                                new Column
-                                    {
-                                        Name = "D",
-                                        Value = CassandraStringHelpers.StringToBytes("8")
-                                    }
-                            })
+                        new KeyValuePair<string, Column[]>("q", columnsForQ),
+                        new KeyValuePair<string, Column[]>("z", columnsForZ)
                     });
-            var collection1 = new NameValueCollection {{"A", "2"}, {"B", "4"}};
             var int1 = new Int {Intf = 3};
-            var collection2 = new NameValueCollection {{"C", "6"}, {"D", "8"}};
             var int2 = new Int {Intf = 5};
-            serializer.Expect(reader => reader.Deserialize<Int>(ARG.EqualsTo(collection1))).Return(int1);
-            serializer.Expect(reader => reader.Deserialize<Int>(ARG.EqualsTo(collection2))).Return(int2);
+            objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columnsForQ), out ARG.Out(int1).Dummy)).Return(true);
+            objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columnsForZ), out ARG.Out(int2).Dummy)).Return(true);
             columnFamilyConnection.Expect(connection => connection.Dispose());
             serializeToRowsStorage.Read<Int>(new[] {"q", "z"}).AssertEqualsTo(new[] {int1, int2});
         }
@@ -251,8 +286,9 @@ namespace Cassandra.Tests.StorageCoreTests
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
-            columnFamilyConnection.Expect(
-                connection => connection.GetRow("q", null, 1234)).Return(new Column[0]);
+            var columns = new Column[0];
+            columnFamilyConnection.Expect(connection => connection.GetRow("q", null, 1234)).Return(columns);
+            objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columns), out ARG.Out<Int>(null).Dummy)).Return(false);
             columnFamilyConnection.Expect(connection => connection.Dispose());
             RunMethodWithException<ObjectNotFoundException>(() => serializeToRowsStorage.Read<Int>("q"));
         }
@@ -283,10 +319,9 @@ namespace Cassandra.Tests.StorageCoreTests
                         }
                 };
             var keys = new[] {"key1", "key2"};
-            cassandraCoreSettings.Expect(settings => settings.MaximalRowsCount).Return(4321);
-            columnFamilyConnection.Expect(connection => connection.GetRowsWhere(ARG.EqualsTo(4321), ARG.EqualsTo(indexes), ARG.EqualsTo(new[] {SerializeToRowsStorage.idColumn}))).Return(keys);
+            columnFamilyConnection.Expect(connection => connection.GetRowsWhere(ARG.EqualsTo((string)null), ARG.EqualsTo(4321), ARG.EqualsTo(indexes), ARG.EqualsTo(new[] {idColumnName}))).Return(keys);
             columnFamilyConnection.Expect(connection => connection.Dispose());
-            serializeToRowsStorage.Search<Int, IntIndexedFields>(template).AssertEqualsTo(keys);
+            serializeToRowsStorage.Search<Int, IntIndexedFields>(null, 4321, template).AssertEqualsTo(keys);
         }
 
         private static bool Check<T>(IEnumerable<T> expected, IEnumerable<T> actual)
@@ -315,6 +350,7 @@ namespace Cassandra.Tests.StorageCoreTests
         private IColumnFamilyConnection columnFamilyConnection;
         private ICassandraCoreSettings cassandraCoreSettings;
         private ISerializeToRowsStorageColumnFamilyNameGetter columnFamilyNameGetter;
+        private IObjectReader objectReader;
 
         private class IntIndexedFields
         {
@@ -324,5 +360,9 @@ namespace Cassandra.Tests.StorageCoreTests
         private class Int : IntIndexedFields
         {
         }
+
+        private const string idColumnName = "3BB854C5-53E8-4B78-99FA-CCE49B3CC759";
+        private const string fullObjectColumnName = "7D9FA845-7866-4749-9509-81FF5C905C65";
+        private const string formatVersionColumnName = "EC056F9E-6C0C-4F87-8244-6C5052E82F2C";
     }
 }

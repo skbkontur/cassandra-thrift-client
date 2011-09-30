@@ -15,7 +15,7 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
         [Test]
         public void TestNull()
         {
-            Assert.IsNull(((ColumnFamily)null).ToAquilesColumnFamily());
+            Assert.IsNull(((ColumnFamily)null).ToAquilesColumnFamily(null));
             Assert.IsNull(((AquilesColumnFamily)null).ToColumnFamily());
         }
 
@@ -24,7 +24,6 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
         {
             var columnFamily = new ColumnFamily
                 {
-                    Keyspace = "testKeyspace",
                     Name = "testName"
                 };
             var expectedAquilesColumnFamily = new AquilesColumnFamily
@@ -33,7 +32,7 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                     Keyspace = "testKeyspace",
                     Comparator = "UTF8Type"
                 };
-            columnFamily.ToAquilesColumnFamily().AssertEqualsTo(expectedAquilesColumnFamily);
+            columnFamily.ToAquilesColumnFamily("testKeyspace").AssertEqualsTo(expectedAquilesColumnFamily);
         }
 
         [Test]
@@ -41,7 +40,6 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
         {
             var columnFamily = new ColumnFamily
                 {
-                    Keyspace = "testKeyspace",
                     Name = "testName",
                     Indexes = new List<IndexDefinition>
                         {
@@ -80,7 +78,7 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                         },
                     Id = 3434
                 };
-            columnFamily.ToAquilesColumnFamily().AssertEqualsTo(expectedAquilesColumnFamily);
+            columnFamily.ToAquilesColumnFamily("testKeyspace").AssertEqualsTo(expectedAquilesColumnFamily);
         }
 
         [Test]
@@ -94,7 +92,6 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                 };
             var expectedColumnFamily = new ColumnFamily
                 {
-                    Keyspace = "testKeyspace",
                     Name = "testName",
                     Id = 5
                 };
@@ -127,7 +124,6 @@ namespace Cassandra.Tests.CassandraClientTests.HelpersTests
                 };
             var expectedColumnFamily = new ColumnFamily
                 {
-                    Keyspace = "testKeyspace",
                     Name = "testName",
                     Indexes = new List<IndexDefinition>
                         {
