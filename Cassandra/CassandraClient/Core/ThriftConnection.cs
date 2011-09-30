@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
 using Apache.Cassandra;
 
@@ -10,9 +9,9 @@ using Thrift.Transport;
 
 namespace CassandraClient.Core
 {
-    public class ThriftConnection : IDisposable
+    public class ThriftConnection : IThriftConnection
     {
-        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        protected ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
             IpEndPoint = ipEndPoint;
             this.keyspaceName = keyspaceName;

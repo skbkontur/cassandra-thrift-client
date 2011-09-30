@@ -5,15 +5,20 @@ using System.Net;
 using CassandraClient.Clusters;
 using CassandraClient.Exceptions;
 
+using log4net;
+
 namespace CassandraClient.Core.Pools
 {
     public class KeyspaceConnectionPool : IKeyspaceConnectionPool
     {
+        private readonly ILog logger = LogManager.GetLogger("KeyspaceConnectionPool");
+
         public KeyspaceConnectionPool(ICassandraClusterSettings settings, IPEndPoint endPoint, string keyspaceName)
         {
             this.endPoint = endPoint;
             this.keyspaceName = keyspaceName;
             this.settings = settings;
+            logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}' was created.", endPoint, keyspaceName);
         }
 
         public bool TryBorrowConnection(out PooledThriftConnection thriftConnection)
@@ -52,7 +57,9 @@ namespace CassandraClient.Core.Pools
 
         private PooledThriftConnection CreateConnection()
         {
-            return new PooledThriftConnection(this, settings.Timeout, endPoint, keyspaceName);
+            var pooledThriftConnection = new PooledThriftConnection(this, settings.Timeout, endPoint, keyspaceName);
+            logger.DebugFormat("Connection {0} was created.", pooledThriftConnection);
+            return pooledThriftConnection;
         }
 
         private readonly ICassandraClusterSettings settings;

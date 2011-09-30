@@ -31,6 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Apache.Cassandra.078, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL" />
     <Reference Include="Aquiles, Version=0.7.0.5, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra\Aquiles.dll</HintPath>
@@ -63,6 +64,10 @@
     <Compile Include="CassandraClientTests\HelpersTests\KeyspaceConverterTest.cs" />
     <Compile Include="CassandraClientTests\HelpersTests\StringHelpersTest.cs" />
     <Compile Include="CoreTestHelpers.cs" />
+    <Compile Include="CoreTests\BadlistTest.cs" />
+    <Compile Include="CoreTests\CommandExecuterTest.cs" />
+    <Compile Include="CoreTests\EndpointManagerProbabilityTest.cs" />
+    <Compile Include="CoreTests\EndpointManagerTest.cs" />
     <Compile Include="ObjComparer\CompareInterfaceAs.cs" />
     <Compile Include="ObjComparer\CompareTypeAs.cs" />
     <Compile Include="ObjComparer\INodeProcessor.cs" />
@@ -90,6 +95,7 @@
       <Name>CassandraClient</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)..\Assemblies

@@ -14,7 +14,7 @@ namespace CassandraClient.Core.Pools
             createPool = key1 => new KeyspaceConnectionPool(settings, key1.IpEndPoint, key1.Keyspace);
         }
 
-        public PooledThriftConnection BorrowConnection(IPEndPoint endPoint, string keyspace)
+        public IThriftConnection BorrowConnection(IPEndPoint endPoint, string keyspace)
         {
             var key = new ConnectionPoolKey
                 {

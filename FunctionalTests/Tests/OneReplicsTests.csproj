@@ -47,6 +47,10 @@
     <Reference Include="GroboSerializer">
       <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
     </Reference>
+    <Reference Include="log4net, Version=1.2.10.0, Culture=neutral, PublicKeyToken=1b44e1d426115821, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
     </Reference>
@@ -86,6 +90,12 @@
     <Compile Include="StorageCoreTests\SerializeToRowsStorageThreadingTest.cs" />
     <Compile Include="StorageCoreTests\TestStorageElement.cs" />
     <Compile Include="StorageCoreTests\TestStorageElementSubItem.cs" />
+    <Compile Include="Utils\ServiceUtils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Settings\log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -13,6 +13,7 @@ namespace CassandraClient.Core
             this.connectionPool = connectionPool;
             Id = Guid.NewGuid();
             KeyspaceName = keyspaceName;
+
         }
 
         public override void Dispose()

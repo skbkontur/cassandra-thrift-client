@@ -31,7 +31,7 @@ namespace CassandraClient.Core
             }
         }
 
-        public KeyValuePair<IPEndPoint, double>[] GetHealth()
+        public KeyValuePair<IPEndPoint, double>[] GetHealthes()
         {
             var result = new List<KeyValuePair<IPEndPoint, double>>();
             foreach (IPEndPoint key in healths.Keys)
@@ -41,6 +41,11 @@ namespace CassandraClient.Core
                     result.Add(new KeyValuePair<IPEndPoint, double>(key, (double)value));
             }
             return result.ToArray();
+        }
+
+        public double GetHealth(IPEndPoint endPoint)
+        {
+            return (double)healths[endPoint];
         }
 
         public void Register(IPEndPoint endPoint)
@@ -67,7 +72,7 @@ namespace CassandraClient.Core
         private readonly Hashtable healths = new Hashtable();
         private readonly object healthsLock = new object();
         private const double aliveHealth = 1.0;
-        private const double deadHealth = 0.1;
+        private const double deadHealth = 0.01;
         private const double alivingRate = 1.5;
         private const double dyingRate = 0.7;
     }
