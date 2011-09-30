@@ -55,14 +55,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arg.cs" />
-    <Compile Include="CassandraClientTests\ConnectionTests\ClusterConnectionTest.cs" />
-    <Compile Include="CassandraClientTests\ConnectionTests\KeyspaceConnectionTest.cs" />
-    <Compile Include="CassandraClientTests\DateTimeServiceTest.cs" />
-    <Compile Include="CassandraClientTests\HelpersTests\ColumnConverterTest.cs" />
-    <Compile Include="CassandraClientTests\HelpersTests\ColumnFamilyConverterTest.cs" />
-    <Compile Include="CassandraClientTests\HelpersTests\ConsistencyLevelConverterTest.cs" />
-    <Compile Include="CassandraClientTests\HelpersTests\KeyspaceConverterTest.cs" />
-    <Compile Include="CassandraClientTests\HelpersTests\StringHelpersTest.cs" />
+    <Compile Include="ConnectionTests\ClusterConnectionTest.cs" />
+    <Compile Include="ConnectionTests\KeyspaceConnectionTest.cs" />
+    <Compile Include="CoreTests\DateTimeServiceTest.cs" />
+    <Compile Include="HelpersTests\ColumnConverterTest.cs" />
+    <Compile Include="HelpersTests\ColumnFamilyConverterTest.cs" />
+    <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
+    <Compile Include="HelpersTests\KeyspaceConverterTest.cs" />
+    <Compile Include="HelpersTests\StringHelpersTest.cs" />
     <Compile Include="CoreTestHelpers.cs" />
     <Compile Include="CoreTests\BadlistTest.cs" />
     <Compile Include="CoreTests\CommandExecuterTest.cs" />

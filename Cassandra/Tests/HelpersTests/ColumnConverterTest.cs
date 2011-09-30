@@ -5,7 +5,7 @@ using CassandraClient.Helpers;
 
 using NUnit.Framework;
 
-namespace Cassandra.Tests.CassandraClientTests.HelpersTests
+namespace Cassandra.Tests.HelpersTests
 {
     public class ColumnConverterTest : TestBase
     {

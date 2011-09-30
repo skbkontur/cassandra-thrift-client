@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using Aquiles;
 using Aquiles.Command;
 using Aquiles.Command.System;
 using Aquiles.Model;
@@ -14,11 +13,10 @@ using CassandraClient.Core;
 using CassandraClient.Helpers;
 
 using NUnit.Framework;
-using NUnit.Framework.SyntaxHelpers;
 
 using Rhino.Mocks;
 
-namespace Cassandra.Tests.CassandraClientTests.ConnectionTests
+namespace Cassandra.Tests.ConnectionTests
 {
     public class ClusterConnectionTest : TestBase
     {

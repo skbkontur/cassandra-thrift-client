@@ -15,7 +15,7 @@ using NUnit.Framework.SyntaxHelpers;
 
 using Rhino.Mocks;
 
-namespace Cassandra.Tests.CassandraClientTests.ConnectionTests
+namespace Cassandra.Tests.ConnectionTests
 {
     public class KeyspaceConnectionTest : TestBase
     {

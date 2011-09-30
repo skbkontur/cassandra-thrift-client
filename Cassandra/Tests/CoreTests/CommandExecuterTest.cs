@@ -16,14 +16,6 @@ namespace Cassandra.Tests.CoreTests
 {
     public class CommandExecuterTest : TestBase
     {
-        private CommandExecuter executer;
-        private ICassandraClusterSettings cassandraClusterSettings;
-        private IEndpointManager endpointManager;
-        private IClusterConnectionPool clusterConnectionPool;
-        private IPEndPoint ipEndPoint3;
-        private IPEndPoint ipEndPoint1;
-        private IPEndPoint ipEndPoint2;
-
         public override void SetUp()
         {
             base.SetUp();
@@ -140,5 +132,13 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             RunMethodWithException<CassandraAttemptsException>(() => executer.Execute(command), "Operation failed for 1 attempts");
         }
+
+        private CommandExecuter executer;
+        private ICassandraClusterSettings cassandraClusterSettings;
+        private IEndpointManager endpointManager;
+        private IClusterConnectionPool clusterConnectionPool;
+        private IPEndPoint ipEndPoint3;
+        private IPEndPoint ipEndPoint1;
+        private IPEndPoint ipEndPoint2;
     }
 }

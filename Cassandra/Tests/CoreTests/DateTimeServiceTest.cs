@@ -4,7 +4,7 @@ using CassandraClient.Core;
 
 using NUnit.Framework;
 
-namespace Cassandra.Tests.CassandraClientTests
+namespace Cassandra.Tests.CoreTests
 {
     public class DateTimeServiceTest : TestBase
     {
