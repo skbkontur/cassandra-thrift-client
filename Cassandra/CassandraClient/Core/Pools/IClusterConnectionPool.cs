@@ -1,9 +1,10 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
 
 namespace CassandraClient.Core.Pools
 {
     public interface IClusterConnectionPool
     {
-        IThriftConnection BorrowConnection(IPEndPoint endPoint, string keyspace);
+        IThriftConnection BorrowConnection(ConnectionPoolKey key);
+        IDictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
     }
 }

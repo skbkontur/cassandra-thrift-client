@@ -14,13 +14,23 @@ namespace CassandraClient.Core
         protected ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
             IpEndPoint = ipEndPoint;
-            this.keyspaceName = keyspaceName;
+            KeyspaceName = keyspaceName;
             string address = ipEndPoint.Address.ToString();
             int port = ipEndPoint.Port;
             TSocket socket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
             var transport = new TFramedTransport(socket);
             cassandraClient = new Cassandra.Client(new TBinaryProtocol(transport));
             OpenTransport();
+        }
+
+        public virtual void Dispose()
+        {
+            CloseTransport();
+        }
+
+        public void ExecuteCommand(ICommand command)
+        {
+            command.Execute(cassandraClient);
         }
 
         public bool IsAlive()
@@ -35,25 +45,16 @@ namespace CassandraClient.Core
             }
         }
 
-        public virtual void Dispose()
-        {
-            CloseTransport();
-        }
-
-        public void ExecuteCommand(ICommand command)
-        {
-            command.Execute(cassandraClient);
-        }
-
-        protected IPEndPoint IpEndPoint { get; private set; }
+        public string KeyspaceName { get; private set; }
+        public IPEndPoint IpEndPoint { get; private set; }
 
         private void OpenTransport()
         {
             cassandraClient.InputProtocol.Transport.Open();
             if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                 cassandraClient.OutputProtocol.Transport.Open();
-            if(!string.IsNullOrEmpty(keyspaceName))
-                cassandraClient.set_keyspace(keyspaceName);
+            if(!string.IsNullOrEmpty(KeyspaceName))
+                cassandraClient.set_keyspace(KeyspaceName);
         }
 
         private void CloseTransport()
@@ -63,7 +64,6 @@ namespace CassandraClient.Core
                 cassandraClient.OutputProtocol.Transport.Close();
         }
 
-        private readonly string keyspaceName;
         private readonly Cassandra.Client cassandraClient;
     }
 }

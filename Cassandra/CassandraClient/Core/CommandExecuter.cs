@@ -35,7 +35,7 @@ namespace CassandraClient.Core
                 IPEndPoint endpoint = endpointManager.GetEndPoint();
                 try
                 {
-                    using (var thriftConnection = clusterConnectionPool.BorrowConnection(endpoint, command.Keyspace))
+                    using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey{IpEndPoint = endpoint, Keyspace = command.Keyspace}))
                         thriftConnection.ExecuteCommand(command);
                     endpointManager.Good(endpoint);
                     return;

@@ -16,7 +16,7 @@ namespace Cassandra.Tests.CoreTests
             int count = 0;
             do
             {
-                for(int i = 0; i < 10000000; ++i)
+                for(int i = 0; i < 1000000; ++i)
                 {
                     long cur = DateTimeService.UtcNow.Ticks;
                     if(cur != last)
@@ -25,8 +25,8 @@ namespace Cassandra.Tests.CoreTests
                         ++count;
                     }
                 }
-            } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(5));
-            Assert.That(count > 5000000);
+            } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(1));
+            Assert.That(count > 1000000);
         }
 
         [Test]

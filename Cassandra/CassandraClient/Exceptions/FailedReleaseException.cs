@@ -6,7 +6,8 @@ namespace CassandraClient.Exceptions
 {
     public class FailedReleaseException : Exception
     {
-        public FailedReleaseException(PooledThriftConnection connection) : base(connection.ToString())
+        public FailedReleaseException(IPooledThriftConnection connection)
+            : base(connection.ToString())
         {
         }
     }

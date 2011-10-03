@@ -79,11 +79,13 @@
     <Compile Include="Core\Badlist.cs" />
     <Compile Include="Core\CommandExecuter.cs" />
     <Compile Include="Core\DateTimeService.cs" />
+    <Compile Include="Core\IPooledThriftConnection.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
     <Compile Include="Core\Pools\ClusterConnectionPool.cs" />
     <Compile Include="Core\EndpointManager.cs" />
     <Compile Include="Core\Pools\ConnectionPoolKey.cs" />
     <Compile Include="Core\Pools\IKeyspaceConnectionPool.cs" />
+    <Compile Include="Core\Pools\KeyspaceConnectionPoolKnowledge.cs" />
     <Compile Include="Exceptions\CassandraAttemptsException.cs" />
     <Compile Include="Exceptions\FailedReleaseException.cs" />
     <Compile Include="Exceptions\GuidCollisionException.cs" />

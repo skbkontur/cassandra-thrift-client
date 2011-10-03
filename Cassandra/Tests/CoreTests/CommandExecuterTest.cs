@@ -63,7 +63,7 @@ namespace Cassandra.Tests.CoreTests
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
             var thriftConnection = GetMock<IThriftConnection>();
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(ipEndPoint1, "keyspace")).
+            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command));
             thriftConnection.Expect(connection => connection.Dispose());
@@ -80,7 +80,7 @@ namespace Cassandra.Tests.CoreTests
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
             var thriftConnection = GetMock<IThriftConnection>();
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(ipEndPoint1, "keyspace")).
+            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new Exception("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
@@ -97,7 +97,7 @@ namespace Cassandra.Tests.CoreTests
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
             var thriftConnection = GetMock<IThriftConnection>();
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(ipEndPoint1, "keyspace")).
+            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
@@ -106,7 +106,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint2);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(ipEndPoint2, "keyspace")).
+            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint2, "keyspace"))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command));
             thriftConnection.Expect(connection => connection.Dispose());
@@ -123,7 +123,7 @@ namespace Cassandra.Tests.CoreTests
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
             var thriftConnection = GetMock<IThriftConnection>();
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(ipEndPoint1, "keyspace")).
+            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
@@ -131,6 +131,15 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             RunMethodWithException<CassandraAttemptsException>(() => executer.Execute(command), "Operation failed for 1 attempts");
+        }
+
+        private ConnectionPoolKey GetConnectionPoolKey(IPEndPoint ipEndPoint, string keyspace)
+        {
+            return new ConnectionPoolKey
+                {
+                    IpEndPoint = ipEndPoint,
+                    Keyspace = keyspace
+                };
         }
 
         private CommandExecuter executer;

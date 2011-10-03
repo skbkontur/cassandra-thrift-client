@@ -13,17 +13,17 @@ namespace CassandraClient.Core.Pools
     {
         private readonly ILog logger = LogManager.GetLogger("KeyspaceConnectionPool");
 
-        public KeyspaceConnectionPool(ICassandraClusterSettings settings, IPEndPoint endPoint, string keyspaceName)
+        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key)
         {
-            this.endPoint = endPoint;
-            this.keyspaceName = keyspaceName;
+            endPoint = key.IpEndPoint;
+            keyspaceName = key.Keyspace;
             this.settings = settings;
             logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}' was created.", endPoint, keyspaceName);
         }
 
-        public bool TryBorrowConnection(out PooledThriftConnection thriftConnection)
+        public bool TryBorrowConnection(out IPooledThriftConnection thriftConnection)
         {
-            PooledThriftConnection result;
+            IPooledThriftConnection result;
             if (!freeConnections.TryDequeue(out result))
             {
                 result = CreateConnection();
@@ -47,12 +47,21 @@ namespace CassandraClient.Core.Pools
             return true;
         }
 
-        public void ReleaseConnection(PooledThriftConnection connection)
+        public void ReleaseConnection(IPooledThriftConnection connection)
         {
-            PooledThriftConnection res;
+            IPooledThriftConnection res;
             if (!busyConnections.TryRemove(connection.Id, out res))
                 throw new FailedReleaseException(connection);
             freeConnections.Enqueue(connection);
+        }
+
+        public KeyspaceConnectionPoolKnowledge GetKnowledge()
+        {
+            return new KeyspaceConnectionPoolKnowledge
+                {
+                    BusyConnectionCount = busyConnections.Count,
+                    FreeConnectionCount = freeConnections.Count
+                };
         }
 
         private PooledThriftConnection CreateConnection()
@@ -65,7 +74,7 @@ namespace CassandraClient.Core.Pools
         private readonly ICassandraClusterSettings settings;
         private readonly IPEndPoint endPoint;
         private readonly string keyspaceName;
-        private readonly ConcurrentQueue<PooledThriftConnection> freeConnections = new ConcurrentQueue<PooledThriftConnection>();
-        private readonly ConcurrentDictionary<Guid, PooledThriftConnection> busyConnections = new ConcurrentDictionary<Guid, PooledThriftConnection>();
+        private readonly ConcurrentQueue<IPooledThriftConnection> freeConnections = new ConcurrentQueue<IPooledThriftConnection>();
+        private readonly ConcurrentDictionary<Guid, IPooledThriftConnection> busyConnections = new ConcurrentDictionary<Guid, IPooledThriftConnection>();
     }
 }
