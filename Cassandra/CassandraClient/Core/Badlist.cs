@@ -1,6 +1,7 @@
-using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 
 namespace CassandraClient.Core
 {
@@ -8,26 +9,23 @@ namespace CassandraClient.Core
     {
         public void Good(IPEndPoint endPoint)
         {
-            object value = healths[endPoint];
-            if (value == null || (double)value >= aliveHealth)
-                return;
-            lock (healthsLock)
+            Health health;
+            if (healths.TryGetValue(endPoint, out health))
             {
-                double health = (double)value * alivingRate;
-                if (health > aliveHealth) health = aliveHealth;
-                healths[endPoint] = health;
+                var healthValue = health.Value * alivingRate;
+                if (healthValue > aliveHealth) healthValue = aliveHealth;
+                health.Value = healthValue;
             }
         }
 
         public void Bad(IPEndPoint endPoint)
         {
-            object value = healths[endPoint];
-            double health = value == null ? aliveHealth : (double)value;
-            lock (healthsLock)
+            Health health;
+            if (healths.TryGetValue(endPoint, out health))
             {
-                health = health * dyingRate;
-                if (health < deadHealth) health = deadHealth;
-                healths[endPoint] = health;
+                var healthValue = health.Value * dyingRate;
+                if (healthValue < deadHealth) healthValue = deadHealth;
+                health.Value = healthValue;
             }
         }
 
@@ -36,16 +34,19 @@ namespace CassandraClient.Core
             var result = new List<KeyValuePair<IPEndPoint, double>>();
             foreach (IPEndPoint key in healths.Keys)
             {
-                var value = healths[key];
-                if (value != null)
-                    result.Add(new KeyValuePair<IPEndPoint, double>(key, (double)value));
+                Health healht;
+                if (healths.TryGetValue(key, out healht))
+                    result.Add(new KeyValuePair<IPEndPoint, double>(key, healht.Value));
             }
             return result.ToArray();
         }
 
         public double GetHealth(IPEndPoint endPoint)
         {
-            return (double)healths[endPoint];
+            Health health;
+            if (healths.TryGetValue(endPoint, out health))
+                return health.Value;
+            return 0;
         }
 
         public void Register(IPEndPoint endPoint)
@@ -55,25 +56,33 @@ namespace CassandraClient.Core
 
         public void Unregister(IPEndPoint endPoint)
         {
-            lock (healthsLock)
-            {
-                healths.Remove(endPoint);
-            }
+            Health health;
+            healths.TryRemove(endPoint, out health);
         }
 
         private void SetHealth(IPEndPoint endPoint, double health)
         {
-            lock (healthsLock)
-            {
-                healths[endPoint] = health;
-            }
+            var healthObj = healths.GetOrAdd(endPoint, ipEndpoint => new Health());
+            healthObj.Value = health;
         }
 
-        private readonly Hashtable healths = new Hashtable();
-        private readonly object healthsLock = new object();
+        private readonly ConcurrentDictionary<IPEndPoint, Health> healths = new ConcurrentDictionary<IPEndPoint, Health>(); 
         private const double aliveHealth = 1.0;
         private const double deadHealth = 0.01;
         private const double alivingRate = 1.5;
         private const double dyingRate = 0.7;
+    }
+
+    public class Health
+    {
+        private double val;
+        public double Value {
+            
+            get
+            {
+                Thread.MemoryBarrier();
+                return val;
+            } 
+            set { Interlocked.Exchange(ref val, value);} }
     }
 }
