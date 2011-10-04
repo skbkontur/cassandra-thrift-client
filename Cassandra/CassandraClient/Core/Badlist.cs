@@ -76,15 +76,14 @@ namespace CassandraClient.Core
 
     public class Health
     {
-        private long val;
+        private double val;
         public double Value {
             
             get
             {
-                var res = Interlocked.Read(ref val);
-                return BitConverter.Int64BitsToDouble(res);
+                return Interlocked.CompareExchange(ref val, 0, 0);
             }
-            set { Interlocked.Exchange(ref val, BitConverter.DoubleToInt64Bits(value)); }
+            set { Interlocked.Exchange(ref val, value); }
         }
     }
 }
