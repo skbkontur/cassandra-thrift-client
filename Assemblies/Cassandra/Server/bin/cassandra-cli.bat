@@ -14,6 +14,7 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 
+SET JAVA_HOME=C:\Program Files\Java\jre6
 
 @echo off
 if "%OS%" == "Windows_NT" setlocal
