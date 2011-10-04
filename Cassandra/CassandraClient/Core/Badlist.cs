@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
@@ -75,14 +76,15 @@ namespace CassandraClient.Core
 
     public class Health
     {
-        private double val;
+        private long val;
         public double Value {
             
             get
             {
-                Thread.MemoryBarrier();
-                return val;
-            } 
-            set { Interlocked.Exchange(ref val, value);} }
+                var res = Interlocked.Read(ref val);
+                return BitConverter.Int64BitsToDouble(res);
+            }
+            set { Interlocked.Exchange(ref val, BitConverter.DoubleToInt64Bits(value)); }
+        }
     }
 }
