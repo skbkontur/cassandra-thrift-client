@@ -31,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aquiles">
-      <HintPath>..\..\Assemblies\Cassandra\Aquiles.dll</HintPath>
-    </Reference>
     <Reference Include="Cassandra.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.Tests.dll</HintPath>
@@ -64,7 +61,6 @@
   <ItemGroup>
     <Compile Include="AssembliesLoader.cs" />
     <Compile Include="Logger\ConsoleLogger.cs" />
-    <Compile Include="Logging\AquilesLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CassandraClusterSettings.cs" />
     <Compile Include="StorageCoreTests\CassandraInitializer.cs" />

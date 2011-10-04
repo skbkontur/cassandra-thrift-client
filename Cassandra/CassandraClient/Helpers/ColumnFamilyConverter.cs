@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using Aquiles.Model;
-
 using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Model;
 
 namespace CassandraClient.Helpers
 {

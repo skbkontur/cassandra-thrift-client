@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 
-using Aquiles.Helpers.Encoders;
-using Aquiles.Model;
+using CassandraClient.AquilesTrash.Encoders;
+using CassandraClient.AquilesTrash.Model;
 
 using CassandraClient.Abstractions;
 using CassandraClient.Helpers;

@@ -2,7 +2,7 @@
 
 using Apache.Cassandra;
 
-using Aquiles;
+using CassandraClient.AquilesTrash.Command;
 
 namespace CassandraClient.Abstractions
 {

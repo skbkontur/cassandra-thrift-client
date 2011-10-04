@@ -1,8 +1,7 @@
 ﻿using System;
 
-using Aquiles.Command;
-
 using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Command;
 
 namespace CassandraClient.Helpers
 {

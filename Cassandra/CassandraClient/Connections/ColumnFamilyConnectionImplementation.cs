@@ -1,25 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 
-using Apache.Cassandra;
-
-using Aquiles;
-using Aquiles.Command;
-using Aquiles.Exceptions;
-using Aquiles.Model;
+using CassandraClient.AquilesTrash.Model;
 
 using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Command;
 using CassandraClient.Core;
 using CassandraClient.Exceptions;
 using CassandraClient.Helpers;
 
-using Thrift;
-using Thrift.Transport;
-
+using AquilesConsistencyLevel = CassandraClient.AquilesTrash.Command.AquilesConsistencyLevel;
+using BatchMutateCommand = CassandraClient.AquilesTrash.Command.BatchMutateCommand;
 using Column = CassandraClient.Abstractions.Column;
 using ConsistencyLevel = CassandraClient.Abstractions.ConsistencyLevel;
+using GetCommand = CassandraClient.AquilesTrash.Command.GetCommand;
+using GetIndexedSlicesCommand = CassandraClient.AquilesTrash.Command.GetIndexedSlicesCommand;
+using GetKeyRangeSliceCommand = CassandraClient.AquilesTrash.Command.GetKeyRangeSliceCommand;
+using GetSliceCommand = CassandraClient.AquilesTrash.Command.GetSliceCommand;
+using InsertCommand = CassandraClient.AquilesTrash.Command.InsertCommand;
+using MultiGetSliceCommand = CassandraClient.AquilesTrash.Command.MultiGetSliceCommand;
+using TruncateColumnFamilyCommand = CassandraClient.AquilesTrash.Command.TruncateColumnFamilyCommand;
 
 namespace CassandraClient.Connections
 {

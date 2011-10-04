@@ -1,8 +1,5 @@
-﻿using System;
-
-using Aquiles.Model;
-
-using CassandraClient.Abstractions;
+﻿using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Model;
 using CassandraClient.Core;
 
 namespace CassandraClient.Helpers

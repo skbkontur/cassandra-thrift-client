@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Aquiles;
-using Aquiles.Command;
-using Aquiles.Command.System;
-using Aquiles.Model;
-
 using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Command;
+using CassandraClient.AquilesTrash.Command.System;
 using CassandraClient.Core;
 using CassandraClient.Helpers;
 

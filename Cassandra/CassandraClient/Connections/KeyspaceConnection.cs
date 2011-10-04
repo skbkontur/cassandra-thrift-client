@@ -1,12 +1,10 @@
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 
-using Aquiles;
-using Aquiles.Command;
-using Aquiles.Command.System;
-using Aquiles.Model;
+using CassandraClient.AquilesTrash.Command;
+using CassandraClient.AquilesTrash.Command.System;
+using CassandraClient.AquilesTrash.Model;
 
 using CassandraClient.Abstractions;
 using CassandraClient.Core;

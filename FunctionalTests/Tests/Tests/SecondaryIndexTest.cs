@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using Aquiles.Helpers.Encoders;
-
 using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
+using CassandraClient.AquilesTrash.Encoders;
 using CassandraClient.Connections;
 
 using NUnit.Framework;

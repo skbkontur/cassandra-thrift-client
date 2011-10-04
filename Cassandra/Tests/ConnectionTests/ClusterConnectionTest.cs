@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using Aquiles.Command;
-using Aquiles.Command.System;
-using Aquiles.Model;
+
+
+using CassandraClient.AquilesTrash.Model;
 
 using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Command;
+using CassandraClient.AquilesTrash.Command.System;
 using CassandraClient.Connections;
 using CassandraClient.Core;
 using CassandraClient.Helpers;
@@ -48,12 +50,8 @@ namespace Cassandra.Tests.ConnectionTests
 
             commandExecuter.Expect(connection => connection.Execute(ARG.EqualsTo(new AquilesCommandAdaptor(new AddKeyspaceCommand
                 {
-                    ConsistencyLevel =
-                        AquilesConsistencyLevel.
-                        EACH_QUORUM,
-                    KeyspaceDefinition =
-                        keyspace.
-                        ToAquilesKeyspace()
+                    ConsistencyLevel = AquilesConsistencyLevel.EACH_QUORUM,
+                    KeyspaceDefinition = keyspace.ToAquilesKeyspace()
                 }))));
             /*commandExecuter.Expect(connection => connection.Execute(Arg<SchemaAgreementCommand>.Is.TypeOf)).WhenCalled(
                 invocation => SetOutput((SchemaAgreementCommand)invocation.Arguments[0])

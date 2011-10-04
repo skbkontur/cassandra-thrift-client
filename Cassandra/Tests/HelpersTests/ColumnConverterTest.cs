@@ -1,4 +1,4 @@
-using Aquiles.Model;
+using CassandraClient.AquilesTrash.Model;
 
 using CassandraClient.Abstractions;
 using CassandraClient.Helpers;

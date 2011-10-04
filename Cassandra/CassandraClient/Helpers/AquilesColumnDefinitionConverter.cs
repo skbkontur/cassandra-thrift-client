@@ -1,7 +1,6 @@
-﻿using Aquiles.Helpers.Encoders;
-using Aquiles.Model;
-
-using CassandraClient.Abstractions;
+﻿using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Encoders;
+using CassandraClient.AquilesTrash.Model;
 
 namespace CassandraClient.Helpers
 {
