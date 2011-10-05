@@ -5,7 +5,8 @@ using System.Linq;
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
-using CassandraClient.StorageCore;
+
+using StorageCore;
 
 using Tests.Tests;
 

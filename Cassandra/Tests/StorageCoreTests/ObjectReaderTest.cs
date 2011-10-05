@@ -1,10 +1,11 @@
 ﻿using CassandraClient.Abstractions;
-using CassandraClient.StorageCore;
-using CassandraClient.StorageCore.RowsStorage;
 
 using NUnit.Framework;
 
 using Rhino.Mocks;
+
+using StorageCore;
+using StorageCore.RowsStorage;
 
 namespace Cassandra.Tests.StorageCoreTests
 {

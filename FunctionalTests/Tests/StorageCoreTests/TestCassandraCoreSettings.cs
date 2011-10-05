@@ -1,4 +1,5 @@
-using CassandraClient.StorageCore;
+
+using StorageCore;
 
 using Tests.Tests;
 

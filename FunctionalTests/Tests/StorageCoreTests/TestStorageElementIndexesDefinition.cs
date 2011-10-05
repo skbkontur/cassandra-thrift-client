@@ -1,6 +1,6 @@
-using CassandraClient.StorageCore;
-
 using GroboSerializer;
+
+using StorageCore;
 
 namespace Tests.StorageCoreTests
 {

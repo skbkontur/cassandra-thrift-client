@@ -55,6 +55,9 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="StorageCore">
+      <HintPath>..\..\Assemblies\StorageCore.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

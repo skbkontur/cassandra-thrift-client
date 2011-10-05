@@ -1,10 +1,11 @@
 using System;
 
 using CassandraClient.Abstractions;
-using CassandraClient.StorageCore;
-using CassandraClient.StorageCore.RowsStorage;
 
 using GroboSerializer;
+
+using StorageCore;
+using StorageCore.RowsStorage;
 
 namespace Tests.StorageCoreTests
 {

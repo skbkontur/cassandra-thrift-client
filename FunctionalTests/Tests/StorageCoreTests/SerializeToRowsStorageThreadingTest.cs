@@ -2,11 +2,11 @@ using System;
 using System.Text;
 using System.Threading;
 
-using CassandraClient.StorageCore.RowsStorage;
-
 using GroboSerializer;
 
 using NUnit.Framework;
+
+using StorageCore.RowsStorage;
 
 using Tests.Tests;
 

@@ -1,14 +1,15 @@
 ﻿using System.Collections.Specialized;
 
 using CassandraClient.Abstractions;
-using CassandraClient.StorageCore;
-using CassandraClient.StorageCore.RowsStorage;
 
 using GroboSerializer;
 
 using NUnit.Framework;
 
 using Rhino.Mocks;
+
+using StorageCore;
+using StorageCore.RowsStorage;
 
 namespace Cassandra.Tests.StorageCoreTests
 {

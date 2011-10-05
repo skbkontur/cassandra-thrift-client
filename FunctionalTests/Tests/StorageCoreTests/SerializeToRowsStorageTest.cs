@@ -5,12 +5,12 @@ using System.Text;
 
 using Cassandra.Tests;
 
-using CassandraClient.StorageCore.Exceptions;
-using CassandraClient.StorageCore.RowsStorage;
-
 using GroboSerializer;
 
 using NUnit.Framework;
+
+using StorageCore.Exceptions;
+using StorageCore.RowsStorage;
 
 using Tests.Tests;
 

@@ -7,15 +7,16 @@ using System.Text;
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
-using CassandraClient.StorageCore;
-using CassandraClient.StorageCore.Exceptions;
-using CassandraClient.StorageCore.RowsStorage;
 
 using GroboSerializer;
 
 using NUnit.Framework;
 
 using Rhino.Mocks;
+
+using StorageCore;
+using StorageCore.Exceptions;
+using StorageCore.RowsStorage;
 
 namespace Cassandra.Tests.StorageCoreTests
 {
