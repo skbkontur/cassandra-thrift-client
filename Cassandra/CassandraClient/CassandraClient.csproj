@@ -68,7 +68,8 @@
     <Compile Include="AquilesTrash\Command\AbstractKeySpaceDependantCommand.cs" />
     <Compile Include="AquilesTrash\Command\AquilesConsistencyLevel.cs" />
     <Compile Include="AquilesTrash\Command\BatchMutateCommand.cs" />
-    <Compile Include="AquilesTrash\Command\DeleteCommand.cs" />
+    <Compile Include="AquilesTrash\Command\DeleteRowCommand.cs" />
+    <Compile Include="AquilesTrash\Command\DeleteColumnCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeKeySpaceCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeSnitchCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeSplitsCommand.cs" />
@@ -153,6 +154,7 @@
     <Compile Include="Core\Badlist.cs" />
     <Compile Include="Core\CommandExecuter.cs" />
     <Compile Include="Core\DateTimeService.cs" />
+    <Compile Include="Core\Health.cs" />
     <Compile Include="Core\IPooledThriftConnection.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
     <Compile Include="Core\Pools\ClusterConnectionPool.cs" />

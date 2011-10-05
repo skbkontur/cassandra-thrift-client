@@ -45,6 +45,16 @@ namespace CassandraClient.Connections
             //aquilesConnection.Dispose();
         }
 
+        public void DeleteRow(byte[] key, long? timestamp)
+        {
+            ExecuteCommand(new DeleteRowCommand
+                {
+                    Key = key,
+                    Timestamp = timestamp,
+                    ColumnFamily = columnFamilyName
+                });
+        }
+
         public void AddColumn(byte[] key, Column column)
         {
             ExecuteCommand(new InsertCommand

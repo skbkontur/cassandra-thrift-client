@@ -19,7 +19,8 @@ namespace CassandraClient.Helpers
                                Name = columnFamily.Name,
                                Keyspace = keyspace,
                                Columns = GetColumnDefinitions(columnFamily.Indexes),
-                               RowCacheSize = columnFamily.RowCacheSize
+                               RowCacheSize = columnFamily.RowCacheSize,
+                               GCGraceSeconds = columnFamily.GCGraceSeconds
                            };
         }
 
@@ -32,7 +33,8 @@ namespace CassandraClient.Helpers
                                Id = aquilesColumnFamily.Id,
                                Name = aquilesColumnFamily.Name,
                                Indexes = GetIndexDefinitions(aquilesColumnFamily.Columns),
-                               RowCacheSize = (int?)aquilesColumnFamily.RowCacheSize
+                               RowCacheSize = (int?)aquilesColumnFamily.RowCacheSize,
+                               GCGraceSeconds = aquilesColumnFamily.GCGraceSeconds
                            };
         }
 

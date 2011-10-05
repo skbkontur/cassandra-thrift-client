@@ -9,6 +9,7 @@ namespace CassandraClient.Connections
 {
     public interface IColumnFamilyConnectionImplementation : IDisposable
     {
+        void DeleteRow(byte[] key, long? timestamp);
         void AddColumn(byte[] key, Column column);
         Column GetColumn(byte[] key, byte[] columnName);
         bool TryGetColumn(byte[] key, byte[] columnName, out Column result);

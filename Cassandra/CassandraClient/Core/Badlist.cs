@@ -2,7 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading;
 
 namespace CassandraClient.Core
 {
@@ -72,18 +71,5 @@ namespace CassandraClient.Core
         private const double deadHealth = 0.01;
         private const double alivingRate = 1.5;
         private const double dyingRate = 0.7;
-    }
-
-    public class Health
-    {
-        private double val;
-        public double Value {
-            
-            get
-            {
-                return Interlocked.CompareExchange(ref val, 0, 0);
-            }
-            set { Interlocked.Exchange(ref val, value); }
-        }
     }
 }

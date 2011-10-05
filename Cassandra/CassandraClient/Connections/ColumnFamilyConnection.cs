@@ -2,6 +2,7 @@
 using System.Linq;
 
 using CassandraClient.Abstractions;
+using CassandraClient.AquilesTrash.Encoders;
 using CassandraClient.Helpers;
 
 namespace CassandraClient.Connections
@@ -19,6 +20,12 @@ namespace CassandraClient.Connections
         {
             implementation.Dispose();
         }
+
+        public void DeleteRow(string key, long? timestamp = null)
+        {
+            implementation.DeleteRow(ByteEncoderHelper.UTF8Encoder.ToByteArray(key), timestamp);
+        }
+
 
         public void AddColumn(string key, Column column)
         {
