@@ -77,6 +77,7 @@
     <Compile Include="Tests\CassandraFunctionalTestWithRemoveKeyspacesBase.cs" />
     <Compile Include="Tests\CassandraFunctionalTestBase.cs" />
     <Compile Include="Tests\Constants.cs" />
+    <Compile Include="Tests\DeleteTest.cs" />
     <Compile Include="Tests\GetRowTest.cs" />
     <Compile Include="Tests\ICassandraClient.cs" />
     <Compile Include="Tests\MultiThreadStressTest.cs" />

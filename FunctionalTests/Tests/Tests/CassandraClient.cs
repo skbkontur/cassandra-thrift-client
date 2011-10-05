@@ -40,9 +40,7 @@ namespace Tests.Tests
                                 {
                                     columnFamilyName, new ColumnFamily
                                         {
-                                            
-                                            Name =
-                                                columnFamilyName
+                                            Name = columnFamilyName
                                         }
                                     }
                             },
