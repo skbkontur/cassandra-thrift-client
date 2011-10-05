@@ -20,5 +20,6 @@ namespace Tests.Tests
 
         Column[] GetRow(string keySpaceName, string columnFamilyName, string key, int count,
                         string startColumnName = null);
+        Column[] GetRow(string keySpaceName, string columnFamilyName, string key);
     }
 }

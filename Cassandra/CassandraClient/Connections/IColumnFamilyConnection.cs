@@ -20,6 +20,8 @@ namespace CassandraClient.Connections
         string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value);
         void Truncate();
         Column[] GetRow(string key, string exclusiveStartColumnName, int count);
+        IEnumerable<Column> GetRow(string key, int batchSize=1000);
         string[] GetKeys(string exclusiveStartKey, int count);
+        IEnumerable<string> GetKeys(int batchSize=1000);
     }
 }

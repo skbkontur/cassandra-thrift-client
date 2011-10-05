@@ -151,6 +151,7 @@
     <Compile Include="Connections\IColumnFamilyConnectionImplementation.cs" />
     <Compile Include="Connections\IKeyspaceConnection.cs" />
     <Compile Include="Connections\KeyspaceConnection.cs" />
+    <Compile Include="Connections\RowsEnumerator.cs" />
     <Compile Include="Core\Badlist.cs" />
     <Compile Include="Core\CommandExecuter.cs" />
     <Compile Include="Core\DateTimeService.cs" />

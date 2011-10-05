@@ -5,6 +5,8 @@ using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
 
+using System.Linq;
+
 namespace Tests.Tests
 {
     public class CassandraClient : ICassandraClient
@@ -128,6 +130,15 @@ namespace Tests.Tests
                 cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
                 result = columnFamilyConnection.GetRow(key, startColumnName, count);
             return result;
+        }
+
+        public Column[] GetRow(string keySpaceName, string columnFamilyName, string key)
+        {
+            IEnumerable<Column> result;
+            using (IColumnFamilyConnection columnFamilyConnection =
+                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+                result = columnFamilyConnection.GetRow(key, 10);
+            return result.ToArray();
         }
 
         private void RemoveKeyspace(string keyspaceName)

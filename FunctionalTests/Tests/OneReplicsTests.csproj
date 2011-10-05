@@ -38,7 +38,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.Tests.dll</HintPath>
     </Reference>
-    <Reference Include="CassandraClient">
+    <Reference Include="CassandraClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\CassandraClient.dll</HintPath>
     </Reference>
     <Reference Include="GroboContainer">

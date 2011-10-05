@@ -1,13 +1,27 @@
 ﻿using Cassandra.Tests;
-
 using CassandraClient.Abstractions;
-
 using NUnit.Framework;
+using System.Linq;
 
 namespace Tests.Tests
 {
     public class GetRowTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
+        [Test]
+        public void TestGetAllRow()
+        {
+            var columns = new Column[14];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                string columnName = "columnName" + i;
+                string columnValue = "columnValue" + i;
+                columns[i] = ToColumn(columnName, columnValue, 100);
+                cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", columnName, columnValue, 100);
+            }
+            Column[] actualColumns = cassandraClient.GetRow(Constants.KeyspaceName, Constants.ColumnFamilyName, "row").ToArray();
+            actualColumns.AssertEqualsTo(columns.OrderBy(x => x.Name).ToArray());
+        }
+
         [Test]
         public void TestGetRow()
         {

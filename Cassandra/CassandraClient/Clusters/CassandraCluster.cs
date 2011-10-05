@@ -29,7 +29,8 @@ namespace CassandraClient.Clusters
         {
             var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, commandExecuter,
                                                                                                 clusterSettings.ReadConsistencyLevel, clusterSettings.WriteConsistencyLevel);
-            return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
+            var enumerableFactory = new EnumerableFactory();
+            return new ColumnFamilyConnection(columnFamilyConnectionImplementation, enumerableFactory);
         }
 
         private readonly ICassandraClusterSettings clusterSettings;

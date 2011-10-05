@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using CassandraClient.Abstractions;
@@ -9,9 +10,10 @@ namespace CassandraClient.Connections
 {
     public class ColumnFamilyConnection : IColumnFamilyConnection
     {
-        public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation)
+        public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation, IEnumerableFactory enumerableFactory)
         {
             this.implementation = implementation;
+            this.enumerableFactory = enumerableFactory;
         }
 
         #region IColumnFamilyConnection Members
@@ -96,6 +98,11 @@ namespace CassandraClient.Connections
             return result;
         }
 
+        public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
+        {
+            return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetRow);
+        }
+
         public string[] GetKeys(string exclusiveStartKey, int count)
         {
             if (count == int.MaxValue) count--;
@@ -105,6 +112,11 @@ namespace CassandraClient.Connections
             if (result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
             if (result.Length > count) result = result.Take(count).ToArray();
             return result;
+        }
+
+        public IEnumerable<string> GetKeys(int batchSize = 1000)
+        {
+            return enumerableFactory.GetRowsEnumerator(batchSize, GetKeys);
         }
 
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)
@@ -140,5 +152,6 @@ namespace CassandraClient.Connections
         #endregion
 
         private readonly IColumnFamilyConnectionImplementation implementation;
+        private readonly IEnumerableFactory enumerableFactory;
     }
 }
