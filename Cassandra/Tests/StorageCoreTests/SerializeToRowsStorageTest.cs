@@ -7,6 +7,7 @@ using System.Text;
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
+using CassandraClient.Helpers;
 
 using GroboSerializer;
 
@@ -55,7 +56,7 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                       new Column
                                                                           {
                                                                               Name = formatVersionColumnName,
-                                                                              Value = CassandraStringHelpers.StringToBytes("v2")
+                                                                              Value = StringHelpers.StringToBytes("v2")
                                                                           },
                                                                       new Column
                                                                           {
@@ -65,17 +66,17 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                       new Column
                                                                           {
                                                                               Name = idColumnName,
-                                                                              Value = CassandraStringHelpers.StringToBytes("q")
+                                                                              Value = StringHelpers.StringToBytes("q")
                                                                           },
                                                                       new Column
                                                                           {
                                                                               Name = "A",
-                                                                              Value = CassandraStringHelpers.StringToBytes("2")
+                                                                              Value = StringHelpers.StringToBytes("2")
                                                                           },
                                                                       new Column
                                                                           {
                                                                               Name = "B",
-                                                                              Value = CassandraStringHelpers.StringToBytes("4")
+                                                                              Value = StringHelpers.StringToBytes("4")
                                                                           }
                                                                   })));
             columnFamilyConnection.Expect(connection => connection.Dispose());
@@ -107,7 +108,7 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                           new Column
                                                                               {
                                                                                   Name = formatVersionColumnName,
-                                                                                  Value = CassandraStringHelpers.StringToBytes("v2")
+                                                                                  Value = StringHelpers.StringToBytes("v2")
                                                                               },
                                                                           new Column
                                                                               {
@@ -117,17 +118,17 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                           new Column
                                                                               {
                                                                                   Name = idColumnName,
-                                                                                  Value = CassandraStringHelpers.StringToBytes("q")
+                                                                                  Value = StringHelpers.StringToBytes("q")
                                                                               },
                                                                           new Column
                                                                               {
                                                                                   Name = "A",
-                                                                                  Value = CassandraStringHelpers.StringToBytes("2")
+                                                                                  Value = StringHelpers.StringToBytes("2")
                                                                               },
                                                                           new Column
                                                                               {
                                                                                   Name = "B",
-                                                                                  Value = CassandraStringHelpers.StringToBytes("4")
+                                                                                  Value = StringHelpers.StringToBytes("4")
                                                                               }
                                                                       }),
                     new KeyValuePair<string, IEnumerable<Column>>("z",
@@ -136,7 +137,7 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                           new Column
                                                                               {
                                                                                   Name = formatVersionColumnName,
-                                                                                  Value = CassandraStringHelpers.StringToBytes("v2")
+                                                                                  Value = StringHelpers.StringToBytes("v2")
                                                                               },
                                                                           new Column
                                                                               {
@@ -146,17 +147,17 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                           new Column
                                                                               {
                                                                                   Name = idColumnName,
-                                                                                  Value = CassandraStringHelpers.StringToBytes("z")
+                                                                                  Value = StringHelpers.StringToBytes("z")
                                                                               },
                                                                           new Column
                                                                               {
                                                                                   Name = "C",
-                                                                                  Value = CassandraStringHelpers.StringToBytes("6")
+                                                                                  Value = StringHelpers.StringToBytes("6")
                                                                               },
                                                                           new Column
                                                                               {
                                                                                   Name = "D",
-                                                                                  Value = CassandraStringHelpers.StringToBytes("8")
+                                                                                  Value = StringHelpers.StringToBytes("8")
                                                                               }
                                                                       })
                 };
@@ -189,12 +190,12 @@ namespace Cassandra.Tests.StorageCoreTests
                     new Column
                         {
                             Name = "A",
-                            Value = CassandraStringHelpers.StringToBytes("2")
+                            Value = StringHelpers.StringToBytes("2")
                         },
                     new Column
                         {
                             Name = "B",
-                            Value = CassandraStringHelpers.StringToBytes("4")
+                            Value = StringHelpers.StringToBytes("4")
                         }
                 });
             columnFamilyConnection.Expect(connection => connection.DeleteBatch(ARG.AreSame("q"), ARG.MatchTo<IEnumerable<string>>(names => Check(new[] {"A", "B"}, names)), ARG.EqualsTo((long?)null)));
@@ -216,12 +217,12 @@ namespace Cassandra.Tests.StorageCoreTests
                     new Column
                         {
                             Name = "A",
-                            Value = CassandraStringHelpers.StringToBytes("2")
+                            Value = StringHelpers.StringToBytes("2")
                         },
                     new Column
                         {
                             Name = "B",
-                            Value = CassandraStringHelpers.StringToBytes("4")
+                            Value = StringHelpers.StringToBytes("4")
                         }
                 };
             columnFamilyConnection.Expect(connection => connection.GetRow("q", null, 1234)).Return(columns);
@@ -244,12 +245,12 @@ namespace Cassandra.Tests.StorageCoreTests
                     new Column
                         {
                             Name = "A",
-                            Value = CassandraStringHelpers.StringToBytes("2")
+                            Value = StringHelpers.StringToBytes("2")
                         },
                     new Column
                         {
                             Name = "B",
-                            Value = CassandraStringHelpers.StringToBytes("4")
+                            Value = StringHelpers.StringToBytes("4")
                         }
                 };
             var columnsForZ = new[]
@@ -257,12 +258,12 @@ namespace Cassandra.Tests.StorageCoreTests
                     new Column
                         {
                             Name = "C",
-                            Value = CassandraStringHelpers.StringToBytes("6")
+                            Value = StringHelpers.StringToBytes("6")
                         },
                     new Column
                         {
                             Name = "D",
-                            Value = CassandraStringHelpers.StringToBytes("8")
+                            Value = StringHelpers.StringToBytes("8")
                         }
                 };
             columnFamilyConnection.Expect(
@@ -310,13 +311,13 @@ namespace Cassandra.Tests.StorageCoreTests
                         {
                             ColumnName = "A",
                             IndexOperator = IndexOperator.EQ,
-                            Value = CassandraStringHelpers.StringToBytes("2")
+                            Value = StringHelpers.StringToBytes("2")
                         },
                     new IndexExpression
                         {
                             ColumnName = "B",
                             IndexOperator = IndexOperator.EQ,
-                            Value = CassandraStringHelpers.StringToBytes("4")
+                            Value = StringHelpers.StringToBytes("4")
                         }
                 };
             var keys = new[] {"key1", "key2"};

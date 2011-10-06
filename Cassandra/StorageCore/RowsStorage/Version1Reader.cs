@@ -1,6 +1,7 @@
 using System.Collections.Specialized;
 
 using CassandraClient.Abstractions;
+using CassandraClient.Helpers;
 
 using GroboSerializer;
 
@@ -20,7 +21,7 @@ namespace StorageCore.RowsStorage
                 return false;
             var nvc = new NameValueCollection();
             foreach(var column in allColumns)
-                nvc.Add(column.Name, CassandraStringHelpers.BytesToString(column.Value));
+                nvc.Add(column.Name, StringHelpers.BytesToString(column.Value));
             result = serializer.Deserialize<T>(nvc);
             return true;
         }

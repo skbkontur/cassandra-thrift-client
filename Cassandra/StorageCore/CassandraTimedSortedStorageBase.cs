@@ -4,6 +4,7 @@ using System.Linq;
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
+using CassandraClient.Helpers;
 
 namespace StorageCore
 {
@@ -48,7 +49,7 @@ namespace StorageCore
                 return connection.GetRow(category, GetColumnName(greatThanElement), count).Select(column => new TimedStorageElement
                     {
                         Ticks = TicksFromColumnName(category, column.Name),
-                        Id = CassandraStringHelpers.BytesToString(column.Value)
+                        Id = StringHelpers.BytesToString(column.Value)
                     }).ToArray();
             }
         }
@@ -60,7 +61,7 @@ namespace StorageCore
                     new Column
                         {
                             Name = GetColumnName(element),
-                            Value = CassandraStringHelpers.StringToBytes(element.Id)
+                            Value = StringHelpers.StringToBytes(element.Id)
                         }
                 });
         }

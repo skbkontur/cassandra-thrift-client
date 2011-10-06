@@ -50,7 +50,6 @@
     <Compile Include="BlobStorage\ISerializeToBlobStorage.cs" />
     <Compile Include="BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
     <Compile Include="BlobStorage\SerializeToBlobStorage.cs" />
-    <Compile Include="CassandraStringHelpers.cs" />
     <Compile Include="CassandraTimedSortedStorageBase.cs" />
     <Compile Include="Exceptions\ColumnFamilyNotRegisteredException.cs" />
     <Compile Include="Exceptions\EmptySearchRequestException.cs" />

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Specialized;
 
 using CassandraClient.Abstractions;
+using CassandraClient.Helpers;
 
 using GroboSerializer;
 
@@ -41,8 +42,8 @@ namespace Cassandra.Tests.StorageCoreTests
                 };
             var columns = new[]
                 {
-                    new Column {Name = "C", Value = CassandraStringHelpers.StringToBytes("D")},
-                    new Column {Name = "A", Value = CassandraStringHelpers.StringToBytes("B")},
+                    new Column {Name = "C", Value = StringHelpers.StringToBytes("D")},
+                    new Column {Name = "A", Value = StringHelpers.StringToBytes("B")},
                 };
             var expected = new TestClass {TestProperty = "tp"};
             serializer.Expect(s => s.Deserialize<TestClass>(ARG.EqualsTo(nvc))).Return(expected);

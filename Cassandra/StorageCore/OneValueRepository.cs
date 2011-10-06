@@ -1,5 +1,6 @@
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
+using CassandraClient.Helpers;
 
 namespace StorageCore
 {
@@ -15,14 +16,14 @@ namespace StorageCore
         public void Write(string value)
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamilyName))
-                conn.AddColumn("Key", new Column {Name = "Value", Value = CassandraStringHelpers.StringToBytes(value)});
+                conn.AddColumn("Key", new Column {Name = "Value", Value = StringHelpers.StringToBytes(value)});
         }
 
         public string TryRead()
         {
             Column column;
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamilyName))
-                return !conn.TryGetColumn("Key", "Value", out column) ? null : CassandraStringHelpers.BytesToString(column.Value);
+                return !conn.TryGetColumn("Key", "Value", out column) ? null : StringHelpers.BytesToString(column.Value);
         }
 
         private readonly ICassandraCluster cassandraCluster;

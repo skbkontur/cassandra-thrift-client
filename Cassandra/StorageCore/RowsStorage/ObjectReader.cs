@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using CassandraClient.Abstractions;
+using CassandraClient.Helpers;
 
 namespace StorageCore.RowsStorage
 {
@@ -27,7 +28,7 @@ namespace StorageCore.RowsStorage
             foreach(var specialColumn in specialColumns)
             {
                 if(specialColumn.Name == SerializeToRowsStorageConstants.formatVersionColumnName)
-                    return CassandraStringHelpers.BytesToString(specialColumn.Value);
+                    return StringHelpers.BytesToString(specialColumn.Value);
             }
             return FormatVersions.version1;
         }

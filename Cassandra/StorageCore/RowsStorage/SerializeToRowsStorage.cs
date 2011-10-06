@@ -7,6 +7,7 @@ using System.Text;
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
+using CassandraClient.Helpers;
 
 using GroboSerializer;
 
@@ -158,7 +159,7 @@ namespace StorageCore.RowsStorage
                                                     {
                                                         ColumnName = key,
                                                         IndexOperator = IndexOperator.EQ,
-                                                        Value = CassandraStringHelpers.StringToBytes(nameValueCollection[key])
+                                                        Value = StringHelpers.StringToBytes(nameValueCollection[key])
                                                     }).ToArray();
                                             result = connection.GetRowsWhere(exclusiveStartKey, count, conditions, new[] {SerializeToRowsStorageConstants.idColumnName});
                                         });
@@ -218,7 +219,7 @@ namespace StorageCore.RowsStorage
             var formatVersionColumn = new Column
                 {
                     Name = SerializeToRowsStorageConstants.formatVersionColumnName,
-                    Value = CassandraStringHelpers.StringToBytes(FormatVersions.version2)
+                    Value = StringHelpers.StringToBytes(FormatVersions.version2)
                 };
             var fullObjectColumn = new Column
                 {
@@ -228,14 +229,14 @@ namespace StorageCore.RowsStorage
             var idColumn = new Column
                 {
                     Name = SerializeToRowsStorageConstants.idColumnName,
-                    Value = CassandraStringHelpers.StringToBytes(id)
+                    Value = StringHelpers.StringToBytes(id)
                 };
             var nameValueCollection = serializer.SerializeToNameValueCollection(obj);
             var nameValueColumns = nameValueCollection.AllKeys.Select(
                 key => new Column
                     {
                         Name = key,
-                        Value = CassandraStringHelpers.StringToBytes(nameValueCollection[key])
+                        Value = StringHelpers.StringToBytes(nameValueCollection[key])
                     });
             return new[]{formatVersionColumn, fullObjectColumn, idColumn}.Concat(nameValueColumns).ToArray();
         }

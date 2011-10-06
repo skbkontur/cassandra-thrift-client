@@ -1,4 +1,5 @@
 ﻿using CassandraClient.Abstractions;
+using CassandraClient.Helpers;
 
 using NUnit.Framework;
 
@@ -108,7 +109,7 @@ namespace Cassandra.Tests.StorageCoreTests
             return new Column
                 {
                     Name = name,
-                    Value = CassandraStringHelpers.StringToBytes(value)
+                    Value = StringHelpers.StringToBytes(value)
                 };
         }
 
