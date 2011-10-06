@@ -10,8 +10,7 @@ namespace CassandraClient.AquilesTrash.Encoders
     /// </summary>
     public class UTF8EncoderHelper : IByteEncoderHelper<string>
     {
-        private UTF8Encoding utf8ByteEncoder = new UTF8Encoding();
-        #region IByteEncoderHelper<string> Members
+        private readonly UTF8Encoding utf8ByteEncoder = new UTF8Encoding();
 
         /// <summary>
         /// Transform a value into a Byte Array
@@ -32,6 +31,6 @@ namespace CassandraClient.AquilesTrash.Encoders
             return utf8ByteEncoder.GetString(value);
         }
 
-        #endregion
+        
     }
 }

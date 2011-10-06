@@ -10,8 +10,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesColumnConverter : IThriftConverter<AquilesColumn, Column>
     {
-        #region IThriftConverter<AquilesColumnConverter,Column> Members
-
         /// <summary>
         /// Transform AquilesColumn structure into Column
         /// </summary>
@@ -56,6 +54,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return aquilesColumn;
         }
 
-        #endregion
+        
     }
 }

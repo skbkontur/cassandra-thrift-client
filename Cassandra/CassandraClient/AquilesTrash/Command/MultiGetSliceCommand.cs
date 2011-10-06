@@ -49,7 +49,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "multiget_slice" over the connection. No return values.
         /// </summary>
@@ -106,7 +105,7 @@ namespace CassandraClient.AquilesTrash.Command
                 }
             }
         }
-        #endregion
+        
 
         private void buildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {

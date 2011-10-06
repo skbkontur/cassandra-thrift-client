@@ -49,7 +49,6 @@ namespace CassandraClient.AquilesTrash.Command
             set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "get_count" over the connection. Return values are set into Output
         /// </summary>
@@ -72,6 +71,6 @@ namespace CassandraClient.AquilesTrash.Command
         {
             base.ValidateInput();
         }
-        #endregion
+        
     }
 }

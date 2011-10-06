@@ -9,7 +9,7 @@ namespace Cassandra.Tests.ObjComparer
     //    {
     //    }
 
-    //    #region INodeProcessor Members
+    //     INodeProcessor Members
 
     //    public bool TryProcess(object node, FieldInfo fieldInfo, out Type nodeType, out object nodeValue)
     //    {
@@ -46,6 +46,6 @@ namespace Cassandra.Tests.ObjComparer
     //        return true;
     //    }
 
-    //    #endregion
+    //    
     //}
 }

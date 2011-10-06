@@ -16,8 +16,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
-
         /// <summary>
         /// Executes a "describe_cluster_name" over the connection, set the ClusterName property with the returned value.
         /// </summary>
@@ -36,6 +34,6 @@ namespace CassandraClient.AquilesTrash.Command
             //do nothing
         }
 
-        #endregion
+        
     }
 }

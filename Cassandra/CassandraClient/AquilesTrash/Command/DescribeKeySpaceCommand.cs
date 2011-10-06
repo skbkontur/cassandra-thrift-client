@@ -35,7 +35,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "describe_keyspace" over the connection.
         /// 
@@ -58,7 +57,7 @@ namespace CassandraClient.AquilesTrash.Command
             //Do nothing
 
         }
-        #endregion
+        
 
         private AquilesColumnFamily Translate(string columnFamilyName, Dictionary<string, string> data)
         {

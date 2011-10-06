@@ -31,8 +31,6 @@ namespace CassandraClient.AquilesTrash.Model
             set;
         }
 
-        #region IAquilesObject<KeyRange> Members
-
         /// <summary>
         /// get or set the list of endpoints (nodes) that replace data in the TokenRange
         /// </summary>
@@ -96,6 +94,6 @@ namespace CassandraClient.AquilesTrash.Model
             }
         }
 
-        #endregion
+        
     }
 }

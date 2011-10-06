@@ -55,8 +55,6 @@ namespace CassandraClient.AquilesTrash.Model
         {
         }
 
-        #region IAquilesObject<Column> Members
-
         /// <summary>
         /// Validate the object data to assure consistency when used as input parameter when used in an insert Operation
         /// <remarks>Throw <see cref="CassandraClient.AquilesTrash.Exceptions.AquilesCommandParameterException"/> in case there is something wrong</remarks>
@@ -119,7 +117,7 @@ namespace CassandraClient.AquilesTrash.Model
                 throw new AquilesCommandParameterException("ColumnName cannot be null or empty.");
             }
         }
-        #endregion
+        
 
         /// <summary>
         /// overriding ToString

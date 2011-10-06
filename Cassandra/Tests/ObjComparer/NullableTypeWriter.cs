@@ -12,8 +12,6 @@ namespace Cassandra.Tests.ObjComparer
             this.nullWriter = nullWriter;
         }
 
-        #region ITypeWriter Members
-
         public bool TryWrite(Type type, object value, XmlWriter writer)
         {
             if(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
@@ -33,7 +31,7 @@ namespace Cassandra.Tests.ObjComparer
             return false;
         }
 
-        #endregion
+        
 
         private readonly ITypeWriter complexTypeWriter;
         private readonly ITypeWriter nullWriter;

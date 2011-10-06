@@ -15,8 +15,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesKeyspaceConverter : IThriftConverter<AquilesKeyspace, KsDef>
     {
-        #region IThriftConverter<AquilesKeyspace,KsDef> Members
-
         /// <summary>
         /// Transform AquilesKeyspace structure into KsDef
         /// </summary>
@@ -74,6 +72,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return keyspace;
         }
 
-        #endregion
+        
     }
 }

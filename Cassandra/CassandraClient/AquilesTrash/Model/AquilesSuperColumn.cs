@@ -38,7 +38,6 @@ namespace CassandraClient.AquilesTrash.Model
             this.Columns = new List<AquilesColumn>();
         }
 
-        #region IAquilesObject<SuperColumn> Members
         /// <summary>
         /// Validate the object data to assure consistency when used as input parameter when used in an insert Operation
         /// <remarks>Throw <see cref="Aquiles.Exceptions.AquilesCommandParameterException"/> in case there is something wrong</remarks>
@@ -117,7 +116,7 @@ namespace CassandraClient.AquilesTrash.Model
             }
         }
 
-        #endregion
+        
 
         /// <summary>
         /// overriding ToString

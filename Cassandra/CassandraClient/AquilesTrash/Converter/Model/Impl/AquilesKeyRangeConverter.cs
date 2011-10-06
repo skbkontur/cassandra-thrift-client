@@ -14,8 +14,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesKeyRangeConverter : IThriftConverter<AquilesKeyRange, KeyRange>
     {
-        #region IThriftConverter<AquilesKeyRange,KeyRange> Members
-
         /// <summary>
         /// Transform AquilesKeyRange structure into KeyRange
         /// </summary>
@@ -46,6 +44,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return keyRange;
         }
 
-        #endregion
+        
     }
 }

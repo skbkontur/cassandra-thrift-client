@@ -29,7 +29,6 @@ namespace CassandraClient.AquilesTrash.Model
             set;
         }
 
-        #region IAquilesObject<SlicePredicate> Members
         /// <summary>
         /// Validate the object data to assure consistency when used as input parameter when used in an insert Operation
         /// <remarks>Throw <see cref="Aquiles.Exceptions.AquilesCommandParameterException"/> in case there is something wrong</remarks>
@@ -135,6 +134,6 @@ namespace CassandraClient.AquilesTrash.Model
             }
         }
 
-        #endregion
+        
     }
 }

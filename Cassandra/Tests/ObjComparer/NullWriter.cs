@@ -5,8 +5,6 @@ namespace Cassandra.Tests.ObjComparer
 {
     public class NullWriter : ITypeWriter
     {
-        #region ITypeWriter Members
-
         public bool TryWrite(Type type, object value, XmlWriter writer)
         {
             if(value == null)
@@ -16,7 +14,5 @@ namespace Cassandra.Tests.ObjComparer
             }
             return false;
         }
-
-        #endregion
     }
 }

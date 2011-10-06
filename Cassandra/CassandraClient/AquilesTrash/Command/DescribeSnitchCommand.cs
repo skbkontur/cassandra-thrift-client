@@ -19,8 +19,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesSystemCommand Members
-
         /// <summary>
         /// Executes a "describe_snitch" over the connection.
         /// </summary>
@@ -40,7 +38,7 @@ namespace CassandraClient.AquilesTrash.Command
             // DO NOTHING
         }
 
-        #endregion
+        
 
     }
 }

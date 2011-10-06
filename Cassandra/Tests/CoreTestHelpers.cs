@@ -22,8 +22,6 @@ namespace Cassandra.Tests
             return result.ToString();
         }
 
-        #region Nested type: CollectionSlot
-
         private class CollectionSlot
         {
             public override string ToString()
@@ -49,6 +47,6 @@ namespace Cassandra.Tests
             public string[] Values;
         }
 
-        #endregion
+        
     }
 }

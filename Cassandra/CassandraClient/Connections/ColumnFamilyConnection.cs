@@ -16,8 +16,6 @@ namespace CassandraClient.Connections
             this.enumerableFactory = enumerableFactory;
         }
 
-        #region IColumnFamilyConnection Members
-
         public void Dispose()
         {
             implementation.Dispose();
@@ -149,7 +147,7 @@ namespace CassandraClient.Connections
             return result;
         }
 
-        #endregion
+        
 
         private readonly IColumnFamilyConnectionImplementation implementation;
         private readonly IEnumerableFactory enumerableFactory;

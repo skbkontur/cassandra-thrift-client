@@ -14,8 +14,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesSliceRangeConverter : IThriftConverter<AquilesSliceRange, SliceRange>
     {
-        #region IThriftConverter<AquilesSliceRange,SliceRange> Members
-
         /// <summary>
         /// Transform AquilesSliceRange structure into SliceRange
         /// </summary>
@@ -68,7 +66,7 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return sliceRange;
         }
 
-        #endregion
+        
 
     }
 }

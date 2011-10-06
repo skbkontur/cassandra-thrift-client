@@ -14,8 +14,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesIndexExpressionConverter : IThriftConverter<AquilesIndexExpression, IndexExpression>
     {
-
-        #region IThriftConverter<AquilesIndexExpression,IndexExpression> Members
         /// <summary>
         /// Transform AquilesIndexExpression structure into IndexExpression
         /// </summary>
@@ -48,6 +46,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return indexExpression;
         }
 
-        #endregion
+        
     }
 }

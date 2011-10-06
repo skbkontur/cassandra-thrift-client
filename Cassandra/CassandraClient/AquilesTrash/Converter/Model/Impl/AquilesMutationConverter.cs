@@ -12,9 +12,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesMutationConverter : IThriftConverter<IAquilesMutation, Mutation>
     {
-
-        #region IThriftConverter<IAquilesMutation,Mutation> Members
-
         /// <summary>
         /// Transform IAquilesMutation structure into Mutation
         /// </summary>
@@ -50,7 +47,7 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             throw new NotImplementedException();
         }
 
-        #endregion
+        
 
         private Mutation convertSetMutation(AquilesSetMutation mutation)
         {

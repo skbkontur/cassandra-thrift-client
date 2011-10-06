@@ -28,7 +28,6 @@ namespace CassandraClient.AquilesTrash.Command
             set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "batch_mutate" over the connection. No return values
         /// </summary>
@@ -96,7 +95,7 @@ namespace CassandraClient.AquilesTrash.Command
             }
         }
 
-        #endregion
+        
 
         private Dictionary<byte[], Dictionary<string, List<Mutation>>> translate(Dictionary<byte[], Dictionary<string, List<IAquilesMutation>>> mutations)
         {

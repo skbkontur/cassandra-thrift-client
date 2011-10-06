@@ -11,8 +11,6 @@ namespace CassandraClient.AquilesTrash.Encoders
     public class LongEncoderHelper : IByteEncoderHelper<long>
     {
         //TODO Ver de hacer un long encoder de endian y otro para big-endian
-        #region IByteEncoderHelper<long> Members
-
         /// <summary>
         /// Transform a value into a Byte Array
         /// </summary>
@@ -32,6 +30,6 @@ namespace CassandraClient.AquilesTrash.Encoders
             return BitConverter.ToInt64(value, 0);
         }
 
-        #endregion
+        
     }
 }

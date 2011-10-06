@@ -11,8 +11,6 @@ namespace Cassandra.Tests.ObjComparer
             this.compareInterfaceAs = compareInterfaceAs;
         }
 
-        #region INodeProcessor Members
-
         public bool TryProcess(object node, FieldInfo fieldInfo, out Type nodeType, out object nodeValue)
         {
             nodeType = fieldInfo.FieldType;
@@ -50,7 +48,7 @@ namespace Cassandra.Tests.ObjComparer
             return true;
         }
 
-        #endregion
+        
 
         private readonly CompareInterfaceAs compareInterfaceAs;
         private readonly CompareTypeAs compareTypeAs;

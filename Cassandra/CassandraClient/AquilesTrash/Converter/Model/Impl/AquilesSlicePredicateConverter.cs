@@ -15,8 +15,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesSlicePredicateConverter : IThriftConverter<AquilesSlicePredicate, SlicePredicate>
     {
-        #region IThriftConverter<AquilesSlicePredicate,SlicePredicate> Members
-
         /// <summary>
         /// Transform AquilesSlicePredicate structure into SlicePredicate
         /// </summary>
@@ -63,6 +61,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return predicate;
         }
 
-        #endregion
+        
     }
 }

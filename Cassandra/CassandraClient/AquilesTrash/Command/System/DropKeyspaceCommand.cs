@@ -26,7 +26,6 @@ namespace CassandraClient.AquilesTrash.Command.System
             private set;
         }
 
-        #region IAquilesCommand Members
 
         /// <summary>
         /// Executes a "system_drop_keyspace" over the connection.
@@ -48,6 +47,6 @@ namespace CassandraClient.AquilesTrash.Command.System
                 throw new AquilesCommandParameterException("Keyspace cannot be null or empty.");
             }
         }
-        #endregion
+        
     }
 }

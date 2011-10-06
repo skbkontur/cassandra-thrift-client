@@ -14,8 +14,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesTokenRangeConverter : IThriftConverter<AquilesTokenRange, TokenRange>
     {
-        #region IThriftConverter<AquilesTokenRange,TokenRange> Members
-
         /// <summary>
         /// Transform AquilesTokenRange structure into TokenRange
         /// </summary>
@@ -46,6 +44,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return tokenRange;
         }
 
-        #endregion
+        
     }
 }

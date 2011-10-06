@@ -29,8 +29,6 @@ namespace CassandraClient.AquilesTrash.Command.System
             private set;
         }
 
-        #region IAquilesSystemCommand Members
-
         /// <summary>
         /// Executes a "system_update_keyspace" over the connection, set the ClusterName property with the returned value.
         /// </summary>
@@ -50,6 +48,6 @@ namespace CassandraClient.AquilesTrash.Command.System
             this.KeyspaceDefinition.ValidateForInsertOperation();
         }
 
-        #endregion
+        
     }
 }

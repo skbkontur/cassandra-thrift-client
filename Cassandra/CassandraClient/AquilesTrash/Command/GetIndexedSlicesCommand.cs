@@ -54,7 +54,6 @@ namespace CassandraClient.AquilesTrash.Command
             get;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "get_indexed_slices" over the connection.
         /// </summary>
@@ -67,7 +66,7 @@ namespace CassandraClient.AquilesTrash.Command
             List<KeySlice> result = cassandraClient.get_indexed_slices(columnParent, indexClause, slicePredicate, this.GetCassandraConsistencyLevel());
             this.BuildOutput(result);
         }
-        #endregion
+        
 
         /// <summary>
         /// Validate the input parameters. 

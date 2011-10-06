@@ -38,8 +38,6 @@ namespace CassandraClient.Connections
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
 
-        #region IColumnFamilyConnectionImplementation Members
-
         public void Dispose()
         {
             //aquilesConnection.Dispose();
@@ -222,7 +220,7 @@ namespace CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        #endregion
+        
 
         private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns)
         {

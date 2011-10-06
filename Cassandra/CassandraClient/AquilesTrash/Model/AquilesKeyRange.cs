@@ -26,8 +26,6 @@ namespace CassandraClient.AquilesTrash.Model
             set;
         }
 
-        #region IAquilesObject<KeyRange> Members
-
         /// <summary>
         /// get or set how many keys to permit in the KeyRange
         /// </summary>
@@ -104,6 +102,6 @@ namespace CassandraClient.AquilesTrash.Model
             }
         }
 
-        #endregion
+        
     }
 }

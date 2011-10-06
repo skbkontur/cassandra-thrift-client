@@ -20,7 +20,6 @@ namespace CassandraClient.AquilesTrash.Command
             set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "login" over the connection.
         /// <remarks>In case the login fails, posible login exceptions are AuthenticationException, AuthorizationException</remarks>
@@ -42,7 +41,7 @@ namespace CassandraClient.AquilesTrash.Command
                 throw new AquilesCommandParameterException("No credential information provided.");
             }
         }
-        #endregion
+        
 
         private AuthenticationRequest BuildAuthenticationRequest()
         {

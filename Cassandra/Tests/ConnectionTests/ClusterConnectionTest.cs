@@ -22,8 +22,6 @@ namespace Cassandra.Tests.ConnectionTests
 {
     public class ClusterConnectionTest : TestBase
     {
-        #region Setup/Teardown
-
         public override void SetUp()
         {
             base.SetUp();
@@ -31,8 +29,6 @@ namespace Cassandra.Tests.ConnectionTests
             clusterConnection = new ClusterConnection(commandExecuter, ConsistencyLevel.ALL,
                                                       ConsistencyLevel.EACH_QUORUM);
         }
-
-        #endregion
 
         [Test]
         public void TestAddKeyspace()

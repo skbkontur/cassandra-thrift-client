@@ -10,8 +10,6 @@ namespace CassandraClient.AquilesTrash.Encoders
     /// </summary>
     public class GUIDEncoderHelper : IByteEncoderHelper<Guid>
     {
-        #region IByteEncoderHelper<Guid> Members
-
         /// <summary>
         /// Transform a value into a Byte Array
         /// </summary>
@@ -32,6 +30,6 @@ namespace CassandraClient.AquilesTrash.Encoders
             return new Guid(value);
         }
 
-        #endregion
+        
     }
 }

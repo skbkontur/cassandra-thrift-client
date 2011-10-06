@@ -15,8 +15,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
     /// </summary>
     public class AquilesColumnFamilyConverter : IThriftConverter<AquilesColumnFamily, CfDef>
     {
-        #region IThriftConverter<AquilesColumnFamily,CfDef> Members
-
         /// <summary>
         /// Transform AquilesColumnFamily structure into CfDef
         /// </summary>
@@ -139,6 +137,6 @@ namespace CassandraClient.AquilesTrash.Converter.Model.Impl
             return columnFamily;
         }
 
-        #endregion
+        
     }
 }

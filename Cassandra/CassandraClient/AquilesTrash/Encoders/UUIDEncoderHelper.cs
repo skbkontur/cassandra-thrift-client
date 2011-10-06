@@ -11,8 +11,6 @@ namespace CassandraClient.AquilesTrash.Encoders
     /// </summary>
     public class UUIDEncoderHelper : IByteEncoderHelper<Guid>
     {
-        #region IByteEncoderHelper<Guid> Members
-
         /// <summary>
         /// Transform a value into a Byte Array
         /// </summary>
@@ -44,7 +42,7 @@ namespace CassandraClient.AquilesTrash.Encoders
             return new Guid(newValue);
         }
 
-        #endregion
+        
 
         private byte[] ReverseLowFieldTimestamp(byte[] guid)
         {

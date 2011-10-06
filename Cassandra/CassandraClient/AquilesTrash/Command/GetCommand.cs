@@ -23,8 +23,6 @@ namespace CassandraClient.AquilesTrash.Command
             logger = LogManager.GetLogger(GetType());
         }
 
-        #region IAquilesCommand Members
-
         /// <summary>
         /// Executes a "get" over the connection. Return values are set into Output
         /// </summary>
@@ -58,7 +56,7 @@ namespace CassandraClient.AquilesTrash.Command
             }
         }
 
-        #endregion
+        
 
         /// <summary>
         /// get the return value

@@ -8,8 +8,6 @@ namespace CassandraClient.AquilesTrash.Command
     /// </summary>
     public class TruncateColumnFamilyCommand : AbstractKeyspaceColumnFamilyDependantCommand, IAquilesCommand
     {
-        #region IAquilesCommand Members
-
         /// <summary>
         /// Executes a "truncate" over the connection.
         /// </summary>
@@ -27,6 +25,6 @@ namespace CassandraClient.AquilesTrash.Command
         {
             base.ValidateInput();
         }
-        #endregion
+        
     }
 }

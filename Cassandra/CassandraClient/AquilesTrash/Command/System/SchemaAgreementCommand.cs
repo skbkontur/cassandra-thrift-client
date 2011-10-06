@@ -20,8 +20,6 @@ namespace CassandraClient.AquilesTrash.Command.System
             private set;
         }
 
-        #region IAquilesSystemCommand Members
-
         /// <summary>
         /// Executes a "describe_schema_versions" over the connection.
         /// </summary>
@@ -42,7 +40,7 @@ namespace CassandraClient.AquilesTrash.Command.System
             // DO NOTHING
         }
 
-        #endregion
+        
 
         private void BuildOutput(Dictionary<string, List<string>> keyspaceAgreement)
         {

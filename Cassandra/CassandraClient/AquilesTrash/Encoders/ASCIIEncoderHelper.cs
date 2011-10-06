@@ -8,7 +8,6 @@ namespace CassandraClient.AquilesTrash.Encoders
     public class ASCIIEncoderHelper : IByteEncoderHelper<string>
     {
         private ASCIIEncoding byteEncoder = new ASCIIEncoding();
-        #region IByteEncoderHelper<string> Members
 
         /// <summary>
         /// Transform a value into a Byte Array
@@ -29,6 +28,6 @@ namespace CassandraClient.AquilesTrash.Encoders
             return byteEncoder.GetString(value);
         }
 
-        #endregion
+        
     }
 }

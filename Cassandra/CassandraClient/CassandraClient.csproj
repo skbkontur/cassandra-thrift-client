@@ -69,7 +69,6 @@
     <Compile Include="AquilesTrash\Command\AquilesConsistencyLevel.cs" />
     <Compile Include="AquilesTrash\Command\BatchMutateCommand.cs" />
     <Compile Include="AquilesTrash\Command\DeleteRowCommand.cs" />
-    <Compile Include="AquilesTrash\Command\DeleteColumnCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeKeySpaceCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeSnitchCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeSplitsCommand.cs" />

@@ -76,8 +76,6 @@ namespace CassandraClient.AquilesTrash.Model
             get;
             set;
         }
-
-        #region IAquilesObject<KsDef> Members
       
         /// <summary>
         /// Validate the object data to assure consistency when used as input parameter when used in an insert Operation
@@ -123,7 +121,7 @@ namespace CassandraClient.AquilesTrash.Model
             //throw new NotImplementedException();
         }
 
-        #endregion
+        
 
         private void ValidateReplicationFactor()
         {

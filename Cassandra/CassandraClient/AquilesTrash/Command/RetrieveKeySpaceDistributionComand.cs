@@ -33,8 +33,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
-
         /// <summary>
         /// Executes a "describe_ring" over the connection, set the Version property with the returned value.
         /// </summary>
@@ -56,7 +54,7 @@ namespace CassandraClient.AquilesTrash.Command
                 throw new AquilesCommandParameterException("Keyspace must be not null or empty.");
             }
         }
-        #endregion
+        
 
         private void BuildOut(List<TokenRange> results)
         {

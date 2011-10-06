@@ -34,8 +34,6 @@ namespace CassandraClient.AquilesTrash.Model
             set;
         }
 
-        #region IAquilesObject Members
-
         public void ValidateForInsertOperation()
         {
             // DO NOTHING
@@ -64,6 +62,6 @@ namespace CassandraClient.AquilesTrash.Model
             }
         }
 
-        #endregion
+        
     }
 }

@@ -40,7 +40,6 @@ namespace CassandraClient.AquilesTrash.Command
             this.logger = LogManager.GetLogger(this.GetType());
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "insert" over the connection. No return values.
         /// </summary>
@@ -66,7 +65,7 @@ namespace CassandraClient.AquilesTrash.Command
             }
             this.Column.ValidateForInsertOperation();
         }
-        #endregion
+        
 
     }
 }

@@ -19,8 +19,6 @@ namespace CassandraClient.AquilesTrash.Command
             logger = LogManager.GetLogger(GetType());
         }
 
-        #region IAquilesCommand Members
-
         /// <summary>
         /// Executes a "remove" over the connection. No return values
         /// </summary>
@@ -44,7 +42,7 @@ namespace CassandraClient.AquilesTrash.Command
         {
         }
 
-        #endregion
+        
 
         /// <summary>
         /// get or set supercolumn name

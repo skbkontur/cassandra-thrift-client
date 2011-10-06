@@ -22,7 +22,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "describe_keyspaces" over the connection, set the Keyspaces property with the returned value.
         /// </summary>
@@ -59,6 +58,6 @@ namespace CassandraClient.AquilesTrash.Command
             //do nothing
         }
 
-        #endregion
+        
     }
 }

@@ -10,8 +10,6 @@ namespace Cassandra.Tests
     [TestFixture]
     public abstract class TestBase
     {
-        #region Setup/Teardown
-
         [SetUp]
         public virtual void SetUp()
         {
@@ -24,7 +22,7 @@ namespace Cassandra.Tests
             MockRepository.VerifyAll();
         }
 
-        #endregion
+        
 
         public static T GetMock<T>()
         {
@@ -98,15 +96,13 @@ namespace Cassandra.Tests
                 ordered = MockRepository.Ordered();
             }
 
-            #region IDisposable Members
-
             public void Dispose()
             {
                 ordered.Dispose();
                 MockRepository.ReplayAll();
             }
 
-            #endregion
+            
 
             private readonly IDisposable ordered;
         }

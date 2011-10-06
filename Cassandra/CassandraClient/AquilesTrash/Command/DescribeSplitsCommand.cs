@@ -48,7 +48,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "describe_splits" over the connection. Returns list of token strings such that first subrange is (list[0], list[1]], next is (list[1], list[2]], etc.
         /// </summary>
@@ -79,6 +78,6 @@ namespace CassandraClient.AquilesTrash.Command
             }
         }
 
-        #endregion
+        
     }
 }

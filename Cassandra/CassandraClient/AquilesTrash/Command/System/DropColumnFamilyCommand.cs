@@ -26,8 +26,6 @@ namespace CassandraClient.AquilesTrash.Command.System
             private set;
         }
 
-        #region IAquilesSystemCommand Members
-
         /// <summary>
         /// Executes a "system_drop_column_family" over the connection.
         /// </summary>
@@ -48,6 +46,6 @@ namespace CassandraClient.AquilesTrash.Command.System
                 throw new AquilesCommandParameterException("ColumnFamily cannot be null or empty.");
             }
         }
-        #endregion
+        
     }
 }

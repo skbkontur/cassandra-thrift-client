@@ -40,7 +40,6 @@ namespace CassandraClient.AquilesTrash.Command
             private set;
         }
 
-        #region IAquilesCommand Members
         /// <summary>
         /// Executes a "get_slice" over the connection. No return values.
         /// </summary>
@@ -71,7 +70,7 @@ namespace CassandraClient.AquilesTrash.Command
                 this.Predicate.ValidateForQueryOperation();
             }
         }
-        #endregion
+        
 
         private void buildOut(List<ColumnOrSuperColumn> output)
         {

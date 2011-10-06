@@ -77,8 +77,6 @@ namespace StorageCore.Extender
         private readonly Hashtable typeExtenders = new Hashtable();
         private readonly object typeExtendersLock = new object();
 
-        #region Emit
-
         private static void EmitFillOfArrayProperty(ILGenerator il, Type type, PropertyInfo propertyInfo)
         {
             MethodInfo getter = propertyInfo.GetGetMethod();
@@ -213,16 +211,10 @@ namespace StorageCore.Extender
             il.MarkLabel(propDone);
         }
 
-        #endregion
-
-        #region Nested type: ScanProperties
-
         public static class ScanProperties
         {
             public static readonly Func<Type, IEnumerable<PropertyInfo>> AllPublic =
                 type => type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
         }
-
-        #endregion
     }
 }
