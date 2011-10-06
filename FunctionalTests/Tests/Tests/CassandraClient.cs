@@ -141,6 +141,15 @@ namespace Tests.Tests
             return result.ToArray();
         }
 
+        public string[] GetKeys(string keySpaceName, string columnFamilyName)
+        {
+            IEnumerable<string> result;
+            using (IColumnFamilyConnection columnFamilyConnection =
+                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+                result = columnFamilyConnection.GetKeys(10);
+            return result.ToArray();
+        }
+
         private void RemoveKeyspace(string keyspaceName)
         {
             using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())

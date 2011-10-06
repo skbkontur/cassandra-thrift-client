@@ -7,27 +7,26 @@ using CassandraClient.Abstractions;
 
 namespace CassandraClient.Connections
 {
-    public class EnumerableFactory: IEnumerableFactory
+    public class EnumerableFactory : IEnumerableFactory
     {
         public IEnumerable<string> GetRowsEnumerator(int bulkSize, Func<string, int, string[]> getRows)
         {
-            return new ObjectsEnumerable<string>(bulkSize,
-                (key, bSize) => getRows(key, bSize).ToArray(),
+            return new ObjectsEnumerable<string>(
+                key => getRows(key, bulkSize).ToArray(),
                 x => x);
         }
 
         public IEnumerable<Column> GetColumnsEnumerator(string key, int bulkSize, Func<string, string, int, Column[]> getColumns)
         {
-            return new ObjectsEnumerable<Column>(bulkSize,
-                (key1, bSize) => getColumns(key, key1, bSize).ToArray(),
+            return new ObjectsEnumerable<Column>(
+                key1 => getColumns(key, key1, bulkSize).ToArray(),
                 col => col.Name);
         }
 
         private class ObjectsEnumerator<T> : IEnumerator<T>
         {
-            public ObjectsEnumerator(int bulkSize, Func<string, int, T[]> getObjs, Func<T, string> getKey)
+            public ObjectsEnumerator(Func<string, T[]> getObjs, Func<T, string> getKey)
             {
-                this.bulkSize = bulkSize;
                 this.getObjs = getObjs;
                 this.getKey = getKey;
             }
@@ -41,7 +40,7 @@ namespace CassandraClient.Connections
                 if(++index >= bulk.Length)
                 {
                     index = 0;
-                    bulk = getObjs(exclusiveStartKey, bulkSize).ToArray();
+                    bulk = getObjs(exclusiveStartKey).ToArray();
                     if(bulk.Length == 0) return false;
                     exclusiveStartKey = getKey(bulk.Last());
                 }
@@ -58,8 +57,7 @@ namespace CassandraClient.Connections
             public T Current { get { return bulk[index]; } }
 
             object IEnumerator.Current { get { return Current; } }
-            private readonly int bulkSize;
-            private readonly Func<string, int, T[]> getObjs;
+            private readonly Func<string, T[]> getObjs;
             private readonly Func<T, string> getKey;
             private string exclusiveStartKey;
             private int index = -1;
@@ -68,16 +66,15 @@ namespace CassandraClient.Connections
 
         private class ObjectsEnumerable<T> : IEnumerable<T>
         {
-            public ObjectsEnumerable(int bulkSize, Func<string, int, T[]> getObjs, Func<T, string> getKey)
+            public ObjectsEnumerable(Func<string, T[]> getObjs, Func<T, string> getKey)
             {
-                this.bulkSize = bulkSize;
                 this.getObjs = getObjs;
                 this.getKey = getKey;
             }
 
             public IEnumerator<T> GetEnumerator()
             {
-                return new ObjectsEnumerator<T>(bulkSize, getObjs, getKey);
+                return new ObjectsEnumerator<T>(getObjs, getKey);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -85,8 +82,7 @@ namespace CassandraClient.Connections
                 return GetEnumerator();
             }
 
-            private readonly int bulkSize;
-            private readonly Func<string, int, T[]> getObjs;
+            private readonly Func<string, T[]> getObjs;
             private readonly Func<T, string> getKey;
         }
     }

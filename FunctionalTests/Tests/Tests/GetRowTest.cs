@@ -8,7 +8,7 @@ namespace Tests.Tests
     public class GetRowTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
         [Test]
-        public void TestGetAllRow()
+        public void TestGetFullRow()
         {
             var columns = new Column[14];
             for (int i = 0; i < columns.Length; i++)
@@ -20,6 +20,19 @@ namespace Tests.Tests
             }
             Column[] actualColumns = cassandraClient.GetRow(Constants.KeyspaceName, Constants.ColumnFamilyName, "row").ToArray();
             actualColumns.AssertEqualsTo(columns.OrderBy(x => x.Name).ToArray());
+        }
+
+        [Test]
+        public void TestGetAllRows()
+        {
+            var rows = new string[14];
+            for (int i = 0; i < rows.Length; i++)
+            {
+                rows[i] = "row" + i;
+                cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, rows[i], "columnName", "columnValue", 100);
+            }
+            string[] actualRows = cassandraClient.GetKeys(Constants.KeyspaceName, Constants.ColumnFamilyName).ToArray();
+            actualRows.OrderBy(x => x).ToArray().AssertEqualsTo(rows.OrderBy(x => x).ToArray());
         }
 
         [Test]
