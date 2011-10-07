@@ -76,17 +76,17 @@ namespace Tests.Tests
         public void TestTimeToLive()
         {
             cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", ttl : 1);
-            Thread.Sleep(2000);
+            Thread.Sleep(10000);
             CheckNotFound("row", "columnName");
         }
 
         [Test]
         public void TestTimeToLiveNotDependsOnTimestamp()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 7);
-            Thread.Sleep(5000);
-            Check("row", "columnName", "columnValue", 0, 7);
-            Thread.Sleep(5000);
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 20);
+            Thread.Sleep(10000);
+            Check("row", "columnName", "columnValue", 0, 20);
+            Thread.Sleep(20000);
             CheckNotFound("row", "columnName");
         }
     }
