@@ -61,7 +61,7 @@ namespace CassandraClient.AquilesTrash.Command
             // Dictionary<string, List<ColumnOrSuperColumn>> output
             KeyRange keyRange = ModelConverterHelper.Convert<AquilesKeyRange, KeyRange>(this.KeyTokenRange);
             List<KeySlice> result = cassandraClient.get_range_slices(columnParent, predicate, keyRange, this.GetCassandraConsistencyLevel());
-            this.buildOut(result);
+            this.BuildOut(result);
         }
 
         /// <summary>
@@ -90,25 +90,15 @@ namespace CassandraClient.AquilesTrash.Command
         }
         
 
-        private void buildOut(List<KeySlice> output)
+        private void BuildOut(IEnumerable<KeySlice> output)
         {
-            List<GetCommand.Out> columnOrSuperColumnList = null;
-            List<Out> returnObjs = new List<Out>();
-            Out returnObj = null;
-            
+            var returnObjs = new List<Out>();
+
             foreach(KeySlice keySlice in output)
             {
-                returnObj = new Out();
-                returnObj.Key = keySlice.Key;
-                columnOrSuperColumnList = new List<GetCommand.Out>(keySlice.Columns.Count);
-                foreach (ColumnOrSuperColumn columnOrSuperColumn in keySlice.Columns)
-                {
-                    columnOrSuperColumnList.Add(new GetCommand.Out()
-                    {
-                        Column = ModelConverterHelper.Convert<AquilesColumn,Column>(columnOrSuperColumn.Column),
-                        SuperColumn = ModelConverterHelper.Convert<AquilesSuperColumn, SuperColumn>(columnOrSuperColumn.Super_column)
-                    });
-                }
+                var returnObj = new Out {Key = keySlice.Key};
+                var columnOrSuperColumnList = new List<AquilesColumn>(keySlice.Columns.Count);
+                columnOrSuperColumnList.AddRange(keySlice.Columns.Select(columnOrSuperColumn => ModelConverterHelper.Convert<AquilesColumn, Column>(columnOrSuperColumn.Column)));
                 returnObj.Columns = columnOrSuperColumnList;
                 returnObjs.Add(returnObj);
             }
@@ -116,25 +106,14 @@ namespace CassandraClient.AquilesTrash.Command
             this.Output = returnObjs;
         }
 
-        /// <summary>
-        /// structure to Return Values
-        /// </summary>
         public class Out
         {
-
-            /// <summary>
-            /// get or set the Key value
-            /// </summary>
             public byte[] Key
             {
                 get;
                 set;
             }
-
-            /// <summary>
-            /// get or set the columns (or SuperColumns) within a key 
-            /// </summary>
-            public List<GetCommand.Out> Columns 
+            public List<AquilesColumn> Columns 
             {
                 get;
                 set;

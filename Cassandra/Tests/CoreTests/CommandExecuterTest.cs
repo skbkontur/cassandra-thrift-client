@@ -31,7 +31,8 @@ namespace Cassandra.Tests.CoreTests
                     ipEndPoint2,
                     ipEndPoint3
                 });
-            endpointManager.Expect(manager => manager.Register(ipEndPoint1));
+            cassandraClusterSettings.Expect(settings => settings.EndpointForFierceCommands).Return(ipEndPoint1);
+            endpointManager.Expect(manager => manager.Register(ipEndPoint1)).Repeat.Times(2);
             endpointManager.Expect(manager => manager.Register(ipEndPoint2));
             endpointManager.Expect(manager => manager.Register(ipEndPoint3));
             executer = new CommandExecuter(clusterConnectionPool, endpointManager, cassandraClusterSettings);
@@ -59,6 +60,7 @@ namespace Cassandra.Tests.CoreTests
         {
             var command = GetMock<ICommand>();
             command.Expect(command1 => command1.Validate()).Return(ValidationResult.Ok());
+            command.Expect(command1 => command1.IsFierce).Return(false);
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
@@ -76,6 +78,7 @@ namespace Cassandra.Tests.CoreTests
         {
             var command = GetMock<ICommand>();
             command.Expect(command1 => command1.Validate()).Return(ValidationResult.Ok());
+            command.Expect(command1 => command1.IsFierce).Return(false);
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
@@ -93,6 +96,7 @@ namespace Cassandra.Tests.CoreTests
         {
             var command = GetMock<ICommand>();
             command.Expect(command1 => command1.Validate()).Return(ValidationResult.Ok());
+            command.Expect(command1 => command1.IsFierce).Return(false).Repeat.Times(2);
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
@@ -119,6 +123,7 @@ namespace Cassandra.Tests.CoreTests
         {
             var command = GetMock<ICommand>();
             command.Expect(command1 => command1.Validate()).Return(ValidationResult.Ok());
+            command.Expect(command1 => command1.IsFierce).Return(false);
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");

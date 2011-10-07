@@ -106,7 +106,7 @@ namespace Cassandra.Tests.CoreTests
                     counter++;
                 }
             }
-            Assert.Greater(30, Math.Abs(counter - 100));
+            Assert.Greater(30, Math.Abs(counter - 110));
         }
 
         [Test]

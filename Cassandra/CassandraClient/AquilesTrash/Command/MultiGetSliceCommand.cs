@@ -109,19 +109,18 @@ namespace CassandraClient.AquilesTrash.Command
 
         private void buildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {
-            List<GetCommand.Out> columnOrSuperColumnList = null;
-            GetCommand.Out columnOrSuperColumn = null;
+            List<AquilesColumn> columnOrSuperColumnList = null;
+            AquilesColumn columnOrSuperColumn = null;
             Out returnObj = new Out();
-            returnObj.Results = new Dictionary<byte[], List<GetCommand.Out>>();
+            returnObj.Results = new Dictionary<byte[], List<AquilesColumn>>();
             Dictionary<byte[], List<ColumnOrSuperColumn>>.Enumerator outputEnum = output.GetEnumerator();
             while (outputEnum.MoveNext())
             {
-                columnOrSuperColumnList = new List<GetCommand.Out>();
+                columnOrSuperColumnList = new List<AquilesColumn>();
                 foreach (ColumnOrSuperColumn cassandraColumnOrSuperColumn in outputEnum.Current.Value)
                 {
-                    columnOrSuperColumn = new GetCommand.Out();
-                    columnOrSuperColumn.Column = ModelConverterHelper.Convert<AquilesColumn, Column>(cassandraColumnOrSuperColumn.Column);
-                    columnOrSuperColumn.SuperColumn = ModelConverterHelper.Convert<AquilesSuperColumn, SuperColumn>(cassandraColumnOrSuperColumn.Super_column);
+                    columnOrSuperColumn = new AquilesColumn();
+                    columnOrSuperColumn = ModelConverterHelper.Convert<AquilesColumn, Column>(cassandraColumnOrSuperColumn.Column);
                     columnOrSuperColumnList.Add(columnOrSuperColumn);
                 }
                 returnObj.Results.Add(outputEnum.Current.Key, columnOrSuperColumnList);
@@ -140,7 +139,7 @@ namespace CassandraClient.AquilesTrash.Command
             /// get or set the results 
             /// <remarks>the dictionary key is actually the key used over cassandra</remarks>
             /// </summary>
-            public Dictionary<byte[], List<GetCommand.Out>> Results 
+            public Dictionary<byte[], List<AquilesColumn>> Results 
             {
                 get;
                 set;

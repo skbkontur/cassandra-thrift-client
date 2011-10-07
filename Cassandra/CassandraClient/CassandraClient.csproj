@@ -70,8 +70,6 @@
     <Compile Include="AquilesTrash\Command\BatchMutateCommand.cs" />
     <Compile Include="AquilesTrash\Command\DeleteRowCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeKeySpaceCommand.cs" />
-    <Compile Include="AquilesTrash\Command\DescribeSnitchCommand.cs" />
-    <Compile Include="AquilesTrash\Command\DescribeSplitsCommand.cs" />
     <Compile Include="AquilesTrash\Command\GetCommand.cs" />
     <Compile Include="AquilesTrash\Command\GetCountCommand.cs" />
     <Compile Include="AquilesTrash\Command\GetIndexedSlicesCommand.cs" />

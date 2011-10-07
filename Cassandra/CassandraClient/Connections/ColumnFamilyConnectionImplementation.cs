@@ -83,9 +83,9 @@ namespace CassandraClient.Connections
                     Key = key
                 };
             ExecuteCommand(getCommand);
-            if(getCommand.Output == null || getCommand.Output.Column == null)
+            if(getCommand.Output == null || getCommand.Output == null)
                 return false;
-            result = getCommand.Output.Column.ToColumn();
+            result = getCommand.Output.ToColumn();
             return true;
         }
 
@@ -128,7 +128,7 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(getSliceCommand);
-            return getSliceCommand.Output.Results.Select(@out => @out.Column.ToColumn()).ToArray();
+            return getSliceCommand.Output.Select(@out => @out.ToColumn()).ToArray();
         }
 
         public List<byte[]> GetKeys(byte[] startKey, int count)
@@ -161,7 +161,7 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.Column.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()
@@ -193,7 +193,7 @@ namespace CassandraClient.Connections
                 };
 
             ExecuteCommand(gisc);
-            return gisc.Output.Select(res => res.Key).ToList();
+            return gisc.Output;
         }
 
         public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data)

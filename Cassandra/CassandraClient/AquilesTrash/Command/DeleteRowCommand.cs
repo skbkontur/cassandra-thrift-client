@@ -19,15 +19,12 @@ namespace CassandraClient.AquilesTrash.Command
             var timestamp = Timestamp ?? DateTimeService.UtcNow.Ticks;
             cassandraClient.remove(
                 Key,
-                new ColumnPath
-                    {
-                        Column_family = ColumnFamily
-                    },
+                new ColumnPath {Column_family = ColumnFamily},
                 timestamp,
                 GetCassandraConsistencyLevel());
         }
-        
-        public long? Timestamp { get; set; }
+
+        public long? Timestamp { private get; set; }
         private readonly ILog logger;
     }
 }
