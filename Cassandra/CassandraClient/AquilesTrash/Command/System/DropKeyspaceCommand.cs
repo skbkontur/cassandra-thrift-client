@@ -31,16 +31,16 @@ namespace CassandraClient.AquilesTrash.Command.System
         /// Executes a "system_drop_keyspace" over the connection.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            this.Output = cassandraClient.system_drop_keyspace(this.Keyspace);
+            Output = cassandraClient.system_drop_keyspace(this.Keyspace);
         }
 
         /// <summary>
         /// Validate the input parameters. 
         /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
         /// </summary>
-        public void ValidateInput()
+        public override void ValidateInput()
         {
             if (String.IsNullOrEmpty(this.Keyspace))
             {

@@ -23,7 +23,7 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "remove" over the connection. No return values
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             ColumnPath columnPath;
             logger.DebugFormat("Removing key '{0}' from columnFamily '{1}'.", Key, ColumnFamily);
@@ -38,7 +38,7 @@ namespace CassandraClient.AquilesTrash.Command
                 GetCassandraConsistencyLevel());
         }
 
-        public void ValidateInput()
+        public override void ValidateInput()
         {
         }
 

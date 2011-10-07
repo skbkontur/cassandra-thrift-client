@@ -6,7 +6,6 @@ using CassandraClient.AquilesTrash.Command;
 
 namespace CassandraClient.Abstractions
 {
-/*todo Срочно порвать эту херь*/
     public class AquilesCommandAdaptor : ICommand
     {
         public readonly IAquilesCommand command;
@@ -24,11 +23,12 @@ namespace CassandraClient.Abstractions
 
         public ValidationResult Validate()
         {
+            //todo что-то решить с валидациями
             return ValidationResult.Ok();
-            throw new NotImplementedException();
         }
 
         
         public string Keyspace { get; private set; }
+        public virtual bool IsFierce { get { return command.IsFierce; } }
     }
 }

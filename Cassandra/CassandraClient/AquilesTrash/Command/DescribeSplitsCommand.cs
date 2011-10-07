@@ -52,7 +52,7 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "describe_splits" over the connection. Returns list of token strings such that first subrange is (list[0], list[1]], next is (list[1], list[2]], etc.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             this.Output = cassandraClient.describe_splits(this.ColumnFamily, this.StartToken, this.EndToken, this.KeysPerSplit);
         }

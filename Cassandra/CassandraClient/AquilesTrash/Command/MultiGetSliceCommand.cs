@@ -53,10 +53,10 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "multiget_slice" over the connection. No return values.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             this.Output = null;
-            ColumnParent columnParent = this.BuildColumnParent(this.SuperColumn);
+            ColumnParent columnParent = this.BuildColumnParent();
             SlicePredicate predicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(this.Predicate);
             Dictionary<byte[], List<ColumnOrSuperColumn>> output = cassandraClient.multiget_slice(this.Keys, columnParent, predicate, this.GetCassandraConsistencyLevel());
             this.buildOut(output);

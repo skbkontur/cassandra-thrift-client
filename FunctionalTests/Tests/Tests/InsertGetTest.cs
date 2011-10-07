@@ -83,10 +83,10 @@ namespace Tests.Tests
         [Test]
         public void TestTimeToLiveNotDependsOnTimestamp()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 1);
-            Thread.Sleep(500);
-            Check("row", "columnName", "columnValue", 0, 1);
-            Thread.Sleep(2000);
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 7);
+            Thread.Sleep(5000);
+            Check("row", "columnName", "columnValue", 0, 7);
+            Thread.Sleep(5000);
             CheckNotFound("row", "columnName");
         }
     }

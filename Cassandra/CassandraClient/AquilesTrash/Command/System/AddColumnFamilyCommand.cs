@@ -33,7 +33,7 @@ namespace CassandraClient.AquilesTrash.Command.System
         /// Executes a "system_add_column_family" over the connection, set the ClusterName property with the returned value.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             CfDef columnFamily = ModelConverterHelper.Convert<AquilesColumnFamily,CfDef>(this.ColumnFamilyDefinition);
             this.Output = cassandraClient.system_add_column_family(columnFamily);
@@ -43,7 +43,7 @@ namespace CassandraClient.AquilesTrash.Command.System
         /// Validate the input parameters. 
         /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
         /// </summary>
-        public void ValidateInput()
+        public override void ValidateInput()
         {
             this.ColumnFamilyDefinition.ValidateForInsertOperation();
         }

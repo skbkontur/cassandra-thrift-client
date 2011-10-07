@@ -44,14 +44,15 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "insert" over the connection. No return values.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             logger.DebugFormat("Adding key '{0}' from columnFamily '{1}'.", this.Key, this.ColumnFamily);
             Column column = ModelConverterHelper.Convert<AquilesColumn,Column>(this.Column);
-            ColumnParent columnParent = this.BuildColumnParent(this.SuperColumn);
+            ColumnParent columnParent = this.BuildColumnParent();
             cassandraClient.insert(this.Key, columnParent, column, this.GetCassandraConsistencyLevel());
 
         }
+        
         /// <summary>
         /// Validate the input parameters. 
         /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters

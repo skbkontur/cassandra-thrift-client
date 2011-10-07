@@ -81,9 +81,7 @@
     <Compile Include="AquilesTrash\Command\LoginCommand.cs" />
     <Compile Include="AquilesTrash\Command\MultiGetCountCommand.cs" />
     <Compile Include="AquilesTrash\Command\MultiGetSliceCommand.cs" />
-    <Compile Include="AquilesTrash\Command\RetrieveClusterNameCommand.cs" />
     <Compile Include="AquilesTrash\Command\RetrieveClusterPartitionerCommand.cs" />
-    <Compile Include="AquilesTrash\Command\RetrieveClusterVersionCommand.cs" />
     <Compile Include="AquilesTrash\Command\RetrieveKeySpaceDistributionComand.cs" />
     <Compile Include="AquilesTrash\Command\RetrieveKeySpacesCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\AddColumnFamilyCommand.cs" />

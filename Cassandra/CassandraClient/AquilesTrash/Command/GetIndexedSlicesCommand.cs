@@ -58,9 +58,9 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "get_indexed_slices" over the connection.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
-            ColumnParent columnParent = this.BuildColumnParent(this.SuperColumn);
+            ColumnParent columnParent = this.BuildColumnParent();
             IndexClause indexClause = ModelConverterHelper.Convert<AquilesIndexClause, IndexClause>(this.IndexClause);
             SlicePredicate slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(this.Predicate);
             List<KeySlice> result = cassandraClient.get_indexed_slices(columnParent, indexClause, slicePredicate, this.GetCassandraConsistencyLevel());

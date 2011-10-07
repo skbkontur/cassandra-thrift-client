@@ -44,10 +44,10 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "get_slice" over the connection. No return values.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             this.Output = null;
-            ColumnParent columnParent = this.BuildColumnParent(this.SuperColumn);
+            ColumnParent columnParent = this.BuildColumnParent();
             SlicePredicate predicate = ModelConverterHelper.Convert<AquilesSlicePredicate,SlicePredicate>(this.Predicate);
             List<ColumnOrSuperColumn> output = cassandraClient.get_slice(this.Key, columnParent, predicate, this.GetCassandraConsistencyLevel());
             this.buildOut(output);

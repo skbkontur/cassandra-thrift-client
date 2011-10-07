@@ -32,7 +32,7 @@ namespace CassandraClient.Core
                 throw new CassandraClientInvalidRequestException(validationResult.Message);
             for (int i = 0; i < settings.Attempts; ++i)
             {
-                IPEndPoint endpoint = endpointManager.GetEndPoint();
+                IPEndPoint endpoint = command.IsFierce ? settings.EndpointForFierceCommands : endpointManager.GetEndPoint();
                 try
                 {
                     using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey{IpEndPoint = endpoint, Keyspace = command.Keyspace}))

@@ -23,7 +23,7 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "describe_snitch" over the connection.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             this.Output = null;
             this.Output = cassandraClient.describe_snitch();
@@ -33,7 +33,7 @@ namespace CassandraClient.AquilesTrash.Command
         /// Validate the input parameters. 
         /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
         /// </summary>
-        public void ValidateInput()
+        public override void ValidateInput()
         {
             // DO NOTHING
         }

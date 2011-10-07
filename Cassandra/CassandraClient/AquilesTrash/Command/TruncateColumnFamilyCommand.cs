@@ -6,13 +6,13 @@ namespace CassandraClient.AquilesTrash.Command
     /// <summary>
     /// Command to truncate a ColumnFamily within a Keyspace
     /// </summary>
-    public class TruncateColumnFamilyCommand : AbstractKeyspaceColumnFamilyDependantCommand, IAquilesCommand
+    public class TruncateColumnFamilyCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
         /// <summary>
         /// Executes a "truncate" over the connection.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             cassandraClient.truncate(this.ColumnFamily);
         }

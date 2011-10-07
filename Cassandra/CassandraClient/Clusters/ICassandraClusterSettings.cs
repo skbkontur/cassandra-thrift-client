@@ -10,6 +10,7 @@ namespace CassandraClient.Clusters
         ConsistencyLevel ReadConsistencyLevel { get; }
         ConsistencyLevel WriteConsistencyLevel { get; }
         IPEndPoint[] Endpoints { get;  }
+        IPEndPoint EndpointForFierceCommands { get; }
         int Attempts { get; }
         int Timeout { get; }
     }

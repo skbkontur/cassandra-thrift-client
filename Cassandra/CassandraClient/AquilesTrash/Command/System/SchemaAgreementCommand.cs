@@ -24,7 +24,7 @@ namespace CassandraClient.AquilesTrash.Command.System
         /// Executes a "describe_schema_versions" over the connection.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             this.Output = null;
             Dictionary<string,List<string>> keyspaceAgreement = cassandraClient.describe_schema_versions();
@@ -35,7 +35,7 @@ namespace CassandraClient.AquilesTrash.Command.System
         /// Validate the input parameters. 
         /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
         /// </summary>
-        public void ValidateInput()
+        public override void ValidateInput()
         {
             // DO NOTHING
         }

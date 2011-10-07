@@ -42,9 +42,9 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "get_count" over the connection. Return values are set into Output
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
-            ColumnParent columnParent = this.BuildColumnParent(this.SuperColumnName);
+            ColumnParent columnParent = this.BuildColumnParent();
             SlicePredicate slicePredicate = null;
             if (this.Predicate != null)
             {

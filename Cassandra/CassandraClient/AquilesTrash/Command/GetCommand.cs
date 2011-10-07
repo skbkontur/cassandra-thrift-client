@@ -27,10 +27,10 @@ namespace CassandraClient.AquilesTrash.Command
         /// Executes a "get" over the connection. Return values are set into Output
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             ColumnOrSuperColumn columnOrSupercolumn = null;
-            ColumnPath columnPath = BuildColumnPath(ColumnFamily, SuperColumnName, ColumnName);
+            ColumnPath columnPath = BuildColumnPath(ColumnName);
             try
             {
                 columnOrSupercolumn = cassandraClient.get(Key, columnPath, GetCassandraConsistencyLevel());

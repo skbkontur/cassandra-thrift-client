@@ -41,7 +41,7 @@ namespace CassandraClient.AquilesTrash.Command
         /// Note: This command is not yet finished.
         /// </summary>
         /// <param name="cassandraClient">opened Thrift client</param>
-        public void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Cassandra.Client cassandraClient)
         {
             KsDef keyspaceDescription = cassandraClient.describe_keyspace(this.Keyspace);
 
@@ -52,7 +52,7 @@ namespace CassandraClient.AquilesTrash.Command
         /// Validate the input parameters. 
         /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
         /// </summary>
-        public void ValidateInput()
+        public override void ValidateInput()
         {
             //Do nothing
 
