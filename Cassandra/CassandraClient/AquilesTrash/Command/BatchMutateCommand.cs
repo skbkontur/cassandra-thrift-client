@@ -10,7 +10,7 @@ using CassandraClient.AquilesTrash.Model;
 
 namespace CassandraClient.AquilesTrash.Command
 {
-    public class BatchMutateCommand : AbstractKeyspaceDependantCommand, IAquilesCommand
+    public class BatchMutateCommand : AbstractKeyspaceDependantCommand
     {
         public override void Execute(Cassandra.Client cassandraClient)
         {
