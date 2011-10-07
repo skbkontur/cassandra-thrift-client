@@ -21,5 +21,6 @@ namespace CassandraClient.AquilesTrash.Command.System
 
         public string Keyspace { private get; set; }
         public string Output { get; private set; }
+        public override bool IsFierce { get { return true; } }
     }
 }

@@ -19,7 +19,7 @@ namespace CassandraClient.AquilesTrash.Command.System
         }
 
         public AquilesKeyspace KeyspaceDefinition { get; set; }
-
         public string Output { get; private set; }
+        public override bool IsFierce { get { return true; } }
     }
 }

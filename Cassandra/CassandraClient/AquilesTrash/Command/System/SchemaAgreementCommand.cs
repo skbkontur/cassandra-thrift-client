@@ -12,5 +12,6 @@ namespace CassandraClient.AquilesTrash.Command.System
         }
 
         public Dictionary<string, List<string>> Output { get; private set; }
+        public override bool IsFierce { get { return true; } }
     }
 }
