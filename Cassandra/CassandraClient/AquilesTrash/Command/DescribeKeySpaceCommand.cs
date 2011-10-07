@@ -1,77 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-
-using CassandraClient.AquilesTrash.Model;
-
-using Apache.Cassandra;
+﻿using Apache.Cassandra;
 
 using CassandraClient.AquilesTrash.Converter;
-using CassandraClient.AquilesTrash.Exceptions;
+using CassandraClient.AquilesTrash.Model;
 
 namespace CassandraClient.AquilesTrash.Command
 {
-    /// <summary>
-    /// Command to retrieve Keyspace structure from cluster.
-    /// </summary>
-    public class DescribeKeyspaceCommand : CassandraClient.AquilesTrash.Command.AbstractCommand, IAquilesCommand
+    public class DescribeKeyspaceCommand : AbstractCommand
     {
-        private const string COLUMN_TYPE = "Type";
-
-        /// <summary>
-        /// get or set the Keyspace
-        /// </summary>
-        public string Keyspace
-        {
-            set;
-            protected get;
-        }
-
-        /// <summary>
-        /// get Dictionary of ColumnFamilies where key is the name of the ColumnFamily
-        /// </summary>
-        public AquilesKeyspace KeyspaceInformation
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Executes a "describe_keyspace" over the connection.
-        /// 
-        /// Note: This command is not yet finished.
-        /// </summary>
-        /// <param name="cassandraClient">opened Thrift client</param>
         public override void Execute(Cassandra.Client cassandraClient)
         {
-            KsDef keyspaceDescription = cassandraClient.describe_keyspace(this.Keyspace);
-
-            this.KeyspaceInformation = ModelConverterHelper.Convert<AquilesKeyspace, KsDef>(keyspaceDescription);
+            var keyspaceDescription = cassandraClient.describe_keyspace(Keyspace);
+            KeyspaceInformation = ModelConverterHelper.Convert<AquilesKeyspace, KsDef>(keyspaceDescription);
         }
 
-        /// <summary>
-        /// Validate the input parameters. 
-        /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
-        /// </summary>
         public override void ValidateInput()
         {
-            //Do nothing
-
         }
-        
 
-        private AquilesColumnFamily Translate(string columnFamilyName, Dictionary<string, string> data)
-        {
-            string rawType = null;
-            AquilesColumnFamilyType type = AquilesColumnFamilyType.Standard;
-            if (data.TryGetValue(COLUMN_TYPE, out rawType))
-            {
-                type = (AquilesColumnFamilyType)Enum.Parse(typeof(AquilesColumnFamilyType), rawType);
-            }
-            AquilesColumnFamily columnFamily = new AquilesColumnFamily();
-            columnFamily.Name = columnFamilyName;
-            columnFamily.Type = type;
-
-            return columnFamily;
-        }
+        public string Keyspace { set; private get; }
+        public AquilesKeyspace KeyspaceInformation { get; private set; }
     }
 }

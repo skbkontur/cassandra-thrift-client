@@ -59,12 +59,12 @@ namespace CassandraClient.Connections
                 };
             commandExecuter.Execute(new AquilesCommandAdaptor(describeKeyspaceCommand, keyspace));
 
-            AquilesKeyspace keyspaceInformation = describeKeyspaceCommand.KeyspaceInformation;
+            var keyspaceInformation = describeKeyspaceCommand.KeyspaceInformation;
             var result = new Keyspace
                 {
                     ColumnFamilies =
                         keyspaceInformation.ColumnFamilies.ToDictionary(pair => pair.Key,
-                                                                        pair => ColumnFamilyConverter.ToColumnFamily(pair.Value)),
+                                                                        pair => pair.Value.ToColumnFamily()),
                     Name = keyspaceInformation.Name,
                     ReplicaPlacementStrategy = keyspaceInformation.ReplicationPlacementStrategy,
                     ReplicationFactor = keyspaceInformation.ReplicationFactor

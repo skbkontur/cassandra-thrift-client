@@ -120,7 +120,6 @@
     <Compile Include="AquilesTrash\Model\AquilesColumn.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnDefinition.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnFamily.cs" />
-    <Compile Include="AquilesTrash\Model\AquilesColumnFamilyType.cs" />
     <Compile Include="AquilesTrash\Model\AquilesDeletionMutation.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexClause.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexExpression.cs" />

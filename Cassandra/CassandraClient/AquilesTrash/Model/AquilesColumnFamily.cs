@@ -35,36 +35,18 @@ namespace CassandraClient.AquilesTrash.Model
             //this.MemtableFlushAfterMins = DEFAULTMEMTABLEFLUSHAFTERMINS;
         }
 
-        /// <summary>
-        /// get or set Name
-        /// </summary>
         public string Name
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// get or set the ColumnFamilyType
-        /// </summary>
-        public AquilesColumnFamilyType Type
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// get or set the comment
-        /// </summary>
         public string Comment
         {
             get;
             set;
         }
 
-        /// <summary>
-        /// get or set the Comparator to be used with Columns
-        /// </summary>
         public string Comparator
         {
             get;
