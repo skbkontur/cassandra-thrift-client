@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 
 using CassandraClient.Abstractions;
@@ -21,6 +22,11 @@ namespace CassandraClient.Core
             foreach(var ipEndPoint in settings.Endpoints)
                 this.endpointManager.Register(ipEndPoint);
             this.endpointManager.Register(settings.EndpointForFierceCommands);
+        }
+
+        public Dictionary<ConnectionPoolKey,KeyspaceConnectionPoolKnowledge> GetKnowledges()
+        {
+            return clusterConnectionPool.GetKnowledges();
         }
 
         public void Execute(ICommand command)

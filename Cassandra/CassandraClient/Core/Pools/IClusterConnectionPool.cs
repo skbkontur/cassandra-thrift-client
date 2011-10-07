@@ -5,6 +5,6 @@ namespace CassandraClient.Core.Pools
     public interface IClusterConnectionPool
     {
         IThriftConnection BorrowConnection(ConnectionPoolKey key);
-        IDictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
+        Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
     }
 }

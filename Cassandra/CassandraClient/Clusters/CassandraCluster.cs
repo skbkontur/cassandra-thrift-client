@@ -1,5 +1,8 @@
-﻿using CassandraClient.Connections;
+﻿using System.Collections.Generic;
+
+using CassandraClient.Connections;
 using CassandraClient.Core;
+using CassandraClient.Core.Pools;
 
 namespace CassandraClient.Clusters
 {
@@ -31,6 +34,11 @@ namespace CassandraClient.Clusters
                                                                                                 clusterSettings.ReadConsistencyLevel, clusterSettings.WriteConsistencyLevel);
             var enumerableFactory = new EnumerableFactory();
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation, enumerableFactory);
+        }
+        
+        public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
+        {
+            return commandExecuter.GetKnowledges();
         }
 
         private readonly ICassandraClusterSettings clusterSettings;

@@ -25,7 +25,7 @@ namespace CassandraClient.Core.Pools
             return result;
         }
 
-        public IDictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
+        public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
         {
             var result = new Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge>();
             foreach(var keyspaceConnectionPool in keyspacePools)
