@@ -1,51 +1,18 @@
 ﻿using System;
+
+using Apache.Cassandra;
+
 using CassandraClient.AquilesTrash.Exceptions;
 
 namespace CassandraClient.AquilesTrash.Command.System
 {
-    /// <summary>
-    /// Command to remove a ColumnFamily within a Keyspace into a Cluster
-    /// </summary>
-    public class DropColumnFamilyCommand : AbstractKeyspaceDependantCommand, IAquilesCommand
+    public class DropColumnFamilyCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        /// <summary>
-        /// Get or Set the ColumnFamily
-        /// </summary>
-        public string ColumnFamily
+        public override void Execute(Cassandra.Client cassandraClient)
         {
-            get;
-            set;
+            Output = cassandraClient.system_drop_column_family(ColumnFamily);
         }
 
-        /// <summary>
-        /// get the command output
-        /// </summary>
-        public string Output
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Executes a "system_drop_column_family" over the connection.
-        /// </summary>
-        /// <param name="cassandraClient">opened Thrift client</param>
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
-        {
-            this.Output = cassandraClient.system_drop_column_family(this.ColumnFamily);
-        }
-
-        /// <summary>
-        /// Validate the input parameters. 
-        /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
-        /// </summary>
-        public override void ValidateInput()
-        {
-            if (String.IsNullOrEmpty(this.ColumnFamily))
-            {
-                throw new AquilesCommandParameterException("ColumnFamily cannot be null or empty.");
-            }
-        }
-        
+        public string Output { get; private set; }
     }
 }

@@ -20,7 +20,8 @@ namespace CassandraClient.AquilesTrash.Command
         private const AquilesConsistencyLevel defaultConsistencyLevel = AquilesConsistencyLevel.QUORUM;
         public abstract void Execute(Cassandra.Client cassandraClient);
 
-        public abstract void ValidateInput();
+        public virtual void ValidateInput(){}
+
         public virtual bool IsFierce { get { return false; } }
     }
 }

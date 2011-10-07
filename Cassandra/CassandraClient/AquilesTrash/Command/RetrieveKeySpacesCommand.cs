@@ -1,63 +1,28 @@
 ﻿using System.Collections.Generic;
-
-using CassandraClient.AquilesTrash.Converter;
-using CassandraClient.AquilesTrash.Exceptions;
-using CassandraClient.AquilesTrash.Model;
+using System.Linq;
 
 using Apache.Cassandra;
 
+using CassandraClient.AquilesTrash.Converter;
+using CassandraClient.AquilesTrash.Model;
+
 namespace CassandraClient.AquilesTrash.Command
 {
-    /// <summary>
-    /// Command to retrieve the list of keyspaces for a cluster
-    /// </summary>
-    public class RetrieveKeyspacesCommand : CassandraClient.AquilesTrash.Command.AbstractCommand, IAquilesCommand
+    public class RetrieveKeyspacesCommand : AbstractCommand
     {
-        /// <summary>
-        /// get the list of keyspaces
-        /// </summary>
-        public List<AquilesKeyspace> Keyspaces
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Executes a "describe_keyspaces" over the connection, set the Keyspaces property with the returned value.
-        /// </summary>
-        /// <param name="cassandraClient">opened Thrift client</param>
         public override void Execute(Cassandra.Client cassandraClient)
         {
             List<KsDef> keySpaces = cassandraClient.describe_keyspaces();
-            this.Keyspaces = this.buildKeyspaces(keySpaces);
+            Keyspaces = BuildKeyspaces(keySpaces);
         }
 
-        private List<AquilesKeyspace> buildKeyspaces(List<KsDef> keySpaces)
+        public List<AquilesKeyspace> Keyspaces { get; private set; }
+
+        private static List<AquilesKeyspace> BuildKeyspaces(IEnumerable<KsDef> keySpaces)
         {
-            List<AquilesKeyspace> convertedKeyspaces = null;
-            if (keySpaces != null)
-            {
-                convertedKeyspaces = new List<AquilesKeyspace>(keySpaces.Count);
-                foreach (KsDef keyspace in keySpaces)
-                {
-                    convertedKeyspaces.Add(ModelConverterHelper.Convert<AquilesKeyspace, KsDef>(keyspace));
-                }
-            }
-            else
-            {
-                convertedKeyspaces = null;
-            }
+            if (keySpaces == null) return null;
+            var convertedKeyspaces = keySpaces.Select(ModelConverterHelper.Convert<AquilesKeyspace, KsDef>).ToList();
             return convertedKeyspaces;
         }
-        /// <summary>
-        /// Validate the input parameters. 
-        /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
-        /// </summary>
-        public override void ValidateInput()
-        {
-            //do nothing
-        }
-
-        
     }
 }

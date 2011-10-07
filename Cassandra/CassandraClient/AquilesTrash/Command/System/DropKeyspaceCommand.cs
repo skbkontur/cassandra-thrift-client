@@ -1,52 +1,25 @@
 ﻿using System;
+
+using Apache.Cassandra;
+
 using CassandraClient.AquilesTrash.Exceptions;
 
 namespace CassandraClient.AquilesTrash.Command.System
 {
-    /// <summary>
-    /// Command to remove a Keyspace into a Cluster
-    /// </summary>
-    public class DropKeyspaceCommand : CassandraClient.AquilesTrash.Command.AbstractCommand, IAquilesCommand
+    public class DropKeyspaceCommand : AbstractCommand
     {
-        /// <summary>
-        /// Get or Set the keyspace
-        /// </summary>
-        public string Keyspace
+        public override void Execute(Cassandra.Client cassandraClient)
         {
-            get;
-            set;
+            Output = cassandraClient.system_drop_keyspace(Keyspace);
         }
 
-        /// <summary>
-        /// get the command output
-        /// </summary>
-        public string Output
-        {
-            get;
-            private set;
-        }
-
-
-        /// <summary>
-        /// Executes a "system_drop_keyspace" over the connection.
-        /// </summary>
-        /// <param name="cassandraClient">opened Thrift client</param>
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
-        {
-            Output = cassandraClient.system_drop_keyspace(this.Keyspace);
-        }
-
-        /// <summary>
-        /// Validate the input parameters. 
-        /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
-        /// </summary>
         public override void ValidateInput()
         {
-            if (String.IsNullOrEmpty(this.Keyspace))
-            {
+            if(String.IsNullOrEmpty(Keyspace))
                 throw new AquilesCommandParameterException("Keyspace cannot be null or empty.");
-            }
         }
-        
+
+        public string Keyspace { private get; set; }
+        public string Output { get; private set; }
     }
 }

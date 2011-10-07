@@ -141,7 +141,7 @@ namespace CassandraClient.Connections
                     KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey=new byte[0], Count = count}
                 };
             ExecuteCommand(getKeyRangeSliceCommand);
-            return getKeyRangeSliceCommand.Output.Select(row => row.Key).ToList();
+            return getKeyRangeSliceCommand.Output;
         }
 
         public List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
@@ -161,7 +161,7 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Results.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()

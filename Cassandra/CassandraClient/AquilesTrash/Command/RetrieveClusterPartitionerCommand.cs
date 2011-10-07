@@ -2,12 +2,11 @@
 
 namespace CassandraClient.AquilesTrash.Command
 {
-    public class RetrieveClusterPartitionerCommand : AbstractCommand, IAquilesCommand
+    public class RetrieveClusterPartitionerCommand : AbstractCommand
     {
         public override void Execute(Cassandra.Client cassandraClient)
         {
-            string partitioner = cassandraClient.describe_partitioner();
-            Partitioner = partitioner;
+            Partitioner = cassandraClient.describe_partitioner();
         }
 
         public override void ValidateInput()

@@ -1,150 +1,62 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Model;
 using CassandraClient.AquilesTrash.Converter;
 using CassandraClient.AquilesTrash.Exceptions;
+using CassandraClient.AquilesTrash.Model;
 
 namespace CassandraClient.AquilesTrash.Command
 {
-    /// <summary>
-    /// Command to retrieve slices of data on each of the given keys in parallel
-    /// </summary>                    
-    public class MultiGetSliceCommand : AbstractKeyspaceColumnFamilyDependantCommand, IAquilesCommand
+    public class MultiGetSliceCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        /// <summary>
-        /// get or set the list of Keys to retrieve
-        /// </summary>
-        public List<byte[]> Keys
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// get or set the name of the SuperColumn
-        /// </summary>
-        public byte[] SuperColumn
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// get or set the predicate to use
-        /// </summary>
-        public AquilesSlicePredicate Predicate
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// get the output of the command
-        /// </summary>
-        public Out Output
-        {
-            get;
-            private set;
-        }
-
-        /// <summary>
-        /// Executes a "multiget_slice" over the connection. No return values.
-        /// </summary>
-        /// <param name="cassandraClient">opened Thrift client</param>
         public override void Execute(Cassandra.Client cassandraClient)
         {
-            this.Output = null;
-            ColumnParent columnParent = this.BuildColumnParent();
-            SlicePredicate predicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(this.Predicate);
-            Dictionary<byte[], List<ColumnOrSuperColumn>> output = cassandraClient.multiget_slice(this.Keys, columnParent, predicate, this.GetCassandraConsistencyLevel());
-            this.buildOut(output);
+            Output = null;
+            var columnParent = BuildColumnParent();
+            var predicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(Predicate);
+            var output = cassandraClient.multiget_slice(Keys, columnParent, predicate, GetCassandraConsistencyLevel());
+            BuildOut(output);
         }
 
-        /// <summary>
-        /// Validate the input parameters. 
-        /// Throws <see cref="AquilesCommandParameterException"/>  in case there is some malformed or missing input parameters
-        /// </summary>
         public override void ValidateInput()
         {
             base.ValidateInput();
-
-            this.ValidateKeys();
-
-            this.ValidatePredicate();
+            ValidateKeys();
+            ValidatePredicate();
         }
+
+        public List<byte[]> Keys { private get; set; }
+        public AquilesSlicePredicate Predicate { private get; set; }
+        public Dictionary<byte[], List<AquilesColumn>> Output { get; private set; }
 
         private void ValidatePredicate()
         {
-            if (this.Predicate == null)
-            {
+            if(Predicate == null)
                 throw new AquilesCommandParameterException("Predicate cannot be null.");
-            }
-            this.Predicate.ValidateForQueryOperation();
+            Predicate.ValidateForQueryOperation();
         }
-
 
         private void ValidateKeys()
         {
-            if ((this.Keys == null) || (this.Keys != null && this.Keys.Count == 0))
-            {
+            if(Keys == null || Keys.Count == 0)
                 throw new AquilesCommandParameterException("No Keys found.");
-            }
 
-            this.ValidateKeyNotNullOrEmpty();
+            if(Keys.Any(key => key == null || key.Length == 0))
+                throw new AquilesCommandParameterException("Key cannot be null or empty.");
         }
 
-        private void ValidateKeyNotNullOrEmpty()
+        private void BuildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {
-            foreach (byte[] key in this.Keys)
+            Output = new Dictionary<byte[], List<AquilesColumn>>();
+            foreach(var outputKeyValuePair in output)
             {
-                if (key == null || key.Length == 0)
-                {
-                    throw new AquilesCommandParameterException("Key cannot be null or empty.");
-                }
+                var columnOrSuperColumnList = outputKeyValuePair.Value.Select(x => x.Column)
+                    .Select(ModelConverterHelper.Convert<AquilesColumn, Column>)
+                    .ToList();
+                Output.Add(outputKeyValuePair.Key, columnOrSuperColumnList);
             }
-        }
-        
-
-        private void buildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
-        {
-            List<AquilesColumn> columnOrSuperColumnList = null;
-            AquilesColumn columnOrSuperColumn = null;
-            Out returnObj = new Out();
-            returnObj.Results = new Dictionary<byte[], List<AquilesColumn>>();
-            Dictionary<byte[], List<ColumnOrSuperColumn>>.Enumerator outputEnum = output.GetEnumerator();
-            while (outputEnum.MoveNext())
-            {
-                columnOrSuperColumnList = new List<AquilesColumn>();
-                foreach (ColumnOrSuperColumn cassandraColumnOrSuperColumn in outputEnum.Current.Value)
-                {
-                    columnOrSuperColumn = new AquilesColumn();
-                    columnOrSuperColumn = ModelConverterHelper.Convert<AquilesColumn, Column>(cassandraColumnOrSuperColumn.Column);
-                    columnOrSuperColumnList.Add(columnOrSuperColumn);
-                }
-                returnObj.Results.Add(outputEnum.Current.Key, columnOrSuperColumnList);
-            }
-
-            this.Output = returnObj;
-        }
-
-        /// <summary>
-        /// structure to Return Values
-        /// </summary>
-        public class Out
-        {
-
-            /// <summary>
-            /// get or set the results 
-            /// <remarks>the dictionary key is actually the key used over cassandra</remarks>
-            /// </summary>
-            public Dictionary<byte[], List<AquilesColumn>> Results 
-            {
-                get;
-                set;
-            }
-
         }
     }
 }
