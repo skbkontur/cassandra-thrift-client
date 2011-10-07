@@ -137,6 +137,7 @@
     <Compile Include="AquilesTrash\Model\IAquilesObject.cs" />
     <Compile Include="AquilesTrash\Model\Internal\CassandraClient.cs" />
     <Compile Include="AquilesTrash\Model\Internal\CassandraEndpoint.cs" />
+    <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraClusterSettings.cs" />

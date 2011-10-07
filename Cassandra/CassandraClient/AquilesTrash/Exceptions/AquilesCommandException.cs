@@ -8,17 +8,9 @@ namespace CassandraClient.AquilesTrash.Exceptions
     [Serializable]
     public class AquilesCommandException : AquilesException
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public AquilesCommandException() : base() { }
-        /// <summary>
-        /// ctor
-        /// </summary>
+        public AquilesCommandException(){ }
         public AquilesCommandException(string message) : base(message) { }
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public AquilesCommandException(string message, System.Exception ex) : base(message, ex) { }
+        public AquilesCommandException(string format, params object[] args) : base(format, args) { }
+        public AquilesCommandException(string message, Exception ex) : base(message, ex) { }
     }
 }

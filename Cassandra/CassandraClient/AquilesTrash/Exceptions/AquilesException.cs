@@ -6,19 +6,11 @@ namespace CassandraClient.AquilesTrash.Exceptions
     /// Exception thrown when something went wrong inside Aquiles
     /// </summary>
     [Serializable]
-    public class AquilesException : System.Exception
+    public class AquilesException : Exception
     {
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public AquilesException() : base() { }
-        /// <summary>
-        /// ctor
-        /// </summary>
+        protected AquilesException(){ }
         public AquilesException(string message) : base(message) { }
-        /// <summary>
-        /// ctor
-        /// </summary>
-        public AquilesException(string message, System.Exception ex) : base(message, ex) { }
+        public AquilesException(string format, params object[] args) : base(string.Format(format, args)) { }
+        protected AquilesException(string message, Exception ex) : base(message, ex) { }
     }
 }

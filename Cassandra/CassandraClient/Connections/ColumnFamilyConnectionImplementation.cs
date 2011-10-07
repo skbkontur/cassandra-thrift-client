@@ -229,14 +229,14 @@ namespace CassandraClient.Connections
 
         private void ExecuteMutations(byte[] key, List<IAquilesMutation> mutationsList)
         {
-            var columnFamilyMutations = new Dictionary<string, List<IAquilesMutation>>
+            var columnFamilyMutations = new Dictionary<byte[], List<IAquilesMutation>>
                 {
-                    {columnFamilyName, mutationsList}
+                    {key, mutationsList}
                 };
 
-            var keyMutations = new Dictionary<byte[], Dictionary<string, List<IAquilesMutation>>>
+            var keyMutations = new Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>>
                 {
-                    {key, columnFamilyMutations}
+                    {columnFamilyName, columnFamilyMutations}
                 };
 
             var batchMutateCommand = new BatchMutateCommand
@@ -250,7 +250,11 @@ namespace CassandraClient.Connections
 
         private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList)
         {
-            var keyMutations = mutationsList.ToDictionary(item => item.Key, item => new Dictionary<string, List<IAquilesMutation>> {{columnFamilyName, item.Value}});
+            var dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
+            var keyMutations = new Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>>
+                {
+                    {columnFamilyName, dict}
+                };
 
             var batchMutateCommand = new BatchMutateCommand
                 {
