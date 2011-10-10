@@ -35,10 +35,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.078.dll</HintPath>
     </Reference>
-    <Reference Include="CassandraClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\CassandraClient.dll</HintPath>
-    </Reference>
     <Reference Include="GroboSerializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
     </Reference>
@@ -94,6 +90,10 @@
     <Compile Include="XmlHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CassandraClient\CassandraClient.csproj">
+      <Project>{16FB4761-5F8E-41FB-BAC2-FB155865C827}</Project>
+      <Name>CassandraClient</Name>
+    </ProjectReference>
     <ProjectReference Include="..\StorageCore\StorageCore.csproj">
       <Project>{11EED920-D590-433F-950E-386DC3DF229B}</Project>
       <Name>StorageCore</Name>
