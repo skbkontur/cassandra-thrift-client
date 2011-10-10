@@ -1,4 +1,7 @@
-﻿using Apache.Cassandra;
+﻿using System.Collections.Generic;
+using System.Linq;
+
+using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
@@ -18,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
             }
             catch(NotFoundException ex)
             {
-                var message = string.Format("[ Key: '{0}', ColumnFamily: '{1}', Column: '{2}' ] not found.", Key, ColumnFamily, ColumnName);
+                var message = string.Format("[ Key: '{0}', ColumnFamily: '{1}', Column: '{2}' ] not found.", ByteArrayAsString(Key), ColumnFamily, ColumnName);
                 logger.Warn(ex, message);
             }
 
@@ -30,5 +33,10 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 
         public AquilesColumn Output { get; private set; }
         public byte[] ColumnName { set; private get; }
+
+        private string ByteArrayAsString(IEnumerable<byte> arr)
+        {
+            return string.Join(",", arr.Select(x => x.ToString()));
+        }
     }
 }
