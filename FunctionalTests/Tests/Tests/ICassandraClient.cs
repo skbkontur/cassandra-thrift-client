@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-using CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {

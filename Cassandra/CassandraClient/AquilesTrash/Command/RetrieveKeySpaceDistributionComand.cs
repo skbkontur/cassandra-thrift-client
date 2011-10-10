@@ -7,18 +7,19 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class RetrieveKeyspaceDistributionComand : AbstractKeyspaceDependantCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
         {
             var results = cassandraClient.describe_ring(Keyspace);
             BuildOut(results);
         }
 
-        public override void ValidateInput()
+        public override void ValidateInput(ICassandraLogger logger)
         {
             if(String.IsNullOrEmpty(Keyspace))
                 throw new AquilesCommandParameterException("Keyspace must be not null or empty.");

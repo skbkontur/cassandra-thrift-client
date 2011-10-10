@@ -3,12 +3,13 @@
 using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public abstract class AbstractKeyspaceColumnFamilyDependantCommand : AbstractKeyspaceDependantCommand
     {
-        public override void ValidateInput()
+        public override void ValidateInput(ICassandraLogger logger)
         {
             if(String.IsNullOrEmpty(ColumnFamily))
                 throw new AquilesCommandParameterException("ColumnFamily must be not null or empty.");

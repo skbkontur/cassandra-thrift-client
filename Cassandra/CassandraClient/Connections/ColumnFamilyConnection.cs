@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -115,6 +114,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public IEnumerable<string> GetKeys(int batchSize = 1000)
         {
             return enumerableFactory.GetRowsEnumerator(batchSize, GetKeys);
+        }
+
+        public int GetCount(string key)
+        {
+            return implementation.GetCount(StringHelpers.StringToBytes(key));
+        }
+
+        public Dictionary<string, int> GetCounts(IEnumerable<string> keys)
+        {
+            var res = implementation.GetCounts(keys.Select(StringHelpers.StringToBytes));
+            return res.ToDictionary(x => StringHelpers.BytesToString(x.Key), x => x.Value);
         }
 
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)

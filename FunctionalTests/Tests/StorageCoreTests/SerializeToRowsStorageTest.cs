@@ -10,9 +10,8 @@ using GroboSerializer;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.FunctionalTests.Tests;
-
-using StorageCore.Exceptions;
-using StorageCore.RowsStorage;
+using SKBKontur.Cassandra.StorageCore.Exceptions;
+using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {

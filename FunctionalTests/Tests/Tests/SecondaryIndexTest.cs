@@ -2,12 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Encoders;
-using CassandraClient.Connections;
-
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders;
+using SKBKontur.Cassandra.CassandraClient.Connections;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {

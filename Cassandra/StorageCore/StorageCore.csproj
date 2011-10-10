@@ -59,8 +59,6 @@
     <Compile Include="Extender\ExtenderImpl.cs" />
     <Compile Include="Extender\PublicPropertiesExtender.cs" />
     <Compile Include="ICassandraCoreSettings.cs" />
-    <Compile Include="ICassandraLogger.cs" />
-    <Compile Include="ICassandraLogManager.cs" />
     <Compile Include="IColumnFamilyIndexesDefinition.cs" />
     <Compile Include="IColumnFamilyNameGetter.cs" />
     <Compile Include="IColumnFamilyRegistry.cs" />

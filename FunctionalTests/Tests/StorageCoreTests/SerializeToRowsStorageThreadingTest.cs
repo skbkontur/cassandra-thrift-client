@@ -2,15 +2,14 @@ using System;
 using System.Text;
 using System.Threading;
 
+using Cassandra.Tests;
+
 using GroboSerializer;
 
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.FunctionalTests.Tests;
-
-using StorageCore.RowsStorage;
-
-using Cassandra.Tests;
+using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {

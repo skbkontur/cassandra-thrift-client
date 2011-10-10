@@ -5,6 +5,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.StorageCore
 {

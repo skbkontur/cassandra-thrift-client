@@ -8,6 +8,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public interface IColumnFamilyConnectionImplementation : IDisposable
     {
+        int GetCount(byte[] key);
+        Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key);
         void DeleteRow(byte[] key, long? timestamp);
         void AddColumn(byte[] key, Column column);
         Column GetColumn(byte[] key, byte[] columnName);

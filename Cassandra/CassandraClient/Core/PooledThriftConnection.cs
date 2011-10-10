@@ -2,13 +2,14 @@ using System;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class PooledThriftConnection : ThriftConnection, IPooledThriftConnection
     {
-        public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName)
-            : base(timeout, ipEndPoint, keyspaceName)
+        public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName, ICassandraLogManager logManager)
+            : base(timeout, ipEndPoint, keyspaceName, logManager)
         {
             this.connectionPool = connectionPool;
             Id = Guid.NewGuid();

@@ -23,5 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         IEnumerable<Column> GetRow(string key, int batchSize=1000);
         string[] GetKeys(string exclusiveStartKey, int count);
         IEnumerable<string> GetKeys(int batchSize=1000);
+        int GetCount(string key);
+        Dictionary<string, int> GetCounts(IEnumerable<string> keys);
     }
 }

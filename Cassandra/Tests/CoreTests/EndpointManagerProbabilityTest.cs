@@ -1,6 +1,8 @@
 using System;
 using System.Net;
 
+using Cassandra.Tests.ConsoleLog;
+
 using SKBKontur.Cassandra.CassandraClient.Core;
 
 using NUnit.Framework;
@@ -16,7 +18,7 @@ namespace Cassandra.Tests.CoreTests
         {
             base.SetUp();
             badlist = new Badlist();
-            endpointManager = new EndpointManager(badlist);
+            endpointManager = new EndpointManager(badlist, new ConsoleLogManager());
         }
 
         [Test]

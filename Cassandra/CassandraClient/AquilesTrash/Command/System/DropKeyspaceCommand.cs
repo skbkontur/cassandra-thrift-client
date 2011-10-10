@@ -3,17 +3,18 @@
 using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System
 {
     public class DropKeyspaceCommand : AbstractCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
         {
             Output = cassandraClient.system_drop_keyspace(Keyspace);
         }
 
-        public override void ValidateInput()
+        public override void ValidateInput(ICassandraLogger logger)
         {
             if(String.IsNullOrEmpty(Keyspace))
                 throw new AquilesCommandParameterException("Keyspace cannot be null or empty.");

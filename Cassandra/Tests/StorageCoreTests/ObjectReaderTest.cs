@@ -1,11 +1,9 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using Rhino.Mocks;
 
-using SKBKontur.Cassandra.StorageCore;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace Cassandra.Tests.StorageCoreTests

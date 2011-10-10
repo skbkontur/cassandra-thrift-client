@@ -6,33 +6,37 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
-using log4net;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class CommandExecuter : ICommandExecuter
     {
-        public CommandExecuter(IClusterConnectionPool clusterConnectionPool, IEndpointManager endpointManager, ICassandraClusterSettings settings)
+        public CommandExecuter(IClusterConnectionPool clusterConnectionPool,
+                               IEndpointManager endpointManager,
+                               ICassandraClusterSettings settings,
+                               ICassandraLogManager logManager)
         {
             this.clusterConnectionPool = clusterConnectionPool;
             this.endpointManager = endpointManager;
             this.settings = settings;
+            this.logManager = logManager;
+            logger = logManager.GetLogger(GetType());
             recognizer = new CassandraClientExceptionTypeRecognizer();
             foreach(var ipEndPoint in settings.Endpoints)
                 this.endpointManager.Register(ipEndPoint);
             this.endpointManager.Register(settings.EndpointForFierceCommands);
         }
 
-        public Dictionary<ConnectionPoolKey,KeyspaceConnectionPoolKnowledge> GetKnowledges()
+        public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
         {
             return clusterConnectionPool.GetKnowledges();
         }
 
         public void Execute(ICommand command)
         {
-            logger.DebugFormat("Start executing {0} command.", command.GetType());
-            ValidationResult validationResult = command.Validate();
+            logger.Debug("Start executing {0} command.", command.GetType());
+            ValidationResult validationResult = command.Validate(logManager.GetLogger(command.GetType()));
             if(validationResult.Status != ValidationStatus.Ok)
                 throw new CassandraClientInvalidRequestException(validationResult.Message);
             for(int i = 0; i < settings.Attempts; ++i)
@@ -41,7 +45,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 try
                 {
                     using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.Keyspace}))
-                        thriftConnection.ExecuteCommand(command);
+                        thriftConnection.ExecuteCommand(command, logManager.GetLogger(command.GetType()));
                     endpointManager.Good(endpoint);
                     return;
                 }
@@ -57,13 +61,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         throw new CassandraAttemptsException(settings.Attempts, exception);
                 }
             }
-            logger.DebugFormat("Executing {0} command complete.", command.GetType());
+            logger.Debug("Executing {0} command complete.", command.GetType());
         }
 
-        private readonly ILog logger = LogManager.GetLogger("CommandExecuter");
         private readonly IClusterConnectionPool clusterConnectionPool;
         private readonly IEndpointManager endpointManager;
         private readonly ICassandraClusterSettings settings;
+        private readonly ICassandraLogManager logManager;
         private readonly CassandraClientExceptionTypeRecognizer recognizer;
+        private ICassandraLogger logger;
     }
 }

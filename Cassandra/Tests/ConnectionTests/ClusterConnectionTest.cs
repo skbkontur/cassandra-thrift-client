@@ -3,20 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-
-
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
-
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
-using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.CassandraClient.Core;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+using Cassandra.Tests.ConsoleLog;
 
 using NUnit.Framework;
 
 using Rhino.Mocks;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace Cassandra.Tests.ConnectionTests
 {
@@ -27,7 +26,7 @@ namespace Cassandra.Tests.ConnectionTests
             base.SetUp();
             commandExecuter = GetMock<ICommandExecuter>();
             clusterConnection = new ClusterConnection(commandExecuter, ConsistencyLevel.ALL,
-                                                      ConsistencyLevel.EACH_QUORUM);
+                                                      ConsistencyLevel.EACH_QUORUM, new ConsoleLogManager());
         }
 
         [Test]

@@ -4,12 +4,13 @@ using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class MultiGetCountCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
         {
             SlicePredicate slicePredicate = null;
             if(Predicate != null)

@@ -1,6 +1,6 @@
-using System;
+﻿using System;
 
-namespace SKBKontur.Cassandra.StorageCore
+namespace SKBKontur.Cassandra.CassandraClient.Log
 {
     public interface ICassandraLogManager
     {

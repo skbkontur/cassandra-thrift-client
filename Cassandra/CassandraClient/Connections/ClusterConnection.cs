@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 
 using SKBKontur.Cassandra.CassandraClient.Helpers;
@@ -9,19 +8,17 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
 using SKBKontur.Cassandra.CassandraClient.Core;
-
-using log4net;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class ClusterConnection : IClusterConnection
     {
-        private readonly ICommandExecuter commandExecuter;
-
         public ClusterConnection(ICommandExecuter commandExecuter,
-                                 ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel)
+                                 ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel, ICassandraLogManager logManager)
         {
             this.commandExecuter = commandExecuter;
+            logger = logManager.GetLogger(GetType());
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
@@ -38,7 +35,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var result = new List<Keyspace>();
             // ReSharper disable LoopCanBeConvertedToQuery
             foreach(var aquilesKeyspace in retrieveKeyspacesCommand.Keyspaces)
-            // ReSharper restore LoopCanBeConvertedToQuery
+                // ReSharper restore LoopCanBeConvertedToQuery
             {
                 if(!aquilesKeyspace.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
                     result.Add(aquilesKeyspace.ToKeyspace());
@@ -66,14 +63,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             WaitUntilAgreementIsReached();
         }
 
-
-
         public void Dispose()
         {
             //aquilesConnection.Dispose();
         }
 
-       private void WaitUntilAgreementIsReached()
+        private void WaitUntilAgreementIsReached()
         {
             while(true)
             {
@@ -97,17 +92,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("Agreement doesnt reach.");
             foreach(var agreeds in versions)
-            {
-                stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", agreeds.Key,
-                                                       agreeds.Value.Aggregate("",
-                                                                               (s1, s2) =>
-                                                                               string.Format("{0}, {1}", s1, s2))));
-            }
+                stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", agreeds.Key, string.Join(",", agreeds.Value)));
             logger.Info(stringBuilder.ToString());
         }
 
-        private readonly ILog logger = LogManager.GetLogger("CassandraClientLogger");
+        private readonly ICommandExecuter commandExecuter;
+        private readonly ICassandraLogManager logManager;
+
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
+        private ICassandraLogger logger;
     }
 }

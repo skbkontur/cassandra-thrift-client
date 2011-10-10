@@ -1,6 +1,6 @@
 using GroboSerializer;
 
-using StorageCore;
+using SKBKontur.Cassandra.StorageCore;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {

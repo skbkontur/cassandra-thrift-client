@@ -1,11 +1,10 @@
 using System;
 
-using CassandraClient.Abstractions;
-
 using GroboSerializer;
 
-using StorageCore;
-using StorageCore.RowsStorage;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.StorageCore;
+using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {

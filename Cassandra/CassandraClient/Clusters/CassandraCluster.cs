@@ -3,21 +3,25 @@
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public class CassandraCluster : ICassandraCluster
     {
-        public CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings)
+        public CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings, ICassandraLogManager logManager)
         {
             this.commandExecuter = commandExecuter;
             this.clusterSettings = clusterSettings;
+            this.logManager = logManager;
         }
 
         public IClusterConnection RetrieveClusterConnection()
         {
             return new ClusterConnection(commandExecuter,
-                                         clusterSettings.ReadConsistencyLevel, clusterSettings.WriteConsistencyLevel);
+                                         clusterSettings.ReadConsistencyLevel,
+                                         clusterSettings.WriteConsistencyLevel,
+                                         logManager);
         }
 
         public IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName)
@@ -25,23 +29,28 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return new KeyspaceConnection(commandExecuter,
                                           clusterSettings.ReadConsistencyLevel,
                                           clusterSettings.WriteConsistencyLevel,
-                                          keyspaceName);
+                                          keyspaceName,
+                                          logManager);
         }
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
-            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, commandExecuter,
-                                                                                                clusterSettings.ReadConsistencyLevel, clusterSettings.WriteConsistencyLevel);
+            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName,
+                                                                                                columnFamilyName,
+                                                                                                commandExecuter,
+                                                                                                clusterSettings.ReadConsistencyLevel,
+                                                                                                clusterSettings.WriteConsistencyLevel);
             var enumerableFactory = new EnumerableFactory();
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation, enumerableFactory);
         }
-        
+
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
         {
             return commandExecuter.GetKnowledges();
         }
 
         private readonly ICassandraClusterSettings clusterSettings;
+        private readonly ICassandraLogManager logManager;
         private readonly ICommandExecuter commandExecuter;
     }
 }

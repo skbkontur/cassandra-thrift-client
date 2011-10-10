@@ -2,15 +2,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
-
-using log4net;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
@@ -18,8 +16,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
     {
         public KeyspaceConnection(ICommandExecuter commandExecuter,
                                   ConsistencyLevel readConsistencyLevel,
-                                  ConsistencyLevel writeConsistencyLevel, string keyspace)
+                                  ConsistencyLevel writeConsistencyLevel,
+                                  string keyspace,
+                                  ICassandraLogManager logManager)
         {
+            logger = logManager.GetLogger(GetType());
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
             this.commandExecuter = commandExecuter;
             this.keyspace = keyspace;
@@ -134,8 +135,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private readonly ICommandExecuter commandExecuter;
         private readonly string keyspace;
 
-        private readonly ILog logger = LogManager.GetLogger("CassandraClientLogger");
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
+        private ICassandraLogger logger;
     }
 }

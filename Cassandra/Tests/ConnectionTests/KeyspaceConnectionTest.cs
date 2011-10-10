@@ -2,18 +2,19 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
-
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.CassandraClient.Core;
+using Cassandra.Tests.ConsoleLog;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
 using Rhino.Mocks;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Core;
 
 namespace Cassandra.Tests.ConnectionTests
 {
@@ -24,7 +25,7 @@ namespace Cassandra.Tests.ConnectionTests
             base.SetUp();
             commandExecuter = GetMock<ICommandExecuter>();
             keyspaceConnection = new KeyspaceConnection(commandExecuter, ConsistencyLevel.ALL,
-                                                        ConsistencyLevel.EACH_QUORUM, keyspaceName);
+                                                        ConsistencyLevel.EACH_QUORUM, keyspaceName, new ConsoleLogManager());
         }
 
         [Test]
@@ -65,16 +66,16 @@ namespace Cassandra.Tests.ConnectionTests
         private static void Qxx(AquilesCommandAdaptor command)
         {
             var aquilesKeyspace = new AquilesKeyspace
-            {
-                ColumnFamilies = new Dictionary<string, AquilesColumnFamily>
-                                    {
-                                        {"CFName1", new AquilesColumnFamily {Keyspace = keyspaceName, Name = "CFName1"}},
-                                        {"CFName2", new AquilesColumnFamily {Keyspace = keyspaceName, Name = "CFName2"}}
-                                    },
-                Name = keyspaceName,
-                ReplicationFactor = replicationFactor,
-                ReplicationPlacementStrategy = replicationPlacementStrategy
-            };
+                {
+                    ColumnFamilies = new Dictionary<string, AquilesColumnFamily>
+                        {
+                            {"CFName1", new AquilesColumnFamily {Keyspace = keyspaceName, Name = "CFName1"}},
+                            {"CFName2", new AquilesColumnFamily {Keyspace = keyspaceName, Name = "CFName2"}}
+                        },
+                    Name = keyspaceName,
+                    ReplicationFactor = replicationFactor,
+                    ReplicationPlacementStrategy = replicationPlacementStrategy
+                };
 
             Type describeKeyspaceCommandType = typeof(DescribeKeyspaceCommand);
             PropertyInfo propertyInfo = describeKeyspaceCommandType.GetProperty("KeyspaceInformation");
@@ -90,7 +91,7 @@ namespace Cassandra.Tests.ConnectionTests
         private ICommandExecuter commandExecuter;
         private KeyspaceConnection keyspaceConnection;
         private const string keyspaceName = "keyspace";
-        const int replicationFactor = 5;
-        const string replicationPlacementStrategy = "ReplicationPlacementStrategy";
+        private const int replicationFactor = 5;
+        private const string replicationPlacementStrategy = "ReplicationPlacementStrategy";
     }
 }

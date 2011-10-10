@@ -1,8 +1,8 @@
 ﻿using System.Net;
-
-using Apache.Cassandra;
+using System.Net.Sockets;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 using Thrift.Protocol;
 using Thrift.Transport;
@@ -11,15 +11,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class ThriftConnection : IThriftConnection
     {
-        protected ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        protected ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ICassandraLogManager logManager)
         {
+            logger = logManager.GetLogger(GetType());
             IpEndPoint = ipEndPoint;
             KeyspaceName = keyspaceName;
             string address = ipEndPoint.Address.ToString();
             int port = ipEndPoint.Port;
-            TSocket socket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
-            socket.TcpClient.Client.NoDelay = true;
-            var transport = new TFramedTransport(socket);
+            TSocket tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
+            socket = tsocket.TcpClient.Client;
+            socket.NoDelay = true;
+            socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
+            var transport = new TFramedTransport(tsocket);
             cassandraClient = new Apache.Cassandra.Cassandra.Client(new TBinaryProtocol(transport));
             OpenTransport();
         }
@@ -29,21 +32,32 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             CloseTransport();
         }
 
-        public void ExecuteCommand(ICommand command)
+        public void ExecuteCommand(ICommand command, ICassandraLogger logger)
         {
-            command.Execute(cassandraClient);
+            command.Execute(cassandraClient, logger);
         }
 
         public bool IsAlive()
         {
             try
             {
-                return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
+                var pool = socket.Poll(0, SelectMode.SelectRead);
+                var available = socket.Available;
+                var result = !(pool && (available == 0));
+                if (!result) logger.Warn("Connetion '{0}' is dead.", this);
+                else logger.Debug("Connection '{0}' is good.", this);
+                return result;
+                //return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
             }
             catch
             {
                 return false;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", IpEndPoint, KeyspaceName);
         }
 
         public string KeyspaceName { get; private set; }
@@ -66,5 +80,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
+        private readonly Socket socket;
+        private ICassandraLogger logger;
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Log;
+
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public abstract class AbstractCommand : IAquilesCommand
@@ -18,9 +20,9 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
         }
 
         private const AquilesConsistencyLevel defaultConsistencyLevel = AquilesConsistencyLevel.QUORUM;
-        public abstract void Execute(Apache.Cassandra.Cassandra.Client cassandraClient);
+        public abstract void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger);
 
-        public virtual void ValidateInput(){}
+        public virtual void ValidateInput(ICassandraLogger logger) { }
 
         public virtual bool IsFierce { get { return false; } }
     }

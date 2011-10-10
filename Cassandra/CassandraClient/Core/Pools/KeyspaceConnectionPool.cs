@@ -4,21 +4,20 @@ using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
-using log4net;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class KeyspaceConnectionPool : IKeyspaceConnectionPool
     {
-        private readonly ILog logger = LogManager.GetLogger("KeyspaceConnectionPool");
-
-        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key)
+        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key, ICassandraLogManager logManager)
         {
+            logger = logManager.GetLogger(GetType());
             endPoint = key.IpEndPoint;
             keyspaceName = key.Keyspace;
             this.settings = settings;
-            logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}' was created.", endPoint, keyspaceName);
+            this.logManager = logManager;
+            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", endPoint, keyspaceName);
         }
 
         public bool TryBorrowConnection(out IPooledThriftConnection thriftConnection)
@@ -66,15 +65,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         private PooledThriftConnection CreateConnection()
         {
-            var pooledThriftConnection = new PooledThriftConnection(this, settings.Timeout, endPoint, keyspaceName);
-            logger.DebugFormat("Connection {0} was created.", pooledThriftConnection);
+            var pooledThriftConnection = new PooledThriftConnection(this, settings.Timeout, endPoint, keyspaceName, logManager);
+            logger.Debug("Connection {0} was created.", pooledThriftConnection);
             return pooledThriftConnection;
         }
 
         private readonly ICassandraClusterSettings settings;
+        private readonly ICassandraLogManager logManager;
         private readonly IPEndPoint endPoint;
         private readonly string keyspaceName;
         private readonly ConcurrentQueue<IPooledThriftConnection> freeConnections = new ConcurrentQueue<IPooledThriftConnection>();
         private readonly ConcurrentDictionary<Guid, IPooledThriftConnection> busyConnections = new ConcurrentDictionary<Guid, IPooledThriftConnection>();
+        private readonly ICassandraLogger logger;
     }
 }

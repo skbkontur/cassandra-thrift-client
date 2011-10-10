@@ -27,7 +27,7 @@ namespace SKBKontur.Cassandra.FunctionalTests
                     || fileName.StartsWith("SKBKontur.", StringComparison.InvariantCultureIgnoreCase)
                     || fileName.StartsWith("Catalogue.", StringComparison.InvariantCultureIgnoreCase)
                     || fileName.StartsWith("GroboSerializer", StringComparison.InvariantCultureIgnoreCase)
-                    || fileName.StartsWith("CassandraClient", StringComparison.InvariantCultureIgnoreCase));
+                    || fileName.StartsWith("Cassandra.", StringComparison.InvariantCultureIgnoreCase));
         }
     }
 }

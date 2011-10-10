@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Connections;
-
 using System.Linq;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -47,8 +46,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                                     }
                             },
                         Name = keySpaceName,
-                        ReplicaPlacementStrategy =
-                            "org.apache.cassandra.locator.SimpleStrategy",
+                        ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
                         ReplicationFactor = 1
                     });
             }
@@ -77,7 +75,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         public void DeleteColumn(string keySpaceName, string columnFamilyName, string key, string columnName)
         {
-            using (IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+            using(IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
                 columnFamilyConnection.DeleteBatch(key, new[] {columnName});
         }
 
@@ -135,7 +133,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public Column[] GetRow(string keySpaceName, string columnFamilyName, string key)
         {
             IEnumerable<Column> result;
-            using (IColumnFamilyConnection columnFamilyConnection =
+            using(IColumnFamilyConnection columnFamilyConnection =
                 cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
                 result = columnFamilyConnection.GetRow(key, 10);
             return result.ToArray();
@@ -144,7 +142,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public string[] GetKeys(string keySpaceName, string columnFamilyName)
         {
             IEnumerable<string> result;
-            using (IColumnFamilyConnection columnFamilyConnection =
+            using(IColumnFamilyConnection columnFamilyConnection =
                 cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
                 result = columnFamilyConnection.GetKeys(10);
             return result.ToArray();

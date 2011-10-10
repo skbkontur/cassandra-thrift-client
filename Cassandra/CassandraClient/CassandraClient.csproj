@@ -192,6 +192,10 @@
     <Compile Include="Helpers\ColumnFamilyConverter.cs" />
     <Compile Include="Helpers\ConsistencyLevelConverter.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
+    <Compile Include="Log\CassandraLogger.cs" />
+    <Compile Include="Log\CassandraLogManager.cs" />
+    <Compile Include="Log\ICassandraLogger.cs" />
+    <Compile Include="Log\ICassandraLogManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -2,19 +2,13 @@
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
-
-using log4net;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class GetCommand : AbstractKeyspaceColumnFamilyKeyDependantCommand
     {
-        public GetCommand()
-        {
-            logger = LogManager.GetLogger(GetType());
-        }
-
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
         {
             ColumnOrSuperColumn columnOrSupercolumn = null;
             ColumnPath columnPath = BuildColumnPath(ColumnName);
@@ -36,7 +30,5 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 
         public AquilesColumn Output { get; private set; }
         public byte[] ColumnName { set; private get; }
-
-        private readonly ILog logger;
     }
 }

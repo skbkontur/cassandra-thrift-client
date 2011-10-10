@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Connections;
-
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.FunctionalTests.Tests;
-
-using StorageCore;
+using SKBKontur.Cassandra.StorageCore;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {

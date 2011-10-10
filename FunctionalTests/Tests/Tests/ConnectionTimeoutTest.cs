@@ -1,8 +1,8 @@
 ﻿using System.Threading;
 
-using CassandraClient.Abstractions;
-
 using NUnit.Framework;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {

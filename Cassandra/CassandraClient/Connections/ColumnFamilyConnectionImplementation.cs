@@ -1,25 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
-using AquilesConsistencyLevel = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.AquilesConsistencyLevel;
-using BatchMutateCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.BatchMutateCommand;
-using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
-using ConsistencyLevel = SKBKontur.Cassandra.CassandraClient.Abstractions.ConsistencyLevel;
-using GetCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetCommand;
-using GetIndexedSlicesCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetIndexedSlicesCommand;
-using GetKeyRangeSliceCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetKeyRangeSliceCommand;
-using GetSliceCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetSliceCommand;
-using InsertCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.InsertCommand;
-using MultiGetSliceCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.MultiGetSliceCommand;
-using TruncateColumnFamilyCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.TruncateColumnFamilyCommand;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
@@ -28,8 +15,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,
                                                     ICommandExecuter commandExecuter,
-                                                    Abstractions.ConsistencyLevel readConsistencyLevel,
-                                                    Abstractions.ConsistencyLevel writeConsistencyLevel)
+                                                    ConsistencyLevel readConsistencyLevel,
+                                                    ConsistencyLevel writeConsistencyLevel)
         {
             this.keyspaceName = keyspaceName;
             this.columnFamilyName = columnFamilyName;
@@ -43,6 +30,30 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             //aquilesConnection.Dispose();
         }
 
+        public int GetCount(byte[] key)
+        {
+            var getCountCommand = new GetCountCommand
+                {
+                    ColumnFamily = columnFamilyName,
+                    ConsistencyLevel = readConsistencyLevel,
+                    Key = key
+                };
+            ExecuteCommand(getCountCommand);
+            return getCountCommand.Count;
+        }
+
+        public Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key)
+        {
+            var getCountCommand = new MultiGetCountCommand
+                {
+                    ColumnFamily = columnFamilyName,
+                    ConsistencyLevel = readConsistencyLevel,
+                    Keys = key.ToList()
+                };
+            ExecuteCommand(getCountCommand);
+            return getCountCommand.Output;
+        }
+
         public void DeleteRow(byte[] key, long? timestamp)
         {
             ExecuteCommand(new DeleteRowCommand
@@ -53,9 +64,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 });
         }
 
-        public void AddColumn(byte[] key, Abstractions.Column column)
+        public void AddColumn(byte[] key, Column column)
         {
-            ExecuteCommand(new AquilesTrash.Command.InsertCommand
+            ExecuteCommand(new InsertCommand
                 {
                     Column = column.ToAquilesColumn(),
                     Key = key,
@@ -64,18 +75,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 });
         }
 
-        public Abstractions.Column GetColumn(byte[] key, byte[] columnName)
+        public Column GetColumn(byte[] key, byte[] columnName)
         {
-            Abstractions.Column result;
+            Column result;
             if(!TryGetColumn(key, columnName, out result))
                 throw new ColumnIsNotFoundException(columnFamilyName, key, columnName);
             return result;
         }
 
-        public bool TryGetColumn(byte[] key, byte[] columnName, out Abstractions.Column result)
+        public bool TryGetColumn(byte[] key, byte[] columnName, out Column result)
         {
             result = null;
-            var getCommand = new AquilesTrash.Command.GetCommand
+            var getCommand = new GetCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ColumnName = columnName,
@@ -89,7 +100,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return true;
         }
 
-        public void AddBatch(byte[] key, IEnumerable<Abstractions.Column> columns)
+        public void AddBatch(byte[] key, IEnumerable<Column> columns)
         {
             List<IAquilesMutation> mutationsList = ToMutationsList(columns);
             ExecuteMutations(key, mutationsList);
@@ -111,9 +122,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(key, mutationsList);
         }
 
-        public Abstractions.Column[] GetRow(byte[] key, byte[] startColumnName, int count)
+        public Column[] GetRow(byte[] key, byte[] startColumnName, int count)
         {
-            var getSliceCommand = new AquilesTrash.Command.GetSliceCommand
+            var getSliceCommand = new GetSliceCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -133,20 +144,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public List<byte[]> GetKeys(byte[] startKey, int count)
         {
-            var getKeyRangeSliceCommand = new AquilesTrash.Command.GetKeyRangeSliceCommand
+            var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
                     Predicate = new AquilesSlicePredicate {Columns = new List<byte[]>()},
-                    KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey=new byte[0], Count = count}
+                    KeyTokenRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey = new byte[0], Count = count}
                 };
             ExecuteCommand(getKeyRangeSliceCommand);
             return getKeyRangeSliceCommand.Output;
         }
 
-        public List<KeyValuePair<byte[], Abstractions.Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
+        public List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
         {
-            var multiGetSliceCommand = new AquilesTrash.Command.MultiGetSliceCommand
+            var multiGetSliceCommand = new MultiGetSliceCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -161,12 +172,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Abstractions.Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()
         {
-            var truncateCommand = new AquilesTrash.Command.TruncateColumnFamilyCommand
+            var truncateCommand = new TruncateColumnFamilyCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = writeConsistencyLevel
@@ -184,7 +195,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             indexClause.Expressions = new List<AquilesIndexExpression>();
             indexClause.Expressions.AddRange(conditions);
 
-            var gisc = new AquilesTrash.Command.GetIndexedSlicesCommand
+            var gisc = new GetIndexedSlicesCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -196,7 +207,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return gisc.Output;
         }
 
-        public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Abstractions.Column>>> data)
+        public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data)
         {
             List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key, ToMutationsList(row.Value))).ToList();
             ExecuteMutations(mutationsList);
@@ -214,15 +225,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                                                             {
                                                                                                 Columns = row.Value.ToList()
                                                                                             },
-                                                                                            Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
+                                                                                        Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                                                                                     }
                                                                             })).ToList();
             ExecuteMutations(mutationsList);
         }
 
-        
-
-        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Abstractions.Column> columns)
+        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns)
         {
             return columns.Select(column => new AquilesSetMutation {Column = column.ToAquilesColumn()}).Cast<IAquilesMutation>().ToList();
         }
@@ -239,7 +248,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     {columnFamilyName, columnFamilyMutations}
                 };
 
-            var batchMutateCommand = new AquilesTrash.Command.BatchMutateCommand
+            var batchMutateCommand = new BatchMutateCommand
                 {
                     ConsistencyLevel = writeConsistencyLevel,
                     Mutations = keyMutations
@@ -256,7 +265,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     {columnFamilyName, dict}
                 };
 
-            var batchMutateCommand = new AquilesTrash.Command.BatchMutateCommand
+            var batchMutateCommand = new BatchMutateCommand
                 {
                     ConsistencyLevel = writeConsistencyLevel,
                     Mutations = keyMutations
@@ -267,13 +276,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private void ExecuteCommand(IAquilesCommand command)
         {
-                commandExecuter.Execute(new AquilesCommandAdaptor(command, keyspaceName));
+            commandExecuter.Execute(new AquilesCommandAdaptor(command, keyspaceName));
         }
 
         private readonly ICommandExecuter commandExecuter;
         private readonly string keyspaceName;
         private readonly string columnFamilyName;
-        private readonly AquilesTrash.Command.AquilesConsistencyLevel readConsistencyLevel;
-        private readonly AquilesTrash.Command.AquilesConsistencyLevel writeConsistencyLevel;
+        private readonly AquilesConsistencyLevel readConsistencyLevel;
+        private readonly AquilesConsistencyLevel writeConsistencyLevel;
     }
 }

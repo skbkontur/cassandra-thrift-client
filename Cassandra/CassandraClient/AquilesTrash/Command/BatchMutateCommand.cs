@@ -7,18 +7,19 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class BatchMutateCommand : AbstractKeyspaceDependantCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
         {
             var mutation_map = Translate(Mutations);
             cassandraClient.batch_mutate(mutation_map, GetCassandraConsistencyLevel());
         }
 
-        public override void ValidateInput()
+        public override void ValidateInput(ICassandraLogger logger)
         {
             if (Mutations == null)
                 throw new AquilesCommandParameterException("No mutations found");

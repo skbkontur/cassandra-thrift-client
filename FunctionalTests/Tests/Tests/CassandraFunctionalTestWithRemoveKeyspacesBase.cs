@@ -2,11 +2,10 @@
 
 using Cassandra.Tests;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Exceptions;
-
 using NUnit.Framework;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
