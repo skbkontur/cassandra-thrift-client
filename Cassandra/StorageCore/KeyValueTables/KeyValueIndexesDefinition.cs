@@ -1,6 +1,6 @@
 using GroboSerializer;
 
-namespace StorageCore.KeyValueTables
+namespace SKBKontur.Cassandra.StorageCore.KeyValueTables
 {
     public abstract class KeyValueIndexesDefinition : SearchQueryIndexesDefinition<KeyToValue>
     {

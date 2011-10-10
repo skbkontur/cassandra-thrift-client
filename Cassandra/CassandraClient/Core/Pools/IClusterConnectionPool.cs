@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace CassandraClient.Core.Pools
+namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public interface IClusterConnectionPool
     {

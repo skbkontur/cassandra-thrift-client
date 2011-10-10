@@ -3,9 +3,10 @@ using System.Collections.Generic;
 
 using System.Text;
 using Apache.Cassandra;
-using CassandraClient.AquilesTrash.Exceptions;
 
-namespace CassandraClient.AquilesTrash.Model
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
 {
     /// <summary>
     /// Aquiles structure to contains Cassandra Key Range structure (only support for a Token range get)

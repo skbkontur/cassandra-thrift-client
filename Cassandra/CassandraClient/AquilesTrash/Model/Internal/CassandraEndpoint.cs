@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Globalization;
 
-namespace CassandraClient.AquilesTrash.Model.Internal
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model.Internal
 {
     internal class CassandraEndpoint
     {

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Encoders;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
-namespace CassandraClient.Connections
+namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class ColumnFamilyConnection : IColumnFamilyConnection
     {

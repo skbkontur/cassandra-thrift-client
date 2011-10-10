@@ -1,8 +1,8 @@
-﻿using CassandraClient.AquilesTrash.Model;
+﻿using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 using Thrift.Protocol;
 
-namespace CassandraClient.AquilesTrash.Converter.Model
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model
 {
     /// <summary>
     /// Interface for converter between objects structure

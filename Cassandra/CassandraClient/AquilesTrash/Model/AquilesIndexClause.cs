@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-using CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 
-namespace CassandraClient.AquilesTrash.Model
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
 {
     /// <summary>
     /// Aquiles structure to contains Cassandra IndexClause structure

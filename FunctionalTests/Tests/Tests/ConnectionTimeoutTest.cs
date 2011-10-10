@@ -4,7 +4,7 @@ using CassandraClient.Abstractions;
 
 using NUnit.Framework;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class ConnectionTimeoutTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {

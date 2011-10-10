@@ -3,15 +3,15 @@ using System.Linq;
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Converter;
-using CassandraClient.AquilesTrash.Exceptions;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class GetKeyRangeSliceCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             Output = null;
             var columnParent = BuildColumnParent();

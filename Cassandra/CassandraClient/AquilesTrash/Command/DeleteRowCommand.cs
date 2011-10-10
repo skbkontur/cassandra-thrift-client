@@ -1,10 +1,10 @@
 ﻿using Apache.Cassandra;
 
-using CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Core;
 
 using log4net;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class DeleteRowCommand : AbstractKeyspaceColumnFamilyKeyDependantCommand
     {
@@ -13,7 +13,7 @@ namespace CassandraClient.AquilesTrash.Command
             logger = LogManager.GetLogger(GetType());
         }
 
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             logger.DebugFormat("Removing key '{0}' from columnFamily '{1}'.", Key, ColumnFamily);
             var timestamp = Timestamp ?? DateTimeService.UtcNow.Ticks;

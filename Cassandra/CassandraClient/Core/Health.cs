@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class Health
     {

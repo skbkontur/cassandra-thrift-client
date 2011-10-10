@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace CassandraClient.Helpers
+namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public static class StringHelpers
     {

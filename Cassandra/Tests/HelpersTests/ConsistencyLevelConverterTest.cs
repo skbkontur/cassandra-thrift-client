@@ -1,8 +1,8 @@
 using System;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Command;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using NUnit.Framework;
 

@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public interface IEndpointManager
     {

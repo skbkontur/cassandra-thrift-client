@@ -1,6 +1,6 @@
 using System;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public interface IPooledThriftConnection : IThriftConnection
     {

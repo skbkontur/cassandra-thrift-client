@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public static class DateTimeService
     {

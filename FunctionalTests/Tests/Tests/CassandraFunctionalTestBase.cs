@@ -9,9 +9,9 @@ using CassandraClient.Clusters;
 using GroboContainer.Core;
 using GroboContainer.Impl;
 
-using Tests.Utils;
+using SKBKontur.Cassandra.FunctionalTests.Utils;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestBase : TestBase
     {

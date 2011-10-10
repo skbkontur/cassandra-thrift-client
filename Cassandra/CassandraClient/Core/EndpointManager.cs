@@ -4,7 +4,7 @@ using System.Net;
 
 using log4net;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class EndpointManager : IEndpointManager
     {

@@ -2,7 +2,7 @@ using GroboSerializer;
 
 using StorageCore;
 
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public class TestStorageElementIndexesDefinition : SearchQueryIndexesDefinition<TestStorageElement>
     {

@@ -4,10 +4,10 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Connections;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using GroboSerializer;
 
@@ -15,9 +15,9 @@ using NUnit.Framework;
 
 using Rhino.Mocks;
 
-using StorageCore;
-using StorageCore.Exceptions;
-using StorageCore.RowsStorage;
+using SKBKontur.Cassandra.StorageCore;
+using SKBKontur.Cassandra.StorageCore.Exceptions;
+using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace Cassandra.Tests.StorageCoreTests
 {

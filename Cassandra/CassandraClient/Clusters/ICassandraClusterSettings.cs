@@ -1,8 +1,8 @@
 using System.Net;
 
-using CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
-namespace CassandraClient.Clusters
+namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public interface ICassandraClusterSettings
     {

@@ -7,7 +7,7 @@ using GroboSerializer;
 using StorageCore;
 using StorageCore.RowsStorage;
 
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public class TestColumnFamilyRegistry : IColumnFamilyRegistry, ISerializeToRowsStorageColumnFamilyNameGetter
     {

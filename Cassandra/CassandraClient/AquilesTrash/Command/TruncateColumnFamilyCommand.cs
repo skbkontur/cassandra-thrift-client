@@ -1,4 +1,4 @@
-﻿namespace CassandraClient.AquilesTrash.Command
+﻿namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class TruncateColumnFamilyCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {

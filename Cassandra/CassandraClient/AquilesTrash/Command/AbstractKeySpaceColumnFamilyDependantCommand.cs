@@ -2,9 +2,9 @@
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public abstract class AbstractKeyspaceColumnFamilyDependantCommand : AbstractKeyspaceDependantCommand
     {

@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 
-using CassandraClient.Connections;
-using CassandraClient.Core;
-using CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
-namespace CassandraClient.Clusters
+namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public class CassandraCluster : ICassandraCluster
     {

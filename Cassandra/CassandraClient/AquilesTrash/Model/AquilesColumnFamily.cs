@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 
-namespace CassandraClient.AquilesTrash.Model
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
 {
     /// <summary>
     /// Aquiles structure to hold Keyspace's columnFamily internal information

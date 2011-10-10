@@ -1,6 +1,6 @@
-using CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public interface IVersionReader
     {

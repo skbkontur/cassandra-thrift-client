@@ -3,9 +3,9 @@
 using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 
-using Tests.Tests;
+using SKBKontur.Cassandra.FunctionalTests.Tests;
 
-namespace Tests.Settings
+namespace SKBKontur.Cassandra.FunctionalTests.Settings
 {
     class CassandraClusterSettings : ICassandraClusterSettings
     {

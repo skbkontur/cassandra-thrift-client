@@ -1,13 +1,13 @@
 ﻿using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Converter;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class DescribeKeyspaceCommand : AbstractCommand
     {
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             var keyspaceDescription = cassandraClient.describe_keyspace(Keyspace);
             KeyspaceInformation = ModelConverterHelper.Convert<AquilesKeyspace, KsDef>(keyspaceDescription);

@@ -1,8 +1,8 @@
-﻿using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Model;
-using CassandraClient.Core;
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Core;
 
-namespace CassandraClient.Helpers
+namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public static class ColumnConverter
     {

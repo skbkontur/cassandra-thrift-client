@@ -1,9 +1,9 @@
 using System.Linq;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace StorageCore
+namespace SKBKontur.Cassandra.StorageCore
 {
     public abstract class IdSetRepository : IIdSetRepository
     {

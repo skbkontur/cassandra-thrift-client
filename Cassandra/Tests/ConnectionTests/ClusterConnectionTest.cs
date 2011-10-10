@@ -5,14 +5,14 @@ using System.Reflection;
 
 
 
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Command;
-using CassandraClient.AquilesTrash.Command.System;
-using CassandraClient.Connections;
-using CassandraClient.Core;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using NUnit.Framework;
 

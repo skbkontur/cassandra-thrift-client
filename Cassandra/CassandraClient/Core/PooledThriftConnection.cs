@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 
-using CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class PooledThriftConnection : ThriftConnection, IPooledThriftConnection
     {

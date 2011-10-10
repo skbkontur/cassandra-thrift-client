@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace CassandraClient.AquilesTrash.Encoders
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders
 {
     /// <summary>
     /// Encoder Helper for UUIDs (Guids that are compatible with UUID java version)

@@ -2,11 +2,11 @@
 
 using Apache.Cassandra;
 
-namespace CassandraClient.AquilesTrash.Command.System
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System
 {
     public class SchemaAgreementCommand : AbstractCommand
     {
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             Output = cassandraClient.describe_schema_versions();
         }

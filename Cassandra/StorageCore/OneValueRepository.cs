@@ -1,8 +1,8 @@
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
-namespace StorageCore
+namespace SKBKontur.Cassandra.StorageCore
 {
     public abstract class OneValueRepository : IOneValueRepository
     {

@@ -1,11 +1,11 @@
 using System.Collections.Specialized;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using GroboSerializer;
 
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public class Version1Reader : IVersionReader
     {

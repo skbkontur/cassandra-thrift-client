@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tests.Logger
+namespace SKBKontur.Cassandra.FunctionalTests.Logger
 {
     public class ConsoleLogger
     {

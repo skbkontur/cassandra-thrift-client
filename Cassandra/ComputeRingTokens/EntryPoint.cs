@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Numerics;
 
-namespace Cassandra.ComputeRingTokens
+namespace SKBKontur.Cassandra.ComputeRingTokens
 {
     public static class EntryPoint
     {

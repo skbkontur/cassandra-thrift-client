@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-namespace CassandraClient.Helpers
+namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public static class ColumnFamilyConverter
     {

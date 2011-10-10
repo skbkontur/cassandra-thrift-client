@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
-namespace StorageCore.Extender
+namespace SKBKontur.Cassandra.StorageCore.Extender
 {
     internal class ExtenderImpl
     {

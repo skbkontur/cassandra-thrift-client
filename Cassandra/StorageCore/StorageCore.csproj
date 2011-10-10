@@ -8,8 +8,8 @@
     <ProjectGuid>{11EED920-D590-433F-950E-386DC3DF229B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>StorageCore</RootNamespace>
-    <AssemblyName>StorageCore</AssemblyName>
+    <RootNamespace>SKBKontur.Cassandra.StorageCore</RootNamespace>
+    <AssemblyName>Cassandra.StorageCore</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

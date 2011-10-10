@@ -7,7 +7,7 @@ using CassandraClient.Connections;
 
 using System.Linq;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class CassandraClient : ICassandraClient
     {

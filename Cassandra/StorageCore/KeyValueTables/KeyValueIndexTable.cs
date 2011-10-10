@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Connections;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
-namespace StorageCore.KeyValueTables
+namespace SKBKontur.Cassandra.StorageCore.KeyValueTables
 {
     public abstract class KeyValueIndexTable : IKeyValueIndexTable
     {

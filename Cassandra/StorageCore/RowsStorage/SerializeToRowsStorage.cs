@@ -4,16 +4,16 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Connections;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using GroboSerializer;
 
-using StorageCore.Exceptions;
+using SKBKontur.Cassandra.StorageCore.Exceptions;
 
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public class SerializeToRowsStorage : ISerializeToRowsStorage
     {

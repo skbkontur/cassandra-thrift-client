@@ -9,7 +9,7 @@ using CassandraClient.Connections;
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class SecondaryIndexTest : CassandraFunctionalTestBase
     {

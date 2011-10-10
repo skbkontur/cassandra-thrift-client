@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public interface ISerializeToRowsStorage
     {

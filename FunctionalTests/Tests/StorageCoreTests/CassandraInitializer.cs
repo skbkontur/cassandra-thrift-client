@@ -6,11 +6,11 @@ using CassandraClient.Abstractions;
 using CassandraClient.Clusters;
 using CassandraClient.Connections;
 
+using SKBKontur.Cassandra.FunctionalTests.Tests;
+
 using StorageCore;
 
-using Tests.Tests;
-
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public static class CassandraInitializer
     {

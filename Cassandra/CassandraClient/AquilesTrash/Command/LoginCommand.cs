@@ -2,13 +2,13 @@
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class LoginCommand : AbstractKeyspaceDependantCommand
     {
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             AuthenticationRequest authReq = BuildAuthenticationRequest();
             cassandraClient.login(authReq);

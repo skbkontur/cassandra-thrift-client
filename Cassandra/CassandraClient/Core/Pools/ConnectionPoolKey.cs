@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace CassandraClient.Core.Pools
+namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class ConnectionPoolKey
     {

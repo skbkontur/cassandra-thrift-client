@@ -8,7 +8,7 @@ using CassandraClient.Exceptions;
 
 using NUnit.Framework;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestWithRemoveKeyspacesBase : CassandraFunctionalTestBase
     {

@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CassandraClient.AquilesTrash.Model;
+
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Converter.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model;
 
-namespace CassandraClient.AquilesTrash.Converter.Model.Impl
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
 {
     /// <summary>
     /// Converter for AquilesSliceRange

@@ -1,4 +1,4 @@
-namespace StorageCore
+namespace SKBKontur.Cassandra.StorageCore
 {
     public interface ICassandraCoreSettings
     {

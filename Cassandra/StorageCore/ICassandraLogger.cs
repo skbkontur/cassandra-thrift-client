@@ -1,6 +1,6 @@
 using System;
 
-namespace StorageCore
+namespace SKBKontur.Cassandra.StorageCore
 {
     public interface ICassandraLogger
     {

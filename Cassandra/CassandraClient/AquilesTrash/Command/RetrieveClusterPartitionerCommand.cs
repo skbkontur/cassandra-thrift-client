@@ -1,10 +1,10 @@
 ﻿using Apache.Cassandra;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class RetrieveClusterPartitionerCommand : AbstractCommand
     {
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             Partitioner = cassandraClient.describe_partitioner();
         }

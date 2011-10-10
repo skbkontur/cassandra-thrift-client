@@ -1,4 +1,4 @@
-﻿namespace StorageCore.KeyValueTables
+﻿namespace SKBKontur.Cassandra.StorageCore.KeyValueTables
 {
     public class KeyToValueSearchQuery
     {

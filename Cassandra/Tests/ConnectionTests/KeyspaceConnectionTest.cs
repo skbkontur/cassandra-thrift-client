@@ -2,13 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-using CassandraClient.AquilesTrash.Command;
-using CassandraClient.AquilesTrash.Command.System;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Connections;
-using CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Core;
 
 using NUnit.Framework;
 using NUnit.Framework.SyntaxHelpers;

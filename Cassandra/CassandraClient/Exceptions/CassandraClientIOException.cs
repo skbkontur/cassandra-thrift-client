@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CassandraClient.Exceptions
+namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientIOException : CassandraClientException
     {

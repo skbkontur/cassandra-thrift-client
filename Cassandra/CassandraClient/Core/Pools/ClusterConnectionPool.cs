@@ -3,10 +3,10 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 
-using CassandraClient.Clusters;
-using CassandraClient.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
-namespace CassandraClient.Core.Pools
+namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class ClusterConnectionPool : IClusterConnectionPool
     {

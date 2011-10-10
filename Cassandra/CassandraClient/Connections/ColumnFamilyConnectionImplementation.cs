@@ -1,35 +1,35 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Command;
-using CassandraClient.Core;
-using CassandraClient.Exceptions;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
-using AquilesConsistencyLevel = CassandraClient.AquilesTrash.Command.AquilesConsistencyLevel;
-using BatchMutateCommand = CassandraClient.AquilesTrash.Command.BatchMutateCommand;
-using Column = CassandraClient.Abstractions.Column;
-using ConsistencyLevel = CassandraClient.Abstractions.ConsistencyLevel;
-using GetCommand = CassandraClient.AquilesTrash.Command.GetCommand;
-using GetIndexedSlicesCommand = CassandraClient.AquilesTrash.Command.GetIndexedSlicesCommand;
-using GetKeyRangeSliceCommand = CassandraClient.AquilesTrash.Command.GetKeyRangeSliceCommand;
-using GetSliceCommand = CassandraClient.AquilesTrash.Command.GetSliceCommand;
-using InsertCommand = CassandraClient.AquilesTrash.Command.InsertCommand;
-using MultiGetSliceCommand = CassandraClient.AquilesTrash.Command.MultiGetSliceCommand;
-using TruncateColumnFamilyCommand = CassandraClient.AquilesTrash.Command.TruncateColumnFamilyCommand;
+using AquilesConsistencyLevel = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.AquilesConsistencyLevel;
+using BatchMutateCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.BatchMutateCommand;
+using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
+using ConsistencyLevel = SKBKontur.Cassandra.CassandraClient.Abstractions.ConsistencyLevel;
+using GetCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetCommand;
+using GetIndexedSlicesCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetIndexedSlicesCommand;
+using GetKeyRangeSliceCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetKeyRangeSliceCommand;
+using GetSliceCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.GetSliceCommand;
+using InsertCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.InsertCommand;
+using MultiGetSliceCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.MultiGetSliceCommand;
+using TruncateColumnFamilyCommand = SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.TruncateColumnFamilyCommand;
 
-namespace CassandraClient.Connections
+namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class ColumnFamilyConnectionImplementation : IColumnFamilyConnectionImplementation
     {
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,
                                                     ICommandExecuter commandExecuter,
-                                                    ConsistencyLevel readConsistencyLevel,
-                                                    ConsistencyLevel writeConsistencyLevel)
+                                                    Abstractions.ConsistencyLevel readConsistencyLevel,
+                                                    Abstractions.ConsistencyLevel writeConsistencyLevel)
         {
             this.keyspaceName = keyspaceName;
             this.columnFamilyName = columnFamilyName;
@@ -53,9 +53,9 @@ namespace CassandraClient.Connections
                 });
         }
 
-        public void AddColumn(byte[] key, Column column)
+        public void AddColumn(byte[] key, Abstractions.Column column)
         {
-            ExecuteCommand(new InsertCommand
+            ExecuteCommand(new AquilesTrash.Command.InsertCommand
                 {
                     Column = column.ToAquilesColumn(),
                     Key = key,
@@ -64,18 +64,18 @@ namespace CassandraClient.Connections
                 });
         }
 
-        public Column GetColumn(byte[] key, byte[] columnName)
+        public Abstractions.Column GetColumn(byte[] key, byte[] columnName)
         {
-            Column result;
+            Abstractions.Column result;
             if(!TryGetColumn(key, columnName, out result))
                 throw new ColumnIsNotFoundException(columnFamilyName, key, columnName);
             return result;
         }
 
-        public bool TryGetColumn(byte[] key, byte[] columnName, out Column result)
+        public bool TryGetColumn(byte[] key, byte[] columnName, out Abstractions.Column result)
         {
             result = null;
-            var getCommand = new GetCommand
+            var getCommand = new AquilesTrash.Command.GetCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ColumnName = columnName,
@@ -89,7 +89,7 @@ namespace CassandraClient.Connections
             return true;
         }
 
-        public void AddBatch(byte[] key, IEnumerable<Column> columns)
+        public void AddBatch(byte[] key, IEnumerable<Abstractions.Column> columns)
         {
             List<IAquilesMutation> mutationsList = ToMutationsList(columns);
             ExecuteMutations(key, mutationsList);
@@ -111,9 +111,9 @@ namespace CassandraClient.Connections
             ExecuteMutations(key, mutationsList);
         }
 
-        public Column[] GetRow(byte[] key, byte[] startColumnName, int count)
+        public Abstractions.Column[] GetRow(byte[] key, byte[] startColumnName, int count)
         {
-            var getSliceCommand = new GetSliceCommand
+            var getSliceCommand = new AquilesTrash.Command.GetSliceCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -133,7 +133,7 @@ namespace CassandraClient.Connections
 
         public List<byte[]> GetKeys(byte[] startKey, int count)
         {
-            var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand
+            var getKeyRangeSliceCommand = new AquilesTrash.Command.GetKeyRangeSliceCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -144,9 +144,9 @@ namespace CassandraClient.Connections
             return getKeyRangeSliceCommand.Output;
         }
 
-        public List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
+        public List<KeyValuePair<byte[], Abstractions.Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
         {
-            var multiGetSliceCommand = new MultiGetSliceCommand
+            var multiGetSliceCommand = new AquilesTrash.Command.MultiGetSliceCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -161,12 +161,12 @@ namespace CassandraClient.Connections
                         }
                 };
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Abstractions.Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()
         {
-            var truncateCommand = new TruncateColumnFamilyCommand
+            var truncateCommand = new AquilesTrash.Command.TruncateColumnFamilyCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = writeConsistencyLevel
@@ -184,7 +184,7 @@ namespace CassandraClient.Connections
             indexClause.Expressions = new List<AquilesIndexExpression>();
             indexClause.Expressions.AddRange(conditions);
 
-            var gisc = new GetIndexedSlicesCommand
+            var gisc = new AquilesTrash.Command.GetIndexedSlicesCommand
                 {
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = readConsistencyLevel,
@@ -196,7 +196,7 @@ namespace CassandraClient.Connections
             return gisc.Output;
         }
 
-        public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data)
+        public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Abstractions.Column>>> data)
         {
             List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key, ToMutationsList(row.Value))).ToList();
             ExecuteMutations(mutationsList);
@@ -222,7 +222,7 @@ namespace CassandraClient.Connections
 
         
 
-        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns)
+        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Abstractions.Column> columns)
         {
             return columns.Select(column => new AquilesSetMutation {Column = column.ToAquilesColumn()}).Cast<IAquilesMutation>().ToList();
         }
@@ -239,7 +239,7 @@ namespace CassandraClient.Connections
                     {columnFamilyName, columnFamilyMutations}
                 };
 
-            var batchMutateCommand = new BatchMutateCommand
+            var batchMutateCommand = new AquilesTrash.Command.BatchMutateCommand
                 {
                     ConsistencyLevel = writeConsistencyLevel,
                     Mutations = keyMutations
@@ -256,7 +256,7 @@ namespace CassandraClient.Connections
                     {columnFamilyName, dict}
                 };
 
-            var batchMutateCommand = new BatchMutateCommand
+            var batchMutateCommand = new AquilesTrash.Command.BatchMutateCommand
                 {
                     ConsistencyLevel = writeConsistencyLevel,
                     Mutations = keyMutations
@@ -273,7 +273,7 @@ namespace CassandraClient.Connections
         private readonly ICommandExecuter commandExecuter;
         private readonly string keyspaceName;
         private readonly string columnFamilyName;
-        private readonly AquilesConsistencyLevel readConsistencyLevel;
-        private readonly AquilesConsistencyLevel writeConsistencyLevel;
+        private readonly AquilesTrash.Command.AquilesConsistencyLevel readConsistencyLevel;
+        private readonly AquilesTrash.Command.AquilesConsistencyLevel writeConsistencyLevel;
     }
 }

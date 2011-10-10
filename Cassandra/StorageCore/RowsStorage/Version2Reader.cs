@@ -1,8 +1,8 @@
-using CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 using GroboSerializer;
 
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public class Version2Reader : IVersionReader
     {

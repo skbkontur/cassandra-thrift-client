@@ -6,13 +6,13 @@ using GroboSerializer;
 
 using NUnit.Framework;
 
-using StorageCore.RowsStorage;
+using SKBKontur.Cassandra.FunctionalTests.Tests;
 
-using Tests.Tests;
+using StorageCore.RowsStorage;
 
 using Cassandra.Tests;
 
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public class SerializeToRowsStorageThreadingTest : CassandraFunctionalTestBase
     {

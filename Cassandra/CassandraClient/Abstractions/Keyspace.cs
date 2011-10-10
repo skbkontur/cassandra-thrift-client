@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace CassandraClient.Abstractions
+namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class Keyspace
     {

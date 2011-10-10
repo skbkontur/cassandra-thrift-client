@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 using System.Text;
 
-namespace CassandraClient.AquilesTrash.Model
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
 {
     /// <summary>
     /// Information of a Cluster

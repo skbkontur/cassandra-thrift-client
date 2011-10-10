@@ -1,14 +1,14 @@
 ﻿using System.Collections.Specialized;
 using System.Linq;
 
-using CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 using GroboSerializer;
 using GroboSerializer.Writing;
 
-using StorageCore.Extender;
+using SKBKontur.Cassandra.StorageCore.Extender;
 
-namespace StorageCore
+namespace SKBKontur.Cassandra.StorageCore
 {
     public abstract class SearchQueryIndexesDefinition<TQuery> : IColumnFamilyIndexesDefinition where TQuery : new()
     {

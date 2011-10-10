@@ -1,10 +1,10 @@
 ﻿using Apache.Cassandra;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public interface IAquilesCommand
     {
-        void Execute(Cassandra.Client cassandraClient);
+        void Execute(Apache.Cassandra.Cassandra.Client cassandraClient);
         void ValidateInput();
         bool IsFierce { get; }
     }

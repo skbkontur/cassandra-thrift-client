@@ -1,6 +1,6 @@
 using System;
 
-namespace StorageCore.Attributes
+namespace SKBKontur.Cassandra.StorageCore.Attributes
 {
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public class UsingColumnFamilyForSerializeToBlobAttribute : UsingColumnFamilyForTypeAttribute

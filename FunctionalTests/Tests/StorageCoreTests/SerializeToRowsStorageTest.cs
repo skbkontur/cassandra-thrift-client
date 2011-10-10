@@ -9,12 +9,12 @@ using GroboSerializer;
 
 using NUnit.Framework;
 
+using SKBKontur.Cassandra.FunctionalTests.Tests;
+
 using StorageCore.Exceptions;
 using StorageCore.RowsStorage;
 
-using Tests.Tests;
-
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     //TODO: для прохождения тестов вставлены хаки: засыпания в некоторые моменты времени.
     //Смысл в том, что Cassandra неодинаково себя ведет, если два раза подряд сделать Insert с одним Timestamp-ом или

@@ -5,7 +5,7 @@ using System.Text;
 using Apache.Cassandra;
 using System.Globalization;
 
-namespace CassandraClient.AquilesTrash.Model.Internal
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model.Internal
 {
     internal class CassandraClient
     {
@@ -15,7 +15,7 @@ namespace CassandraClient.AquilesTrash.Model.Internal
             private set;
         }
 
-        internal Cassandra.Client InnerClient
+        internal Apache.Cassandra.Cassandra.Client InnerClient
         {
             get;
             private set;
@@ -39,9 +39,9 @@ namespace CassandraClient.AquilesTrash.Model.Internal
             get;
         }
 
-        public CassandraClient(Cassandra.Client cassandraClient, CassandraEndpoint endpoint) : this(cassandraClient, endpoint, null) { }
+        public CassandraClient(Apache.Cassandra.Cassandra.Client cassandraClient, CassandraEndpoint endpoint) : this(cassandraClient, endpoint, null) { }
 
-        public CassandraClient(Cassandra.Client cassandraClient, CassandraEndpoint endpoint, string belongsToPool)
+        public CassandraClient(Apache.Cassandra.Cassandra.Client cassandraClient, CassandraEndpoint endpoint, string belongsToPool)
         {
             this.InnerClient = cassandraClient;
             this.Endpoint = endpoint;

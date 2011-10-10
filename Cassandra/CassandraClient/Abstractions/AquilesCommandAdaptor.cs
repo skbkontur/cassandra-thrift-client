@@ -2,9 +2,9 @@
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 
-namespace CassandraClient.Abstractions
+namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class AquilesCommandAdaptor : ICommand
     {
@@ -16,7 +16,7 @@ namespace CassandraClient.Abstractions
             this.command = command;
         }
 
-        public void Execute(Cassandra.Client client)
+        public void Execute(Apache.Cassandra.Cassandra.Client client)
         {
             command.Execute(client);
         }

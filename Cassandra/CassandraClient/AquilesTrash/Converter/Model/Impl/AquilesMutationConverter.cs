@@ -1,11 +1,12 @@
 ﻿using System;
 
-using CassandraClient.AquilesTrash.Model;
 using Apache.Cassandra;
-using CassandraClient.AquilesTrash.Exceptions;
-using CassandraClient.Core;
 
-namespace CassandraClient.AquilesTrash.Converter.Model.Impl
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Core;
+
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
 {
     /// <summary>
     /// Converter for AquilesMutation

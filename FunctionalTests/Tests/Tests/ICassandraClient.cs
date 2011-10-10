@@ -2,7 +2,7 @@
 
 using CassandraClient.Abstractions;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public interface ICassandraClient
     {

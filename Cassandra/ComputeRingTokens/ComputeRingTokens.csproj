@@ -8,7 +8,7 @@
     <ProjectGuid>{9A8A104B-8D18-4F04-81A9-36E2CC8BDF83}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cassandra.ComputeRingTokens</RootNamespace>
+    <RootNamespace>SKBKontur.Cassandra.ComputeRingTokens</RootNamespace>
     <AssemblyName>Cassandra.ComputeRingTokens</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

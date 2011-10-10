@@ -8,8 +8,8 @@
     <ProjectGuid>{EC3E94EB-D2E7-4224-9D5E-4CAC5012BE99}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Deployment</RootNamespace>
-    <AssemblyName>Deployment</AssemblyName>
+    <RootNamespace>SKBKontur.Cassandra.Deployment</RootNamespace>
+    <AssemblyName>Cassandra.Deployment</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

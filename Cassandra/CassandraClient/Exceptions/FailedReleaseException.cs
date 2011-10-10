@@ -1,8 +1,8 @@
 ﻿using System;
 
-using CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Core;
 
-namespace CassandraClient.Exceptions
+namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class FailedReleaseException : Exception
     {

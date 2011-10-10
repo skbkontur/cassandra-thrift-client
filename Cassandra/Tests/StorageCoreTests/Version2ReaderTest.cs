@@ -1,4 +1,4 @@
-﻿using CassandraClient.Abstractions;
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 using GroboSerializer;
 
@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 using Rhino.Mocks;
 
-using StorageCore.RowsStorage;
+using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace Cassandra.Tests.StorageCoreTests
 {

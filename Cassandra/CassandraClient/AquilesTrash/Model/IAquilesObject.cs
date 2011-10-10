@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Thrift.Protocol;
 
-namespace CassandraClient.AquilesTrash.Model
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
 {
     /// <summary>
     /// Interface for model object in order to support common methods

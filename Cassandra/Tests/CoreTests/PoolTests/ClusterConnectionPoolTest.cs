@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Net;
 
-using CassandraClient.Clusters;
-using CassandraClient.Core;
-using CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
 using NUnit.Framework;
 

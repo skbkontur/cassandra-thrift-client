@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-using CassandraClient.Abstractions;
-
-namespace CassandraClient.Connections
+namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public interface IColumnFamilyConnectionImplementation : IDisposable
     {

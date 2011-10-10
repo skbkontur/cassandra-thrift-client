@@ -2,12 +2,12 @@
 
 using Apache.Cassandra;
 
-using CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 using Thrift.Protocol;
 using Thrift.Transport;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class ThriftConnection : IThriftConnection
     {
@@ -20,7 +20,7 @@ namespace CassandraClient.Core
             TSocket socket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
             socket.TcpClient.Client.NoDelay = true;
             var transport = new TFramedTransport(socket);
-            cassandraClient = new Cassandra.Client(new TBinaryProtocol(transport));
+            cassandraClient = new Apache.Cassandra.Cassandra.Client(new TBinaryProtocol(transport));
             OpenTransport();
         }
 
@@ -65,6 +65,6 @@ namespace CassandraClient.Core
                 cassandraClient.OutputProtocol.Transport.Close();
         }
 
-        private readonly Cassandra.Client cassandraClient;
+        private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
     }
 }

@@ -7,7 +7,7 @@ using CassandraClient.Abstractions;
 
 using NUnit.Framework;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class ConnectionPoolTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
@@ -35,8 +35,8 @@ namespace Tests.Tests
                     Console.WriteLine(kvp.Key.IpEndPoint + " " + kvp.Key.Keyspace + " " + kvp.Value.BusyConnectionCount + " " + kvp.Value.FreeConnectionCount);
                     maxBusy = Math.Max(maxBusy, kvp.Value.BusyConnectionCount);
                     maxFree = Math.Max(maxFree, kvp.Value.FreeConnectionCount);
-                    Assert.IsTrue(kvp.Value.BusyConnectionCount < 100);
-                    Assert.IsTrue(kvp.Value.FreeConnectionCount < 100);
+                    Assert.IsTrue(kvp.Value.BusyConnectionCount < 300);
+                    Assert.IsTrue(kvp.Value.FreeConnectionCount < 300);
                 }
 
                 var flag = threads.Aggregate(false, (current, thread) => current || (thread.IsAlive));

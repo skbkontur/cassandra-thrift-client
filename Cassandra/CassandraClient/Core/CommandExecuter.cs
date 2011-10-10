@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Net;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Core.Pools;
-using CassandraClient.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using log4net;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class CommandExecuter : ICommandExecuter
     {

@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
-namespace CassandraClient.Core
+namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public interface ICommandExecuter
     {

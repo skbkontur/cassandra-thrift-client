@@ -1,6 +1,6 @@
 using System.Text;
 
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using NUnit.Framework;
 

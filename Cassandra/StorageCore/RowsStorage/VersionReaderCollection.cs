@@ -1,6 +1,6 @@
 using GroboSerializer;
 
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public class VersionReaderCollection : IVersionReaderCollection
     {

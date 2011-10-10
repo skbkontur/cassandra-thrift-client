@@ -8,8 +8,8 @@
     <ProjectGuid>{16FB4761-5F8E-41FB-BAC2-FB155865C827}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CassandraClient</RootNamespace>
-    <AssemblyName>CassandraClient</AssemblyName>
+    <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
+    <AssemblyName>Cassandra.CassandraClient</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

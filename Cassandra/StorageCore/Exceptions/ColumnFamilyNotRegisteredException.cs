@@ -1,4 +1,4 @@
-﻿namespace StorageCore.Exceptions
+﻿namespace SKBKontur.Cassandra.StorageCore.Exceptions
 {
     public class ColumnFamilyNotRegisteredException : StorageCoreException
     {

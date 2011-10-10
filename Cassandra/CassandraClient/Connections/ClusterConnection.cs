@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Command;
-using CassandraClient.AquilesTrash.Command.System;
-using CassandraClient.Core;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.Core;
 
 using log4net;
 
-namespace CassandraClient.Connections
+namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class ClusterConnection : IClusterConnection
     {

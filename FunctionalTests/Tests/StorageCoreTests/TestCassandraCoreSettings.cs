@@ -1,9 +1,9 @@
 
+using SKBKontur.Cassandra.FunctionalTests.Tests;
+
 using StorageCore;
 
-using Tests.Tests;
-
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public class TestCassandraCoreSettings : ICassandraCoreSettings
     {

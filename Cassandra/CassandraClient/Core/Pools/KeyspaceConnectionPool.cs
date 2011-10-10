@@ -2,12 +2,12 @@ using System;
 using System.Collections.Concurrent;
 using System.Net;
 
-using CassandraClient.Clusters;
-using CassandraClient.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using log4net;
 
-namespace CassandraClient.Core.Pools
+namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class KeyspaceConnectionPool : IKeyspaceConnectionPool
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CassandraClient.Helpers
+namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public class ByteArrayComparer : IEqualityComparer<byte[]>
     {

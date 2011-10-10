@@ -1,9 +1,9 @@
 ﻿using System;
 
-using CassandraClient.Abstractions;
-using CassandraClient.AquilesTrash.Command;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 
-namespace CassandraClient.Helpers
+namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public static class ConsistencyLevelConverter
     {

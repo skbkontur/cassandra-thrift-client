@@ -2,7 +2,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class InsertGetTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {

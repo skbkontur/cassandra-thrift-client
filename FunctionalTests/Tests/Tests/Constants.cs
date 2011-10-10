@@ -1,4 +1,4 @@
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public static class Constants
     {

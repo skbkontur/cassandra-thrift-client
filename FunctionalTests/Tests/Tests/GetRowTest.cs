@@ -3,7 +3,7 @@ using CassandraClient.Abstractions;
 using NUnit.Framework;
 using System.Linq;
 
-namespace Tests.Tests
+namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class GetRowTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {

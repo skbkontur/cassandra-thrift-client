@@ -1,12 +1,12 @@
 ﻿using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Converter;
-using CassandraClient.AquilesTrash.Exceptions;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 using log4net;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class InsertCommand : AbstractKeyspaceColumnFamilyKeyDependantCommand
     {
@@ -15,7 +15,7 @@ namespace CassandraClient.AquilesTrash.Command
             logger = LogManager.GetLogger(GetType());
         }
 
-        public override void Execute(Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             logger.DebugFormat("Adding key '{0}' to columnFamily '{1}'.", Key, ColumnFamily);
             var column = ModelConverterHelper.Convert<AquilesColumn, Column>(Column);

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CassandraClient.AquilesTrash.Exceptions
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions
 {
     /// <summary>
     /// Exception thrown when a command input parameters are not valid

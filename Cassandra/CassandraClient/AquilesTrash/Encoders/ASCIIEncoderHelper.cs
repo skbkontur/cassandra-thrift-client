@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace CassandraClient.AquilesTrash.Encoders
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders
 {
     /// <summary>
     /// Encoder Helper for ASCII

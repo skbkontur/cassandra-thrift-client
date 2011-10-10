@@ -1,4 +1,4 @@
-﻿namespace CassandraClient.Abstractions
+﻿namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public enum ValidationClass
     {

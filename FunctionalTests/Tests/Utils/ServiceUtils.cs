@@ -3,7 +3,7 @@ using System.IO;
 
 using log4net.Config;
 
-namespace Tests.Utils
+namespace SKBKontur.Cassandra.FunctionalTests.Utils
 {
     public class ServiceUtils
     {

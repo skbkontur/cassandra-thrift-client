@@ -1,6 +1,6 @@
 ﻿using Apache.Cassandra;
 
-namespace CassandraClient.AquilesTrash.Command
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public abstract class AbstractCommand : IAquilesCommand
     {
@@ -18,7 +18,7 @@ namespace CassandraClient.AquilesTrash.Command
         }
 
         private const AquilesConsistencyLevel defaultConsistencyLevel = AquilesConsistencyLevel.QUORUM;
-        public abstract void Execute(Cassandra.Client cassandraClient);
+        public abstract void Execute(Apache.Cassandra.Cassandra.Client cassandraClient);
 
         public virtual void ValidateInput(){}
 

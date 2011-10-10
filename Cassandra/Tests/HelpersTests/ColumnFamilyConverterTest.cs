@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 
-using CassandraClient.AquilesTrash.Encoders;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Helpers;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using NUnit.Framework;
 

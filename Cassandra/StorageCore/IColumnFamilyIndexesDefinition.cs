@@ -1,6 +1,6 @@
-﻿using CassandraClient.Abstractions;
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
-namespace StorageCore
+namespace SKBKontur.Cassandra.StorageCore
 {
     public interface IColumnFamilyIndexesDefinition
     {

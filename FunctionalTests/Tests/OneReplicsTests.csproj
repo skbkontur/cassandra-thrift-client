@@ -8,8 +8,8 @@
     <ProjectGuid>{6C60A962-E359-4A0A-99F6-B0F3FA14EF34}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Tests</RootNamespace>
-    <AssemblyName>Tests</AssemblyName>
+    <RootNamespace>SKBKontur.Cassandra.FunctionalTests</RootNamespace>
+    <AssemblyName>Cassandra.FunctionalTests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

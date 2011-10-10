@@ -1,4 +1,4 @@
-namespace Tests.StorageCoreTests
+namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public class TestStorageElement : TestStorageElementSearchQuery
     {

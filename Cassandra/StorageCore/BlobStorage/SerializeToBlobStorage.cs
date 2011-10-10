@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Text;
 
-using CassandraClient.Abstractions;
-using CassandraClient.Clusters;
-using CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
 
 using GroboSerializer;
 
-using StorageCore.Exceptions;
+using SKBKontur.Cassandra.StorageCore.Exceptions;
 
-namespace StorageCore.BlobStorage
+namespace SKBKontur.Cassandra.StorageCore.BlobStorage
 {
     public class SerializeToBlobStorage : ISerializeToBlobStorage
     {

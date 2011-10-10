@@ -3,14 +3,14 @@ using System.Collections;
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Converter.Model;
-using CassandraClient.AquilesTrash.Converter.Model.Impl;
-using CassandraClient.AquilesTrash.Exceptions;
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 using Thrift.Protocol;
 
-namespace CassandraClient.AquilesTrash.Converter
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter
 {
     /// <summary>
     /// Helper class to avoid creating Converters everytime needed.

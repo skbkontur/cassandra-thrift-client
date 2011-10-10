@@ -4,9 +4,9 @@ using System.Linq;
 
 using Apache.Cassandra;
 
-using CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
-namespace CassandraClient.AquilesTrash.Converter.Model.Impl
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
 {
     public class AquilesColumnFamilyConverter : IThriftConverter<AquilesColumnFamily, CfDef>
     {

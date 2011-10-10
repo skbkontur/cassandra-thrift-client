@@ -1,4 +1,4 @@
-﻿namespace StorageCore.Extender
+﻿namespace SKBKontur.Cassandra.StorageCore.Extender
 {
     internal class PublicPropertiesExtender
     {

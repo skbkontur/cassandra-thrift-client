@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using Apache.Cassandra;
 
-namespace CassandraClient.AquilesTrash.Model
+namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
 {
     /// <summary>
     /// Interface of Mutations

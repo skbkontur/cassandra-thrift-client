@@ -1,4 +1,4 @@
-namespace StorageCore.RowsStorage
+namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 {
     public static class FormatVersions
     {
