@@ -4,11 +4,12 @@ using GroboSerializer;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.StorageCore;
+using SKBKontur.Cassandra.StorageCore.BlobStorage;
 using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
-    public class TestColumnFamilyRegistry : IColumnFamilyRegistry, ISerializeToRowsStorageColumnFamilyNameGetter
+    public class TestColumnFamilyRegistry : IColumnFamilyRegistry, ISerializeToRowsStorageColumnFamilyNameGetter, ISerializeToBlobStorageColumnFamilyNameGetter
     {
         public TestColumnFamilyRegistry(ISerializer serializer)
         {

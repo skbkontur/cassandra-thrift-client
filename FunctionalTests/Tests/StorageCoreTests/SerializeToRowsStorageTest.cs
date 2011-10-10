@@ -3,24 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Cassandra.Tests;
-
 using GroboSerializer;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.FunctionalTests.Tests;
-using SKBKontur.Cassandra.StorageCore.Exceptions;
+using SKBKontur.Cassandra.StorageCore;
 using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
-    //TODO: для прохождения тестов вставлены хаки: засыпания в некоторые моменты времени.
-    //Смысл в том, что Cassandra неодинаково себя ведет, если два раза подряд сделать Insert с одним Timestamp-ом или
-    //два раза подряд сделать BatchInsert с одним Timestamp-ом. В случае BatchInsert-а экспериментально выяснилось, что
-    //правым оказывается первая вставка. В случае Insert-а -- наоборот.
-    //Нужно это починить на уровне клиента (напр., возвращать всегда увеличивающееся время).
-    public class SerializeToRowsStorageTest : CassandraFunctionalTestBase
+    public class SerializeToRowsStorageTest : StorageTestBase
     {
         #region Setup/Teardown
 
@@ -38,167 +30,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
         }
 
         #endregion
-
-        [Test]
-        public void TestUpdate()
-        {
-            var element1 = new TestStorageElement {IntProperty = 5, StringProperty = "zzz", Id = "id", Arr = new[] {"arr0", "arr1"}};
-            storage.Write("zzz", element1);
-            var element2 = new TestStorageElement {IntProperty = null, StringProperty = null, Id = null, Arr = new[] {"arr2"}};
-            storage.Write("zzz", element2);
-            storage.Read<TestStorageElement>("zzz").AssertEqualsTo(element2);
-        }
-
-        [Test]
-        public void TestMultiUpdate()
-        {
-            var element11 = new TestStorageElement {IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] {"arr0", "arr1"}};
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement {IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] {"arr2", "arr3"}};
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement {IntProperty = null, StringProperty = null, Id = null, Arr = new[] {"arr2"}};
-            var element22 = new TestStorageElement {IntProperty = null, StringProperty = null, Id = null, Arr = new[] {"arr4"}};
-            storage.Write(new[] {new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22)});
-            storage.Read<TestStorageElement>("zzz").AssertEqualsTo(element12);
-            storage.Read<TestStorageElement>("qxx").AssertEqualsTo(element22);
-        }
-
-        [Test]
-        public void TestReadMultiple()
-        {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            storage.Read<TestStorageElement>(new[]{"zzz","qxx"}).AssertEqualsTo(new[]{element12,element22});
-        }
-
-        [Test]
-        public void TestReadMultipleException()
-        {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            RunMethodWithException<StorageCoreException>(() => storage.Read<TestStorageElement>(new[] { "zzz", "qxx", "ttt" }), "Objects not found. Expected 3, but was 2");
-        }
-
-        [Test]
-        public void TestReadMultipleEqualIdsInReadQuery()
-        {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            storage.Read<TestStorageElement>(new[] { "zzz", "zzz", "zzz" }).AssertEqualsTo(new[]{element12,element12,element12});
-        }
-
-        [Test]
-        public void TestTryReadBadId()
-        {
-            TestStorageElement result;
-            Assert.IsFalse(storage.TryRead("zzz",out result));
-        }
-
-        [Test]
-        public void TestTryRead()
-        {
-            var element1 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element1);
-            var element2 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            storage.Write("zzz", element2);
-            TestStorageElement result;
-            Assert.IsTrue(storage.TryRead("zzz",out result));
-            result.AssertEqualsTo(element2);
-        }
-
-        [Test]
-        public void TestTryReadMultiple()
-        {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            storage.TryRead<TestStorageElement>(new[] { "zzz", "qxx" }).AssertEqualsTo(new[] { element12, element22 });
-        }
-
-
-        [Test]
-        public void TestTryReadMultipleUnknownId()
-        {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            storage.TryRead<TestStorageElement>(new[] { "zzz", "qxx", "ttt", "rrr" }).AssertEqualsTo(new[] { element12, element22 });
-        }
-
-        [Test]
-        public void TestTryReadMultipleEqualIdsInReadQuery()
-        {
-            var element11 = new TestStorageElement { IntProperty = 5, StringProperty = "zzz", Id = "id1", Arr = new[] { "arr0", "arr1" } };
-            storage.Write("zzz", element11);
-            var element21 = new TestStorageElement { IntProperty = 10, StringProperty = "qxx", Id = "id2", Arr = new[] { "arr2", "arr3" } };
-            storage.Write("qxx", element21);
-            var element12 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr2" } };
-            var element22 = new TestStorageElement { IntProperty = null, StringProperty = null, Id = null, Arr = new[] { "arr4" } };
-            storage.Write(new[] { new KeyValuePair<string, TestStorageElement>("zzz", element12), new KeyValuePair<string, TestStorageElement>("qxx", element22) });
-            storage.TryRead<TestStorageElement>(new[] { "zzz", "zzz", "zzz", "qxx", "qxx" }).AssertEqualsTo(new[] { element12, element12, element12, element22, element22 });
-        }
-
-        [Test]
-        public void TestGetKeys()
-        {
-            const int count = 100;
-            var elements = new List<TestStorageElement>();
-            var rnd = new Random();
-            for(int i = 0; i < count; ++i)
-            {
-                int a = rnd.Next(2);
-                int b = rnd.Next(2);
-                var c = rnd.Next(2);
-                var d = rnd.Next(2);
-                var element = new TestStorageElement
-                    {
-                        Id = Guid.NewGuid().ToString(),
-                        StringProperty = "String" + a,
-                        IntProperty = 1234 + b,
-                        ComplexProperty = new TestStorageElementSubItem
-                            {
-                                StringProperty = "String" + c,
-                                IntProperty = 4321 + d,
-                            }
-                    };
-                elements.Add(element);
-            }
-            storage.Write(elements.Select(e => new KeyValuePair<string, TestStorageElement>(e.Id, e)).ToArray());
-            string prev = null;
-            var allIds = new List<string>();
-            for(;;)
-            {
-                var ids = storage.GetIds<TestStorageElement>(prev, 10);
-                if(ids.Length == 0) break;
-                allIds.AddRange(ids);
-                prev = ids.Last();
-            }
-            Assert.AreEqual(allIds.Count, count);
-            Assert.IsTrue(allIds.All(id => elements.Find(element => element.Id == id) != null));
-        }
 
         [Test]
         public void TestSearch()
@@ -266,6 +97,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
                     }
                 }
             }
+        }
+
+        protected override IStorage GetStorage()
+        {
+            return storage;
         }
 
         private static bool Matches(TestStorageElement element, TestStorageElementSearchQuery query)

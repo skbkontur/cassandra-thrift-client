@@ -166,9 +166,9 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
             return result;
         }
 
-        public T ReadOrCreate<T>(string id, Func<T> creator) where T : class
+        public T ReadOrCreate<T>(string id, Func<string, T> creator) where T : class
         {
-            return ReadOrCreate(new[] {id}, id1 => creator()).Single();
+            return ReadOrCreate(new[] {id}, creator).Single();
         }
 
         public T[] ReadOrCreate<T>(string[] ids, Func<string, T> creator) where T : class

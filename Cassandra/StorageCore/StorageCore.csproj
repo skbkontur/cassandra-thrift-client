@@ -77,6 +77,7 @@
     <Compile Include="RowsStorage\IObjectReader.cs" />
     <Compile Include="RowsStorage\ISerializeToRowsStorage.cs" />
     <Compile Include="RowsStorage\ISerializeToRowsStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="IStorage.cs" />
     <Compile Include="RowsStorage\IVersionReader.cs" />
     <Compile Include="RowsStorage\IVersionReaderCollection.cs" />
     <Compile Include="RowsStorage\ObjectReader.cs" />
