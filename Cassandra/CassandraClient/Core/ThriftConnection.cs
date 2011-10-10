@@ -18,6 +18,7 @@ namespace CassandraClient.Core
             string address = ipEndPoint.Address.ToString();
             int port = ipEndPoint.Port;
             TSocket socket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
+            socket.TcpClient.Client.NoDelay = true;
             var transport = new TFramedTransport(socket);
             cassandraClient = new Cassandra.Client(new TBinaryProtocol(transport));
             OpenTransport();
