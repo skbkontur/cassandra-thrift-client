@@ -22,6 +22,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
     {
         public override void SetUp()
         {
+            TestNameHolder.TestName = TestContext.CurrentContext.Test.Name;
             base.SetUp();
             var assemblies = new List<Assembly>(AssembliesLoader.Load()) {Assembly.GetExecutingAssembly()};
             var container = new Container(new ContainerConfiguration(assemblies));
@@ -29,7 +30,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
             cassandraCluster = container.Get<ICassandraCluster>();
             ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
-            TestNameHolder.TestName = TestContext.CurrentContext.Test.Name;
         }
 
         protected ICassandraCluster cassandraCluster;

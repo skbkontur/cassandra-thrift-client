@@ -97,16 +97,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Logger
 
         private string GetRealMessage(string message, params object[] args)
         {
-            string testName;
-            try
-            {
-                testName = TestContext.CurrentContext.Test.FullName;
-            }
-            catch(Exception)
-            {
-                testName = "UnknownTest";
-            }
-            return testName + " " + string.Format(message, args);
+            return TestNameHolder.TestName + " " + string.Format(message, args);
         }
 
         private string GetRealMessage(string message)
