@@ -53,7 +53,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 {
                     string message = string.Format("An error occured while executing cassandra command '{0}'", command.GetType());
                     var exception = CassandraExceptionTransformer.Transform(e, message);
-                    logger.Warn("Attempt " + i + " on " + endpoint + " failed.", exception);
+                    logger.Warn(exception, "Attempt {0} on {1} failed.", i, endpoint);
                     endpointManager.Bad(endpoint);
                     if(!recognizer.IsExceptionRetryable(exception))
                         throw exception;

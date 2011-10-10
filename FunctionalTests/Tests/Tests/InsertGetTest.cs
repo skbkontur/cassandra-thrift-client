@@ -83,10 +83,10 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestTimeToLiveNotDependsOnTimestamp()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 20);
-            Thread.Sleep(10000);
-            Check("row", "columnName", "columnValue", 0, 20);
-            Thread.Sleep(20000);
+            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 30);
+            Thread.Sleep(15000);
+            Check("row", "columnName", "columnValue", 0, 30);
+            Thread.Sleep(45000);
             CheckNotFound("row", "columnName");
         }
     }

@@ -71,6 +71,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssembliesLoader.cs" />
+    <Compile Include="Logger\TestLogger.cs" />
+    <Compile Include="Logger\TestLogManager.cs" />
+    <Compile Include="Logger\TestNameHolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CassandraClusterSettings.cs" />
     <Compile Include="StorageCoreTests\CassandraInitializer.cs" />

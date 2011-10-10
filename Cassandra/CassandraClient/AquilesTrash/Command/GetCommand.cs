@@ -18,8 +18,8 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
             }
             catch(NotFoundException ex)
             {
-                var message = string.Format("{{ Key: '{0}', ColumnFamily: '{1}', Column: '{2}' }} not found.", Key, ColumnFamily, ColumnName);
-                logger.Warn(message, ex);
+                var message = string.Format("[ Key: '{0}', ColumnFamily: '{1}', Column: '{2}' ] not found.", Key, ColumnFamily, ColumnName);
+                logger.Warn(ex, message);
             }
 
             if(columnOrSupercolumn != null)
