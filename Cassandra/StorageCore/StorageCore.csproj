@@ -43,10 +43,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\UsingColumnFamilyAttribute.cs" />
-    <Compile Include="Attributes\UsingColumnFamilyForSerializeToBlobAttribute.cs" />
-    <Compile Include="Attributes\UsingColumnFamilyForSerializeToRowsAttribute.cs" />
-    <Compile Include="Attributes\UsingColumnFamilyForTypeAttribute.cs" />
     <Compile Include="BlobStorage\ISerializeToBlobStorage.cs" />
     <Compile Include="BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
     <Compile Include="BlobStorage\SerializeToBlobStorage.cs" />
