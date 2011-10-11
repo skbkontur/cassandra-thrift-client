@@ -22,5 +22,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                         string startColumnName = null);
         Column[] GetRow(string keySpaceName, string columnFamilyName, string key);
         string[] GetKeys(string keySpaceName, string columnFamilyName);
+        int GetCount(string keySpaceName, string columnFamilyName, string key);
+        Dictionary<string, int> GetCounts(string keySpaceName, string columnFamilyName, IEnumerable<string> keys);
     }
 }

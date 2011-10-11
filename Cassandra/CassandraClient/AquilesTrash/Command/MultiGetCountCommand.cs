@@ -15,6 +15,14 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
             SlicePredicate slicePredicate = null;
             if(Predicate != null)
                 slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(Predicate);
+            else
+                slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(new AquilesSlicePredicate
+                {
+                    SliceRange = new AquilesSliceRange
+                    {
+                        Count = int.MaxValue,
+                    }
+                });
             Output = cassandraClient.multiget_count(Keys, BuildColumnParent(), slicePredicate, GetCassandraConsistencyLevel());
         }
 

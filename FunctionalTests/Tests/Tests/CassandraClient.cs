@@ -148,6 +148,24 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             return result.ToArray();
         }
 
+        public int GetCount(string keySpaceName, string columnFamilyName, string key)
+        {
+            int result;
+            using (IColumnFamilyConnection columnFamilyConnection =
+                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+                result = columnFamilyConnection.GetCount(key);
+            return result;
+        }
+
+        public Dictionary<string, int> GetCounts(string keySpaceName, string columnFamilyName, IEnumerable<string> keys)
+        {
+            Dictionary<string, int> result;
+            using (IColumnFamilyConnection columnFamilyConnection =
+                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+                result = columnFamilyConnection.GetCounts(keys);
+            return result;
+        }
+
         private void RemoveKeyspace(string keyspaceName)
         {
             using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())

@@ -94,6 +94,7 @@
     <Compile Include="Tests\ConnectionPoolTest.cs" />
     <Compile Include="Tests\ConnectionTimeoutTest.cs" />
     <Compile Include="Tests\Constants.cs" />
+    <Compile Include="Tests\CounterTest.cs" />
     <Compile Include="Tests\DeleteTest.cs" />
     <Compile Include="Tests\GetRowTest.cs" />
     <Compile Include="Tests\ICassandraClient.cs" />
