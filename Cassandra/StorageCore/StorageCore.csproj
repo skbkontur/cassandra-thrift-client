@@ -46,7 +46,6 @@
     <Compile Include="BlobStorage\ISerializeToBlobStorage.cs" />
     <Compile Include="BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
     <Compile Include="BlobStorage\SerializeToBlobStorage.cs" />
-    <Compile Include="CassandraTimedSortedStorageBase.cs" />
     <Compile Include="Exceptions\ColumnFamilyNotRegisteredException.cs" />
     <Compile Include="Exceptions\EmptySearchRequestException.cs" />
     <Compile Include="Exceptions\ObjectNotFoundException.cs" />
@@ -55,17 +54,14 @@
     <Compile Include="Extender\ExtenderImpl.cs" />
     <Compile Include="Extender\PublicPropertiesExtender.cs" />
     <Compile Include="ICassandraCoreSettings.cs" />
-    <Compile Include="IColumnFamilyIndexesDefinition.cs" />
     <Compile Include="IColumnFamilyNameGetter.cs" />
     <Compile Include="IColumnFamilyRegistry.cs" />
     <Compile Include="IdSetRepository.cs" />
     <Compile Include="IIdSetRepository.cs" />
     <Compile Include="IOneValueRepository.cs" />
-    <Compile Include="ITimedSortedStorage.cs" />
     <Compile Include="KeyValueTables\IKeyValueIndexTable.cs" />
     <Compile Include="KeyValueTables\KeyToValue.cs" />
     <Compile Include="KeyValueTables\KeyToValueSearchQuery.cs" />
-    <Compile Include="KeyValueTables\KeyValueIndexesDefinition.cs" />
     <Compile Include="KeyValueTables\KeyValueIndexTable.cs" />
     <Compile Include="OneValueRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -83,8 +79,6 @@
     <Compile Include="RowsStorage\Version1Reader.cs" />
     <Compile Include="RowsStorage\Version2Reader.cs" />
     <Compile Include="RowsStorage\VersionReaderCollection.cs" />
-    <Compile Include="SearchQueryIndexesDefinition.cs" />
-    <Compile Include="TimedStorageElement.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
