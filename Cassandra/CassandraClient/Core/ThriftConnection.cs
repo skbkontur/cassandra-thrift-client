@@ -41,13 +41,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             try
             {
-                var pool = socket.Poll(0, SelectMode.SelectRead);
+                /*var pool = socket.Poll(0, SelectMode.SelectRead);
                 var available = socket.Available;
                 var result = !(pool && (available == 0));
                 if (!result) logger.Warn("Connetion '{0}' is dead.", this);
                 else logger.Debug("Connection '{0}' is good.", this);
-                return result;
-                //return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
+                return result;*/
+                return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
             }
             catch
             {

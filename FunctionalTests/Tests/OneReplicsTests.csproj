@@ -83,7 +83,6 @@
     <Compile Include="StorageCoreTests\TestCassandraCoreSettings.cs" />
     <Compile Include="StorageCoreTests\TestColumnFamilyRegistry.cs" />
     <Compile Include="StorageCoreTests\TestObject.cs" />
-    <Compile Include="StorageCoreTests\TestStorageElementIndexesDefinition.cs" />
     <Compile Include="StorageCoreTests\TestStorageElementSearchQuery.cs" />
     <Compile Include="StorageCoreTests\TestXmlNamespaceFactory.cs" />
     <Compile Include="Tests\BatchCommandsTest.cs" />

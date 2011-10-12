@@ -14,10 +14,10 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void Test()
         {
-            var threads = new List<Thread>();
-            const int threadCount = 100;
+            threads = new List<Thread>();
             finished = new int[threadCount];
-            for (int i = 0; i < threadCount; i++)
+            stopped = false;
+            for(int i = 0; i < threadCount; i++)
             {
                 int i1 = i;
                 var thread = new Thread(() => FillColumnFamily(i1));
@@ -26,8 +26,10 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             }
             int maxFree = 0;
             int maxBusy = 0;
-            while (true)
+            while(true)
             {
+                if(stopped)
+                    break;
                 Thread.Sleep(5000);
                 var know = cassandraCluster.GetKnowledges();
                 Console.WriteLine("-------------------------------");
@@ -42,11 +44,17 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 }
 
                 var flag = threads.Aggregate(false, (current, thread) => current || (thread.IsAlive));
-                if (!flag) break;
-                for (int i = 0; i < threadCount; i++)
-                    Assert.AreNotEqual(-1, finished[i]);
+                if(!flag || stopped) break;
+                for(int i = 0; i < threadCount; i++)
+                {
+                    if(finished[i] == -1)
+                        stopped = true;
+                }
             }
-            for (int i = 0; i < threadCount; i++)
+            for(int i = 0; i < threadCount; i++)
+                threads[i].Join();
+
+            for(int i = 0; i < threadCount; i++)
                 Assert.AreEqual(1, finished[i]);
             Console.WriteLine(string.Format("Max free = {0}; Max busy: {1}", maxFree, maxBusy));
         }
@@ -59,17 +67,23 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             {
                 for(int i = 0; i < 100; i++)
                 {
+                    if(stopped)
+                        break;
                     using(var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
                     {
                         var list = new List<Column>();
                         for(int j = 0; j < 1000; j++)
                         {
+                            if(stopped)
+                                break;
                             list.Add(new Column
                                 {
                                     Name = string.Format("name_{0}_{1}_{2}", id, i, j),
                                     Value = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
                                 });
                         }
+                        if(stopped)
+                            break;
                         connection.AddBatch(string.Format("row_{0}_{1}", id, i), list);
                     }
                 }
@@ -81,5 +95,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             }
             finished[id] = 1;
         }
+
+        private List<Thread> threads;
+        private volatile bool stopped;
+        private const int threadCount = 100;
     }
 }

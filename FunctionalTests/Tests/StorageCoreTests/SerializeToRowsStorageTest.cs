@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
             base.SetUp();
 
             serializer = new Serializer(new TestXmlNamespaceFactory());
-            var columnFamilyRegistry = new TestColumnFamilyRegistry(serializer);
+            var columnFamilyRegistry = new TestColumnFamilyRegistry();
             CassandraInitializer.CreateNewKeyspace(cassandraCluster, columnFamilyRegistry);
 
             var cassandraCoreSettings = new TestCassandraCoreSettings();

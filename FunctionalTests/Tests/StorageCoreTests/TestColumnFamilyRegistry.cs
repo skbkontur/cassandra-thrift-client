@@ -1,7 +1,5 @@
 using System;
 
-using GroboSerializer;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.StorageCore;
 using SKBKontur.Cassandra.StorageCore.BlobStorage;
@@ -11,11 +9,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
     public class TestColumnFamilyRegistry : IColumnFamilyRegistry, ISerializeToRowsStorageColumnFamilyNameGetter, ISerializeToBlobStorageColumnFamilyNameGetter
     {
-        public TestColumnFamilyRegistry(ISerializer serializer)
-        {
-            this.serializer = serializer;
-        }
-
         #region IColumnFamilyRegistry Members
 
         public bool ContainsColumnFamily(string columnFamilyName)
@@ -30,7 +23,13 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 
         public IndexDefinition[] GetIndexDefinitions(string columnName)
         {
-            return new TestStorageElementIndexesDefinition(serializer).IndexDefinitions;
+            return new[]
+                {
+                    new IndexDefinition {Name = "StringProperty", ValidationClass = ValidationClass.UTF8Type},
+                    new IndexDefinition {Name = "IntProperty", ValidationClass = ValidationClass.UTF8Type},
+                    new IndexDefinition {Name = "ComplexProperty.StringProperty", ValidationClass = ValidationClass.UTF8Type},
+                    new IndexDefinition {Name = "ComplexProperty.IntProperty", ValidationClass = ValidationClass.UTF8Type}
+                };
         }
 
         #endregion
@@ -40,7 +39,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
             return type.Name;
         }
 
+        public bool TryGetColumnFamilyName(Type type, out string columnFamilyName)
+        {
+            columnFamilyName = type.Name;
+            return true;
+        }
+
         private readonly string[] columnFamilyNames = new[] {typeof(TestStorageElement).Name, typeof(TestObject).Name};
-        private readonly ISerializer serializer;
     }
 }
