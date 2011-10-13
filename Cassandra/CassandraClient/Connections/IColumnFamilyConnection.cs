@@ -7,6 +7,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public interface IColumnFamilyConnection : IDisposable
     {
+        void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000);
         void DeleteRow(string key, long ? timestamp = null);
         void AddColumn(string key, Column column);
         Column GetColumn(string key, string columnName);

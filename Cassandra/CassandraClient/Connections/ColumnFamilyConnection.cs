@@ -20,6 +20,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             implementation.Dispose();
         }
 
+        public void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000)
+        {
+            var counts = GetCounts(keys);
+            while (counts.Count > 0)
+            {
+                var rows = GetRows(keys, null, batchSize);
+                var d = rows.Select(row => new KeyValuePair<string, IEnumerable<string>>(row.Key, row.Value.Select(col => col.Name)));
+                BatchDelete(d, timestamp);
+                var newCounts = new Dictionary<string, int>();
+                foreach(var keyValuePair in counts)
+                {
+                    if (keyValuePair.Value > batchSize)
+                        newCounts.Add(keyValuePair.Key, keyValuePair.Value-batchSize);
+                }
+                counts = newCounts;
+            }
+        }
+
         public void DeleteRow(string key, long? timestamp = null)
         {
             implementation.DeleteRow(ByteEncoderHelper.UTF8Encoder.ToByteArray(key), timestamp);
