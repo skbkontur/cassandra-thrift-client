@@ -20,17 +20,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", endPoint, keyspaceName);
         }
 
-        public bool TryBorrowConnection(out IPooledThriftConnection thriftConnection)
+        public ConnectionType TryBorrowConnection(out IPooledThriftConnection thriftConnection)
         {
             IPooledThriftConnection result;
+            ConnectionType connectionType;
             if (!freeConnections.TryDequeue(out result))
             {
                 result = CreateConnection();
                 if (!result.IsAlive())
                 {
                     thriftConnection = null;
-                    return false;
+                    return ConnectionType.Undefined;
                 }
+                connectionType = ConnectionType.New;
             }
             else
             {
@@ -38,12 +40,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
                 {
                     return TryBorrowConnection(out thriftConnection);
                 }
+                connectionType = ConnectionType.FromPool;
             }
 
             if (!busyConnections.TryAdd(result.Id, result))
                 throw new GuidCollisionException(result.Id);
             thriftConnection = result;
-            return true;
+            return connectionType;
         }
 
         public void ReleaseConnection(IPooledThriftConnection connection)

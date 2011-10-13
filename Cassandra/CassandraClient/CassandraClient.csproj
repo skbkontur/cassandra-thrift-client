@@ -157,6 +157,7 @@
     <Compile Include="Core\Pools\ClusterConnectionPool.cs" />
     <Compile Include="Core\EndpointManager.cs" />
     <Compile Include="Core\Pools\ConnectionPoolKey.cs" />
+    <Compile Include="Core\Pools\ConnectionType.cs" />
     <Compile Include="Core\Pools\IKeyspaceConnectionPool.cs" />
     <Compile Include="Core\Pools\KeyspaceConnectionPoolKnowledge.cs" />
     <Compile Include="Exceptions\CassandraAttemptsException.cs" />

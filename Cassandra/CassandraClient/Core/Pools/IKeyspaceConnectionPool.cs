@@ -2,7 +2,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public interface IKeyspaceConnectionPool
     {
-        bool TryBorrowConnection(out IPooledThriftConnection thriftConnection);
+        ConnectionType TryBorrowConnection(out IPooledThriftConnection thriftConnection);
         void ReleaseConnection(IPooledThriftConnection connection);
         KeyspaceConnectionPoolKnowledge GetKnowledge();
     }

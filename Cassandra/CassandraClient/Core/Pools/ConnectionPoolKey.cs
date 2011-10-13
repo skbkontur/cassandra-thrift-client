@@ -29,5 +29,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             if (ReferenceEquals(this, other)) return true;
             return Equals(other.IpEndPoint, IpEndPoint) && Equals(other.Keyspace, Keyspace);
         }
+
+        public override string ToString()
+        {
+            return string.Format("EndPoint={0}; KeySpace={1}", IpEndPoint, Keyspace);
+        }
     }
 }

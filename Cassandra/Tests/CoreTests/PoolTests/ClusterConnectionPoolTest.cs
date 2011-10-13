@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 
+using Cassandra.Tests.ConsoleLog;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
@@ -42,7 +44,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                            Assert.AreEqual(1, count2);
                            return keyspacePool2;
                        };
-            clusterPool = new ClusterConnectionPool(cassandraClusterSettings, func);
+            clusterPool = new ClusterConnectionPool(new ConsoleLogManager(), cassandraClusterSettings, func);
             pooledThriftConnection = GetMock<IPooledThriftConnection>();
         }
 
@@ -50,12 +52,12 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         public void TryBorrowConnectionTest()
         {
             
-            keyspacePool1.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(true).Repeat.Times(10);
+            keyspacePool1.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(ConnectionType.FromPool).Repeat.Times(10);
             for (int i = 0; i < 10; i++ )
                 clusterPool.BorrowConnection(GetConnectionPoolKey("key1"));
             Assert.AreEqual(1, count1);
             Assert.AreEqual(0, count2);
-            keyspacePool2.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(true).Repeat.Times(10);
+            keyspacePool2.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(ConnectionType.FromPool).Repeat.Times(10);
             for (int i = 0; i < 10; i++)
                 clusterPool.BorrowConnection(GetConnectionPoolKey("key2"));
             Assert.AreEqual(1, count1);
@@ -69,7 +71,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             Assert.AreEqual(0, knowledges.Count);
             keyspacePool1.Expect(kp => kp.GetKnowledge()).Return(new KeyspaceConnectionPoolKnowledge {BusyConnectionCount = 146, FreeConnectionCount = 641});
 
-            keyspacePool1.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(true).Repeat.Times(10);
+            keyspacePool1.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(ConnectionType.FromPool).Repeat.Times(10);
             for (int i = 0; i < 10; i++)
                 clusterPool.BorrowConnection(GetConnectionPoolKey("key1"));
             knowledges = clusterPool.GetKnowledges();
@@ -80,7 +82,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
             keyspacePool1.Expect(kp => kp.GetKnowledge()).Return(new KeyspaceConnectionPoolKnowledge { BusyConnectionCount = 146, FreeConnectionCount = 641 });
             keyspacePool2.Expect(kp => kp.GetKnowledge()).Return(new KeyspaceConnectionPoolKnowledge { BusyConnectionCount = 136, FreeConnectionCount = 631 });
-            keyspacePool2.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(true).Repeat.Times(10);
+            keyspacePool2.Expect(pool => pool.TryBorrowConnection(out ARG.Out(pooledThriftConnection).Dummy)).Return(ConnectionType.FromPool).Repeat.Times(10);
             for (int i = 0; i < 10; i++)
                 clusterPool.BorrowConnection(GetConnectionPoolKey("key2"));
             knowledges = clusterPool.GetKnowledges();
