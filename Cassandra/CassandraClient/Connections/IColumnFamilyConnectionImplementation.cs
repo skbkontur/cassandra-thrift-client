@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public interface IColumnFamilyConnectionImplementation : IDisposable
+    public interface IColumnFamilyConnectionImplementation
     {
         int GetCount(byte[] key);
         Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key);

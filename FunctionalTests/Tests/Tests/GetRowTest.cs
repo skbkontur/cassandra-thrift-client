@@ -1,6 +1,8 @@
-﻿using Cassandra.Tests;
+﻿using System.Linq;
+
+using Cassandra.Tests;
+
 using NUnit.Framework;
-using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
@@ -12,7 +14,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestGetFullRow()
         {
             var columns = new Column[14];
-            for (int i = 0; i < columns.Length; i++)
+            for(int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i;
                 string columnValue = "columnValue" + i;
@@ -27,7 +29,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestGetAllRows()
         {
             var rows = new string[14];
-            for (int i = 0; i < rows.Length; i++)
+            for(int i = 0; i < rows.Length; i++)
             {
                 rows[i] = "row" + i;
                 cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, rows[i], "columnName", "columnValue", 100);
@@ -136,20 +138,18 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             var columns = new Column[1000];
             const string key = "key";
-            for (int i = 0; i < columns.Length; i++)
+            for(int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i.ToString("D3");
                 string columnValue = "columnValue" + i;
                 columns[i] = ToColumn(columnName, columnValue, 100);
             }
-            using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
-            {
-                conn.AddBatch(key, columns);
-                var actualColumns = conn.GetRow(key, "columnName020", 20).ToArray();
-                Assert.AreEqual(979, actualColumns.Length);
-                for (int i = 0; i < actualColumns.Length; i++)
-                    actualColumns[i].AssertEqualsTo(columns[i + 21]);
-            }
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            conn.AddBatch(key, columns);
+            var actualColumns = conn.GetRow(key, "columnName020", 20).ToArray();
+            Assert.AreEqual(979, actualColumns.Length);
+            for(int i = 0; i < actualColumns.Length; i++)
+                actualColumns[i].AssertEqualsTo(columns[i + 21]);
         }
     }
 }

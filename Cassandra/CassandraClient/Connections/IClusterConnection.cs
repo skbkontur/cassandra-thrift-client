@@ -5,7 +5,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public interface IClusterConnection : IDisposable
+    public interface IClusterConnection
     {
         IList<Keyspace> RetrieveKeyspaces();
         void AddKeyspace(Keyspace keyspace);

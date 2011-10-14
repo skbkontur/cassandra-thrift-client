@@ -23,14 +23,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 
             Keyspace keySpace = GetKeyspace(columnFamilyRegistry);
             bool wasOurKeyspace = false;
-            using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())
+            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+            var keyspaces = clusterConnection.RetrieveKeyspaces();
+            foreach(var keyspace in keyspaces)
             {
-                var keyspaces = clusterConnection.RetrieveKeyspaces();
-                foreach(var keyspace in keyspaces)
-                {
-                    if(string.Compare(keySpace.Name, keyspace.Name, StringComparison.OrdinalIgnoreCase) == 0)
-                        wasOurKeyspace = true;
-                }
+                if(string.Compare(keySpace.Name, keyspace.Name, StringComparison.OrdinalIgnoreCase) == 0)
+                    wasOurKeyspace = true;
             }
             if(!wasOurKeyspace)
                 AddKeyspace(cassandraCluster, keySpace);
@@ -43,25 +41,23 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 
         private static void AddKeyspace(ICassandraCluster cassandraCluster, Keyspace keyspace)
         {
-            using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())
-                clusterConnection.AddKeyspace(keyspace);
+            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+            clusterConnection.AddKeyspace(keyspace);
         }
 
         private static void UpdateKeyspace(ICassandraCluster cassandraCluster, Keyspace keyspace)
         {
             IDictionary<string, int> truncatedCfs = ClearKeyspace(cassandraCluster, keyspace.Name);
-            using(var clusterConnection = cassandraCluster.RetrieveKeyspaceConnection(keyspace.Name))
+            var clusterConnection = cassandraCluster.RetrieveKeyspaceConnection(keyspace.Name);
+            foreach(var cf in keyspace.ColumnFamilies)
             {
-                foreach(var cf in keyspace.ColumnFamilies)
+                if(!truncatedCfs.ContainsKey(cf.Key))
+                    clusterConnection.AddColumnFamily(cf.Value);
+                else
                 {
-                    if(!truncatedCfs.ContainsKey(cf.Key))
-                        clusterConnection.AddColumnFamily(cf.Value);
-                    else
-                    {
-                        ColumnFamily columnFamily = cf.Value;
-                        columnFamily.Id = truncatedCfs[cf.Key];
-                        clusterConnection.UpdateColumnFamily(columnFamily);
-                    }
+                    ColumnFamily columnFamily = cf.Value;
+                    columnFamily.Id = truncatedCfs[cf.Key];
+                    clusterConnection.UpdateColumnFamily(columnFamily);
                 }
             }
         }
@@ -70,8 +66,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
         {
             foreach(var cf in keyspace.ColumnFamilies)
             {
-                using(IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, cf.Key))
-                    columnFamilyConnection.Truncate();
+                IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keyspace.Name, cf.Key);
+                columnFamilyConnection.Truncate();
             }
         }
 
@@ -79,13 +75,13 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
         {
             var truncatedColumnFamilies = new Dictionary<string, int>();
             Keyspace keyspace;
-            using(var conn = cassandraCluster.RetrieveKeyspaceConnection(keyspaceName))
-                keyspace = conn.DescribeKeyspace();
+            var conn = cassandraCluster.RetrieveKeyspaceConnection(keyspaceName);
+            keyspace = conn.DescribeKeyspace();
             foreach(var cf in keyspace.ColumnFamilies)
             {
                 truncatedColumnFamilies.Add(cf.Key, cf.Value.Id);
-                using(IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keyspaceName, cf.Key))
-                    columnFamilyConnection.Truncate();
+                var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keyspaceName, cf.Key);
+                columnFamilyConnection.Truncate();
             }
             return truncatedColumnFamilies;
         }

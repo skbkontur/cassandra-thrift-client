@@ -79,7 +79,6 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                               Value = StringHelpers.StringToBytes("4")
                                                                           }
                                                                   })));
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             serializeToRowsStorage.Write("q", intvar);
         }
 
@@ -162,7 +161,6 @@ namespace Cassandra.Tests.StorageCoreTests
                                                                       })
                 };
             columnFamilyConnection.Expect(familyConnection => familyConnection.BatchInsert(ARG.MatchTo<IEnumerable<KeyValuePair<string, IEnumerable<Column>>>>(act => Check(keyValuePairs, act))));
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             serializeToRowsStorage.Write(new[] {new KeyValuePair<string, Int>("q", int1), new KeyValuePair<string, Int>("z", int2)});
         }
 
@@ -183,7 +181,6 @@ namespace Cassandra.Tests.StorageCoreTests
         {
             columnFamilyNameGetter.Expect(cfr => cfr.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
             columnFamilyConnection.Expect(connection => connection.GetColumns("q", null, 1234)).Return(new[]
                 {
@@ -228,7 +225,6 @@ namespace Cassandra.Tests.StorageCoreTests
             columnFamilyConnection.Expect(connection => connection.GetColumns("q", null, 1234)).Return(columns);
             var resultObject = new Int {Intf = 123};
             objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columns), out ARG.Out(resultObject).Dummy)).Return(true);
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             Assert.AreEqual(123, serializeToRowsStorage.Read<Int>("q").Intf);
         }
 
@@ -276,7 +272,6 @@ namespace Cassandra.Tests.StorageCoreTests
             var int2 = new Int {Intf = 5};
             objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columnsForQ), out ARG.Out(int1).Dummy)).Return(true);
             objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columnsForZ), out ARG.Out(int2).Dummy)).Return(true);
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             serializeToRowsStorage.Read<Int>(new[] {"q", "z"}).AssertEqualsTo(new[] {int1, int2});
         }
 
@@ -291,7 +286,6 @@ namespace Cassandra.Tests.StorageCoreTests
             var columns = new Column[0];
             columnFamilyConnection.Expect(connection => connection.GetColumns("q", null, 1234)).Return(columns);
             objectReader.Expect(reader => reader.TryReadObject(ARG.AreSame(columns), out ARG.Out<Int>(null).Dummy)).Return(false);
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             RunMethodWithException<ObjectNotFoundException>(() => serializeToRowsStorage.Read<Int>("q"));
         }
 
@@ -322,7 +316,6 @@ namespace Cassandra.Tests.StorageCoreTests
                 };
             var keys = new[] {"key1", "key2"};
             columnFamilyConnection.Expect(connection => connection.GetRowsWhere(ARG.EqualsTo((string)null), ARG.EqualsTo(4321), ARG.EqualsTo(indexes), ARG.EqualsTo(new[] {idColumnName}))).Return(keys);
-            columnFamilyConnection.Expect(connection => connection.Dispose());
             serializeToRowsStorage.Search<Int, IntIndexedFields>(null, 4321, template).AssertEqualsTo(keys);
         }
 

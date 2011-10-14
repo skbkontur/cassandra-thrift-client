@@ -169,8 +169,8 @@ namespace SKBKontur.Cassandra.StorageCore.BlobStorage
             var columnFamily = serializeToBlobStorageColumnFamilyNameGetter.GetColumnFamilyName(typeof(T));
             if(!columnFamilyRegistry.ContainsColumnFamily(columnFamily))
                 throw new ColumnFamilyNotRegisteredException(columnFamily);
-            using(IColumnFamilyConnection connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamily))
-                action(connection);
+            var connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamily);
+            action(connection);
         }
 
         private readonly ICassandraCluster cassandraCluster;

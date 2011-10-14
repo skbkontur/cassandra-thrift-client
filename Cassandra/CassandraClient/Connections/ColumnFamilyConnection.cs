@@ -14,12 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.implementation = implementation;
             this.enumerableFactory = enumerableFactory;
         }
-
-        public void Dispose()
-        {
-            implementation.Dispose();
-        }
-
+        
         public void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000)
         {
             var counts = GetCounts(keys);
@@ -179,8 +174,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             if (result.Length > count) result = result.Take(count).ToArray();
             return result;
         }
-
-        
 
         private readonly IColumnFamilyConnectionImplementation implementation;
         private readonly IEnumerableFactory enumerableFactory;

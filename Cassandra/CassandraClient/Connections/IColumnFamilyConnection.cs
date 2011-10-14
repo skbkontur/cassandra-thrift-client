@@ -5,7 +5,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public interface IColumnFamilyConnection : IDisposable
+    public interface IColumnFamilyConnection
     {
         void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000);
         void DeleteRow(string key, long ? timestamp = null);

@@ -63,11 +63,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             WaitUntilAgreementIsReached();
         }
 
-        public void Dispose()
-        {
-            //aquilesConnection.Dispose();
-        }
-
         private void WaitUntilAgreementIsReached()
         {
             while(true)

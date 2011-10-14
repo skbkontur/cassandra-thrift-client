@@ -4,7 +4,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public interface IKeyspaceConnection : IDisposable
+    public interface IKeyspaceConnection
     {
         void RemoveColumnFamily(string columnFamily);
         void AddColumnFamily(string columnFamilyName);

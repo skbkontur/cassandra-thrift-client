@@ -203,8 +203,8 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
             string columnFamily = serializeToRowsStorageColumnFamilyNameGetter.GetColumnFamilyName(typeof(T));
             if(!columnFamilyRegistry.ContainsColumnFamily(columnFamily))
                 throw new ColumnFamilyNotRegisteredException(columnFamily);
-            using(IColumnFamilyConnection connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamily))
-                action(connection);
+            var connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamily);
+            action(connection);
         }
 
         private T Read<T>(Column[] columns) where T : class

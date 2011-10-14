@@ -15,8 +15,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             this.cassandraCluster = cassandraCluster;
         }
 
-        #region ICassandraClient Members
-
         public void RemoveAllKeyspaces()
         {
             //TODO хак из-за бага в кассандре.Убрать с версии 0.7.5
@@ -32,144 +30,112 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         public void AddKeyspace(string keySpaceName, string columnFamilyName)
         {
-            using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())
-            {
-                clusterConnection.AddKeyspace(new Keyspace
-                    {
-                        ColumnFamilies = new Dictionary<string, ColumnFamily>
+            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+            clusterConnection.AddKeyspace(new Keyspace
+                {
+                    ColumnFamilies = new Dictionary<string, ColumnFamily>
+                        {
                             {
-                                {
-                                    columnFamilyName, new ColumnFamily
-                                        {
-                                            Name = columnFamilyName
-                                        }
+                                columnFamilyName, new ColumnFamily
+                                    {
+                                        Name = columnFamilyName
                                     }
-                            },
-                        Name = keySpaceName,
-                        ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                        ReplicationFactor = 1
-                    });
-            }
+                                }
+                        },
+                    Name = keySpaceName,
+                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
+                    ReplicationFactor = 1
+                });
         }
 
         public bool TryGetColumn(string keySpaceName, string columnFamilyName, string key, string columnName,
                                  out Column result)
         {
-            bool returnResult;
-            using(
-                IColumnFamilyConnection columnFamilyConnection =
-                    cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                returnResult = columnFamilyConnection.TryGetColumn(key, columnName, out result);
-            return returnResult;
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            return columnFamilyConnection.TryGetColumn(key, columnName, out result);
         }
 
         public Column GetColumn(string keySpaceName, string columnFamilyName, string key, string columnName)
         {
-            Column result;
-            using(
-                IColumnFamilyConnection columnFamilyConnection =
-                    cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetColumn(key, columnName);
-            return result;
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            return columnFamilyConnection.GetColumn(key, columnName);
         }
 
         public void DeleteColumn(string keySpaceName, string columnFamilyName, string key, string columnName)
         {
-            using(IColumnFamilyConnection columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                columnFamilyConnection.DeleteBatch(key, new[] {columnName});
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            columnFamilyConnection.DeleteBatch(key, new[] {columnName});
         }
-
-        private void UnsafeRemoveKeyspaces()
-        {
-            IList<Keyspace> result;
-            using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())
-                result = clusterConnection.RetrieveKeyspaces();
-
-            foreach(var keyspace in result)
-                RemoveKeyspace(keyspace.Name);
-        }
-
-        #endregion
 
         public void Add(string keySpaceName, string columnFamilyName, string key, string columnName, byte[] columnValue,
                         long? timestamp, int? ttl)
         {
-            using(IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-            {
-                columnFamilyConnection.AddColumn(key, new Column
-                    {
-                        Name = columnName,
-                        Value = columnValue,
-                        Timestamp = timestamp,
-                        TTL = ttl
-                    });
-            }
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            columnFamilyConnection.AddColumn(key, new Column
+                {
+                    Name = columnName,
+                    Value = columnValue,
+                    Timestamp = timestamp,
+                    TTL = ttl
+                });
         }
 
         public void AddBatch(string keySpaceName, string columnFamilyName, string key, Column[] columns)
         {
-            using(IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                columnFamilyConnection.AddBatch(key, columns);
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            columnFamilyConnection.AddBatch(key, columns);
         }
 
         public void DeleteBatch(string keySpaceName, string columnFamilyName, string key, IEnumerable<string> columnNames, long? timestamp = null)
         {
-            using(IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
                 columnFamilyConnection.DeleteBatch(key, columnNames, timestamp);
         }
 
         public Column[] GetRow(string keySpaceName, string columnFamilyName, string key, int count, string startColumnName)
         {
-            Column[] result;
-            using(IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetColumns(key, startColumnName, count);
-            return result;
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            return columnFamilyConnection.GetColumns(key, startColumnName, count);
         }
 
         public Column[] GetRow(string keySpaceName, string columnFamilyName, string key)
         {
-            IEnumerable<Column> result;
-            using(IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetRow(key, 10);
-            return result.ToArray();
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            return columnFamilyConnection.GetRow(key, 10).ToArray();
         }
 
         public string[] GetKeys(string keySpaceName, string columnFamilyName)
         {
-            IEnumerable<string> result;
-            using(IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetKeys(10);
-            return result.ToArray();
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            return columnFamilyConnection.GetKeys(10).ToArray();
         }
 
         public int GetCount(string keySpaceName, string columnFamilyName, string key)
         {
-            int result;
-            using (IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetCount(key);
-            return result;
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            return columnFamilyConnection.GetCount(key);
         }
 
         public Dictionary<string, int> GetCounts(string keySpaceName, string columnFamilyName, IEnumerable<string> keys)
         {
             Dictionary<string, int> result;
-            using (IColumnFamilyConnection columnFamilyConnection =
-                cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetCounts(keys);
+            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+            result = columnFamilyConnection.GetCounts(keys);
             return result;
+        }
+
+        private void UnsafeRemoveKeyspaces()
+        {
+            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+            var result = clusterConnection.RetrieveKeyspaces();
+            foreach(var keyspace in result)
+                RemoveKeyspace(keyspace.Name);
         }
 
         private void RemoveKeyspace(string keyspaceName)
         {
-            using(IClusterConnection clusterConnection = cassandraCluster.RetrieveClusterConnection())
-                clusterConnection.RemoveKeyspace(keyspaceName);
+            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+            clusterConnection.RemoveKeyspace(keyspaceName);
         }
 
         private readonly ICassandraCluster cassandraCluster;

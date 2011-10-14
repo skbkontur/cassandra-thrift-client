@@ -69,23 +69,22 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 {
                     if(stopped)
                         break;
-                    using(var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
+                    var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+
+                    var list = new List<Column>();
+                    for(int j = 0; j < 1000; j++)
                     {
-                        var list = new List<Column>();
-                        for(int j = 0; j < 1000; j++)
-                        {
-                            if(stopped)
-                                break;
-                            list.Add(new Column
-                                {
-                                    Name = string.Format("name_{0}_{1}_{2}", id, i, j),
-                                    Value = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
-                                });
-                        }
                         if(stopped)
                             break;
-                        connection.AddBatch(string.Format("row_{0}_{1}", id, i), list);
+                        list.Add(new Column
+                            {
+                                Name = string.Format("name_{0}_{1}_{2}", id, i, j),
+                                Value = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
+                            });
                     }
+                    if(stopped)
+                        break;
+                    connection.AddBatch(string.Format("row_{0}_{1}", id, i), list);
                 }
             }
             catch

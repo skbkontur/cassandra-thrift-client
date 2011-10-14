@@ -25,11 +25,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
 
-        public void Dispose()
-        {
-            //aquilesConnection.Dispose();
-        }
-
         public int GetCount(byte[] key)
         {
             var getCountCommand = new GetCountCommand

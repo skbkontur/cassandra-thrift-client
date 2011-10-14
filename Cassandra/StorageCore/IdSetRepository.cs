@@ -18,17 +18,15 @@ namespace SKBKontur.Cassandra.StorageCore
         {
             if(ids == null || ids.Length == 0)
                 return;
-            using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(settings.KeyspaceName, columnFamilyName))
-                conn.AddBatch("Ids", ids.Select(id => new Column {Name = id, Value = new byte[] {0}}));
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(settings.KeyspaceName, columnFamilyName);
+            conn.AddBatch("Ids", ids.Select(id => new Column {Name = id, Value = new byte[] {0}}));
         }
 
         public string[] Read(int maxCount, string startId)
         {
-            using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(settings.KeyspaceName, columnFamilyName))
-            {
-                var columns = conn.GetColumns("Ids", startId, maxCount);
-                return columns.Select(col => col.Name).ToArray();
-            }
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(settings.KeyspaceName, columnFamilyName);
+            var columns = conn.GetColumns("Ids", startId, maxCount);
+            return columns.Select(col => col.Name).ToArray();
         }
 
         private readonly ICassandraCluster cassandraCluster;

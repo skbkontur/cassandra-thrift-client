@@ -1,5 +1,6 @@
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.StorageCore
@@ -8,26 +9,20 @@ namespace SKBKontur.Cassandra.StorageCore
     {
         protected OneValueRepository(ICassandraCluster cassandraCluster, ICassandraCoreSettings cassandraCoreSettings, string columnFamilyName)
         {
-            this.cassandraCluster = cassandraCluster;
-            this.cassandraCoreSettings = cassandraCoreSettings;
-            this.columnFamilyName = columnFamilyName;
+            connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamilyName);
         }
 
         public void Write(string value)
         {
-            using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamilyName))
-                conn.AddColumn("Key", new Column {Name = "Value", Value = StringHelpers.StringToBytes(value)});
+            connection.AddColumn("Key", new Column {Name = "Value", Value = StringHelpers.StringToBytes(value)});
         }
 
         public string TryRead()
         {
             Column column;
-            using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamilyName))
-                return !conn.TryGetColumn("Key", "Value", out column) ? null : StringHelpers.BytesToString(column.Value);
+            return !connection.TryGetColumn("Key", "Value", out column) ? null : StringHelpers.BytesToString(column.Value);
         }
 
-        private readonly ICassandraCluster cassandraCluster;
-        private readonly ICassandraCoreSettings cassandraCoreSettings;
-        private readonly string columnFamilyName;
+        private readonly IColumnFamilyConnection connection;
     }
 }
