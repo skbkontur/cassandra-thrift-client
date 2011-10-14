@@ -41,7 +41,7 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
             MakeInConnection<T>(
                 connection =>
                     {
-                        var columnNames = new HashSet<string>((connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount) ?? new Column[0]).Select(column => column.Name));
+                        var columnNames = new HashSet<string>((connection.GetColumns(id, null, cassandraCoreSettings.MaximalColumnsCount) ?? new Column[0]).Select(column => column.Name));
                         Column[] row = GetRow(id, obj);
                         connection.AddBatch(id, row);
                         foreach(var column in row)
@@ -92,7 +92,7 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
         public bool TryRead<T>(string id, out T result) where T : class
         {
             Column[] columns = null;
-            MakeInConnection<T>(connection => columns = connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount));
+            MakeInConnection<T>(connection => columns = connection.GetColumns(id, null, cassandraCoreSettings.MaximalColumnsCount));
             return objectReader.TryReadObject(columns, out result);
         }
 
@@ -100,7 +100,7 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
         {
             MakeInConnection<T>(connection =>
                                     {
-                                        Column[] columns = connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount);
+                                        Column[] columns = connection.GetColumns(id, null, cassandraCoreSettings.MaximalColumnsCount);
                                         connection.DeleteBatch(id, columns.Select(col => col.Name));
                                     });
         }

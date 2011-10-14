@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Value = new byte[] { 2, 3, 4 }
                 });
                 conn.DeleteRow("qxx", 10000);
-                var columns = conn.GetRow("qxx", null, 20);
+                var columns = conn.GetColumns("qxx", null, 20);
                 Assert.AreEqual(0, columns.Length);
                 var keys = conn.GetKeys("", 100);
                 Assert.AreEqual(1, keys.Length);
@@ -65,7 +65,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Value = new byte[] { 2, 3, 4 }
                 });
                 conn.DeleteBatch("qxx", new[] { "qzz", "qtt", "qqq" }, 10000);
-                var columns = conn.GetRow("qxx", null, 20);
+                var columns = conn.GetColumns("qxx", null, 20);
                 Assert.AreEqual(0, columns.Length);
                 var keys = conn.GetKeys("", 100);
                 Assert.AreEqual(1, keys.Length);

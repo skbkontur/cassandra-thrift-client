@@ -126,7 +126,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Column[] result;
             using(IColumnFamilyConnection columnFamilyConnection =
                 cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName))
-                result = columnFamilyConnection.GetRow(key, startColumnName, count);
+                result = columnFamilyConnection.GetColumns(key, startColumnName, count);
             return result;
         }
 

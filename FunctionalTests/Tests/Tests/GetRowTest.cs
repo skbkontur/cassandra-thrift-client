@@ -130,5 +130,26 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             CollectionAssert.IsEmpty(cassandraClient.GetRow(Constants.KeyspaceName, Constants.ColumnFamilyName, "emptyRow", int.MaxValue));
         }
+
+        [Test]
+        public void TestGetRowFrom20()
+        {
+            var columns = new Column[1000];
+            const string key = "key";
+            for (int i = 0; i < columns.Length; i++)
+            {
+                string columnName = "columnName" + i.ToString("D3");
+                string columnValue = "columnValue" + i;
+                columns[i] = ToColumn(columnName, columnValue, 100);
+            }
+            using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName))
+            {
+                conn.AddBatch(key, columns);
+                var actualColumns = conn.GetRow(key, "columnName020", 20).ToArray();
+                Assert.AreEqual(979, actualColumns.Length);
+                for (int i = 0; i < actualColumns.Length; i++)
+                    actualColumns[i].AssertEqualsTo(columns[i + 21]);
+            }
+        }
     }
 }

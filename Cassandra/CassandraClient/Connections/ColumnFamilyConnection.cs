@@ -94,7 +94,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     new KeyValuePair<byte[], IEnumerable<Column>>(StringHelpers.StringToBytes(item.Key), item.Value)));
         }
 
-        public Column[] GetRow(string key, string exclusiveStartColumnName, int count)
+        public Column[] GetColumns(string key, string exclusiveStartColumnName, int count)
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new Column[0];
@@ -115,7 +115,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
         {
-            return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetRow);
+            return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetColumns);
+        }
+
+        public IEnumerable<Column> GetRow(string key, string exclusiveStartColumnName, int batchSize = 1000)
+        {
+            return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetColumns, exclusiveStartColumnName);
         }
 
         public string[] GetKeys(string exclusiveStartKey, int count)

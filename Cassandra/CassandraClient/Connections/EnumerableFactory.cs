@@ -9,26 +9,30 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class EnumerableFactory : IEnumerableFactory
     {
-        public IEnumerable<string> GetRowsEnumerator(int bulkSize, Func<string, int, string[]> getRows)
+        public IEnumerable<string> GetRowsEnumerator(int bulkSize, Func<string, int, string[]> getRows, string initialStartKey = null)
         {
             return new ObjectsEnumerable<string>(
                 key => getRows(key, bulkSize).ToArray(),
-                x => x);
+                x => x,
+                initialStartKey);
         }
 
-        public IEnumerable<Column> GetColumnsEnumerator(string key, int bulkSize, Func<string, string, int, Column[]> getColumns)
+        public IEnumerable<Column> GetColumnsEnumerator(string key, int bulkSize, Func<string, string, int, Column[]> getColumns, string initialStartKey = null)
         {
             return new ObjectsEnumerable<Column>(
-                key1 => getColumns(key, key1, bulkSize).ToArray(),
-                col => col.Name);
+                fromColumnName => getColumns(key, fromColumnName, bulkSize).ToArray(),
+                col => col.Name,
+                initialStartKey);
         }
 
         private class ObjectsEnumerator<T> : IEnumerator<T>
         {
-            public ObjectsEnumerator(Func<string, T[]> getObjs, Func<T, string> getKey)
+            public ObjectsEnumerator(Func<string, T[]> getObjs, Func<T, string> getKey, string initialStartKey)
             {
                 this.getObjs = getObjs;
                 this.getKey = getKey;
+                this.initialStartKey = initialStartKey;
+                exclusiveStartKey = initialStartKey;
             }
 
             public void Dispose()
@@ -49,7 +53,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             public void Reset()
             {
-                exclusiveStartKey = null;
+                exclusiveStartKey = initialStartKey;
                 index = -1;
                 bulk = new T[0];
             }
@@ -59,6 +63,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             object IEnumerator.Current { get { return Current; } }
             private readonly Func<string, T[]> getObjs;
             private readonly Func<T, string> getKey;
+            private readonly string initialStartKey;
             private string exclusiveStartKey;
             private int index = -1;
             private T[] bulk = new T[0];
@@ -66,15 +71,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private class ObjectsEnumerable<T> : IEnumerable<T>
         {
-            public ObjectsEnumerable(Func<string, T[]> getObjs, Func<T, string> getKey)
+            public ObjectsEnumerable(Func<string, T[]> getObjs, Func<T, string> getKey, string initialStartKey)
             {
                 this.getObjs = getObjs;
                 this.getKey = getKey;
+                this.initialStartKey = initialStartKey;
             }
 
             public IEnumerator<T> GetEnumerator()
             {
-                return new ObjectsEnumerator<T>(getObjs, getKey);
+                return new ObjectsEnumerator<T>(getObjs, getKey, initialStartKey);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -84,6 +90,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             private readonly Func<string, T[]> getObjs;
             private readonly Func<T, string> getKey;
+            private readonly string initialStartKey;
         }
     }
 }

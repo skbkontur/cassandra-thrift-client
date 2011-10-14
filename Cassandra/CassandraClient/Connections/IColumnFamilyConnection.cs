@@ -20,8 +20,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns);
         string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value);
         void Truncate();
-        Column[] GetRow(string key, string exclusiveStartColumnName, int count);
+        Column[] GetColumns(string key, string exclusiveStartColumnName, int count);
         IEnumerable<Column> GetRow(string key, int batchSize=1000);
+        IEnumerable<Column> GetRow(string key, string exclusiveStartColumnName, int batchSize = 1000);
         string[] GetKeys(string exclusiveStartKey, int count);
         IEnumerable<string> GetKeys(int batchSize=1000);
         int GetCount(string key);

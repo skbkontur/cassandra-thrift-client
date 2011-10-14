@@ -26,7 +26,7 @@ namespace SKBKontur.Cassandra.StorageCore
         {
             using(var conn = cassandraCluster.RetrieveColumnFamilyConnection(settings.KeyspaceName, columnFamilyName))
             {
-                var columns = conn.GetRow("Ids", startId, maxCount);
+                var columns = conn.GetColumns("Ids", startId, maxCount);
                 return columns.Select(col => col.Name).ToArray();
             }
         }

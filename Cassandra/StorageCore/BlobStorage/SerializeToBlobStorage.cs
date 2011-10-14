@@ -68,7 +68,7 @@ namespace SKBKontur.Cassandra.StorageCore.BlobStorage
         {
             MakeInConnection<T>(connection =>
                                     {
-                                        Column[] columns = connection.GetRow(id, null, cassandraCoreSettings.MaximalColumnsCount);
+                                        Column[] columns = connection.GetColumns(id, null, cassandraCoreSettings.MaximalColumnsCount);
                                         connection.DeleteBatch(id, columns.Select(col => col.Name));
                                     });
         }
