@@ -185,7 +185,6 @@
     <Compile Include="Exceptions\CassandraClientExceptionTypeRecognizer.cs" />
     <Compile Include="Exceptions\CassandraUnknownException.cs" />
     <Compile Include="Helpers\AquilesColumnDefinitionConverter.cs" />
-    <Compile Include="Helpers\ByteArrayComparer.cs" />
     <Compile Include="Helpers\IndexExpressionConverter.cs" />
     <Compile Include="Helpers\IndexOperatorConverter.cs" />
     <Compile Include="Helpers\KeyspaceConverter.cs" />

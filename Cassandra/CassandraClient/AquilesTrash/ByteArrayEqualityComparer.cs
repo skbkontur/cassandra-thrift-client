@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash
@@ -21,5 +22,13 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash
         {
             return obj.Aggregate(0, (current, b) => current + (current * 197 + b));
         }
+
+        public static ByteArrayEqualityComparer SimpleComparer
+        {
+            get { return simpleComparer ?? (simpleComparer = new ByteArrayEqualityComparer()); }
+        }
+
+        [ThreadStatic]
+        private static ByteArrayEqualityComparer simpleComparer;
     }
 }

@@ -7,6 +7,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public interface IColumnFamilyConnectionImplementation
     {
+        bool IsRowExist(byte[] key);
         int GetCount(byte[] key);
         Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key);
         void DeleteRow(byte[] key, long? timestamp);

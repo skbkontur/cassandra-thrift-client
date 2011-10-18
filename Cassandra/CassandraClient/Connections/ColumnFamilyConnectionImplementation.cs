@@ -2,6 +2,7 @@
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
@@ -23,6 +24,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.commandExecuter = commandExecuter;
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
+        }
+
+        public bool IsRowExist(byte[] key)
+        {
+            var keys = GetKeys(key, 1);
+            return keys.Count == 1 && ByteArrayEqualityComparer.SimpleComparer.Equals(keys[0], key);
         }
 
         public int GetCount(byte[] key)

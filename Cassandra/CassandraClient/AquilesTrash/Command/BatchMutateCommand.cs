@@ -51,7 +51,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 
         private Dictionary<byte[], Dictionary<string, List<Mutation>>> Translate(Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>> mutations)
         {
-            var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(new ByteArrayEqualityComparer());
+            var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(ByteArrayEqualityComparer.SimpleComparer);
             foreach (var mutationsPerColumnFamily in mutations)
             {
                 foreach (var mutationsPerRow in mutationsPerColumnFamily.Value)

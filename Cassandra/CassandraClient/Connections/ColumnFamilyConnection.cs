@@ -14,7 +14,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.implementation = implementation;
             this.enumerableFactory = enumerableFactory;
         }
-        
+
+        public bool IsRowExist(string key)
+        {
+            return implementation.IsRowExist(StringHelpers.StringToBytes(key));
+        }
+
         public void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000)
         {
             var counts = GetCounts(keys);

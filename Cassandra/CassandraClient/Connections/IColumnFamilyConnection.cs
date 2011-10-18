@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
@@ -7,6 +6,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public interface IColumnFamilyConnection
     {
+        bool IsRowExist(string key);
         void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000);
         void DeleteRow(string key, long ? timestamp = null);
         void AddColumn(string key, Column column);

@@ -97,6 +97,7 @@
     <Compile Include="Tests\DeleteTest.cs" />
     <Compile Include="Tests\GetRowTest.cs" />
     <Compile Include="Tests\ICassandraClient.cs" />
+    <Compile Include="Tests\IsRowExistTest.cs" />
     <Compile Include="Tests\MultiThreadStressTest.cs" />
     <Compile Include="Tests\SecondaryIndexTest.cs" />
     <Compile Include="Tests\InsertGetTest.cs" />
