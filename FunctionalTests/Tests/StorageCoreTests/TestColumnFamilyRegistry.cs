@@ -7,7 +7,7 @@ using SKBKontur.Cassandra.StorageCore.RowsStorage;
 
 namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
 {
-    public class TestColumnFamilyRegistry : IColumnFamilyRegistry, ISerializeToRowsStorageColumnFamilyNameGetter, ISerializeToBlobStorageColumnFamilyNameGetter
+    public class TestColumnFamilyRegistry : IColumnFamilyRegistry, ISerializeToRowsStorageColumnFamilyTypeMapper, ISerializeToBlobStorageColumnFamilyTypeMapper
     {
         #region IColumnFamilyRegistry Members
 
@@ -43,6 +43,16 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
         {
             columnFamilyName = type.Name;
             return true;
+        }
+
+        public Type GetColumnFamilyNameType(string columnFamilyName)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Type TryGetColumnFamilyNameType(string columnFamilyName, out Type type)
+        {
+            throw new NotImplementedException();
         }
 
         private readonly string[] columnFamilyNames = new[] {typeof(TestStorageElement).Name, typeof(TestObject).Name};

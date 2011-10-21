@@ -29,10 +29,10 @@ namespace Cassandra.Tests.StorageCoreTests
             columnFamilyRegistry = GetMock<IColumnFamilyRegistry>();
             cassandraCluster = GetMock<ICassandraCluster>();
             serializer = GetMock<ISerializer>();
-            columnFamilyNameGetter = GetMock<ISerializeToRowsStorageColumnFamilyNameGetter>();
+            columnFamilyTypeMapper = GetMock<ISerializeToRowsStorageColumnFamilyTypeMapper>();
             cassandraCoreSettings = GetMock<ICassandraCoreSettings>();
             objectReader = GetMock<IObjectReader>();
-            serializeToRowsStorage = new SerializeToRowsStorage(columnFamilyRegistry, columnFamilyNameGetter, cassandraCluster, cassandraCoreSettings, serializer, objectReader);
+            serializeToRowsStorage = new SerializeToRowsStorage(columnFamilyRegistry, columnFamilyTypeMapper, cassandraCluster, cassandraCoreSettings, serializer, objectReader);
             columnFamilyConnection = GetMock<IColumnFamilyConnection>();
         }
 
@@ -40,7 +40,7 @@ namespace Cassandra.Tests.StorageCoreTests
         public void TestWrite()
         {
             var intvar = new Int {Intf = 5};
-            columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
+            columnFamilyTypeMapper.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
@@ -87,7 +87,7 @@ namespace Cassandra.Tests.StorageCoreTests
         {
             var int1 = new Int {Intf = 5};
             var int2 = new Int {Intf = 3};
-            columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
+            columnFamilyTypeMapper.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
@@ -179,7 +179,7 @@ namespace Cassandra.Tests.StorageCoreTests
         [Test]
         public void TestDelete()
         {
-            columnFamilyNameGetter.Expect(cfr => cfr.GetColumnFamilyName(typeof(Int))).Return("IntType");
+            columnFamilyTypeMapper.Expect(cfr => cfr.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.MaximalColumnsCount).Return(1234);
             columnFamilyConnection.Expect(connection => connection.GetColumns("q", null, 1234)).Return(new[]
@@ -204,7 +204,7 @@ namespace Cassandra.Tests.StorageCoreTests
         [Test]
         public void TestRead()
         {
-            columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
+            columnFamilyTypeMapper.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
@@ -231,7 +231,7 @@ namespace Cassandra.Tests.StorageCoreTests
         [Test]
         public void TestReadMultiple()
         {
-            columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
+            columnFamilyTypeMapper.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
@@ -278,7 +278,7 @@ namespace Cassandra.Tests.StorageCoreTests
         [Test]
         public void TestReadNotExisting()
         {
-            columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
+            columnFamilyTypeMapper.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return("IntType");
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("IntType")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", "IntType")).Return(columnFamilyConnection);
@@ -292,7 +292,7 @@ namespace Cassandra.Tests.StorageCoreTests
         [Test]
         public void TestSearch()
         {
-            columnFamilyNameGetter.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return(typeof(Int).Name);
+            columnFamilyTypeMapper.Expect(items => items.GetColumnFamilyName(typeof(Int))).Return(typeof(Int).Name);
             columnFamilyRegistry.Expect(cfr => cfr.ContainsColumnFamily("Int")).Return(true);
             cassandraCoreSettings.Expect(settings => settings.KeyspaceName).Return("KeyspaceName");
             cassandraCluster.Expect(cluster => cluster.RetrieveColumnFamilyConnection("KeyspaceName", typeof(Int).Name)).Return(columnFamilyConnection);
@@ -344,7 +344,7 @@ namespace Cassandra.Tests.StorageCoreTests
         private SerializeToRowsStorage serializeToRowsStorage;
         private IColumnFamilyConnection columnFamilyConnection;
         private ICassandraCoreSettings cassandraCoreSettings;
-        private ISerializeToRowsStorageColumnFamilyNameGetter columnFamilyNameGetter;
+        private ISerializeToRowsStorageColumnFamilyTypeMapper columnFamilyTypeMapper;
         private IObjectReader objectReader;
 
         private class IntIndexedFields

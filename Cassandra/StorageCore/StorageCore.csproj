@@ -44,7 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BlobStorage\ISerializeToBlobStorage.cs" />
-    <Compile Include="BlobStorage\ISerializeToBlobStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="BlobStorage\ISerializeToBlobStorageColumnFamilyTypeMapper.cs" />
     <Compile Include="BlobStorage\SerializeToBlobStorage.cs" />
     <Compile Include="Exceptions\ColumnFamilyNotRegisteredException.cs" />
     <Compile Include="Exceptions\EmptySearchRequestException.cs" />
@@ -54,7 +54,7 @@
     <Compile Include="Extender\ExtenderImpl.cs" />
     <Compile Include="Extender\PublicPropertiesExtender.cs" />
     <Compile Include="ICassandraCoreSettings.cs" />
-    <Compile Include="IColumnFamilyNameGetter.cs" />
+    <Compile Include="IColumnFamilyTypeMapper.cs" />
     <Compile Include="IColumnFamilyRegistry.cs" />
     <Compile Include="IdSetRepository.cs" />
     <Compile Include="IIdSetRepository.cs" />
@@ -68,7 +68,7 @@
     <Compile Include="RowsStorage\FormatVersions.cs" />
     <Compile Include="RowsStorage\IObjectReader.cs" />
     <Compile Include="RowsStorage\ISerializeToRowsStorage.cs" />
-    <Compile Include="RowsStorage\ISerializeToRowsStorageColumnFamilyNameGetter.cs" />
+    <Compile Include="RowsStorage\ISerializeToRowsStorageColumnFamilyTypeMapper.cs" />
     <Compile Include="IStorage.cs" />
     <Compile Include="RowsStorage\IVersionReader.cs" />
     <Compile Include="RowsStorage\IVersionReaderCollection.cs" />

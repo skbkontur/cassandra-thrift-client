@@ -19,13 +19,13 @@ namespace SKBKontur.Cassandra.StorageCore.BlobStorage
             ICassandraCoreSettings cassandraCoreSettings,
             IColumnFamilyRegistry columnFamilyRegistry,
             ISerializer serializer,
-            ISerializeToBlobStorageColumnFamilyNameGetter serializeToBlobStorageColumnFamilyNameGetter)
+            ISerializeToBlobStorageColumnFamilyTypeMapper serializeToBlobStorageColumnFamilyTypeMapper)
         {
             this.cassandraCluster = cassandraCluster;
             this.cassandraCoreSettings = cassandraCoreSettings;
             this.columnFamilyRegistry = columnFamilyRegistry;
             this.serializer = serializer;
-            this.serializeToBlobStorageColumnFamilyNameGetter = serializeToBlobStorageColumnFamilyNameGetter;
+            this.serializeToBlobStorageColumnFamilyTypeMapper = serializeToBlobStorageColumnFamilyTypeMapper;
         }
 
         public void Write<T>(KeyValuePair<string, T>[] objects) where T : class
@@ -166,7 +166,7 @@ namespace SKBKontur.Cassandra.StorageCore.BlobStorage
 
         private void MakeInConnection<T>(Action<IColumnFamilyConnection> action)
         {
-            var columnFamily = serializeToBlobStorageColumnFamilyNameGetter.GetColumnFamilyName(typeof(T));
+            var columnFamily = serializeToBlobStorageColumnFamilyTypeMapper.GetColumnFamilyName(typeof(T));
             if(!columnFamilyRegistry.ContainsColumnFamily(columnFamily))
                 throw new ColumnFamilyNotRegisteredException(columnFamily);
             var connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamily);
@@ -177,6 +177,6 @@ namespace SKBKontur.Cassandra.StorageCore.BlobStorage
         private readonly ICassandraCoreSettings cassandraCoreSettings;
         private readonly IColumnFamilyRegistry columnFamilyRegistry;
         private readonly ISerializer serializer;
-        private readonly ISerializeToBlobStorageColumnFamilyNameGetter serializeToBlobStorageColumnFamilyNameGetter;
+        private readonly ISerializeToBlobStorageColumnFamilyTypeMapper serializeToBlobStorageColumnFamilyTypeMapper;
     }
 }

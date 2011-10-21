@@ -19,13 +19,13 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
     {
         public SerializeToRowsStorage(
             IColumnFamilyRegistry columnFamilyRegistry,
-            ISerializeToRowsStorageColumnFamilyNameGetter serializeToRowsStorageColumnFamilyNameGetter,
+            ISerializeToRowsStorageColumnFamilyTypeMapper serializeToRowsStorageColumnFamilyTypeMapper,
             ICassandraCluster cassandraCluster,
             ICassandraCoreSettings cassandraCoreSettings,
             ISerializer serializer, IObjectReader objectReader)
         {
             this.columnFamilyRegistry = columnFamilyRegistry;
-            this.serializeToRowsStorageColumnFamilyNameGetter = serializeToRowsStorageColumnFamilyNameGetter;
+            this.serializeToRowsStorageColumnFamilyTypeMapper = serializeToRowsStorageColumnFamilyTypeMapper;
             this.cassandraCluster = cassandraCluster;
             this.cassandraCoreSettings = cassandraCoreSettings;
             this.serializer = serializer;
@@ -200,7 +200,7 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
 
         private void MakeInConnection<T>(Action<IColumnFamilyConnection> action)
         {
-            string columnFamily = serializeToRowsStorageColumnFamilyNameGetter.GetColumnFamilyName(typeof(T));
+            string columnFamily = serializeToRowsStorageColumnFamilyTypeMapper.GetColumnFamilyName(typeof(T));
             if(!columnFamilyRegistry.ContainsColumnFamily(columnFamily))
                 throw new ColumnFamilyNotRegisteredException(columnFamily);
             var connection = cassandraCluster.RetrieveColumnFamilyConnection(cassandraCoreSettings.KeyspaceName, columnFamily);
@@ -242,7 +242,7 @@ namespace SKBKontur.Cassandra.StorageCore.RowsStorage
         }
 
         private readonly IColumnFamilyRegistry columnFamilyRegistry;
-        private readonly ISerializeToRowsStorageColumnFamilyNameGetter serializeToRowsStorageColumnFamilyNameGetter;
+        private readonly ISerializeToRowsStorageColumnFamilyTypeMapper serializeToRowsStorageColumnFamilyTypeMapper;
         private readonly ICassandraCluster cassandraCluster;
         private readonly ICassandraCoreSettings cassandraCoreSettings;
         private readonly ISerializer serializer;
