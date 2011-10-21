@@ -6,7 +6,7 @@ namespace SKBKontur.Cassandra.StorageCore
     {
         string GetColumnFamilyName(Type type);
         bool TryGetColumnFamilyName(Type type, out string columnFamilyName);
-        Type GetColumnFamilyNameType(string columnFamilyName);
-        Type TryGetColumnFamilyNameType(string columnFamilyName, out Type type);
+        Type GetColumnFamilyType(string columnFamilyName);
+        bool TryGetColumnFamilyType(string columnFamilyName, out Type type);
     }
 }

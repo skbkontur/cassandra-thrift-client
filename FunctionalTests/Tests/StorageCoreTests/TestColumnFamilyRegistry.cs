@@ -45,12 +45,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.StorageCoreTests
             return true;
         }
 
-        public Type GetColumnFamilyNameType(string columnFamilyName)
+        public Type GetColumnFamilyType(string columnFamilyName)
         {
             throw new NotImplementedException();
         }
 
-        public Type TryGetColumnFamilyNameType(string columnFamilyName, out Type type)
+        public bool TryGetColumnFamilyType(string columnFamilyName, out Type type)
         {
             throw new NotImplementedException();
         }
