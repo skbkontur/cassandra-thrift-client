@@ -38,10 +38,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.StorageCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Cassandra.StorageCore.dll</HintPath>
-    </Reference>
     <Reference Include="Cassandra.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.Tests.dll</HintPath>
@@ -76,15 +72,6 @@
     <Compile Include="Logger\TestNameHolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CassandraClusterSettings.cs" />
-    <Compile Include="StorageCoreTests\CassandraInitializer.cs" />
-    <Compile Include="StorageCoreTests\SerializeToBlobStorageTest.cs" />
-    <Compile Include="StorageCoreTests\SerializeToRowsStorageTest.cs" />
-    <Compile Include="StorageCoreTests\StorageTestBase.cs" />
-    <Compile Include="StorageCoreTests\TestCassandraCoreSettings.cs" />
-    <Compile Include="StorageCoreTests\TestColumnFamilyRegistry.cs" />
-    <Compile Include="StorageCoreTests\TestObject.cs" />
-    <Compile Include="StorageCoreTests\TestStorageElementSearchQuery.cs" />
-    <Compile Include="StorageCoreTests\TestXmlNamespaceFactory.cs" />
     <Compile Include="Tests\BatchCommandsTest.cs" />
     <Compile Include="Tests\CassandraClient.cs" />
     <Compile Include="Tests\CassandraClientExtensions.cs" />
@@ -102,9 +89,6 @@
     <Compile Include="Tests\SecondaryIndexTest.cs" />
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
-    <Compile Include="StorageCoreTests\SerializeToRowsStorageThreadingTest.cs" />
-    <Compile Include="StorageCoreTests\TestStorageElement.cs" />
-    <Compile Include="StorageCoreTests\TestStorageElementSubItem.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
   <ItemGroup>

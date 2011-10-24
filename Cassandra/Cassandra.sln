@@ -9,8 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ComputeRingTokens", "Comput
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Deployment", "Deployment\Deployment.csproj", "{EC3E94EB-D2E7-4224-9D5E-4CAC5012BE99}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageCore", "StorageCore\StorageCore.csproj", "{11EED920-D590-433F-950E-386DC3DF229B}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,12 +47,6 @@ Global
 		{EC3E94EB-D2E7-4224-9D5E-4CAC5012BE99}.Release|Any CPU.ActiveCfg = Debug|Any CPU
 		{EC3E94EB-D2E7-4224-9D5E-4CAC5012BE99}.Release|Any CPU.Build.0 = Debug|Any CPU
 		{EC3E94EB-D2E7-4224-9D5E-4CAC5012BE99}.Release|X64.ActiveCfg = Debug|Any CPU
-		{11EED920-D590-433F-950E-386DC3DF229B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{11EED920-D590-433F-950E-386DC3DF229B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{11EED920-D590-433F-950E-386DC3DF229B}.Debug|X64.ActiveCfg = Debug|Any CPU
-		{11EED920-D590-433F-950E-386DC3DF229B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{11EED920-D590-433F-950E-386DC3DF229B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{11EED920-D590-433F-950E-386DC3DF229B}.Release|X64.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
