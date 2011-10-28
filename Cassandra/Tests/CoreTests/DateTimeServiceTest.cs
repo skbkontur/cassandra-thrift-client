@@ -30,6 +30,22 @@ namespace Cassandra.Tests.CoreTests
         }
 
         [Test]
+        public void TestAscending()
+        {
+            long last = DateTimeService.UtcNow.Ticks;
+            DateTime start = DateTime.UtcNow;
+            do
+            {
+                for(int i = 0; i < 1000000; ++i)
+                {
+                    long cur = DateTimeService.UtcNow.Ticks;
+                    Assert.That(cur >= last, string.Format("cur={0}\r\n last={1}", cur, last));
+                    last = cur;
+                }
+            } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(10));
+        }
+
+        [Test]
         public void TestReturnsUtc()
         {
             long maxDiff = 0;

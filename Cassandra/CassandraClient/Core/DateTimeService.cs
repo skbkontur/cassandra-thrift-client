@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public static class DateTimeService
     {
         public static DateTime UtcNow { get { return new DateTime(GetUtcTicks(), DateTimeKind.Utc); } }
+        private static object lockObject = new object();
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool QueryPerformanceFrequency(out long lpFrequency);
@@ -39,12 +41,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private static long GetUtcTicks()
         {
             if(!initialized) Init();
-            long currentCounter = GetCounter();
-            double elapsed = (double)(currentCounter - startCounter) / frequency;
+            double elapsed = (double)(GetCounter() - startCounter) / frequency;
             if(elapsed > 1.0)
             {
-                initialized = false;
-                return GetUtcTicks();
+                //Тут происходят действия, направленные на то, чтобы функция UtcNow была неубывающей
+                lock (lockObject)
+                {
+                    elapsed = (double)(GetCounter() - startCounter) / frequency;
+                    if(elapsed > 1.0)
+                    {
+                        initialized = false;
+                        Thread.Sleep(10);
+                        return GetUtcTicks();
+                    }
+                }
+                
             }
             return startTicks + (long)(elapsed * 10000000 + 0.5);
         }
