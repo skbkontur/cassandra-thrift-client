@@ -33,6 +33,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             return clusterConnectionPool.GetKnowledges();
         }
 
+        public void CheckConnections()
+        {
+            clusterConnectionPool.CheckConnections();
+        }
+
         public void Execute(ICommand command)
         {
             logger.Debug("Start executing {0} command.", command.GetType());

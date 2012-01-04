@@ -13,6 +13,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     {
         protected ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ICassandraLogManager logManager)
         {
+            IsAlive = true;
             logger = logManager.GetLogger(GetType());
             IpEndPoint = ipEndPoint;
             KeyspaceName = keyspaceName;
@@ -24,6 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
             var transport = new TFramedTransport(tsocket);
             cassandraClient = new Apache.Cassandra.Cassandra.Client(new TBinaryProtocol(transport));
+            lockObject = new object();
             OpenTransport();
         }
 
@@ -34,20 +36,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void ExecuteCommand(ICommand command, ICassandraLogger logger)
         {
-            command.Execute(cassandraClient, logger);
+            lock(lockObject)
+            {
+                command.Execute(cassandraClient, logger);
+            }
         }
 
-        public bool IsAlive()
+        public bool IsAlive { get { return isAlive; } set { isAlive = value; } }
+
+        public bool Ping()
         {
             try
             {
-                /*var pool = socket.Poll(0, SelectMode.SelectRead);
-                var available = socket.Available;
-                var result = !(pool && (available == 0));
-                if (!result) logger.Warn("Connetion '{0}' is dead.", this);
-                else logger.Debug("Connection '{0}' is good.", this);
-                return result;*/
-                return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
+                lock(lockObject)
+                {
+                    cassandraClient.describe_version();
+                }
+                return true;
             }
             catch
             {
@@ -60,8 +65,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", IpEndPoint, KeyspaceName);
         }
 
-        public string KeyspaceName { get; private set; }
-        public IPEndPoint IpEndPoint { get; private set; }
+        protected string KeyspaceName { get; set; }
+        protected IPEndPoint IpEndPoint { get; set; }
 
         private void OpenTransport()
         {
@@ -79,8 +84,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 cassandraClient.OutputProtocol.Transport.Close();
         }
 
+        private volatile bool isAlive;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
         private readonly Socket socket;
         private ICassandraLogger logger;
+        private readonly object lockObject;
     }
 }

@@ -53,6 +53,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             WaitUntilAgreementIsReached();
         }
 
+        public string DescribeVersion()
+        {
+            var describeVersionCommand = new DescribeVersionCommand
+                {
+                    ConsistencyLevel = writeConsistencyLevel
+                };
+            commandExecuter.Execute(new AquilesCommandAdaptor(describeVersionCommand));
+            return describeVersionCommand.Version;
+        }
+
         public void AddKeyspace(Keyspace keyspace)
         {
             commandExecuter.Execute(new AquilesCommandAdaptor(new AddKeyspaceCommand

@@ -42,6 +42,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             return result;
         }
 
+        public void CheckConnections()
+        {
+            foreach (var keyspaceConnectionPool in keyspacePools.Values)
+            {
+                keyspaceConnectionPool.CheckConnections();
+            }
+        }
+
         private string KnowledgesToString(Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> knowledges)
         {
             var result = "";

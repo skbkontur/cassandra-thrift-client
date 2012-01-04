@@ -8,6 +8,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     public interface IThriftConnection : IDisposable
     {
         void ExecuteCommand(ICommand command, ICassandraLogger logger);
-        bool IsAlive();
+        bool IsAlive { get; set; }
+        bool Ping();
     }
 }

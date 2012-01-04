@@ -68,6 +68,7 @@
     <Compile Include="AquilesTrash\Command\AbstractKeySpaceDependantCommand.cs" />
     <Compile Include="AquilesTrash\Command\AquilesConsistencyLevel.cs" />
     <Compile Include="AquilesTrash\Command\BatchMutateCommand.cs" />
+    <Compile Include="AquilesTrash\Command\DescribeVersionCommand.cs" />
     <Compile Include="AquilesTrash\Command\DeleteRowCommand.cs" />
     <Compile Include="AquilesTrash\Command\DescribeKeySpaceCommand.cs" />
     <Compile Include="AquilesTrash\Command\GetCommand.cs" />

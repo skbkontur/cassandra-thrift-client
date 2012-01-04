@@ -9,5 +9,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     {
         void Execute(ICommand command);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
+        void CheckConnections();
     }
 }

@@ -49,6 +49,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return commandExecuter.GetKnowledges();
         }
 
+        public void CheckConnections()
+        {
+            commandExecuter.CheckConnections();
+        }
+
         private readonly ICassandraClusterSettings clusterSettings;
         private readonly ICassandraLogManager logManager;
         private readonly ICommandExecuter commandExecuter;

@@ -6,5 +6,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
     {
         IThriftConnection BorrowConnection(ConnectionPoolKey key);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
+        void CheckConnections();
     }
 }

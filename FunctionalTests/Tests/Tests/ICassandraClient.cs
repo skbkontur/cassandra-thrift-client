@@ -24,5 +24,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         string[] GetKeys(string keySpaceName, string columnFamilyName);
         int GetCount(string keySpaceName, string columnFamilyName, string key);
         Dictionary<string, int> GetCounts(string keySpaceName, string columnFamilyName, IEnumerable<string> keys);
+        void CheckConnections();
     }
 }

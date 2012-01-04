@@ -124,6 +124,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             return result;
         }
 
+        public void CheckConnections()
+        {
+            cassandraCluster.CheckConnections();
+        }
+
         private void UnsafeRemoveKeyspaces()
         {
             var clusterConnection = cassandraCluster.RetrieveClusterConnection();

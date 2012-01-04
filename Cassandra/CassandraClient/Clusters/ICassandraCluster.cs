@@ -11,5 +11,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName);
         IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
+        void CheckConnections();
     }
 }
