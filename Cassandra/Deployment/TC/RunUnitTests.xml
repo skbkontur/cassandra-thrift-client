@@ -5,6 +5,6 @@
 
     <Target Name="RunUnitTests">
         <Error Condition="'$(SolutionDir)' == ''" Text="SolutionDir is not defined" />
-        <NUnit Assemblies="$(SolutionDir)Tests\bin\$(Configuration)\Cassandra.Tests.dll" />
+        <NUnit Assemblies="$(SolutionDir)Tests\bin\$(Configuration)\Cassandra.Tests.dll" NUnitVersion="NUnit-2.5.10"/>
     </Target>
 </Project>

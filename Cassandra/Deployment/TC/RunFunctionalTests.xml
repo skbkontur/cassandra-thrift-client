@@ -5,6 +5,6 @@
 
     <Target Name="RunTests">
         <Error Condition="'$(FunctionalTestsSolutionDir)' == ''" Text="FunctionalTestsSolutionDir is not defined" />
-        <NUnit Assemblies="$(FunctionalTestsSolutionDir)Tests\bin\$(Configuration)\Cassandra.FunctionalTests.dll" />
+        <NUnit Assemblies="$(FunctionalTestsSolutionDir)Tests\bin\$(Configuration)\Cassandra.FunctionalTests.dll" NUnitVersion="NUnit-2.5.10"/>
     </Target>
 </Project>
