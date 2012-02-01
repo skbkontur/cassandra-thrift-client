@@ -1,5 +1,7 @@
 ﻿using System;
 
+using Apache.Cassandra;
+
 namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientInvalidRequestException : CassandraClientException
@@ -9,8 +11,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
         {
         }
 
-        public CassandraClientInvalidRequestException(string message, Exception innerException)
-            : base(message, innerException)
+        public CassandraClientInvalidRequestException(string message, InvalidRequestException innerException)
+            : base(message + Environment.NewLine + "Why: " + innerException.Why, innerException)
         {
         }
     }

@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
             if (e is NotFoundException)
                 return new CassandraClientSomethingNotFoundException(message, e);
             if (e is InvalidRequestException)
-                return new CassandraClientInvalidRequestException(message, e);
+                return new CassandraClientInvalidRequestException(message, (InvalidRequestException)e);
             if (e is UnavailableException)
                 return new CassandraClientUnavailableException(message, e);
             if (e is TimedOutException)
