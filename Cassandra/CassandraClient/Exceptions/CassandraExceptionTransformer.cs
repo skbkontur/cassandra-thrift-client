@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
             if (e is TimedOutException)
                 return new CassandraClientTimedOutException(message, e);
             if (e is TApplicationException)
-                return new CassandraClientApplicationException(message, e);
+                return new CassandraClientApplicationException(message, (TApplicationException)e);
             if (e is AuthenticationException)
                 return new CassandraClientAuthenticationException(message, e);
             if (e is AuthorizationException)
