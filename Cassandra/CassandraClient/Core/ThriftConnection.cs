@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -42,7 +43,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        public bool IsAlive { get { return isAlive; } set { isAlive = value; } }
+        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen(); } set { isAlive = value; } }
 
         public bool Ping()
         {
@@ -68,20 +69,38 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         protected string KeyspaceName { get; set; }
         protected IPEndPoint IpEndPoint { get; set; }
 
+        private bool CassandraTransportIsOpen()
+        {
+            try
+            {
+                return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
+            }
+            catch(Exception)
+            {
+                return false;
+            }
+        }
+
         private void OpenTransport()
         {
-            cassandraClient.InputProtocol.Transport.Open();
-            if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
-                cassandraClient.OutputProtocol.Transport.Open();
-            if(!string.IsNullOrEmpty(KeyspaceName))
-                cassandraClient.set_keyspace(KeyspaceName);
+            lock(lockObject)
+            {
+                cassandraClient.InputProtocol.Transport.Open();
+                if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
+                    cassandraClient.OutputProtocol.Transport.Open();
+                if(!string.IsNullOrEmpty(KeyspaceName))
+                    cassandraClient.set_keyspace(KeyspaceName);
+            }
         }
 
         private void CloseTransport()
         {
-            cassandraClient.InputProtocol.Transport.Close();
-            if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
-                cassandraClient.OutputProtocol.Transport.Close();
+            lock(lockObject)
+            {
+                cassandraClient.InputProtocol.Transport.Close();
+                if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
+                    cassandraClient.OutputProtocol.Transport.Close();
+            }
         }
 
         private volatile bool isAlive;
