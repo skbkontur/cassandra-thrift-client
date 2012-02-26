@@ -60,8 +60,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     var exception = CassandraExceptionTransformer.Transform(e, message);
                     logger.Warn(exception, "Attempt {0} on {1} failed.", i, endpoint);
                     endpointManager.Bad(endpoint);
-                    if(!recognizer.IsExceptionRetryable(exception))
-                        throw exception;
                     if(i + 1 == settings.Attempts)
                         throw new CassandraAttemptsException(settings.Attempts, exception);
                 }

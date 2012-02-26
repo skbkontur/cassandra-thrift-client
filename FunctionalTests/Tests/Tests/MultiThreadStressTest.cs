@@ -62,7 +62,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 while(true)
                 {
                     Log("CheckConnections", "Start CheckConnections");
-                    Thread.Sleep(50);
+                    Thread.Sleep(10);
                     cassandraClient.CheckConnections();
                     Log("CheckConnections", "Finish CheckConnections");
                 }

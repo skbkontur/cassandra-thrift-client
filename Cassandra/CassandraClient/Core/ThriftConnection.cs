@@ -39,7 +39,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             lock(lockObject)
             {
-                command.Execute(cassandraClient, logger);
+                try
+                {
+                    command.Execute(cassandraClient, logger);
+                }
+                catch(Exception)
+                {
+                    IsAlive = false;
+                    throw;
+                }
             }
         }
 

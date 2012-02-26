@@ -82,24 +82,6 @@ namespace Cassandra.Tests.CoreTests
         }
 
         [Test]
-        public void UnretryableExceptionTest()
-        {
-            var command = GetMock<ICommand>();
-            command.Expect(command1 => command1.Validate(logger)).Return(ValidationResult.Ok());
-            command.Expect(command1 => command1.IsFierce).Return(false);
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
-            endpointManager.Expect(manager => manager.GetEndPoint()).Return(ipEndPoint1);
-            command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
-                Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new Exception("xxx"));
-            thriftConnection.Expect(connection => connection.Dispose());
-            endpointManager.Expect(manager => manager.Bad(ipEndPoint1));
-            RunMethodWithException<CassandraUnknownException>(() => executer.Execute(command), string.Format("An error occured while executing cassandra command '{0}'", command.GetType()));
-        }
-
-        [Test]
         public void RetryableExceptionTest()
         {
             var command = GetMock<ICommand>();
@@ -162,24 +144,6 @@ namespace Cassandra.Tests.CoreTests
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Good(ipEndPoint1));
             executer.Execute(command);
-        }
-
-        [Test]
-        public void FiercedUnretryableExceptionTest()
-        {
-            var command = GetMock<ICommand>();
-            command.Expect(command1 => command1.Validate(logger)).Return(ValidationResult.Ok());
-            command.Expect(command1 => command1.IsFierce).Return(true);
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
-            cassandraClusterSettings.Expect(settings => settings.EndpointForFierceCommands).Return(ipEndPoint1);
-            command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
-            clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
-                Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new Exception("xxx"));
-            thriftConnection.Expect(connection => connection.Dispose());
-            endpointManager.Expect(manager => manager.Bad(ipEndPoint1));
-            RunMethodWithException<CassandraUnknownException>(() => executer.Execute(command), string.Format("An error occured while executing cassandra command '{0}'", command.GetType()));
         }
 
         [Test]
