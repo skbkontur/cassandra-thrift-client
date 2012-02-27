@@ -75,7 +75,7 @@ namespace Cassandra.Tests.CoreTests
             var thriftConnection = GetMock<IThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Good(ipEndPoint1));
             executer.Execute(command);
@@ -93,7 +93,7 @@ namespace Cassandra.Tests.CoreTests
             var thriftConnection = GetMock<IThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Bad(ipEndPoint1));
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
@@ -102,7 +102,7 @@ namespace Cassandra.Tests.CoreTests
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint2, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Good(ipEndPoint2));
             executer.Execute(command);
@@ -120,7 +120,7 @@ namespace Cassandra.Tests.CoreTests
             var thriftConnection = GetMock<IThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Bad(ipEndPoint1));
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
@@ -140,7 +140,7 @@ namespace Cassandra.Tests.CoreTests
             var thriftConnection = GetMock<IThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Good(ipEndPoint1));
             executer.Execute(command);
@@ -158,7 +158,7 @@ namespace Cassandra.Tests.CoreTests
             var thriftConnection = GetMock<IThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Bad(ipEndPoint1));
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
@@ -167,7 +167,7 @@ namespace Cassandra.Tests.CoreTests
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint2, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Good(ipEndPoint2));
             executer.Execute(command);
@@ -185,7 +185,7 @@ namespace Cassandra.Tests.CoreTests
             var thriftConnection = GetMock<IThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace"))).
                 Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
             thriftConnection.Expect(connection => connection.Dispose());
             endpointManager.Expect(manager => manager.Bad(ipEndPoint1));
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);

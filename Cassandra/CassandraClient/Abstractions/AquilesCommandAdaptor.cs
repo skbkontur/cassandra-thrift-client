@@ -1,4 +1,6 @@
-﻿using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
+﻿using System;
+
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
@@ -24,8 +26,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             return ValidationResult.Ok();
         }
 
+
         
         public string Keyspace { get; private set; }
         public virtual bool IsFierce { get { return command.IsFierce; } }
+
+        public Type GetCommandType()
+        {
+            return command.GetType();
+        }
     }
 }

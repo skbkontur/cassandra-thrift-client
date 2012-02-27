@@ -35,16 +35,39 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             CloseTransport();
         }
 
-        public void ExecuteCommand(ICommand command, ICassandraLogger logger)
+        public void ExecuteCommand(ICommand command)
         {
-            DoActionWithCloseTransportIfCrash(() => command.Execute(cassandraClient, logger));
+            try
+            {
+                lock(lockObject)
+                {
+                    command.Execute(cassandraClient, logger);
+                }
+            }
+            catch(Exception e)
+            {
+                CloseTransport();
+                logger.Warn(e, "Exception during execute command {0}", command.GetCommandType().Name);
+                throw;
+            }
         }
 
         public bool IsAlive { get { return isAlive && CassandraTransportIsOpen(); } private set { isAlive = value; } }
 
         public void Check()
         {
-            DoActionWithCloseTransportIfCrash(() => cassandraClient.describe_version());
+            try
+            {
+                lock(lockObject)
+                {
+                    cassandraClient.describe_version();
+                }
+            }
+            catch(Exception e)
+            {
+                CloseTransport();
+                logger.Debug(e, "Exception in method Check. Close transport.");
+            }
         }
 
         public override string ToString()
@@ -81,35 +104,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private void CloseTransport()
         {
-            lock(lockObject)
+            try
             {
-                try
+                lock(lockObject)
                 {
                     IsAlive = false;
                     cassandraClient.InputProtocol.Transport.Close();
                     if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                         cassandraClient.OutputProtocol.Transport.Close();
                 }
-                catch(Exception e)
-                {
-                    logger.Debug(e, "Exception while close transport");
-                }
             }
-        }
-
-        private void DoActionWithCloseTransportIfCrash(Action action)
-        {
-            lock(lockObject)
+            catch(Exception e)
             {
-                try
-                {
-                    action();
-                }
-                catch(Exception e)
-                {
-                    CloseTransport();
-                    logger.Debug(e, "Some error during action in cassandra");
-                }
+                logger.Debug(e, "Exception while close transport");
             }
         }
 
