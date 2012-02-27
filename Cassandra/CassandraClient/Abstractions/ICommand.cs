@@ -1,6 +1,4 @@
-﻿using System;
-
-using SKBKontur.Cassandra.CassandraClient.Log;
+﻿using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -10,6 +8,5 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         ValidationResult Validate(ICassandraLogger logger);
         string Keyspace { get; }
         bool IsFierce { get; }
-        Type GetCommandType();
     }
 }

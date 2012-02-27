@@ -35,26 +35,25 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             CloseTransport();
         }
 
-        public void ExecuteCommand(ICommand command)
+        public void ExecuteCommand(ICommand command, ICassandraLogger logger)
         {
-            try
+            lock(lockObject)
             {
-                lock(lockObject)
+                try
                 {
                     command.Execute(cassandraClient, logger);
                 }
-            }
-            catch(Exception e)
-            {
-                CloseTransport();
-                logger.Warn(e, "Exception during execute command {0}", command.GetCommandType().Name);
-                throw;
+                catch(Exception)
+                {
+                    IsAlive = false;
+                    throw;
+                }
             }
         }
 
-        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen(); } private set { isAlive = value; } }
+        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen(); } set { isAlive = value; } }
 
-        public void Check()
+        public bool Ping()
         {
             try
             {
@@ -62,11 +61,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 {
                     cassandraClient.describe_version();
                 }
+                return true;
             }
-            catch(Exception e)
+            catch
             {
-                CloseTransport();
-                logger.Debug(e, "Exception in method Check. Close transport.");
+                return false;
             }
         }
 
@@ -104,26 +103,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private void CloseTransport()
         {
-            try
+            lock(lockObject)
             {
-                lock(lockObject)
-                {
-                    IsAlive = false;
-                    cassandraClient.InputProtocol.Transport.Close();
-                    if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
-                        cassandraClient.OutputProtocol.Transport.Close();
-                }
-            }
-            catch(Exception e)
-            {
-                logger.Debug(e, "Exception while close transport");
+                cassandraClient.InputProtocol.Transport.Close();
+                if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
+                    cassandraClient.OutputProtocol.Transport.Close();
             }
         }
 
         private volatile bool isAlive;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
         private readonly Socket socket;
-        private readonly ICassandraLogger logger;
+        private ICassandraLogger logger;
         private readonly object lockObject;
     }
 }

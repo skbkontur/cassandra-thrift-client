@@ -69,8 +69,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         public void CheckConnections()
         {
             var connections = freeConnections.ToArray();
-            foreach(var connection in connections)
-                connection.Check();
+            foreach (var connection in connections)
+            {
+                connection.IsAlive = connection.Ping();
+            }
         }
 
         private PooledThriftConnection CreateConnection()

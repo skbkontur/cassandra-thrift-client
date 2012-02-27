@@ -50,7 +50,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 try
                 {
                     using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.Keyspace}))
-                        thriftConnection.ExecuteCommand(command);
+                        thriftConnection.ExecuteCommand(command, logManager.GetLogger(command.GetType()));
                     endpointManager.Good(endpoint);
                     return;
                 }
@@ -72,6 +72,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private readonly ICassandraClusterSettings settings;
         private readonly ICassandraLogManager logManager;
         private readonly CassandraClientExceptionTypeRecognizer recognizer;
-        private readonly ICassandraLogger logger;
+        private ICassandraLogger logger;
     }
 }
