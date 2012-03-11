@@ -58,13 +58,17 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void GetEndpointTest()
         {
+            var ipEndPoint = new IPEndPoint(new IPAddress(new byte[] {1, 1, 1, 1}), 2323);
             badlist.Expect(badlist1 => badlist1.GetHealthes()).Return(new[]
                 {
                     new KeyValuePair<IPEndPoint, double>(endpoint, 1.0), 
-                    new KeyValuePair<IPEndPoint, double>(new IPEndPoint(new IPAddress(new byte[] {1, 1, 1, 1}), 2323), 0.0)
+                    new KeyValuePair<IPEndPoint, double>(ipEndPoint, 0.0)
                 });
-            var currentEndpoint = endpointManager.GetEndPoint();
+            var ipEndPoints = endpointManager.GetEndPoints();
+            var currentEndpoint = ipEndPoints[0];
             Assert.AreEqual(endpoint, currentEndpoint);
+            var currentEndpoint2 = ipEndPoints[1];
+            Assert.AreEqual(ipEndPoint, currentEndpoint2);
         }
     }
 }

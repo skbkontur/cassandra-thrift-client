@@ -8,6 +8,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         void Unregister(IPEndPoint ipEndPoint);
         void Good(IPEndPoint ipEndPoint);
         void Bad(IPEndPoint ipEndPoint);
-        IPEndPoint GetEndPoint();
+        IPEndPoint[] GetEndPoints();
     }
 }

@@ -38,7 +38,7 @@ namespace Cassandra.Tests.CoreTests
             endpointManager.Register(new IPEndPoint(new IPAddress(new byte[] {1, 1, 1, 10}), 1));
             for(int i = 0; i < iter; i++)
             {
-                var currentEndpoint = endpointManager.GetEndPoint();
+                var currentEndpoint = endpointManager.GetEndPoints()[0];
                 if (currentEndpoint.Equals(endPoint))
                 {
                     endpointManager.Bad(currentEndpoint);
@@ -67,7 +67,7 @@ namespace Cassandra.Tests.CoreTests
             endpointManager.Register(new IPEndPoint(new IPAddress(new byte[] { 1, 1, 1, 10 }), 1));
             for (int i = 0; i < iter; i++)
             {
-                var currentEndpoint = endpointManager.GetEndPoint();
+                var currentEndpoint = endpointManager.GetEndPoints()[0];
                 if (currentEndpoint.Equals(endPoint))
                 {
                     endpointManager.Bad(currentEndpoint);
@@ -102,7 +102,7 @@ namespace Cassandra.Tests.CoreTests
             }
             for (int i = 0; i < iter; i++)
             {
-                var currentEndpoint = endpointManager.GetEndPoint();
+                var currentEndpoint = endpointManager.GetEndPoints()[0];
                 if (currentEndpoint.Equals(endPoint))
                 {
                     counter++;
@@ -132,7 +132,7 @@ namespace Cassandra.Tests.CoreTests
             }
             for (int i = 0; i < iter; i++)
             {
-                var currentEndpoint = endpointManager.GetEndPoint();
+                var currentEndpoint = endpointManager.GetEndPoints()[0];
                 endpointManager.Good(currentEndpoint);
             }
             Assert.AreEqual(1.0, badlist.GetHealth(endPoint));
@@ -159,7 +159,7 @@ namespace Cassandra.Tests.CoreTests
             }
             for (int i = 0; i < iter; i++)
             {
-                var currentEndpoint = endpointManager.GetEndPoint();
+                var currentEndpoint = endpointManager.GetEndPoints()[0];
                 endpointManager.Good(currentEndpoint);
             }
             Assert.AreNotEqual(1.0, badlist.GetHealth(endPoint));

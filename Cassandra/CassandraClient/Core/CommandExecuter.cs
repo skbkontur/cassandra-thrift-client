@@ -22,7 +22,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             this.settings = settings;
             this.logManager = logManager;
             logger = logManager.GetLogger(GetType());
-            recognizer = new CassandraClientExceptionTypeRecognizer();
             foreach(var ipEndPoint in settings.Endpoints)
                 this.endpointManager.Register(ipEndPoint);
             this.endpointManager.Register(settings.EndpointForFierceCommands);
@@ -46,22 +45,25 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 throw new CassandraClientInvalidRequestException(validationResult.Message);
             for(int i = 0; i < settings.Attempts; ++i)
             {
-                IPEndPoint endpoint = command.IsFierce ? settings.EndpointForFierceCommands : endpointManager.GetEndPoint();
-                try
+                IPEndPoint[] endpoints = command.IsFierce ? new[] {settings.EndpointForFierceCommands} : endpointManager.GetEndPoints();
+                foreach (var endpoint in endpoints)
                 {
-                    using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.Keyspace}))
-                        thriftConnection.ExecuteCommand(command, logManager.GetLogger(command.GetType()));
-                    endpointManager.Good(endpoint);
-                    return;
-                }
-                catch(Exception e)
-                {
-                    string message = string.Format("An error occured while executing cassandra command '{0}'", command.GetType());
-                    var exception = CassandraExceptionTransformer.Transform(e, message);
-                    logger.Warn(exception, "Attempt {0} on {1} failed.", i, endpoint);
-                    endpointManager.Bad(endpoint);
-                    if(i + 1 == settings.Attempts)
-                        throw new CassandraAttemptsException(settings.Attempts, exception);
+                    try
+                    {
+                        using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey { IpEndPoint = endpoint, Keyspace = command.Keyspace }))
+                            thriftConnection.ExecuteCommand(command, logManager.GetLogger(command.GetType()));
+                        endpointManager.Good(endpoint);
+                        return;
+                    }
+                    catch (Exception e)
+                    {
+                        string message = string.Format("An error occured while executing cassandra command '{0}'", command.GetType());
+                        var exception = CassandraExceptionTransformer.Transform(e, message);
+                        logger.Warn(exception, "Attempt {0} on {1} failed.", i, endpoint);
+                        endpointManager.Bad(endpoint);
+                        if (i + 1 == settings.Attempts)
+                            throw new CassandraAttemptsException(settings.Attempts, exception);
+                    }
                 }
             }
             logger.Debug("Executing {0} command complete.", command.GetType());
@@ -71,7 +73,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private readonly IEndpointManager endpointManager;
         private readonly ICassandraClusterSettings settings;
         private readonly ICassandraLogManager logManager;
-        private readonly CassandraClientExceptionTypeRecognizer recognizer;
-        private ICassandraLogger logger;
+        private readonly ICassandraLogger logger;
     }
 }
