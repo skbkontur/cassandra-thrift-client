@@ -29,5 +29,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Settings
         public int Attempts { get { return 5; } }
 
         public int Timeout { get { return 6000; } }
+
+        public int FierceTimeout { get { return 10000; } }
     }
 }

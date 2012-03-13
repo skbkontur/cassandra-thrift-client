@@ -19,7 +19,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         public IThriftConnection BorrowConnection(ConnectionPoolKey key)
         {
-
             var connectionPool = keyspacePools.GetOrAdd(key, createPool);
             IPooledThriftConnection result;
             var connectionType = connectionPool.TryBorrowConnection(out result);

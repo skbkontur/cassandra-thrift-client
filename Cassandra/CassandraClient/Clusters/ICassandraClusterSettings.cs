@@ -13,5 +13,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         IPEndPoint EndpointForFierceCommands { get; }
         int Attempts { get; }
         int Timeout { get; }
+        int FierceTimeout { get; }
     }
 }

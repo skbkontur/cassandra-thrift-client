@@ -50,7 +50,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 {
                     try
                     {
-                        using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey { IpEndPoint = endpoint, Keyspace = command.Keyspace }))
+                        using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey { IpEndPoint = endpoint, Keyspace = command.Keyspace, IsFierce = command.IsFierce}))
                             thriftConnection.ExecuteCommand(command, logManager.GetLogger(command.GetType()));
                         endpointManager.Good(endpoint);
                         return;

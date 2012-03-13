@@ -15,9 +15,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             logger = logManager.GetLogger(GetType());
             endPoint = key.IpEndPoint;
             keyspaceName = key.Keyspace;
+            isFierce = key.IsFierce;
             this.settings = settings;
             this.logManager = logManager;
-            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", endPoint, keyspaceName);
+            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'{2} was created.", endPoint, keyspaceName, isFierce?"[Fierce]":"");
         }
 
         public ConnectionType TryBorrowConnection(out IPooledThriftConnection thriftConnection)
@@ -77,7 +78,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         private PooledThriftConnection CreateConnection()
         {
-            var pooledThriftConnection = new PooledThriftConnection(this, settings.Timeout, endPoint, keyspaceName, logManager);
+            var pooledThriftConnection = new PooledThriftConnection(this, isFierce ? settings.FierceTimeout : settings.Timeout, endPoint, keyspaceName, logManager);
             logger.Debug("Connection {0} was created.", pooledThriftConnection);
             return pooledThriftConnection;
         }
@@ -86,6 +87,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         private readonly ICassandraLogManager logManager;
         private readonly IPEndPoint endPoint;
         private readonly string keyspaceName;
+        private readonly bool isFierce;
         private readonly ConcurrentQueue<IPooledThriftConnection> freeConnections = new ConcurrentQueue<IPooledThriftConnection>();
         private readonly ConcurrentDictionary<Guid, IPooledThriftConnection> busyConnections = new ConcurrentDictionary<Guid, IPooledThriftConnection>();
         private readonly ICassandraLogger logger;
