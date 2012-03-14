@@ -183,7 +183,6 @@
     <Compile Include="Exceptions\CassandraClientUnavailableException.cs" />
     <Compile Include="Exceptions\CassandraExceptionTransformer.cs" />
     <Compile Include="Exceptions\ColumnIsNotFoundException.cs" />
-    <Compile Include="Exceptions\CassandraClientExceptionTypeRecognizer.cs" />
     <Compile Include="Exceptions\CassandraUnknownException.cs" />
     <Compile Include="Helpers\AquilesColumnDefinitionConverter.cs" />
     <Compile Include="Helpers\IndexExpressionConverter.cs" />
