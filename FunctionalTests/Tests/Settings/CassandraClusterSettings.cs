@@ -6,14 +6,8 @@ using SKBKontur.Cassandra.FunctionalTests.Tests;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Settings
 {
-    class CassandraClusterSettings : ICassandraClusterSettings
+    public class CassandraClusterSettings : ICassandraClusterSettings
     {
-        public string ClusterName { get { return Constants.ClusterName; } }
-
-        public ConsistencyLevel ReadConsistencyLevel { get { return ConsistencyLevel.ALL; } }
-
-        public ConsistencyLevel WriteConsistencyLevel { get { return ConsistencyLevel.ALL; } }
-
         public IPEndPoint[] Endpoints { get { return new[]
             {
                 new IPEndPoint(new IPAddress(new byte[]{127, 0, 0, 1}), 9898)
@@ -26,11 +20,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Settings
 
         public IPEndPoint EndpointForFierceCommands { get { return Endpoints[0]; } }
         public bool AllowNullTimestamp { get { return true; } }
-
         public int Attempts { get { return 5; } }
-
         public int Timeout { get { return 6000; } }
-
         public int FierceTimeout { get { return 10000; } }
+        public string ClusterName { get { return Constants.ClusterName; } }
+        public ConsistencyLevel ReadConsistencyLevel { get { return ConsistencyLevel.ALL; } }
+        public ConsistencyLevel WriteConsistencyLevel { get { return ConsistencyLevel.ALL; } }
     }
 }
