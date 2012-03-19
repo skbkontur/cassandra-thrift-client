@@ -11,6 +11,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         ConsistencyLevel WriteConsistencyLevel { get; }
         IPEndPoint[] Endpoints { get;  }
         IPEndPoint EndpointForFierceCommands { get; }
+        bool AllowNullTimestamp { get; }
         int Attempts { get; }
         int Timeout { get; }
         int FierceTimeout { get; }

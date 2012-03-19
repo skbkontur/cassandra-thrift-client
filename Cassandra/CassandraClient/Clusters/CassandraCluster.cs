@@ -37,6 +37,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
             var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName,
                                                                                                 columnFamilyName,
+                                                                                                clusterSettings,
                                                                                                 commandExecuter,
                                                                                                 clusterSettings.ReadConsistencyLevel,
                                                                                                 clusterSettings.WriteConsistencyLevel);

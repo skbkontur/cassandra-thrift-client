@@ -25,6 +25,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Settings
             }; } }
 
         public IPEndPoint EndpointForFierceCommands { get { return Endpoints[0]; } }
+        public bool AllowNullTimestamp { get { return true; } }
 
         public int Attempts { get { return 5; } }
 

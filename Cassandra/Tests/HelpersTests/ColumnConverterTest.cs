@@ -12,7 +12,7 @@ namespace Cassandra.Tests.HelpersTests
         [Test]
         public void TestNull()
         {
-            Assert.IsNull(((Column)null).ToAquilesColumn());
+            Assert.IsNull(((Column)null).ToAquilesColumn(true));
             Assert.IsNull(((AquilesColumn)null).ToColumn());
         }
 
@@ -33,7 +33,7 @@ namespace Cassandra.Tests.HelpersTests
                     TTL = 321,
                     Value = new byte[] {3, 2, 1}
                 };
-            column.ToAquilesColumn().AssertEqualsTo(expectedAquilesColumn);
+            column.ToAquilesColumn(true).AssertEqualsTo(expectedAquilesColumn);
         }
 
         [Test]

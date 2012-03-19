@@ -5,6 +5,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
@@ -15,12 +16,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
     {
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,
+                                                    ICassandraClusterSettings cassandraClusterSettings,
                                                     ICommandExecuter commandExecuter,
                                                     ConsistencyLevel readConsistencyLevel,
                                                     ConsistencyLevel writeConsistencyLevel)
         {
             this.keyspaceName = keyspaceName;
             this.columnFamilyName = columnFamilyName;
+            this.cassandraClusterSettings = cassandraClusterSettings;
             this.commandExecuter = commandExecuter;
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
@@ -70,7 +73,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             ExecuteCommand(new InsertCommand
                 {
-                    Column = column.ToAquilesColumn(),
+                    Column = column.ToAquilesColumn(cassandraClusterSettings.AllowNullTimestamp),
                     Key = key,
                     ColumnFamily = columnFamilyName,
                     ConsistencyLevel = writeConsistencyLevel
@@ -104,7 +107,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddBatch(byte[] key, IEnumerable<Column> columns)
         {
-            List<IAquilesMutation> mutationsList = ToMutationsList(columns);
+            List<IAquilesMutation> mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
             ExecuteMutations(key, mutationsList);
         }
 
@@ -211,7 +214,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data)
         {
-            List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key, ToMutationsList(row.Value))).ToList();
+            List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key, ToMutationsList(row.Value, cassandraClusterSettings.AllowNullTimestamp))).ToList();
             ExecuteMutations(mutationsList);
         }
 
@@ -233,9 +236,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns)
+        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns, bool allowNullTimestamp)
         {
-            return columns.Select(column => new AquilesSetMutation {Column = column.ToAquilesColumn()}).Cast<IAquilesMutation>().ToList();
+            return columns.Select(column => new AquilesSetMutation { Column = column.ToAquilesColumn(allowNullTimestamp) }).Cast<IAquilesMutation>().ToList();
         }
 
         private void ExecuteMutations(byte[] key, List<IAquilesMutation> mutationsList)
@@ -284,6 +287,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private readonly ICommandExecuter commandExecuter;
         private readonly string keyspaceName;
         private readonly string columnFamilyName;
+        private readonly ICassandraClusterSettings cassandraClusterSettings;
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
     }

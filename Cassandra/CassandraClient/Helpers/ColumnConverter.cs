@@ -1,4 +1,6 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+﻿using System;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
 
@@ -19,17 +21,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                            };
         }
 
-        public static AquilesColumn ToAquilesColumn(this Column column)
+        public static AquilesColumn ToAquilesColumn(this Column column, bool allowNullTimestamp)
         {
-            return column == null
-                       ? null
-                       : new AquilesColumn
-                           {
-                               ColumnName = StringHelpers.StringToBytes(column.Name),
-                               Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks,
-                               TTL = column.TTL,
-                               Value = column.Value
-                           };
+            if(column == null) return null;
+            if (!allowNullTimestamp && column.Timestamp == null)
+                throw new ArgumentException("Timestamp should be filled.");
+            return new AquilesColumn
+                {
+                    ColumnName = StringHelpers.StringToBytes(column.Name),
+                    Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks,
+                    TTL = column.TTL,
+                    Value = column.Value
+                };
         }
     }
 }
