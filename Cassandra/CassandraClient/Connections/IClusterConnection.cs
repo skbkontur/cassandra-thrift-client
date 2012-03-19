@@ -1,10 +1,11 @@
+using System;
 using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public interface IClusterConnection
+    public interface IClusterConnection : IDisposable
     {
         IList<Keyspace> RetrieveKeyspaces();
         void AddKeyspace(Keyspace keyspace);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 
 using Cassandra.Tests.ConsoleLog;
 
@@ -16,10 +15,9 @@ namespace Cassandra.Tests.CoreTests.PoolTests
     public class ClusterConnectionPoolTest: TestBase
     {
         private ClusterConnectionPool clusterPool;
-        private Func<ICassandraClusterSettings, ConnectionPoolKey, IKeyspaceConnectionPool> func;
+        private Func<ConnectionPoolKey, IKeyspaceConnectionPool> func;
         private IKeyspaceConnectionPool keyspacePool2;
         private IKeyspaceConnectionPool keyspacePool1;
-        private ICassandraClusterSettings cassandraClusterSettings;
         private int count1;
         private int count2;
         private IPooledThriftConnection pooledThriftConnection;
@@ -27,12 +25,12 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         public override void SetUp()
         {
             base.SetUp();
-            cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
+            GetMock<ICassandraClusterSettings>();
             keyspacePool1 = GetMock<IKeyspaceConnectionPool>();
             keyspacePool2 = GetMock<IKeyspaceConnectionPool>();
             count1 = 0;
             count2 = 0;
-            func = (settings, key) =>
+            func = key =>
                        {
                            if (key.Keyspace == "key1")
                            {
@@ -44,7 +42,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                            Assert.AreEqual(1, count2);
                            return keyspacePool2;
                        };
-            clusterPool = new ClusterConnectionPool(new ConsoleLogManager(), cassandraClusterSettings, func);
+            clusterPool = new ClusterConnectionPool(new ConsoleLogManager(), func);
             pooledThriftConnection = GetMock<IPooledThriftConnection>();
         }
 

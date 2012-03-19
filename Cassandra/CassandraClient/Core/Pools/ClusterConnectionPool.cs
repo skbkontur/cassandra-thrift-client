@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Net;
 
-using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Log;
 
@@ -11,23 +9,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class ClusterConnectionPool : IClusterConnectionPool
     {
-        public ClusterConnectionPool(ICassandraLogManager logManager, ICassandraClusterSettings settings, Func<ICassandraClusterSettings, ConnectionPoolKey, IKeyspaceConnectionPool> createKeyspaceConnectionPool)
+        public ClusterConnectionPool(ICassandraLogManager logManager, Func<ConnectionPoolKey, IKeyspaceConnectionPool> createKeyspaceConnectionPool)
         {
-            createPool = key => createKeyspaceConnectionPool(settings, key);
+            createPool = createKeyspaceConnectionPool;
             logger = logManager.GetLogger(GetType());
         }
 
-        public IThriftConnection BorrowConnection(ConnectionPoolKey key)
+        public IPooledThriftConnection BorrowConnection(ConnectionPoolKey key)
         {
-            var connectionPool = keyspacePools.GetOrAdd(key, createPool);
+            var keyspaceConnectionPool = keyspacePools.GetOrAdd(key, createPool);
             IPooledThriftConnection result;
-            var connectionType = connectionPool.TryBorrowConnection(out result);
+            var connectionType = keyspaceConnectionPool.TryBorrowConnection(out result);
             if(connectionType == ConnectionType.Undefined)
                 throw new CassandraClientIOException(string.Format("Can't connect to endpoint '{0}' [keyspace={1}]", key.IpEndPoint, key.Keyspace));
-            if (connectionType == ConnectionType.New)
-            {
+            if(connectionType == ConnectionType.New)
                 logger.Debug("Added new connection {0}.{1}{2}", result, Environment.NewLine, KnowledgesToString(GetKnowledges()));
-            }
             return result;
         }
 
@@ -35,18 +31,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         {
             var result = new Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge>();
             foreach(var keyspaceConnectionPool in keyspacePools)
-            {
                 result.Add(keyspaceConnectionPool.Key, keyspaceConnectionPool.Value.GetKnowledge());
-            }
             return result;
         }
 
         public void CheckConnections()
         {
-            foreach (var keyspaceConnectionPool in keyspacePools.Values)
-            {
+            foreach(var keyspaceConnectionPool in keyspacePools.Values)
                 keyspaceConnectionPool.CheckConnections();
-            }
+        }
+
+        public void Dispose()
+        {
+            foreach(var keyspaceConnectionPool in keyspacePools.Values)
+                keyspaceConnectionPool.Dispose();
         }
 
         private string KnowledgesToString(Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> knowledges)
@@ -54,7 +52,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             var result = "";
             foreach(var kvp in knowledges)
             {
-                if (result.Length > 0)
+                if(result.Length > 0)
                     result += Environment.NewLine;
                 result += kvp.Key + "; " + kvp.Value;
             }

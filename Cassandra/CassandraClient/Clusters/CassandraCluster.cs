@@ -55,6 +55,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             commandExecuter.CheckConnections();
         }
 
+        public void Dispose()
+        {
+            commandExecuter.Dispose();
+        }
+
         private readonly ICassandraClusterSettings clusterSettings;
         private readonly ICassandraLogManager logManager;
         private readonly ICommandExecuter commandExecuter;

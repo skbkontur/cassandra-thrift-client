@@ -46,27 +46,32 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             for(int i = 0; i < settings.Attempts; ++i)
             {
                 IPEndPoint[] endpoints = command.IsFierce ? new[] {settings.EndpointForFierceCommands} : endpointManager.GetEndPoints();
-                foreach (var endpoint in endpoints)
+                foreach(var endpoint in endpoints)
                 {
                     try
                     {
-                        using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey { IpEndPoint = endpoint, Keyspace = command.Keyspace, IsFierce = command.IsFierce}))
+                        using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.Keyspace, IsFierce = command.IsFierce}))
                             thriftConnection.ExecuteCommand(command, logManager.GetLogger(command.GetType()));
                         endpointManager.Good(endpoint);
                         return;
                     }
-                    catch (Exception e)
+                    catch(Exception e)
                     {
                         string message = string.Format("An error occured while executing cassandra command '{0}'", command.GetType());
                         var exception = CassandraExceptionTransformer.Transform(e, message);
                         logger.Warn(exception, "Attempt {0} on {1} failed.", i, endpoint);
                         endpointManager.Bad(endpoint);
-                        if (i + 1 == settings.Attempts)
+                        if(i + 1 == settings.Attempts)
                             throw new CassandraAttemptsException(settings.Attempts, exception);
                     }
                 }
             }
             logger.Debug("Executing {0} command complete.", command.GetType());
+        }
+
+        public void Dispose()
+        {
+            clusterConnectionPool.Dispose();
         }
 
         private readonly IClusterConnectionPool clusterConnectionPool;

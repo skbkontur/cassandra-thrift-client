@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
 using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
@@ -73,6 +72,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             WaitUntilAgreementIsReached();
         }
 
+        public void Dispose()
+        {
+            commandExecuter.Dispose();
+        }
+
         private void WaitUntilAgreementIsReached()
         {
             while(true)
@@ -106,6 +110,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
-        private ICassandraLogger logger;
+        private readonly ICassandraLogger logger;
     }
 }

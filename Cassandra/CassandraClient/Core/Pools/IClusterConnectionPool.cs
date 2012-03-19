@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
-    public interface IClusterConnectionPool
+    public interface IClusterConnectionPool : IDisposable
     {
-        IThriftConnection BorrowConnection(ConnectionPoolKey key);
+        IPooledThriftConnection BorrowConnection(ConnectionPoolKey key);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
         void CheckConnections();
     }

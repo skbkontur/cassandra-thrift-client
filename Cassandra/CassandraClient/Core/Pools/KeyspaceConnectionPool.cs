@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Linq;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
@@ -18,17 +19,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             isFierce = key.IsFierce;
             this.settings = settings;
             this.logManager = logManager;
-            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'{2} was created.", endPoint, keyspaceName, isFierce?"[Fierce]":"");
+            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'{2} was created.", endPoint, keyspaceName, isFierce ? "[Fierce]" : "");
         }
 
         public ConnectionType TryBorrowConnection(out IPooledThriftConnection thriftConnection)
         {
             IPooledThriftConnection result;
             ConnectionType connectionType;
-            if (!freeConnections.TryDequeue(out result))
+            if(!freeConnections.TryDequeue(out result))
             {
                 result = CreateConnection();
-                if (!result.IsAlive)
+                if(!result.IsAlive)
                 {
                     thriftConnection = null;
                     return ConnectionType.Undefined;
@@ -37,14 +38,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             }
             else
             {
-                if (!result.IsAlive)
-                {
+                if(!result.IsAlive)
                     return TryBorrowConnection(out thriftConnection);
-                }
                 connectionType = ConnectionType.FromPool;
             }
 
-            if (!busyConnections.TryAdd(result.Id, result))
+            if(!busyConnections.TryAdd(result.Id, result))
                 throw new GuidCollisionException(result.Id);
             thriftConnection = result;
             return connectionType;
@@ -53,7 +52,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         public void ReleaseConnection(IPooledThriftConnection connection)
         {
             IPooledThriftConnection res;
-            if (!busyConnections.TryRemove(connection.Id, out res))
+            if(!busyConnections.TryRemove(connection.Id, out res))
                 throw new FailedReleaseException(connection);
             freeConnections.Enqueue(connection);
         }
@@ -70,10 +69,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         public void CheckConnections()
         {
             var connections = freeConnections.ToArray();
-            foreach (var connection in connections)
-            {
+            foreach(var connection in connections)
                 connection.IsAlive = connection.Ping();
-            }
+        }
+
+        public void Dispose()
+        {
+            var connections = freeConnections.Union(busyConnections.Values).ToArray();
+            foreach(var connection in connections)
+                connection.Kill();
         }
 
         private PooledThriftConnection CreateConnection()

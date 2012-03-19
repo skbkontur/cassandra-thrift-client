@@ -72,7 +72,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             endpointManager.Expect(manager => manager.GetEndPoints()).Return(new[] {ipEndPoint1});
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
+            var thriftConnection = GetMock<IPooledThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace", false))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger));
@@ -90,7 +90,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             endpointManager.Expect(manager => manager.GetEndPoints()).Return(new [] {ipEndPoint1, ipEndPoint2});
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
+            var thriftConnection = GetMock<IPooledThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace", false))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
@@ -115,7 +115,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             endpointManager.Expect(manager => manager.GetEndPoints()).Return(new[] { ipEndPoint1 });
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
+            var thriftConnection = GetMock<IPooledThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace", false))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
@@ -135,7 +135,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             cassandraClusterSettings.Expect(settings => settings.EndpointForFierceCommands).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
+            var thriftConnection = GetMock<IPooledThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace", true))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger));
@@ -153,7 +153,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
             cassandraClusterSettings.Expect(settings => settings.EndpointForFierceCommands).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
+            var thriftConnection = GetMock<IPooledThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace", true))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
@@ -180,7 +180,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1);
             cassandraClusterSettings.Expect(settings => settings.EndpointForFierceCommands).Return(ipEndPoint1);
             command.Expect(command1 => command1.Keyspace).Return("keyspace");
-            var thriftConnection = GetMock<IThriftConnection>();
+            var thriftConnection = GetMock<IPooledThriftConnection>();
             clusterConnectionPool.Expect(pool => pool.BorrowConnection(GetConnectionPoolKey(ipEndPoint1, "keyspace", true))).
                 Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command, logger)).Throw(new IOException("xxx"));
