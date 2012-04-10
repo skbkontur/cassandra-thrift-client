@@ -9,6 +9,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
     {
         IList<Keyspace> RetrieveKeyspaces();
         void AddKeyspace(Keyspace keyspace);
+        void UpdateKeyspace(Keyspace keyspace);
         void RemoveKeyspace(string keyspace);
         string DescribeVersion();
     }

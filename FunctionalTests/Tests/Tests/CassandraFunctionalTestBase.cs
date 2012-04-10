@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 
 using Cassandra.Tests;
-using Cassandra.Tests.ConsoleLog;
 
 using GroboContainer.Core;
 using GroboContainer.Impl;
@@ -14,7 +13,6 @@ using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Log;
 using SKBKontur.Cassandra.FunctionalTests.Logger;
 using SKBKontur.Cassandra.FunctionalTests.Utils;
-
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {

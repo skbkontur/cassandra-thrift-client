@@ -90,6 +90,7 @@
     <Compile Include="Tests\SecondaryIndexTest.cs" />
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
+    <Compile Include="Tests\UpdateKeyspaceTest.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -42,6 +42,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return result;
         }
 
+        public void UpdateKeyspace(Keyspace keyspace)
+        {
+            commandExecuter.Execute(new AquilesCommandAdaptor(new UpdateKeyspaceCommand
+                {
+                    ConsistencyLevel = writeConsistencyLevel,
+                    KeyspaceDefinition = keyspace.ToAquilesKeyspace()
+                }));
+            WaitUntilAgreementIsReached();
+        }
+
         public void RemoveKeyspace(string keyspace)
         {
             commandExecuter.Execute(new AquilesCommandAdaptor(new DropKeyspaceCommand
