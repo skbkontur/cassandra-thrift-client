@@ -28,8 +28,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             var transport = new TFramedTransport(tsocket);
             cassandraClient = new Apache.Cassandra.Cassandra.Client(new TBinaryProtocol(transport));
             lockObject = new object();
+            CreationDateTime = DateTime.UtcNow;
             OpenTransport();
         }
+
+        public DateTime CreationDateTime { get; private set; }
 
         public void Dispose()
         {
@@ -47,8 +50,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 {
                     command.Execute(cassandraClient, logger);
                 }
-                catch(Exception)
+                catch(Exception e)
                 {
+                    logger.Error(e, "Команда завершилась неудачей. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
                     IsAlive = false;
                     throw;
                 }
