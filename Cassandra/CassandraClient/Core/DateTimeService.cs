@@ -6,8 +6,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public static class DateTimeService
     {
-        public static DateTime UtcNow { get { return new DateTime(GetUtcTicks(), DateTimeKind.Utc); } }
-        private static object lockObject = new object();
+        public static DateTime UtcNow
+        {
+            get
+            {
+                var cand = new DateTime(GetUtcTicks(), DateTimeKind.Utc);
+                if(cand < lastReturned)
+                    cand = lastReturned;
+                lastReturned = cand;
+                return cand;
+            }
+        }
 
         [DllImport("kernel32.dll", SetLastError = true)]
         private static extern bool QueryPerformanceFrequency(out long lpFrequency);
@@ -45,7 +54,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             if(elapsed > 1.0)
             {
                 //Тут происходят действия, направленные на то, чтобы функция UtcNow была неубывающей
-                lock (lockObject)
+                lock(lockObject)
                 {
                     elapsed = (double)(GetCounter() - startCounter) / frequency;
                     if(elapsed > 1.0)
@@ -55,10 +64,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         return GetUtcTicks();
                     }
                 }
-                
             }
             return startTicks + (long)(elapsed * 10000000 + 0.5);
         }
+
+        private static readonly object lockObject = new object();
 
         private static readonly long frequency = GetFrequency();
 
@@ -70,5 +80,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         [ThreadStatic]
         private static long startTicks;
+
+        [ThreadStatic]
+        private static DateTime lastReturned;
     }
 }
