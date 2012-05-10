@@ -40,13 +40,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
                 columnFamily.Row_cache_save_period_in_seconds = objectA.RowCacheSavePeriodInSeconds.Value;
             if(objectA.KeyCacheSavePeriodInSeconds.HasValue)
                 columnFamily.Key_cache_save_period_in_seconds = objectA.KeyCacheSavePeriodInSeconds.Value;
-            if(objectA.MemtableFlushAfterMins.HasValue)
-                columnFamily.Memtable_flush_after_mins = objectA.MemtableFlushAfterMins.Value;
-            if(objectA.MemtableThroughputInMb.HasValue)
-                columnFamily.Memtable_throughput_in_mb = objectA.MemtableThroughputInMb.Value;
-            if(objectA.MemtableOperationsInMillions.HasValue)
-                columnFamily.Memtable_operations_in_millions = objectA.MemtableOperationsInMillions.Value;
-
             if(objectA.Columns != null)
             {
                 var originColumns = objectA.Columns;
@@ -77,9 +70,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
                     MaximumCompactationThreshold = objectB.Max_compaction_threshold,
                     RowCacheSavePeriodInSeconds = objectB.Row_cache_save_period_in_seconds,
                     KeyCacheSavePeriodInSeconds = objectB.Key_cache_save_period_in_seconds,
-                    MemtableFlushAfterMins = objectB.Memtable_flush_after_mins,
-                    MemtableThroughputInMb = objectB.Memtable_throughput_in_mb,
-                    MemtableOperationsInMillions = objectB.Memtable_operations_in_millions
                 };
             if(objectB.Column_metadata != null)
             {

@@ -31,8 +31,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.078">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.078.dll</HintPath>
+    <Reference Include="Apache.Cassandra.105">
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.105.dll</HintPath>
     </Reference>
     <Reference Include="GroboSerializer">
       <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
@@ -45,7 +45,8 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thrift">
+    <Reference Include="Thrift, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
