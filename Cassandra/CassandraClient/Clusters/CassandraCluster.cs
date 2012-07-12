@@ -9,7 +9,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public class CassandraCluster : ICassandraCluster
     {
-        public CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings, ICassandraLogManager logManager)
+        public CassandraCluster(ICassandraClusterSettings settings)
+            : this(settings, new CassandraLogManager())
+        {
+        }
+
+        private CassandraCluster(ICassandraClusterSettings settings, ICassandraLogManager cassandraLogManager)
+            : this(new CommandExecuter(new ClusterConnectionPool(cassandraLogManager, k => new KeyspaceConnectionPool(settings, k, cassandraLogManager)), new EndpointManager(new Badlist(), cassandraLogManager), settings, cassandraLogManager), settings, cassandraLogManager)
+        {
+        }
+
+        private CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings, ICassandraLogManager logManager)
         {
             this.commandExecuter = commandExecuter;
             this.clusterSettings = clusterSettings;
