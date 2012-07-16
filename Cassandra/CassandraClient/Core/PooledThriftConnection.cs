@@ -37,7 +37,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             {
                 thriftConnection.Dispose();
             }
-            catch
+            catch(Exception e)
             {
             }
         }

@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Log;
 
 using Thrift.Protocol;
@@ -32,8 +33,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             OpenTransport();
         }
 
-        public DateTime CreationDateTime { get; private set; }
-
         public void Dispose()
         {
             if(isDisposed)
@@ -46,6 +45,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             lock(lockObject)
             {
+                if(!isAlive)
+                {
+                    var e = new DeadConnectionException();
+                    logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
+                    throw e;
+                }
                 try
                 {
                     command.Execute(cassandraClient, logger);
@@ -61,17 +66,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public bool Ping()
         {
-            try
+            lock(lockObject)
             {
-                lock(lockObject)
+                try
                 {
                     cassandraClient.describe_version();
                 }
+                catch(Exception e)
+                {
+                    logger.Error(e, "Error while ping");
+                    isAlive = false;
+                    return false;
+                }
                 return true;
-            }
-            catch
-            {
-                return false;
             }
         }
 
@@ -79,6 +86,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", ipEndPoint, keyspaceName);
         }
+
+        public DateTime CreationDateTime { get; private set; }
 
         public bool IsAlive { get { return isAlive && CassandraTransportIsOpen(); } set { isAlive = value; } }
 
