@@ -1,7 +1,5 @@
 ﻿using System;
 
-using Cassandra.Tests.ConsoleLog;
-
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
@@ -42,7 +40,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                            Assert.AreEqual(1, count2);
                            return keyspacePool2;
                        };
-            clusterPool = new ClusterConnectionPool(new ConsoleLogManager(), func);
+            clusterPool = new ClusterConnectionPool(func);
             pooledThriftConnection = GetMock<IPooledThriftConnection>();
         }
 

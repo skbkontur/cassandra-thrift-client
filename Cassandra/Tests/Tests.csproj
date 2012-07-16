@@ -59,8 +59,6 @@
     <Compile Include="Arg.cs" />
     <Compile Include="ConnectionTests\ClusterConnectionTest.cs" />
     <Compile Include="ConnectionTests\KeyspaceConnectionTest.cs" />
-    <Compile Include="ConsoleLog\ConsoleLogger.cs" />
-    <Compile Include="ConsoleLog\ConsoleLogManager.cs" />
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
     <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
     <Compile Include="HelpersTests\ColumnConverterTest.cs" />

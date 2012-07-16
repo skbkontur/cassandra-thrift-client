@@ -3,35 +3,27 @@
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public class CassandraCluster : ICassandraCluster
     {
         public CassandraCluster(ICassandraClusterSettings settings)
-            : this(settings, new CassandraLogManager())
+            : this(new CommandExecuter(new ClusterConnectionPool(k => new KeyspaceConnectionPool(settings, k)), new EndpointManager(new Badlist()), settings), settings)
         {
         }
 
-        private CassandraCluster(ICassandraClusterSettings settings, ICassandraLogManager cassandraLogManager)
-            : this(new CommandExecuter(new ClusterConnectionPool(cassandraLogManager, k => new KeyspaceConnectionPool(settings, k, cassandraLogManager)), new EndpointManager(new Badlist(), cassandraLogManager), settings, cassandraLogManager), settings, cassandraLogManager)
-        {
-        }
-
-        private CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings, ICassandraLogManager logManager)
+        private CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings)
         {
             this.commandExecuter = commandExecuter;
             this.clusterSettings = clusterSettings;
-            this.logManager = logManager;
         }
 
         public IClusterConnection RetrieveClusterConnection()
         {
             return new ClusterConnection(commandExecuter,
                                          clusterSettings.ReadConsistencyLevel,
-                                         clusterSettings.WriteConsistencyLevel,
-                                         logManager);
+                                         clusterSettings.WriteConsistencyLevel);
         }
 
         public IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName)
@@ -39,8 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return new KeyspaceConnection(commandExecuter,
                                           clusterSettings.ReadConsistencyLevel,
                                           clusterSettings.WriteConsistencyLevel,
-                                          keyspaceName,
-                                          logManager);
+                                          keyspaceName);
         }
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
@@ -71,7 +62,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         }
 
         private readonly ICassandraClusterSettings clusterSettings;
-        private readonly ICassandraLogManager logManager;
         private readonly ICommandExecuter commandExecuter;
     }
 }

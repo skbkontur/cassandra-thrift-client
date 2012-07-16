@@ -5,13 +5,12 @@ using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class GetIndexedSlicesCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             var columnParent = BuildColumnParent();
             var indexClause = ModelConverterHelper.Convert<AquilesIndexClause, IndexClause>(IndexClause);
@@ -20,9 +19,9 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
             BuildOutput(result);
         }
 
-        public override void ValidateInput(ICassandraLogger logger)
+        public override void ValidateInput()
         {
-            base.ValidateInput(logger);
+            base.ValidateInput();
             IndexClause.ValidateForQueryOperation();
             Predicate.ValidateForQueryOperation();
         }

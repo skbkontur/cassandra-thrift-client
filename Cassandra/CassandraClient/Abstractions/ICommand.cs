@@ -1,11 +1,9 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Log;
-
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+﻿namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public interface ICommand
     {
-        void Execute(Apache.Cassandra.Cassandra.Client client, ICassandraLogger logger);
-        ValidationResult Validate(ICassandraLogger logger);
+        void Execute(Apache.Cassandra.Cassandra.Client client);
+        ValidationResult Validate();
         string Keyspace { get; }
         bool IsFierce { get; }
     }

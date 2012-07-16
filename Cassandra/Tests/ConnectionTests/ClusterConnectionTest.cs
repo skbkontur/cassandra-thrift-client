@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-using Cassandra.Tests.ConsoleLog;
-
 using NUnit.Framework;
 
 using Rhino.Mocks;
@@ -26,7 +24,7 @@ namespace Cassandra.Tests.ConnectionTests
             base.SetUp();
             commandExecuter = GetMock<ICommandExecuter>();
             clusterConnection = new ClusterConnection(commandExecuter, ConsistencyLevel.ALL,
-                                                      ConsistencyLevel.EACH_QUORUM, new ConsoleLogManager());
+                                                      ConsistencyLevel.EACH_QUORUM);
         }
 
         [Test]

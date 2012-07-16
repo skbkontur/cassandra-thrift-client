@@ -1,15 +1,13 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Log;
-
-namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
+﻿namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class DescribeVersionCommand : AbstractCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             Version = cassandraClient.describe_version();
         }
 
-        public override void ValidateInput(ICassandraLogger logger)
+        public override void ValidateInput()
         {
         }
 

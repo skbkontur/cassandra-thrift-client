@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 
-using Cassandra.Tests.ConsoleLog;
-
 using SKBKontur.Cassandra.CassandraClient.Core;
 
 using NUnit.Framework;
@@ -21,7 +19,7 @@ namespace Cassandra.Tests.CoreTests
         {
             base.SetUp();
             badlist = GetMock<IBadlist>();
-            endpointManager = new EndpointManager(badlist, new ConsoleLogManager());
+            endpointManager = new EndpointManager(badlist);
             endpoint = new IPEndPoint(new IPAddress(new byte[] {1, 0, 0, 1}), 1212);
         }
 

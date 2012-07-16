@@ -3,40 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
-using SKBKontur.Cassandra.CassandraClient.Log;
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class EndpointManager : IEndpointManager
     {
-        public EndpointManager(IBadlist badlist, ICassandraLogManager logManager)
+        public EndpointManager(IBadlist badlist)
         {
             this.badlist = badlist;
-            logger = logManager.GetLogger(GetType());
+            logger = LogManager.GetLogger(GetType());
         }
 
         public void Register(IPEndPoint ipEndPoint)
         {
             badlist.Register(ipEndPoint);
-            logger.Info("New node with endpoint {0} was added in client topology.", ipEndPoint);
+            logger.InfoFormat("New node with endpoint {0} was added in client topology.", ipEndPoint);
         }
 
         public void Unregister(IPEndPoint ipEndPoint)
         {
             badlist.Unregister(ipEndPoint);
-            logger.Info("Node with endpoint {0} was deleted from client topology.", ipEndPoint);
+            logger.InfoFormat("Node with endpoint {0} was deleted from client topology.", ipEndPoint);
         }
 
         public void Good(IPEndPoint ipEndPoint)
         {
             badlist.Good(ipEndPoint);
-            logger.Debug("Health of node with endpoint {0} was increased. Current health: {1}", ipEndPoint, badlist.GetHealth(ipEndPoint));
+            logger.DebugFormat("Health of node with endpoint {0} was increased. Current health: {1}", ipEndPoint, badlist.GetHealth(ipEndPoint));
         }
 
         public void Bad(IPEndPoint ipEndPoint)
         {
             badlist.Bad(ipEndPoint);
-            logger.Debug("Health of node with endpoint {0} was decreased. Current health: {1}", ipEndPoint, badlist.GetHealth(ipEndPoint));
+            logger.DebugFormat("Health of node with endpoint {0} was decreased. Current health: {1}", ipEndPoint, badlist.GetHealth(ipEndPoint));
         }
 
         public IPEndPoint[] GetEndPoints()
@@ -76,7 +76,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         [ThreadStatic]
         private static Random random;
 
-        private readonly ICassandraLogger logger;
+        private readonly ILog logger;
 
         private const double eps = 1e-15;
     }

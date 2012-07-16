@@ -3,15 +3,14 @@ using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class PooledThriftConnection : IPooledThriftConnection
     {
-        public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName, ICassandraLogManager logManager)
+        public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
-            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName, logManager);
+            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName);
             this.connectionPool = connectionPool;
             Id = Guid.NewGuid();
         }
@@ -21,9 +20,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             connectionPool.ReleaseConnection(this);
         }
 
-        public void ExecuteCommand(ICommand command, ICassandraLogger logger)
+        public void ExecuteCommand(ICommand command)
         {
-            thriftConnection.ExecuteCommand(command, logger);
+            thriftConnection.ExecuteCommand(command);
         }
 
         public bool Ping()

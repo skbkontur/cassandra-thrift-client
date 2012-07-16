@@ -8,7 +8,8 @@ using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
-using SKBKontur.Cassandra.CassandraClient.Log;
+
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
@@ -17,10 +18,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public KeyspaceConnection(ICommandExecuter commandExecuter,
                                   ConsistencyLevel readConsistencyLevel,
                                   ConsistencyLevel writeConsistencyLevel,
-                                  string keyspace,
-                                  ICassandraLogManager logManager)
+                                  string keyspace)
         {
-            logger = logManager.GetLogger(GetType());
+            logger = LogManager.GetLogger(GetType());
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
             this.commandExecuter = commandExecuter;
             this.keyspace = keyspace;
@@ -132,6 +132,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
-        private ICassandraLogger logger;
+        private ILog logger;
     }
 }

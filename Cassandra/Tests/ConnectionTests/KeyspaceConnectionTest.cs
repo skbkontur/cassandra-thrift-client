@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-using Cassandra.Tests.ConsoleLog;
-
 using NUnit.Framework;
 
 using Rhino.Mocks;
@@ -24,7 +22,7 @@ namespace Cassandra.Tests.ConnectionTests
             base.SetUp();
             commandExecuter = GetMock<ICommandExecuter>();
             keyspaceConnection = new KeyspaceConnection(commandExecuter, ConsistencyLevel.ALL,
-                                                        ConsistencyLevel.EACH_QUORUM, keyspaceName, new ConsoleLogManager());
+                                                        ConsistencyLevel.EACH_QUORUM, keyspaceName);
         }
 
         [Test]

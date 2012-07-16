@@ -4,15 +4,14 @@ using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class MultiGetCountCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            SlicePredicate slicePredicate = null;
+            SlicePredicate slicePredicate;
             if(Predicate != null)
                 slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(Predicate);
             else

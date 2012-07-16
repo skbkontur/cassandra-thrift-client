@@ -6,13 +6,12 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
     public class MultiGetSliceCommand : AbstractKeyspaceColumnFamilyDependantCommand
     {
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             Output = null;
             var columnParent = BuildColumnParent();
@@ -21,9 +20,9 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
             BuildOut(output);
         }
 
-        public override void ValidateInput(ICassandraLogger logger)
+        public override void ValidateInput()
         {
-            base.ValidateInput(logger);
+            base.ValidateInput();
             ValidateKeys();
             ValidatePredicate();
         }

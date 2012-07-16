@@ -1,6 +1,6 @@
 ﻿using Apache.Cassandra;
 
-using SKBKontur.Cassandra.CassandraClient.Log;
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
 {
@@ -20,10 +20,11 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command
         }
 
         private const AquilesConsistencyLevel defaultConsistencyLevel = AquilesConsistencyLevel.QUORUM;
-        public abstract void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ICassandraLogger logger);
+        public abstract void Execute(Apache.Cassandra.Cassandra.Client cassandraClient);
 
-        public virtual void ValidateInput(ICassandraLogger logger) { }
+        public virtual void ValidateInput() { }
 
         public virtual bool IsFierce { get { return false; } }
+        protected ILog logger = LogManager.GetLogger(typeof(AbstractCommand));
     }
 }

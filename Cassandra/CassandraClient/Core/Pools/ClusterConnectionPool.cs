@@ -3,16 +3,17 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Log;
+
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class ClusterConnectionPool : IClusterConnectionPool
     {
-        public ClusterConnectionPool(ICassandraLogManager logManager, Func<ConnectionPoolKey, IKeyspaceConnectionPool> createKeyspaceConnectionPool)
+        public ClusterConnectionPool(Func<ConnectionPoolKey, IKeyspaceConnectionPool> createKeyspaceConnectionPool)
         {
             createPool = createKeyspaceConnectionPool;
-            logger = logManager.GetLogger(GetType());
+            logger = LogManager.GetLogger(typeof(ClusterConnectionPool));
         }
 
         public IPooledThriftConnection BorrowConnection(ConnectionPoolKey key)
@@ -23,7 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             if(connectionType == ConnectionType.Undefined)
                 throw new CassandraClientIOException(string.Format("Can't connect to endpoint '{0}' [keyspace={1}]", key.IpEndPoint, key.Keyspace));
             if(connectionType == ConnectionType.New)
-                logger.Debug("Added new connection {0}.{1}{2}", result, Environment.NewLine, KnowledgesToString(GetKnowledges()));
+                logger.DebugFormat("Added new connection {0}.{1}{2}", result, Environment.NewLine, KnowledgesToString(GetKnowledges()));
             return result;
         }
 
@@ -61,6 +62,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         private readonly ConcurrentDictionary<ConnectionPoolKey, IKeyspaceConnectionPool> keyspacePools = new ConcurrentDictionary<ConnectionPoolKey, IKeyspaceConnectionPool>();
         private readonly Func<ConnectionPoolKey, IKeyspaceConnectionPool> createPool;
-        private readonly ICassandraLogger logger;
+        private readonly ILog logger;
     }
 }

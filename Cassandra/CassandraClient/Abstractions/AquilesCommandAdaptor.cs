@@ -1,5 +1,4 @@
 ﻿using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -13,12 +12,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             this.command = command;
         }
 
-        public void Execute(Apache.Cassandra.Cassandra.Client client, ICassandraLogger logger)
+        public void Execute(Apache.Cassandra.Cassandra.Client client)
         {
-            command.Execute(client, logger);
+            command.Execute(client);
         }
 
-        public ValidationResult Validate(ICassandraLogger logger)
+        public ValidationResult Validate()
         {
             //todo что-то решить с валидациями
             return ValidationResult.Ok();

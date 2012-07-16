@@ -4,20 +4,21 @@ using System.Net.Sockets;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Log;
 
 using Thrift.Protocol;
 using Thrift.Transport;
+
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class ThriftConnection
     {
-        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ICassandraLogManager logManager)
+        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
             isDisposed = false;
             IsAlive = true;
-            logger = logManager.GetLogger(GetType());
+            logger = LogManager.GetLogger(GetType());
             this.ipEndPoint = ipEndPoint;
             this.keyspaceName = keyspaceName;
             string address = ipEndPoint.Address.ToString();
@@ -41,23 +42,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             CloseTransport();
         }
 
-        public void ExecuteCommand(ICommand command, ICassandraLogger logger)
+        public void ExecuteCommand(ICommand command)
         {
             lock(lockObject)
             {
                 if(!isAlive)
                 {
                     var e = new DeadConnectionException();
-                    logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
+                    logger.Error(string.Format("Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
                     throw e;
                 }
                 try
                 {
-                    command.Execute(cassandraClient, logger);
+                    command.Execute(cassandraClient);
                 }
                 catch(Exception e)
                 {
-                    logger.Error(e, "Команда завершилась неудачей. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
+                    logger.Error(string.Format("Команда завершилась неудачей. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
                     IsAlive = false;
                     throw;
                 }
@@ -74,7 +75,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 }
                 catch(Exception e)
                 {
-                    logger.Error(e, "Error while ping");
+                    logger.Error("Error while ping", e);
                     isAlive = false;
                     return false;
                 }
@@ -130,7 +131,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private volatile bool isAlive;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
         private readonly Socket socket;
-        private ICassandraLogger logger;
+        private ILog logger;
         private readonly object lockObject;
         private bool isDisposed;
     }

@@ -7,17 +7,18 @@ using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
-using SKBKontur.Cassandra.CassandraClient.Log;
+
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class ClusterConnection : IClusterConnection
     {
         public ClusterConnection(ICommandExecuter commandExecuter,
-                                 ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel, ICassandraLogManager logManager)
+                                 ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel)
         {
             this.commandExecuter = commandExecuter;
-            logger = logManager.GetLogger(GetType());
+            logger = LogManager.GetLogger(GetType());
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
@@ -116,10 +117,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         }
 
         private readonly ICommandExecuter commandExecuter;
-        private readonly ICassandraLogManager logManager;
 
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
-        private readonly ICassandraLogger logger;
+        private readonly ILog logger;
     }
 }

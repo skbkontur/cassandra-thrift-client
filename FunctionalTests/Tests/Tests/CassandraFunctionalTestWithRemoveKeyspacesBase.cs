@@ -11,18 +11,13 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestWithRemoveKeyspacesBase : CassandraFunctionalTestBase
     {
-        #region Setup/Teardown
-
         public override void SetUp()
         {
             base.SetUp();
-            
             cassandraClient = new CassandraClient(cassandraCluster);
             cassandraClient.RemoveAllKeyspaces();
             cassandraClient.AddKeyspace(Constants.KeyspaceName, Constants.ColumnFamilyName);
         }
-
-        #endregion
 
         protected static Column ToColumn(string columnName, string columnValue, long? timestamp = null, int? ttl = null)
         {
