@@ -15,7 +15,6 @@
 @REM  limitations under the License.
 
 SET JAVA_HOME=C:\Program Files\Java\jre6
-
 @echo off
 if "%OS%" == "Windows_NT" setlocal
 
@@ -34,8 +33,8 @@ set CLASSPATH=%CLASSPATH%;%1
 goto :eof
 
 :okClasspath
-REM Include the build\classes directory so it works in development
-set CASSANDRA_CLASSPATH=%CLASSPATH%;"%CASSANDRA_HOME%\build\classes"
+REM Include the build\classes\main directory so it works in development
+set CASSANDRA_CLASSPATH=%CLASSPATH%;"%CASSANDRA_HOME%\build\classes\main";"%CASSANDRA_HOME%\build\classes\thrift"
 goto runCli
 
 :runCli

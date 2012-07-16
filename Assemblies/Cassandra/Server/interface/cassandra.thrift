@@ -46,7 +46,7 @@ namespace rb CassandraThrift
 #           for every edit that doesn't result in a change to major/minor.
 #
 # See the Semantic Versioning Specification (SemVer) http://semver.org.
-const string VERSION = "19.4.0"
+const string VERSION = "19.19.0"
 
 
 #
@@ -61,8 +61,8 @@ const string VERSION = "19.4.0"
  */
 struct Column {
    1: required binary name,
-   2: required binary value,
-   3: required i64 timestamp,
+   2: optional binary value,
+   3: optional i64 timestamp,
    4: optional i32 ttl,
 }
 
@@ -76,6 +76,16 @@ struct SuperColumn {
    2: required list<Column> columns,
 }
 
+struct CounterColumn {
+    1: required binary name,
+    2: required i64 value
+}
+
+struct CounterSuperColumn {
+    1: required binary name,
+    2: required list<CounterColumn> columns
+}
+
 /**
     Methods for fetching rows/records from Cassandra will return either a single instance of ColumnOrSuperColumn or a list
     of ColumnOrSuperColumns (get_slice()). If you're looking up a SuperColumn (or list of SuperColumns) then the resulting
@@ -83,12 +93,19 @@ struct SuperColumn {
     in Columns, those values will be in the attribute column. This change was made between 0.3 and 0.4 to standardize on
     single query methods that may return either a SuperColumn or Column.
 
+    If the query was on a counter column family, you will either get a counter_column (instead of a column) or a 
+    counter_super_column (instead of a super_column)
+
     @param column. The Column returned by get() or get_slice().
     @param super_column. The SuperColumn returned by get() or get_slice().
+    @param counter_column. The Counterolumn returned by get() or get_slice().
+    @param counter_super_column. The CounterSuperColumn returned by get() or get_slice().
  */
 struct ColumnOrSuperColumn {
     1: optional Column column,
     2: optional SuperColumn super_column,
+    3: optional CounterColumn counter_column,
+    4: optional CounterSuperColumn counter_super_column
 }
 
 
@@ -124,6 +141,10 @@ exception AuthenticationException {
 /** invalid authorization request (user does not have access to keyspace) */
 exception AuthorizationException {
     1: required string why
+}
+
+/** schemas are not in agreement across all nodes */
+exception SchemaDisagreementException {
 }
 
 
@@ -302,15 +323,18 @@ struct KeyCount {
     2: required i32 count
 }
 
+/**
+ * Note that the timestamp is only optional in case of counter deletion.
+ */
 struct Deletion {
-    1: required i64 timestamp,
+    1: optional i64 timestamp,
     2: optional binary super_column,
     3: optional SlicePredicate predicate,
 }
 
 /**
-    A Mutation is either an insert, represented by filling column_or_supercolumn, or a deletion, represented by filling the deletion attribute.
-    @param column_or_supercolumn. An insert to a column or supercolumn
+    A Mutation is either an insert (represented by filling column_or_supercolumn) or a deletion (represented by filling the deletion attribute).
+    @param column_or_supercolumn. An insert to a column or supercolumn (possibly counter column or supercolumn)
     @param deletion. A deletion of a column or supercolumn
 */
 struct Mutation {
@@ -318,10 +342,26 @@ struct Mutation {
     2: optional Deletion deletion,
 }
 
+struct EndpointDetails {
+    1: string host,
+    2: string datacenter,
+    3: optional string rack
+}
+
+/**
+    A TokenRange describes part of the Cassandra ring, it is a mapping from a range to
+    endpoints responsible for that range.
+    @param start_token The first token in the range
+    @param end_token The last token in the range
+    @param endpoints The endpoints responsible for the range (listed by their configured listen_address)
+    @param rpc_endpoints The endpoints responsible for the range (listed by their configured rpc_address)
+*/
 struct TokenRange {
     1: required string start_token,
     2: required string end_token,
     3: required list<string> endpoints,
+    4: optional list<string> rpc_endpoints
+    5: optional list<EndpointDetails> endpoint_details,
 }
 
 /**
@@ -333,6 +373,7 @@ struct AuthenticationRequest {
 
 enum IndexType {
     KEYS,
+    CUSTOM
 }
 
 /* describes a column in a column family. */
@@ -340,7 +381,8 @@ struct ColumnDef {
     1: required binary name,
     2: required string validation_class,
     3: optional IndexType index_type,
-    4: optional string index_name
+    4: optional string index_name,
+    5: optional map<string,string> index_options
 }
 
 
@@ -363,9 +405,15 @@ struct CfDef {
     18: optional i32 max_compaction_threshold,
     19: optional i32 row_cache_save_period_in_seconds,
     20: optional i32 key_cache_save_period_in_seconds,
-    21: optional i32 memtable_flush_after_mins,
-    22: optional i32 memtable_throughput_in_mb,
-    23: optional double memtable_operations_in_millions,
+    24: optional bool replicate_on_write,
+    25: optional double merge_shards_chance,
+    26: optional string key_validation_class,
+    27: optional string row_cache_provider,
+    28: optional binary key_alias,
+    29: optional string compaction_strategy,
+    30: optional map<string,string> compaction_strategy_options,
+    31: optional i32 row_cache_keys_to_save,
+    32: optional map<string,string> compression_options,
 }
 
 /* describes a keyspace. */
@@ -373,8 +421,44 @@ struct KsDef {
     1: required string name,
     2: required string strategy_class,
     3: optional map<string,string> strategy_options,
-    4: required i32 replication_factor,
+
+    /** @deprecated */
+    4: optional i32 replication_factor, 
+
     5: required list<CfDef> cf_defs,
+    6: optional bool durable_writes=1,
+}
+
+/** CQL query compression */
+enum Compression {
+    GZIP = 1,
+    NONE = 2
+}
+
+enum CqlResultType {
+    ROWS = 1,
+    VOID = 2,
+    INT = 3
+}
+
+/** Row returned from a CQL query */
+struct CqlRow {
+    1: required binary key,
+    2: required list<Column> columns
+}
+
+struct CqlMetadata {
+    1: required map<binary,string> name_types,
+    2: required map<binary,string> value_types,
+    3: required string default_name_type,
+    4: required string default_value_type
+}
+
+struct CqlResult {
+    1: required CqlResultType type,
+    2: optional list<CqlRow> rows,
+    3: optional i32 num,
+    4: optional CqlMetadata schema
 }
 
 service Cassandra {
@@ -461,6 +545,15 @@ service Cassandra {
        throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
 
   /**
+   * Increment or decrement a counter.
+   */
+  void add(1:required binary key,
+           2:required ColumnParent column_parent,
+           3:required CounterColumn column,
+           4:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
+       throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
+
+  /**
     Remove data from the row specified by key at the granularity specified by column_path, and the given timestamp. Note
     that all the values in column_path besides column_path.column_family are truly optional: you can remove the entire
     row by just specifying the ColumnFamily, or you can remove a SuperColumn or a single Column by specifying those levels too.
@@ -470,6 +563,17 @@ service Cassandra {
               3:required i64 timestamp,
               4:ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
        throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
+
+  /**
+   * Remove a counter at the specified location.
+   * Note that counters have limited support for deletes: if you remove a counter, you must wait to issue any following update
+   * until the delete has reached all the nodes and all of them have been fully compacted.
+   */
+  void remove_counter(1:required binary key,
+                      2:required ColumnPath path,
+                      3:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
+      throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
+
 
   /**
     Mutate many columns or super columns for many row keys. See also: Mutation.
@@ -490,6 +594,8 @@ service Cassandra {
   */
   void truncate(1:required string cfname)
        throws (1: InvalidRequestException ire, 2: UnavailableException ue),
+
+
     
   // Meta-APIs -- APIs to get information about the node or cluster,
   // rather than user data.  The nodeprobe program provides usage examples.
@@ -541,29 +647,40 @@ service Cassandra {
   list<string> describe_splits(1:required string cfName,
                                2:required string start_token, 
                                3:required string end_token,
-                               4:required i32 keys_per_split),
+                               4:required i32 keys_per_split)
+    throws (1:InvalidRequestException ire),
 
   /** adds a column family. returns the new schema id. */
   string system_add_column_family(1:required CfDef cf_def)
-    throws (1:InvalidRequestException ire),
+    throws (1:InvalidRequestException ire, 2:SchemaDisagreementException sde),
     
   /** drops a column family. returns the new schema id. */
   string system_drop_column_family(1:required string column_family)
-    throws (1:InvalidRequestException ire), 
+    throws (1:InvalidRequestException ire, 2:SchemaDisagreementException sde), 
   
   /** adds a keyspace and any column families that are part of it. returns the new schema id. */
   string system_add_keyspace(1:required KsDef ks_def)
-    throws (1:InvalidRequestException ire),
+    throws (1:InvalidRequestException ire, 2:SchemaDisagreementException sde),
   
   /** drops a keyspace and any column families that are part of it. returns the new schema id. */
   string system_drop_keyspace(1:required string keyspace)
-    throws (1:InvalidRequestException ire),
+    throws (1:InvalidRequestException ire, 2:SchemaDisagreementException sde),
   
   /** updates properties of a keyspace. returns the new schema id. */
   string system_update_keyspace(1:required KsDef ks_def)
-    throws (1:InvalidRequestException ire),
+    throws (1:InvalidRequestException ire, 2:SchemaDisagreementException sde),
         
   /** updates properties of a column family. returns the new schema id. */
   string system_update_column_family(1:required CfDef cf_def)
-    throws (1:InvalidRequestException ire),
+    throws (1:InvalidRequestException ire, 2:SchemaDisagreementException sde),
+  
+  /**
+   * Executes a CQL (Cassandra Query Language) statement and returns a
+   * CqlResult containing the results.
+   */
+  CqlResult execute_cql_query(1:required binary query, 2:required Compression compression)
+    throws (1:InvalidRequestException ire,
+            2:UnavailableException ue,
+            3:TimedOutException te,
+            4:SchemaDisagreementException sde)
 }
