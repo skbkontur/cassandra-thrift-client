@@ -14,7 +14,12 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 
-SET JAVA_HOME=C:\Program Files\Java\jre6
+
+@REM automatic JAVA_HOME discover, thanks to http://chriskopec.com/blog/2009/jun/15/automatic-discovery-java_home-batch-file/
+
+FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtime Environment" /v CurrentVersion') DO set CurVer=%%B
+FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtime Environment\%CurVer%" /v JavaHome') DO set JAVA_HOME=%%B
+
 @echo off
 if "%OS%" == "Windows_NT" setlocal
 
