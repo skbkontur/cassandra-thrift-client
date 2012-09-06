@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -38,6 +39,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void Execute(ICommand command)
         {
+	    var stopwatch = Stopwatch.StartNew();
             logger.DebugFormat("Start executing {0} command.", command.GetType());
             ValidationResult validationResult = command.Validate();
             if(validationResult.Status != ValidationStatus.Ok)
@@ -65,7 +67,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     }
                 }
             }
-            logger.DebugFormat("Executing {0} command complete.", command.GetType());
+            logger.DebugFormat("Executing {0} command complete in {1}ms.", command.GetType(), stopwatch.ElapsedMilliseconds);
         }
 
         public void Dispose()
