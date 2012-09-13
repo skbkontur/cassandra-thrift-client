@@ -46,7 +46,16 @@ namespace rb CassandraThrift
 #           for every edit that doesn't result in a change to major/minor.
 #
 # See the Semantic Versioning Specification (SemVer) http://semver.org.
-const string VERSION = "19.19.0"
+#
+# Note that this backwards compatibility is from the perspective of the server,
+# not the client. Cassandra should always be able to talk to older client
+# software, but client software may not be able to talk to older Cassandra
+# instances.
+#
+# An effort should be made not to break forward-client-compatibility either
+# (e.g. one should avoid removing obsolete fields from the IDL), but no
+# guarantees in this respect are made by the Cassandra project.
+const string VERSION = "19.20.0"
 
 
 #
@@ -414,6 +423,7 @@ struct CfDef {
     30: optional map<string,string> compaction_strategy_options,
     31: optional i32 row_cache_keys_to_save,
     32: optional map<string,string> compression_options,
+    33: optional double bloom_filter_fp_chance,
 }
 
 /* describes a keyspace. */
