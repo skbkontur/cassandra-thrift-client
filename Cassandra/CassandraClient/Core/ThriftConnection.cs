@@ -71,7 +71,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             {
                 try
                 {
-                    cassandraClient.describe_version();
+                    cassandraClient.describe_cluster_name();
                 }
                 catch(Exception e)
                 {
