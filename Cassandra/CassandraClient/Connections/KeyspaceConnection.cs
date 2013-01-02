@@ -20,7 +20,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                   ConsistencyLevel writeConsistencyLevel,
                                   string keyspace)
         {
-            logger = LogManager.GetLogger(GetType());
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
             this.commandExecuter = commandExecuter;
             this.keyspace = keyspace;
@@ -132,6 +131,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
-        private ILog logger;
+        private readonly ILog logger = LogManager.GetLogger(typeof(KeyspaceConnection));
     }
 }

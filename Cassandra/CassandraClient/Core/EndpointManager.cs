@@ -12,7 +12,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         public EndpointManager(IBadlist badlist)
         {
             this.badlist = badlist;
-            logger = LogManager.GetLogger(GetType());
         }
 
         public void Register(IPEndPoint ipEndPoint)
@@ -76,8 +75,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         [ThreadStatic]
         private static Random random;
 
-        private readonly ILog logger;
-
+        private readonly ILog logger = LogManager.GetLogger(typeof(EndpointManager));
         private const double eps = 1e-15;
     }
 }

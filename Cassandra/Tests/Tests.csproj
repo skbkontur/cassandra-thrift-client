@@ -80,7 +80,6 @@
     <Compile Include="ObjComparer\NullWriter.cs" />
     <Compile Include="ObjComparer\ObjectWriter.cs" />
     <Compile Include="ObjComparer\SimpleTypeWriter.cs" />
-    <Compile Include="ObjComparer\TestNodeProcessor.cs" />
     <Compile Include="ObjComparer\TypeHelpers.cs" />
     <Compile Include="ObjComparer\TypeWriterExtensions.cs" />
     <Compile Include="ObjectComparer.cs" />

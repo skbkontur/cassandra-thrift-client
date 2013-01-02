@@ -4,8 +4,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class AquilesCommandAdaptor : ICommand
     {
-        public readonly IAquilesCommand command;
-
         public AquilesCommandAdaptor(IAquilesCommand command, string keyspace = null)
         {
             Keyspace = keyspace;
@@ -23,8 +21,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             return ValidationResult.Ok();
         }
 
-        
         public string Keyspace { get; private set; }
+        public string Name { get { return command.GetType().Name; } }
         public virtual bool IsFierce { get { return command.IsFierce; } }
+        public readonly IAquilesCommand command;
     }
 }

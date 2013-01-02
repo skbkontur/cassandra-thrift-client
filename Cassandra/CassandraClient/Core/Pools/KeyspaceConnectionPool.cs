@@ -12,14 +12,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class KeyspaceConnectionPool : IKeyspaceConnectionPool
     {
-        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key, TimeStatistics timeStatistics)
+        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key)
         {
-            logger = LogManager.GetLogger(GetType());
             endPoint = key.IpEndPoint;
             keyspaceName = key.Keyspace;
             isFierce = key.IsFierce;
             this.settings = settings;
-            this.timeStatistics = timeStatistics;
             logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}'{2} was created.", endPoint, keyspaceName, isFierce ? "[Fierce]" : "");
         }
 
@@ -83,18 +81,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         private PooledThriftConnection CreateConnection()
         {
-            var pooledThriftConnection = new PooledThriftConnection(this, isFierce ? settings.FierceTimeout : settings.Timeout, endPoint, keyspaceName, timeStatistics);
+            var pooledThriftConnection = new PooledThriftConnection(this, isFierce ? settings.FierceTimeout : settings.Timeout, endPoint, keyspaceName);
             logger.DebugFormat("Connection {0} was created.", pooledThriftConnection);
             return pooledThriftConnection;
         }
 
         private readonly ICassandraClusterSettings settings;
-        private readonly TimeStatistics timeStatistics;
         private readonly IPEndPoint endPoint;
         private readonly string keyspaceName;
         private readonly bool isFierce;
         private readonly ConcurrentQueue<IPooledThriftConnection> freeConnections = new ConcurrentQueue<IPooledThriftConnection>();
         private readonly ConcurrentDictionary<Guid, IPooledThriftConnection> busyConnections = new ConcurrentDictionary<Guid, IPooledThriftConnection>();
-        private readonly ILog logger;
+        private readonly ILog logger = LogManager.GetLogger(typeof(KeyspaceConnectionPool));
     }
 }

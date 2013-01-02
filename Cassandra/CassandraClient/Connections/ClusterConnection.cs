@@ -18,7 +18,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                  ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel)
         {
             this.commandExecuter = commandExecuter;
-            logger = LogManager.GetLogger(GetType());
             this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
@@ -120,6 +119,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private readonly AquilesConsistencyLevel readConsistencyLevel;
         private readonly AquilesConsistencyLevel writeConsistencyLevel;
-        private readonly ILog logger;
+        private readonly ILog logger = LogManager.GetLogger(typeof(ClusterConnection));
     }
 }
