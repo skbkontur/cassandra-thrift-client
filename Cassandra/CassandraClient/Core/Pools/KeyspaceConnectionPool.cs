@@ -12,13 +12,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
     public class KeyspaceConnectionPool : IKeyspaceConnectionPool
     {
-        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key)
+        public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key, TimeStatistics timeStatistics)
         {
             logger = LogManager.GetLogger(GetType());
             endPoint = key.IpEndPoint;
             keyspaceName = key.Keyspace;
             isFierce = key.IsFierce;
             this.settings = settings;
+            this.timeStatistics = timeStatistics;
             logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}'{2} was created.", endPoint, keyspaceName, isFierce ? "[Fierce]" : "");
         }
 
@@ -82,12 +83,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         private PooledThriftConnection CreateConnection()
         {
-            var pooledThriftConnection = new PooledThriftConnection(this, isFierce ? settings.FierceTimeout : settings.Timeout, endPoint, keyspaceName);
+            var pooledThriftConnection = new PooledThriftConnection(this, isFierce ? settings.FierceTimeout : settings.Timeout, endPoint, keyspaceName, timeStatistics);
             logger.DebugFormat("Connection {0} was created.", pooledThriftConnection);
             return pooledThriftConnection;
         }
 
         private readonly ICassandraClusterSettings settings;
+        private readonly TimeStatistics timeStatistics;
         private readonly IPEndPoint endPoint;
         private readonly string keyspaceName;
         private readonly bool isFierce;

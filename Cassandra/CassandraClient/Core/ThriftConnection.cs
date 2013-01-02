@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 
@@ -14,13 +15,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class ThriftConnection
     {
-        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, TimeStatistics timeStatistics)
         {
             isDisposed = false;
             IsAlive = true;
             logger = LogManager.GetLogger(GetType());
             this.ipEndPoint = ipEndPoint;
             this.keyspaceName = keyspaceName;
+            this.timeStatistics = timeStatistics;
             string address = ipEndPoint.Address.ToString();
             int port = ipEndPoint.Port;
             TSocket tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
@@ -39,6 +41,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             if(isDisposed)
                 return;
             isDisposed = true;
+            timeStatistics.LogStatistics();
             CloseTransport();
         }
 
@@ -54,7 +57,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 }
                 try
                 {
+                    var stopwatch = Stopwatch.StartNew();
                     command.Execute(cassandraClient);
+                    timeStatistics.AddTime(stopwatch.ElapsedMilliseconds);
                 }
                 catch(Exception e)
                 {
@@ -127,6 +132,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         private readonly string keyspaceName;
+        private readonly TimeStatistics timeStatistics;
         private readonly IPEndPoint ipEndPoint;
         private volatile bool isAlive;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;

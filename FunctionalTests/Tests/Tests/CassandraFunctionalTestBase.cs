@@ -23,7 +23,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             base.SetUp();
             var assemblies = new List<Assembly>(AssembliesLoader.Load()) {Assembly.GetExecutingAssembly()};
             var container = new Container(new ContainerConfiguration(assemblies));
-
             cassandraCluster = container.Get<ICassandraCluster>();
             ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
         }

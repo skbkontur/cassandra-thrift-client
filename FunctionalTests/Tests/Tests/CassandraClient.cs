@@ -4,7 +4,6 @@ using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Connections;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -89,7 +88,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void DeleteBatch(string keySpaceName, string columnFamilyName, string key, IEnumerable<string> columnNames, long? timestamp = null)
         {
             var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
-                columnFamilyConnection.DeleteBatch(key, columnNames, timestamp);
+            columnFamilyConnection.DeleteBatch(key, columnNames, timestamp);
         }
 
         public Column[] GetRow(string keySpaceName, string columnFamilyName, string key, int count, string startColumnName)

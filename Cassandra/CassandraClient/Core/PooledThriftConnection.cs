@@ -8,9 +8,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class PooledThriftConnection : IPooledThriftConnection
     {
-        public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName, TimeStatistics timeStatistics)
         {
-            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName);
+            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName, timeStatistics);
             this.connectionPool = connectionPool;
             Id = Guid.NewGuid();
         }
