@@ -21,17 +21,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public IClusterConnection RetrieveClusterConnection()
         {
-            return new ClusterConnection(commandExecuter,
-                                         clusterSettings.ReadConsistencyLevel,
-                                         clusterSettings.WriteConsistencyLevel);
+            return new ClusterConnection(commandExecuter);
         }
 
         public IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName)
         {
-            return new KeyspaceConnection(commandExecuter,
-                                          clusterSettings.ReadConsistencyLevel,
-                                          clusterSettings.WriteConsistencyLevel,
-                                          keyspaceName);
+            return new KeyspaceConnection(commandExecuter, keyspaceName);
         }
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)

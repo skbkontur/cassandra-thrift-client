@@ -4,31 +4,28 @@ using System.Text;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Read;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using log4net;
 
+using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
+
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public class ClusterConnection : IClusterConnection
     {
-        public ClusterConnection(ICommandExecuter commandExecuter,
-                                 ConsistencyLevel readConsistencyLevel, ConsistencyLevel writeConsistencyLevel)
+        public ClusterConnection(ICommandExecuter commandExecuter)
         {
             this.commandExecuter = commandExecuter;
-            this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
-            this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
         }
 
         public IList<Keyspace> RetrieveKeyspaces()
         {
-            var retrieveKeyspacesCommand = new RetrieveKeyspacesCommand
-                {
-                    ConsistencyLevel = readConsistencyLevel
-                };
-            commandExecuter.Execute(new AquilesCommandAdaptor(retrieveKeyspacesCommand));
+            var retrieveKeyspacesCommand = new RetrieveKeyspacesCommand();
+            commandExecuter.Execute(retrieveKeyspacesCommand);
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
             var result = new List<Keyspace>();
@@ -44,41 +41,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void UpdateKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(new UpdateKeyspaceCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    KeyspaceDefinition = keyspace.ToAquilesKeyspace()
-                }));
+            commandExecuter.Execute(new UpdateKeyspaceCommand(keyspace.ToAquilesKeyspace()));
             WaitUntilAgreementIsReached();
         }
 
         public void RemoveKeyspace(string keyspace)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(new DropKeyspaceCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    Keyspace = keyspace
-                }));
+            commandExecuter.Execute(new DropKeyspaceCommand(keyspace));
             WaitUntilAgreementIsReached();
         }
 
         public string DescribeVersion()
         {
-            var describeVersionCommand = new DescribeVersionCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel
-                };
-            commandExecuter.Execute(new AquilesCommandAdaptor(describeVersionCommand));
+            var describeVersionCommand = new DescribeVersionCommand();
+            commandExecuter.Execute(describeVersionCommand);
             return describeVersionCommand.Version;
         }
 
         public void AddKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(new AddKeyspaceCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    KeyspaceDefinition = keyspace.ToAquilesKeyspace()
-                }));
+            commandExecuter.Execute(new AddKeyspaceCommand(keyspace.ToAquilesKeyspace()));
             WaitUntilAgreementIsReached();
         }
 
@@ -92,11 +74,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             while(true)
             {
                 logger.Info("Start checking schema agreement.");
-                var schemaAgreementCommand = new SchemaAgreementCommand
-                    {
-                        ConsistencyLevel = writeConsistencyLevel
-                    };
-                commandExecuter.Execute(new AquilesCommandAdaptor(schemaAgreementCommand));
+                var schemaAgreementCommand = new SchemaAgreementCommand();
+                commandExecuter.Execute(schemaAgreementCommand);
 
                 if(schemaAgreementCommand.Output.Count == 1)
                     break;
@@ -117,8 +96,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private readonly ICommandExecuter commandExecuter;
 
-        private readonly AquilesConsistencyLevel readConsistencyLevel;
-        private readonly AquilesConsistencyLevel writeConsistencyLevel;
         private readonly ILog logger = LogManager.GetLogger(typeof(ClusterConnection));
     }
 }

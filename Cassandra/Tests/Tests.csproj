@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.105">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.105.dll</HintPath>
+    <Reference Include="Apache.Cassandra.110, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.110.dll</HintPath>
     </Reference>
     <Reference Include="GroboSerializer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
@@ -57,8 +58,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arg.cs" />
-    <Compile Include="ConnectionTests\ClusterConnectionTest.cs" />
-    <Compile Include="ConnectionTests\KeyspaceConnectionTest.cs" />
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
     <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
     <Compile Include="HelpersTests\ColumnConverterTest.cs" />

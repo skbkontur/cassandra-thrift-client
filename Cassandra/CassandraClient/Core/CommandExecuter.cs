@@ -43,9 +43,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             logger.DebugFormat("Start executing {0} command.", command.Name);
             try
             {
-                ValidationResult validationResult = command.Validate();
-                if(validationResult.Status != ValidationStatus.Ok)
-                    throw new CassandraClientInvalidRequestException(validationResult.Message);
                 for(int i = 0; i < settings.Attempts; ++i)
                 {
                     IPEndPoint[] endpoints = command.IsFierce ? new[] {settings.EndpointForFierceCommands} : endpointManager.GetEndPoints();
@@ -53,7 +50,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     {
                         try
                         {
-                            using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.Keyspace, IsFierce = command.IsFierce}))
+                            using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.CommandContext.KeyspaceName, IsFierce = command.IsFierce}))
                                 thriftConnection.ExecuteCommand(command);
                             endpointManager.Good(endpoint);
                             return;
@@ -73,7 +70,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             finally
             {
                 var commandName = command.Name;
-                var timeStatistics = timeStatisticsDictionary.GetOrAdd(commandName, x => new TimeStatistics(string.Format("Cassandra.{0}", commandName)));
+                var commandContext = command.CommandContext;
+                var timeStatistics = timeStatisticsDictionary.GetOrAdd(commandName, x => new TimeStatistics(string.Format("Cassandra.{0}{1}", commandName, commandContext)));
                 timeStatistics.AddTime(stopwatch.ElapsedMilliseconds);
             }
         }

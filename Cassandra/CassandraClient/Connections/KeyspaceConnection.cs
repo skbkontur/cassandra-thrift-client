@@ -4,7 +4,8 @@ using System.Text;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Read;
+using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
@@ -16,48 +17,28 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
     public class KeyspaceConnection : IKeyspaceConnection
     {
         public KeyspaceConnection(ICommandExecuter commandExecuter,
-                                  ConsistencyLevel readConsistencyLevel,
-                                  ConsistencyLevel writeConsistencyLevel,
-                                  string keyspace)
+                                  string keyspaceName)
         {
-            this.writeConsistencyLevel = writeConsistencyLevel.ToAquilesConsistencyLevel();
             this.commandExecuter = commandExecuter;
-            this.keyspace = keyspace;
-            this.readConsistencyLevel = readConsistencyLevel.ToAquilesConsistencyLevel();
+            this.keyspaceName = keyspaceName;
         }
 
         public void AddColumnFamily(ColumnFamily columnFamily)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(new AddColumnFamilyCommand
-                {
-                    ColumnFamilyDefinition = columnFamily.ToAquilesColumnFamily(keyspace),
-                    ConsistencyLevel = writeConsistencyLevel,
-                }, keyspace));
+            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName, columnFamily.ToAquilesColumnFamily(keyspaceName)));
             WaitUntilAgreementIsReached();
         }
 
         public void AddColumnFamily(string columnFamilyName)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(new AddColumnFamilyCommand
-                {
-                    ColumnFamilyDefinition = new AquilesColumnFamily
-                        {
-                            Name = columnFamilyName,
-                            Keyspace = keyspace
-                        },
-                    ConsistencyLevel = writeConsistencyLevel,
-                }, keyspace));
+            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName, new AquilesColumnFamily {Name = columnFamilyName, Keyspace = keyspaceName}));
             WaitUntilAgreementIsReached();
         }
 
         public Keyspace DescribeKeyspace()
         {
-            var describeKeyspaceCommand = new DescribeKeyspaceCommand
-                {
-                    Keyspace = keyspace,
-                    ConsistencyLevel = readConsistencyLevel
-                };
-            commandExecuter.Execute(new AquilesCommandAdaptor(describeKeyspaceCommand, keyspace));
+            var describeKeyspaceCommand = new DescribeKeyspaceCommand(keyspaceName);
+            commandExecuter.Execute(describeKeyspaceCommand);
 
             var keyspaceInformation = describeKeyspaceCommand.KeyspaceInformation;
             var result = new Keyspace
@@ -74,22 +55,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void UpdateColumnFamily(ColumnFamily columnFamily)
         {
-            AquilesColumnFamily aquilesColumnFamily = columnFamily.ToAquilesColumnFamily(keyspace);
-            commandExecuter.Execute(new AquilesCommandAdaptor(new UpdateColumnFamilyCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    ColumnFamilyDefinition = aquilesColumnFamily
-                }, keyspace));
+            AquilesColumnFamily aquilesColumnFamily = columnFamily.ToAquilesColumnFamily(keyspaceName);
+            commandExecuter.Execute(new UpdateColumnFamilyCommand(keyspaceName, aquilesColumnFamily));
             WaitUntilAgreementIsReached();
         }
 
         public void RemoveColumnFamily(string columnFamily)
         {
-            commandExecuter.Execute(new AquilesCommandAdaptor(new DropColumnFamilyCommand
-                {
-                    ConsistencyLevel = writeConsistencyLevel,
-                    ColumnFamily = columnFamily
-                }, keyspace));
+            commandExecuter.Execute(new DropColumnFamilyCommand(keyspaceName, columnFamily));
             WaitUntilAgreementIsReached();
         }
 
@@ -98,11 +71,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             while(true)
             {
                 logger.Info("Start checking schema agreement.");
-                var schemaAgreementCommand = new SchemaAgreementCommand
-                    {
-                        ConsistencyLevel = writeConsistencyLevel
-                    };
-                commandExecuter.Execute(new AquilesCommandAdaptor(schemaAgreementCommand, keyspace));
+                var schemaAgreementCommand = new SchemaAgreementCommand();
+                commandExecuter.Execute(schemaAgreementCommand);
 
                 if(schemaAgreementCommand.Output.Count == 1)
                     break;
@@ -127,10 +97,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         }
 
         private readonly ICommandExecuter commandExecuter;
-        private readonly string keyspace;
+        private readonly string keyspaceName;
 
-        private readonly AquilesConsistencyLevel readConsistencyLevel;
-        private readonly AquilesConsistencyLevel writeConsistencyLevel;
         private readonly ILog logger = LogManager.GetLogger(typeof(KeyspaceConnection));
     }
 }
