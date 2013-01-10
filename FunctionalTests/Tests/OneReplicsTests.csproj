@@ -81,6 +81,7 @@
     <Compile Include="Tests\CounterTest.cs" />
     <Compile Include="Tests\DeleteTest.cs" />
     <Compile Include="Tests\DescribeVersionTest.cs" />
+    <Compile Include="Tests\GetKeysTest.cs" />
     <Compile Include="Tests\GetRowTest.cs" />
     <Compile Include="Tests\ICassandraClient.cs" />
     <Compile Include="Tests\IsRowExistTest.cs" />

@@ -9,13 +9,13 @@ using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
-    public class GetKeyRangeSliceCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetKeyRangeSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public GetKeyRangeSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, AquilesKeyRange keyTokenRange, AquilesSlicePredicate predicate)
+        public GetKeyRangeSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, Abstractions.KeyRange keyRange, AquilesSlicePredicate predicate)
             : base(keyspace, columnFamily)
         {
             this.consistencyLevel = consistencyLevel;
-            this.keyTokenRange = keyTokenRange;
+            this.keyRange = keyRange;
             this.predicate = predicate;
         }
 
@@ -24,8 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
             Output = null;
             var columnParent = BuildColumnParent();
             var apachePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(predicate);
-            var keyRange = ModelConverterHelper.Convert<AquilesKeyRange, KeyRange>(keyTokenRange);
-            var result = cassandraClient.get_range_slices(columnParent, apachePredicate, keyRange, consistencyLevel);
+            var result = cassandraClient.get_range_slices(columnParent, apachePredicate, Abstractions.KeyRange.ToCassandraKeyRange(keyRange), consistencyLevel);
             BuildOut(result);
         }
 
@@ -38,7 +37,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         }
 
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly AquilesKeyRange keyTokenRange;
+        private readonly Abstractions.KeyRange keyRange;
         private readonly AquilesSlicePredicate predicate;
     }
 }

@@ -58,6 +58,7 @@
     <Compile Include="Abstractions\IndexDefinition.cs" />
     <Compile Include="Abstractions\IndexExpression.cs" />
     <Compile Include="Abstractions\IndexOperator.cs" />
+    <Compile Include="Abstractions\KeyRange.cs" />
     <Compile Include="Abstractions\Keyspace.cs" />
     <Compile Include="Abstractions\ValidationClass.cs" />
     <Compile Include="Abstractions\ValidationResult.cs" />
@@ -94,7 +95,6 @@
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesColumnFamilyConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesIndexClauseConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesIndexExpressionConverter.cs" />
-    <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesKeyRangeConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesKeyspaceConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesMutationConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesSlicePredicateConverter.cs" />
@@ -119,7 +119,6 @@
     <Compile Include="AquilesTrash\Model\AquilesIndexClause.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexExpression.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexOperator.cs" />
-    <Compile Include="AquilesTrash\Model\AquilesKeyRange.cs" />
     <Compile Include="AquilesTrash\Model\AquilesKeySpace.cs" />
     <Compile Include="AquilesTrash\Model\AquilesSetMutation.cs" />
     <Compile Include="AquilesTrash\Model\AquilesSlicePredicate.cs" />

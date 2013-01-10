@@ -73,11 +73,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter
             converters.Add(typeof(AquilesIndexExpression), converter);
             converters.Add(typeof(IndexExpression), converter);
 
-            // AquilesKeyRangeConverter
-            converter = new AquilesKeyRangeConverter();
-            converters.Add(typeof(AquilesKeyRange), converter);
-            converters.Add(typeof(KeyRange), converter);
-
             // AquilesTokenRangeConverter
             converter = new AquilesTokenRangeConverter();
             converters.Add(typeof(AquilesTokenRange), converter);

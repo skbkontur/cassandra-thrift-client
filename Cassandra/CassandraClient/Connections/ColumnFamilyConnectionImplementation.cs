@@ -123,9 +123,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public List<byte[]> GetKeys(byte[] startKey, int count)
         {
-            var aquilesKeyRange = new AquilesKeyRange {StartKey = startKey ?? new byte[0], EndKey = new byte[0], Count = count};
+            var keyRange = new KeyRange {StartKey = startKey ?? new byte[0], EndKey = new byte[0], Count = count};
             var aquilesSlicePredicate = new AquilesSlicePredicate {Columns = new List<byte[]>()};
-            var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, aquilesKeyRange, aquilesSlicePredicate);
+            var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keyRange, aquilesSlicePredicate);
 
             ExecuteCommand(getKeyRangeSliceCommand);
             return getKeyRangeSliceCommand.Output;
