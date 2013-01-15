@@ -1,43 +1,31 @@
 ﻿using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+
+using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
+using SliceRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SliceRange;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
-    public class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public GetCountCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, AquilesSlicePredicate predicate = null)
+        public GetCountCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, SlicePredicate predicate = null)
             : base(keyspace, columnFamily)
         {
             this.rowKey = rowKey;
             this.consistencyLevel = consistencyLevel;
-            this.predicate = predicate;
+            this.predicate = predicate ?? new SlicePredicate(new SliceRange {Count = int.MaxValue});
         }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            ColumnParent columnParent = BuildColumnParent();
-            SlicePredicate slicePredicate;
-            if(predicate != null)
-                slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(predicate);
-            else
-            {
-                slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(new AquilesSlicePredicate
-                    {
-                        SliceRange = new AquilesSliceRange
-                            {
-                                Count = int.MaxValue,
-                            }
-                    });
-            }
-            Count = cassandraClient.get_count(rowKey, columnParent, slicePredicate, consistencyLevel);
+            Count = cassandraClient.get_count(rowKey, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
         }
 
         public int Count { get; private set; }
         private readonly byte[] rowKey;
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly AquilesSlicePredicate predicate;
+        private readonly SlicePredicate predicate;
     }
 }

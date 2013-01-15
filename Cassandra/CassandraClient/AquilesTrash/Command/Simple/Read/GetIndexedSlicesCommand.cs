@@ -3,15 +3,18 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
+using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
+
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
-    public class GetIndexedSlicesCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetIndexedSlicesCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public GetIndexedSlicesCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, AquilesSlicePredicate predicate, AquilesIndexClause indexClause)
+        public GetIndexedSlicesCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, SlicePredicate predicate, AquilesIndexClause indexClause)
             : base(keyspace, columnFamily)
         {
             this.consistencyLevel = consistencyLevel;
@@ -23,8 +26,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         {
             var columnParent = BuildColumnParent();
             var apacheIndexClause = ModelConverterHelper.Convert<AquilesIndexClause, IndexClause>(indexClause);
-            var slicePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(predicate);
-            var result = cassandraClient.get_indexed_slices(columnParent, apacheIndexClause, slicePredicate, consistencyLevel);
+            var result = cassandraClient.get_indexed_slices(columnParent, apacheIndexClause, predicate.ToCassandraSlicePredicate(), consistencyLevel);
             BuildOutput(result);
         }
 
@@ -37,7 +39,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         }
 
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly AquilesSlicePredicate predicate;
+        private readonly SlicePredicate predicate;
         private readonly AquilesIndexClause indexClause;
     }
 }

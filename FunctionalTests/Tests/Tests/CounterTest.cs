@@ -12,10 +12,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestGetCount()
         {
             var start1 = DateTime.Now;
-            for (int i = 0; i < 1000; i++)
+            const int rowsCount = 100;
+            const int columnsCount = 100;
+            for (int i = 0; i < rowsCount; i++)
             {
-                var cols = new Column[1000];
-                for (int j = 0; j < 1000; ++j)
+                var cols = new Column[columnsCount];
+                for (int j = 0; j < columnsCount; ++j)
                 {
                     string columnName = "columnName" + i + "_" + j;
                     string columnValue = "columnValue" + i + "_" + j;
@@ -28,10 +30,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             var start = DateTime.Now;
             var count = cassandraClient.GetCount(Constants.KeyspaceName, Constants.ColumnFamilyName, "row");
             var finish = DateTime.Now;
-            Assert.AreEqual(1000000, count);
+            Assert.AreEqual(rowsCount * columnsCount, count);
             Console.WriteLine("GetCount Completed at " + (finish - start).TotalMilliseconds + "ms");
             Console.WriteLine("Write Completed at " + (finish1 - start1).TotalMilliseconds + "ms");
         }
+
         [Test]
         public void TestGetEmptyCount()
         {

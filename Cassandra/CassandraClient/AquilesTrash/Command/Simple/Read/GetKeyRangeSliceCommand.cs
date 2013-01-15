@@ -3,15 +3,17 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+
+using KeyRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.KeyRange;
+using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
     internal class GetKeyRangeSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public GetKeyRangeSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, Abstractions.KeyRange keyRange, AquilesSlicePredicate predicate)
+        public GetKeyRangeSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, KeyRange keyRange, SlicePredicate predicate)
             : base(keyspace, columnFamily)
         {
             this.consistencyLevel = consistencyLevel;
@@ -23,8 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         {
             Output = null;
             var columnParent = BuildColumnParent();
-            var apachePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(predicate);
-            var result = cassandraClient.get_range_slices(columnParent, apachePredicate, Abstractions.KeyRange.ToCassandraKeyRange(keyRange), consistencyLevel);
+            var result = cassandraClient.get_range_slices(columnParent, predicate.ToCassandraSlicePredicate(), keyRange.ToCassandraKeyRange(), consistencyLevel);
             BuildOut(result);
         }
 
@@ -37,7 +38,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         }
 
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly Abstractions.KeyRange keyRange;
-        private readonly AquilesSlicePredicate predicate;
+        private readonly KeyRange keyRange;
+        private readonly SlicePredicate predicate;
     }
 }

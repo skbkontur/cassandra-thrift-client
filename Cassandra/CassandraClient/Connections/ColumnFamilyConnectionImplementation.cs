@@ -2,8 +2,8 @@
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write;
@@ -96,10 +96,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 {
                     new AquilesDeletionMutation
                         {
-                            Predicate = new AquilesSlicePredicate
-                                {
-                                    Columns = columnNames.ToList(),
-                                },
+                            Predicate = new SlicePredicate(columnNames.ToList()),
                             Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                         }
                 };
@@ -108,14 +105,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public Column[] GetRow(byte[] key, byte[] startColumnName, int count)
         {
-            var aquilesSlicePredicate = new AquilesSlicePredicate
+            var aquilesSlicePredicate = new SlicePredicate(new SliceRange
                 {
-                    SliceRange = new AquilesSliceRange
-                        {
-                            Count = count,
-                            StartColumn = startColumnName
-                        }
-                };
+                    Count = count,
+                    StartColumn = startColumnName
+                });
             var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
             ExecuteCommand(getSliceCommand);
             return getSliceCommand.Output.Select(@out => @out.ToColumn()).ToArray();
@@ -124,7 +118,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public List<byte[]> GetKeys(byte[] startKey, int count)
         {
             var keyRange = new KeyRange {StartKey = startKey ?? new byte[0], EndKey = new byte[0], Count = count};
-            var aquilesSlicePredicate = new AquilesSlicePredicate {Columns = new List<byte[]>()};
+            var aquilesSlicePredicate = new SlicePredicate(new List<byte[]>());
             var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keyRange, aquilesSlicePredicate);
 
             ExecuteCommand(getKeyRangeSliceCommand);
@@ -135,14 +129,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var multiGetSliceCommand = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel,
                                                                 keys.ToList(),
-                                                                new AquilesSlicePredicate
+                                                                new SlicePredicate(new SliceRange
                                                                     {
-                                                                        SliceRange = new AquilesSliceRange
-                                                                            {
-                                                                                Count = count,
-                                                                                StartColumn = startColumnName
-                                                                            }
-                                                                    });
+                                                                        Count = count,
+                                                                        StartColumn = startColumnName
+                                                                    }));
             ExecuteCommand(multiGetSliceCommand);
             return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
@@ -155,7 +146,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns)
         {
-            var predicate = new AquilesSlicePredicate {Columns = columns};
+            var predicate = new SlicePredicate(columns);
 
             var indexClause = new AquilesIndexClause();
             indexClause.Count = maximalCount;
@@ -183,10 +174,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                                             {
                                                                                 new AquilesDeletionMutation
                                                                                     {
-                                                                                        Predicate = new AquilesSlicePredicate
-                                                                                            {
-                                                                                                Columns = row.Value.ToList()
-                                                                                            },
+                                                                                        Predicate = new SlicePredicate(row.Value.ToList()),
                                                                                         Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                                                                                     }
                                                                             })).ToList();

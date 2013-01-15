@@ -5,6 +5,7 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
 {
@@ -72,7 +73,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
         private Mutation convertDeletionMutation(AquilesDeletionMutation aquilesDeletionMutation)
         {
             Deletion deletion = new Deletion();
-            deletion.Predicate = ModelConverterHelper.Convert<AquilesSlicePredicate,SlicePredicate>(aquilesDeletionMutation.Predicate);
+            deletion.Predicate = aquilesDeletionMutation.Predicate.ToCassandraSlicePredicate();
             deletion.Super_column = aquilesDeletionMutation.SuperColumn;
             if (aquilesDeletionMutation.Timestamp.HasValue)
             {

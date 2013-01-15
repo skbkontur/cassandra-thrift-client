@@ -5,7 +5,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
     /// <summary>
     /// Mutation to support elimination
     /// </summary>
-    public class AquilesDeletionMutation : IAquilesMutation
+    internal class AquilesDeletionMutation : IAquilesMutation
     {
         /// <summary>
         /// get or set SuperColumn Name
@@ -28,7 +28,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
         /// <summary>
         /// get or set the predicate to match for the action
         /// </summary>
-        public AquilesSlicePredicate Predicate
+        public Abstractions.Internal.SlicePredicate Predicate
         {
             get;
             set;
@@ -80,8 +80,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
             this.ValidateNullPredicateOrSupercolumn();
             this.ValidateTimestamp();
             this.ValidateNullPredicate();
-            if (this.Predicate != null)
-                this.Predicate.ValidateForDeletationOperation();
         }
 
         private void ValidateNullPredicateOrSupercolumn()

@@ -49,16 +49,19 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 {
                     Name = "KeyspaceName",
                     ReplicaPlacementStrategy = "org.apache.cassandra.locator.NetworkTopologyStrategy",
-                    ReplicationFactor = 2
+                    ReplicationFactor = 3
                 });
 
             keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
             Assert.AreEqual(1, keyspaces.Length);
+
+            //The replication factor is zero, because for NetworkTopologyStrategy this setting does not work and should be adjusted 
+            //per datacenter
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = "KeyspaceName",
                     ReplicaPlacementStrategy = "org.apache.cassandra.locator.NetworkTopologyStrategy",
-                    ReplicationFactor = 2,
+                    ReplicationFactor = 0,
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
                             {"1", new ColumnFamily {Name = "1"}},

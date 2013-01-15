@@ -48,16 +48,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter
             converters.Add(typeof(AquilesDeletionMutation), converter);
             converters.Add(typeof(Mutation), converter);
 
-            // AquilesSlicePredicateConverter
-            converter = new AquilesSlicePredicateConverter();
-            converters.Add(typeof(AquilesSlicePredicate), converter);
-            converters.Add(typeof(SlicePredicate), converter);
-
-            // AquilesSliceRangeConverter
-            converter = new AquilesSliceRangeConverter();
-            converters.Add(typeof(AquilesSliceRange), converter);
-            converters.Add(typeof(SliceRange), converter);
-
             // AquilesSuperColumnConverter
             converter = new AquilesSuperColumnConverter();
             converters.Add(typeof(AquilesSuperColumn), converter);

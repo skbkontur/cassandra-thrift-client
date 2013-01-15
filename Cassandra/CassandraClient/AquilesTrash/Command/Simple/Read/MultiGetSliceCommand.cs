@@ -3,15 +3,18 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
+using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
+
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
-    public class MultiGetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class MultiGetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public MultiGetSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, List<byte[]> keys, AquilesSlicePredicate predicate)
+        public MultiGetSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, List<byte[]> keys, SlicePredicate predicate)
             : base(keyspace, columnFamily)
         {
             this.consistencyLevel = consistencyLevel;
@@ -21,10 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            Output = null;
-            var columnParent = BuildColumnParent();
-            var apachePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(predicate);
-            var output = cassandraClient.multiget_slice(keys, columnParent, apachePredicate, consistencyLevel);
+            var output = cassandraClient.multiget_slice(keys, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
             BuildOut(output);
         }
 
@@ -44,6 +44,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 
         private readonly ConsistencyLevel consistencyLevel;
         private readonly List<byte[]> keys;
-        private readonly AquilesSlicePredicate predicate;
+        private readonly SlicePredicate predicate;
     }
 }

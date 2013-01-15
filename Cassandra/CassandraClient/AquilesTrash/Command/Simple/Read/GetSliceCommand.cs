@@ -3,15 +3,18 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
+using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
+
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
-    public class GetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public GetSliceCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, AquilesSlicePredicate predicate)
+        public GetSliceCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, SlicePredicate predicate)
             : base(keyspace, columnFamily)
         {
             this.rowKey = rowKey;
@@ -23,8 +26,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         {
             Output = null;
             ColumnParent columnParent = BuildColumnParent();
-            SlicePredicate apachePredicate = ModelConverterHelper.Convert<AquilesSlicePredicate, SlicePredicate>(predicate);
-            List<ColumnOrSuperColumn> output = cassandraClient.get_slice(rowKey, columnParent, apachePredicate, consistencyLevel);
+            List<ColumnOrSuperColumn> output = cassandraClient.get_slice(rowKey, columnParent, predicate.ToCassandraSlicePredicate(), consistencyLevel);
             BuildOut(output);
         }
 
@@ -39,6 +41,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 
         private readonly byte[] rowKey;
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly AquilesSlicePredicate predicate;
+        private readonly SlicePredicate predicate;
     }
 }
