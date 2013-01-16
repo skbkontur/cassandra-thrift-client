@@ -62,7 +62,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddColumn(byte[] key, Column column)
         {
-            ExecuteCommand(new InsertCommand(keyspaceName, columnFamilyName, key, writeConsistencyLevel, column.ToAquilesColumn(cassandraClusterSettings.AllowNullTimestamp)));
+            if (!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
+                throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
+            ExecuteCommand(new InsertCommand(keyspaceName, columnFamilyName, key, writeConsistencyLevel, column));
         }
 
         public Column GetColumn(byte[] key, byte[] columnName)
@@ -80,7 +82,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(getCommand);
             if(getCommand.Output == null || getCommand.Output == null)
                 return false;
-            result = getCommand.Output.ToColumn();
+            result = getCommand.Output;
             return true;
         }
 
@@ -112,7 +114,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 });
             var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
             ExecuteCommand(getSliceCommand);
-            return getSliceCommand.Output.Select(@out => @out.ToColumn()).ToArray();
+            return getSliceCommand.Output.ToArray();
         }
 
         public List<byte[]> GetKeys(byte[] startKey, int count)
@@ -135,7 +137,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                                         StartColumn = startColumnName
                                                                     }));
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.Select(@out => @out.ToColumn()).ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
         public void Truncate()

@@ -1,14 +1,15 @@
 ﻿using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+
+using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
+using ColumnExtensions = SKBKontur.Cassandra.CassandraClient.Abstractions.ColumnExtensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write
 {
     public class InsertCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, AquilesColumn column)
+        public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, Column column)
             : base(keyspace, columnFamily)
         {
             this.rowKey = rowKey;
@@ -18,13 +19,11 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            var apacheColumn = ModelConverterHelper.Convert<AquilesColumn, Column>(column);
-            var columnParent = BuildColumnParent();
-            cassandraClient.insert(rowKey, columnParent, apacheColumn, consistencyLevel);
+            cassandraClient.insert(rowKey, BuildColumnParent(), ColumnExtensions.ToCassandraColumn(column), consistencyLevel);
         }
 
         private readonly byte[] rowKey;
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly AquilesColumn column;
+        private readonly Column column;
     }
 }

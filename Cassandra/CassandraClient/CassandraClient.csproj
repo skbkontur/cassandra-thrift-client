@@ -95,7 +95,6 @@
     <Compile Include="AquilesTrash\Command\System\Write\UpdateKeyspaceCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\Write\TruncateColumnFamilyCommand.cs" />
     <Compile Include="AquilesTrash\Converter\ModelConverterHelper.cs" />
-    <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesColumnConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesColumnDefinitionConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesColumnFamilyConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesKeyspaceConverter.cs" />
@@ -110,7 +109,6 @@
     <Compile Include="AquilesTrash\Exceptions\AquilesCommandException.cs" />
     <Compile Include="AquilesTrash\Exceptions\AquilesCommandParameterException.cs" />
     <Compile Include="AquilesTrash\Exceptions\AquilesException.cs" />
-    <Compile Include="AquilesTrash\Model\AquilesColumn.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnDefinition.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnFamily.cs" />
     <Compile Include="AquilesTrash\Model\AquilesKeySpace.cs" />
@@ -167,7 +165,6 @@
     <Compile Include="Exceptions\CassandraUnknownException.cs" />
     <Compile Include="Helpers\AquilesColumnDefinitionConverter.cs" />
     <Compile Include="Helpers\KeyspaceConverter.cs" />
-    <Compile Include="Helpers\ColumnConverter.cs" />
     <Compile Include="Helpers\ColumnFamilyConverter.cs" />
     <Compile Include="Helpers\ConsistencyLevelConverter.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />

@@ -3,11 +3,12 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
+using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
@@ -30,13 +31,11 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
             BuildOut(output);
         }
 
-        public List<AquilesColumn> Output { get; private set; }
+        public List<Column> Output { get; private set; }
 
         private void BuildOut(IEnumerable<ColumnOrSuperColumn> output)
         {
-            Output = output.Select(x => x.Column)
-                .Select(ModelConverterHelper.Convert<AquilesColumn, Column>)
-                .ToList();
+            Output = output.Select(x => x.Column).Select(column => column.FromCassandraColumn()).ToList();
         }
 
         private readonly byte[] rowKey;

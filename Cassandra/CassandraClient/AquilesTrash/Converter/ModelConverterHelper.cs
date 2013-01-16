@@ -22,11 +22,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter
             object converter;
             converters = new Hashtable();
 
-            // AquilesColumnConverter
-            converter = new AquilesColumnConverter();
-            converters.Add(typeof(AquilesColumn), converter);
-            converters.Add(typeof(Column), converter);
-
             // AquilesColumnDefinitionConverter
             converter = new AquilesColumnDefinitionConverter();
             converters.Add(typeof(AquilesColumnDefinition), converter);

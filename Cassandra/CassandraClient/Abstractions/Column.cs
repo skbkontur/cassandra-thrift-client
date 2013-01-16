@@ -15,6 +15,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     {
         public static Apache.Cassandra.Column ToCassandraColumn(this Column column)
         {
+            if (column == null)
+                return null;
             var result = new Apache.Cassandra.Column
                 {
                     Name = StringHelpers.StringToBytes(column.Name),
@@ -23,6 +25,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 };
             if (column.TTL.HasValue)
                 result.Ttl = column.TTL.Value;
+            return result;
+        }
+
+        public static Column FromCassandraColumn(this Apache.Cassandra.Column cassandraColumn)
+        {
+            if (cassandraColumn == null)
+                return null;
+            var result = new Column();
+            if (cassandraColumn.__isset.ttl)
+                result.TTL = cassandraColumn.Ttl;
+            result.Name = StringHelpers.BytesToString(cassandraColumn.Name);
+            result.Timestamp = cassandraColumn.Timestamp;
+            result.Value = cassandraColumn.Value;
             return result;
         }
     }

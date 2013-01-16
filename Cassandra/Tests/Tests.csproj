@@ -60,7 +60,6 @@
     <Compile Include="Arg.cs" />
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
     <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
-    <Compile Include="HelpersTests\ColumnConverterTest.cs" />
     <Compile Include="HelpersTests\ColumnFamilyConverterTest.cs" />
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
     <Compile Include="HelpersTests\KeyspaceConverterTest.cs" />

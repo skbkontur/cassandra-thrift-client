@@ -5,9 +5,9 @@ using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
+using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
+using ColumnExtensions = SKBKontur.Cassandra.CassandraClient.Abstractions.ColumnExtensions;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
@@ -28,16 +28,15 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
             BuildOut(output);
         }
 
-        public Dictionary<byte[], List<AquilesColumn>> Output { get; private set; }
+        public Dictionary<byte[], List<Column>> Output { get; private set; }
 
         private void BuildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {
-            Output = new Dictionary<byte[], List<AquilesColumn>>();
+            Output = new Dictionary<byte[], List<Column>>();
             foreach(var outputKeyValuePair in output)
             {
                 var columnOrSuperColumnList = outputKeyValuePair.Value.Select(x => x.Column)
-                    .Select(ModelConverterHelper.Convert<AquilesColumn, Column>)
-                    .ToList();
+                    .Select(ColumnExtensions.FromCassandraColumn).ToList();
                 Output.Add(outputKeyValuePair.Key, columnOrSuperColumnList);
             }
         }

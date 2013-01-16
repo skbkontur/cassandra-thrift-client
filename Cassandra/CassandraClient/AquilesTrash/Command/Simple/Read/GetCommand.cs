@@ -4,8 +4,9 @@ using System.Linq;
 using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+
+using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
+using ColumnExtensions = SKBKontur.Cassandra.CassandraClient.Abstractions.ColumnExtensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
@@ -32,13 +33,10 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
                 //ничего не делаем
             }
 
-            if(columnOrSupercolumn != null)
-                Output = ModelConverterHelper.Convert<AquilesColumn, Column>(columnOrSupercolumn.Column);
-            else
-                Output = null;
+            Output = columnOrSupercolumn != null ? ColumnExtensions.FromCassandraColumn(columnOrSupercolumn.Column) : null;
         }
 
-        public AquilesColumn Output { get; private set; }
+        public Column Output { get; private set; }
 
         private string ByteArrayAsString(IEnumerable<byte> arr)
         {
