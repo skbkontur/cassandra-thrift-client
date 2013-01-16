@@ -112,7 +112,6 @@
     <Compile Include="AquilesTrash\Model\AquilesColumnDefinition.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnFamily.cs" />
     <Compile Include="AquilesTrash\Model\AquilesKeySpace.cs" />
-    <Compile Include="AquilesTrash\Model\CassandraClusterInformation.cs" />
     <Compile Include="AquilesTrash\Model\IAquilesObject.cs" />
     <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
