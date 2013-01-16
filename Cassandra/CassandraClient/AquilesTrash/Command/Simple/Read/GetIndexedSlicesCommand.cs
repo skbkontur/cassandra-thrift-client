@@ -5,16 +5,15 @@ using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
+using IndexClause = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.IndexClause;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 {
     internal class GetIndexedSlicesCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public GetIndexedSlicesCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, SlicePredicate predicate, AquilesIndexClause indexClause)
+        public GetIndexedSlicesCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, SlicePredicate predicate, IndexClause indexClause)
             : base(keyspace, columnFamily)
         {
             this.consistencyLevel = consistencyLevel;
@@ -25,8 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             var columnParent = BuildColumnParent();
-            var apacheIndexClause = ModelConverterHelper.Convert<AquilesIndexClause, IndexClause>(indexClause);
-            var result = cassandraClient.get_indexed_slices(columnParent, apacheIndexClause, predicate.ToCassandraSlicePredicate(), consistencyLevel);
+            var result = cassandraClient.get_indexed_slices(columnParent, indexClause.ToCassandraIndexClause(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
             BuildOutput(result);
         }
 
@@ -40,6 +38,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read
 
         private readonly ConsistencyLevel consistencyLevel;
         private readonly SlicePredicate predicate;
-        private readonly AquilesIndexClause indexClause;
+        private readonly IndexClause indexClause;
     }
 }

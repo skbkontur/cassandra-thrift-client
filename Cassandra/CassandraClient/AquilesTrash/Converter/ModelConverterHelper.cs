@@ -47,16 +47,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter
             converters.Add(typeof(AquilesSuperColumn), converter);
             converters.Add(typeof(SuperColumn), converter);
 
-            // AquilesIndexClauseConverter
-            converter = new AquilesIndexClauseConverter();
-            converters.Add(typeof(AquilesIndexClause), converter);
-            converters.Add(typeof(IndexClause), converter);
-
-            // AquilesIndexExpressionConverter
-            converter = new AquilesIndexExpressionConverter();
-            converters.Add(typeof(AquilesIndexExpression), converter);
-            converters.Add(typeof(IndexExpression), converter);
-
             // AquilesTokenRangeConverter
             converter = new AquilesTokenRangeConverter();
             converters.Add(typeof(AquilesTokenRange), converter);

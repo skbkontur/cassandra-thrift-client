@@ -9,7 +9,6 @@ using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Read;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
@@ -145,16 +144,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(truncateCommand);
         }
 
-        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, AquilesIndexExpression[] conditions, List<byte[]> columns)
+        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, IndexExpression[] conditions, List<byte[]> columns)
         {
             var predicate = new SlicePredicate(columns);
-
-            var indexClause = new AquilesIndexClause();
-            indexClause.Count = maximalCount;
-            indexClause.StartKey = startKey ?? new byte[0];
-            indexClause.Expressions = new List<AquilesIndexExpression>();
-            indexClause.Expressions.AddRange(conditions);
-
+            var indexClause = new IndexClause
+                {
+                    Count = maximalCount,
+                    Expressions = (conditions ?? new IndexExpression[0]).ToList(),
+                    StartKey = startKey ?? new byte[0]
+                };
             var gisc = new GetIndexedSlicesCommand(keyspaceName, columnFamilyName, readConsistencyLevel, predicate, indexClause);
 
             ExecuteCommand(gisc);
