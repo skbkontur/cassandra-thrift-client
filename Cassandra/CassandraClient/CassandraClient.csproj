@@ -85,7 +85,6 @@
     <Compile Include="AquilesTrash\Command\Simple\Read\MultiGetCountCommand.cs" />
     <Compile Include="AquilesTrash\Command\Simple\Read\MultiGetSliceCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\Read\RetrieveClusterPartitionerCommand.cs" />
-    <Compile Include="AquilesTrash\Command\System\Read\RetrieveKeySpaceDistributionComand.cs" />
     <Compile Include="AquilesTrash\Command\System\Read\RetrieveKeySpacesCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\Write\AddColumnFamilyCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\Write\AddKeyspaceCommand.cs" />
@@ -101,7 +100,6 @@
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesColumnFamilyConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesKeyspaceConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesSuperColumnConverter.cs" />
-    <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesTokenRangeConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\IThriftConverter.cs" />
     <Compile Include="AquilesTrash\Encoders\ASCIIEncoderHelper.cs" />
     <Compile Include="AquilesTrash\Encoders\ByteEncoderHelper.cs" />
@@ -118,7 +116,6 @@
     <Compile Include="AquilesTrash\Model\AquilesColumnFamily.cs" />
     <Compile Include="AquilesTrash\Model\AquilesKeySpace.cs" />
     <Compile Include="AquilesTrash\Model\AquilesSuperColumn.cs" />
-    <Compile Include="AquilesTrash\Model\AquilesTokenRange.cs" />
     <Compile Include="AquilesTrash\Model\CassandraClusterInformation.cs" />
     <Compile Include="AquilesTrash\Model\IAquilesObject.cs" />
     <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
