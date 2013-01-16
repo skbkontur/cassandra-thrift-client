@@ -61,19 +61,17 @@ namespace Cassandra.Tests.HelpersTests
                     Name = "testName",
                     Keyspace = "testKeyspace",
                     Comparator = "UTF8Type",
-                    Columns = new List<AquilesColumnDefinition>
+                    Columns = new List<IndexDefinition>
                         {
-                            new AquilesColumnDefinition
+                            new IndexDefinition
                                 {
-                                    IsIndex = true,
-                                    Name = ByteEncoderHelper.UTF8Encoder.ToByteArray("name1"),
-                                    ValidationClass = "UTF8Type"
+                                    Name = "name1",
+                                    ValidationClass = ValidationClass.UTF8Type
                                 },
-                            new AquilesColumnDefinition
+                            new IndexDefinition
                                 {
-                                    IsIndex = true,
-                                    Name = ByteEncoderHelper.UTF8Encoder.ToByteArray("name2"),
-                                    ValidationClass = "LongType"
+                                    Name = "name2",
+                                    ValidationClass = ValidationClass.LongType
                                 }
                         },
                     Id = 3434
@@ -105,20 +103,12 @@ namespace Cassandra.Tests.HelpersTests
                 {
                     Name = "testName",
                     Keyspace = "testKeyspace",
-                    Columns = new List<AquilesColumnDefinition>
+                    Columns = new List<IndexDefinition>
                         {
-                            new AquilesColumnDefinition
+                            new IndexDefinition
                                 {
-                                    IsIndex = true,
-                                    Name = ByteEncoderHelper.UTF8Encoder.ToByteArray("name1"),
-                                    ValidationClass = "UTF8Type"
-                                },
-                            new AquilesColumnDefinition
-                                {
-                                    IndexName = "index2",
-                                    IsIndex = false,
-                                    Name = ByteEncoderHelper.UTF8Encoder.ToByteArray("name2"),
-                                    ValidationClass = "class2"
+                                    Name = "name1",
+                                    ValidationClass = ValidationClass.UTF8Type
                                 }
                         }
                 };

@@ -5,6 +5,7 @@ using System.Linq;
 using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
 {
@@ -44,7 +45,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
             {
                 var originColumns = objectA.Columns;
                 var destinationColumns = new List<ColumnDef>(originColumns.Count);
-                destinationColumns.AddRange(originColumns.Select(ModelConverterHelper.Convert<AquilesColumnDefinition, ColumnDef>));
+                destinationColumns.AddRange(originColumns.Select(definition => definition.ToCassandraColumnDef()));
                 columnFamily.Column_metadata = destinationColumns;
             }
 
@@ -74,8 +75,8 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter.Model.Impl
             if(objectB.Column_metadata != null)
             {
                 var originColumns = objectB.Column_metadata;
-                var destinationColumns = new List<AquilesColumnDefinition>(originColumns.Count);
-                destinationColumns.AddRange(originColumns.Select(ModelConverterHelper.Convert<AquilesColumnDefinition, ColumnDef>));
+                var destinationColumns = new List<IndexDefinition>(originColumns.Count);
+                destinationColumns.AddRange(originColumns.Select(def => def.FromCassandraColumnDef()));
                 columnFamily.Columns = destinationColumns;
             }
 

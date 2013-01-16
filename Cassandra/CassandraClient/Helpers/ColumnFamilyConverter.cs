@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
@@ -18,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                                Comparator = "UTF8Type",
                                Name = columnFamily.Name,
                                Keyspace = keyspace,
-                               Columns = GetColumnDefinitions(columnFamily.Indexes),
+                               Columns = columnFamily.Indexes,
                                RowCacheSize = columnFamily.RowCacheSize,
                                GCGraceSeconds = columnFamily.GCGraceSeconds
                            };
@@ -32,22 +29,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                            {
                                Id = aquilesColumnFamily.Id,
                                Name = aquilesColumnFamily.Name,
-                               Indexes = GetIndexDefinitions(aquilesColumnFamily.Columns),
+                               Indexes = aquilesColumnFamily.Columns,
                                RowCacheSize = (int?)aquilesColumnFamily.RowCacheSize,
                                GCGraceSeconds = aquilesColumnFamily.GCGraceSeconds
                            };
-        }
-
-        private static List<AquilesColumnDefinition> GetColumnDefinitions(IEnumerable<IndexDefinition> indexDefinitions)
-        {
-            return indexDefinitions == null ? null : indexDefinitions.Select(definition => definition.ToAquilesColumnDefinition()).ToList();
-        }
-
-        private static List<IndexDefinition> GetIndexDefinitions(IEnumerable<AquilesColumnDefinition> columnDefinitions)
-        {
-            return columnDefinitions == null ? null : columnDefinitions.
-                                                          Where(columnDefinition => columnDefinition.IsIndex).
-                                                          Select(definition => definition.ToIndexDefinition()).ToList();
         }
     }
 }

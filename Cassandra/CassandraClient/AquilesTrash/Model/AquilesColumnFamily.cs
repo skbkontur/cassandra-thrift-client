@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Exceptions;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
@@ -114,7 +115,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
         /// <summary>
         /// get or set the list of Column Definitions
         /// </summary>
-        public List<AquilesColumnDefinition> Columns
+        public List<IndexDefinition> Columns
         {
             get;
             set;
@@ -209,8 +210,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
             this.ValidateNotNullOrEmptyKeyspace();
 
             this.ValidateNotNullOrEmptyName();
-
-            this.ValidateInnerColumns();
         }
         /// <summary>
         /// Validate the object data to assure consistency when used as input parameter when used in an deletation Operation
@@ -252,17 +251,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model
             if (String.IsNullOrEmpty(this.Name))
             {
                 throw new AquilesCommandParameterException("Name cannot be null or empty.");
-            }
-        }
-
-        private void ValidateInnerColumns()
-        {
-            if (this.Columns != null)
-            {
-                foreach (AquilesColumnDefinition columnDefinition in this.Columns)
-                {
-                    columnDefinition.ValidateForInsertOperation();
-                }
             }
         }
     }
