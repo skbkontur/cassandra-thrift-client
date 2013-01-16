@@ -58,7 +58,10 @@
     <Compile Include="Abstractions\IndexDefinition.cs" />
     <Compile Include="Abstractions\IndexExpression.cs" />
     <Compile Include="Abstractions\IndexOperator.cs" />
+    <Compile Include="Abstractions\Internal\DeletionMutation.cs" />
+    <Compile Include="Abstractions\Internal\IMutation.cs" />
     <Compile Include="Abstractions\Internal\KeyRange.cs" />
+    <Compile Include="Abstractions\Internal\SetMutation.cs" />
     <Compile Include="Abstractions\Internal\SlicePredicate.cs" />
     <Compile Include="Abstractions\Internal\SliceRange.cs" />
     <Compile Include="Abstractions\Keyspace.cs" />
@@ -98,7 +101,6 @@
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesIndexClauseConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesIndexExpressionConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesKeyspaceConverter.cs" />
-    <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesMutationConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesSuperColumnConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\Impl\AquilesTokenRangeConverter.cs" />
     <Compile Include="AquilesTrash\Converter\Model\IThriftConverter.cs" />
@@ -115,16 +117,13 @@
     <Compile Include="AquilesTrash\Model\AquilesColumn.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnDefinition.cs" />
     <Compile Include="AquilesTrash\Model\AquilesColumnFamily.cs" />
-    <Compile Include="AquilesTrash\Model\AquilesDeletionMutation.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexClause.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexExpression.cs" />
     <Compile Include="AquilesTrash\Model\AquilesIndexOperator.cs" />
     <Compile Include="AquilesTrash\Model\AquilesKeySpace.cs" />
-    <Compile Include="AquilesTrash\Model\AquilesSetMutation.cs" />
     <Compile Include="AquilesTrash\Model\AquilesSuperColumn.cs" />
     <Compile Include="AquilesTrash\Model\AquilesTokenRange.cs" />
     <Compile Include="AquilesTrash\Model\CassandraClusterInformation.cs" />
-    <Compile Include="AquilesTrash\Model\IAquilesMutation.cs" />
     <Compile Include="AquilesTrash\Model\IAquilesObject.cs" />
     <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />

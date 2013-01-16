@@ -3,15 +3,14 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write
 {
-    public class BatchMutateCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class BatchMutateCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public BatchMutateCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>> mutations)
+        public BatchMutateCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, Dictionary<string, Dictionary<byte[], List<IMutation>>> mutations)
             : base(keyspace, columnFamily)
         {
             this.consistencyLevel = consistencyLevel;
@@ -20,8 +19,8 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            var mutation_map = TranslateMutations();
-            cassandraClient.batch_mutate(mutation_map, consistencyLevel);
+            var mutationMap = TranslateMutations();
+            cassandraClient.batch_mutate(mutationMap, consistencyLevel);
         }
 
         private Dictionary<byte[], Dictionary<string, List<Mutation>>> TranslateMutations()
@@ -31,7 +30,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write
             {
                 foreach(var mutationsPerRow in mutationsPerColumnFamily.Value)
                 {
-                    var mutationList = mutationsPerRow.Value.Select(ModelConverterHelper.Convert<IAquilesMutation, Mutation>).ToList();
+                    var mutationList = mutationsPerRow.Value.Select(mutation => mutation.ToCassandraMutation()).ToList();
                     if(!result.ContainsKey(mutationsPerRow.Key))
                         result.Add(mutationsPerRow.Key, new Dictionary<string, List<Mutation>>());
                     if(!result[mutationsPerRow.Key].ContainsKey(mutationsPerColumnFamily.Key))
@@ -43,6 +42,6 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Simple.Write
         }
 
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>> mutations;
+        private readonly Dictionary<string, Dictionary<byte[], List<IMutation>>> mutations;
     }
 }

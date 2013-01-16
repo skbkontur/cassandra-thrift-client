@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -86,17 +87,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddBatch(byte[] key, IEnumerable<Column> columns)
         {
-            List<IAquilesMutation> mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
+            var mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
             ExecuteMutations(key, mutationsList);
         }
 
         public void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null)
         {
-            var mutationsList = new List<IAquilesMutation>
+            var mutationsList = new List<IMutation>
                 {
-                    new AquilesDeletionMutation
+                    new DeletionMutation
                         {
-                            Predicate = new SlicePredicate(columnNames.ToList()),
+                            SlicePredicate = new SlicePredicate(columnNames.ToList()),
                             Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
                         }
                 };
@@ -162,38 +163,48 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data)
         {
-            List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key, ToMutationsList(row.Value, cassandraClusterSettings.AllowNullTimestamp))).ToList();
+            List<KeyValuePair<byte[], List<IMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IMutation>>(row.Key, ToMutationsList(row.Value, cassandraClusterSettings.AllowNullTimestamp))).ToList();
             ExecuteMutations(mutationsList);
         }
 
         public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null)
         {
-            List<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList = data.Select(
-                row => new KeyValuePair<byte[], List<IAquilesMutation>>(row.Key,
-                                                                        new List<IAquilesMutation>
-                                                                            {
-                                                                                new AquilesDeletionMutation
-                                                                                    {
-                                                                                        Predicate = new SlicePredicate(row.Value.ToList()),
-                                                                                        Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
-                                                                                    }
-                                                                            })).ToList();
+            List<KeyValuePair<byte[], List<IMutation>>> mutationsList = data.Select(
+                row => new KeyValuePair<byte[], List<IMutation>>(row.Key,
+                                                                 new List<IMutation>
+                                                                     {
+                                                                         new DeletionMutation
+                                                                             {
+                                                                                 SlicePredicate = new SlicePredicate(row.Value.ToList()),
+                                                                                 Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
+                                                                             }
+                                                                     })).ToList();
             ExecuteMutations(mutationsList);
         }
 
-        private static List<IAquilesMutation> ToMutationsList(IEnumerable<Column> columns, bool allowNullTimestamp)
+        private static List<IMutation> ToMutationsList(IEnumerable<Column> columns, bool allowNullTimestamp)
         {
-            return columns.Select(column => new AquilesSetMutation {Column = column.ToAquilesColumn(allowNullTimestamp)}).Cast<IAquilesMutation>().ToList();
+            var result = new List<IMutation>();
+            foreach(var column in columns)
+            {
+                if(!allowNullTimestamp && !column.Timestamp.HasValue)
+                    throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
+                result.Add(new SetMutation
+                    {
+                        Column = column
+                    });
+            }
+            return result;
         }
 
-        private void ExecuteMutations(byte[] key, List<IAquilesMutation> mutationsList)
+        private void ExecuteMutations(byte[] key, List<IMutation> mutationsList)
         {
-            var columnFamilyMutations = new Dictionary<byte[], List<IAquilesMutation>>
+            var columnFamilyMutations = new Dictionary<byte[], List<IMutation>>
                 {
                     {key, mutationsList}
                 };
 
-            var keyMutations = new Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>>
+            var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
                 {
                     {columnFamilyName, columnFamilyMutations}
                 };
@@ -203,10 +214,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(batchMutateCommand);
         }
 
-        private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IAquilesMutation>>> mutationsList)
+        private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IMutation>>> mutationsList)
         {
             var dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
-            var keyMutations = new Dictionary<string, Dictionary<byte[], List<IAquilesMutation>>>
+            var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
                 {
                     {columnFamilyName, dict}
                 };

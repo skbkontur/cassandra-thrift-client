@@ -41,13 +41,7 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter
             converter = new AquilesKeyspaceConverter();
             converters.Add(typeof(AquilesKeyspace), converter);
             converters.Add(typeof(KsDef), converter);
-
-            // AquilesMutationConverter
-            converter = new AquilesMutationConverter();
-            converters.Add(typeof(AquilesSetMutation), converter);
-            converters.Add(typeof(AquilesDeletionMutation), converter);
-            converters.Add(typeof(Mutation), converter);
-
+            
             // AquilesSuperColumnConverter
             converter = new AquilesSuperColumnConverter();
             converters.Add(typeof(AquilesSuperColumn), converter);

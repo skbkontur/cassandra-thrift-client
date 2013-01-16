@@ -12,7 +12,18 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
     public class ConnectionPoolTest : CassandraFunctionalTestWithRemoveKeyspacesBase
     {
         [Test]
-        public void Test()
+        public void TestSimple()
+        {
+            DoTest(10);
+        }
+        
+        [Test, Ignore]
+        public void TestHard()
+        {
+            DoTest(100);
+        }
+
+        private void DoTest(int threadCount)
         {
             threads = new List<Thread>();
             finished = new int[threadCount];
@@ -39,8 +50,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Console.WriteLine(kvp.Key.IpEndPoint + " " + kvp.Key.Keyspace + " " + kvp.Value.BusyConnectionCount + " " + kvp.Value.FreeConnectionCount);
                     maxBusy = Math.Max(maxBusy, kvp.Value.BusyConnectionCount);
                     maxFree = Math.Max(maxFree, kvp.Value.FreeConnectionCount);
-                    Assert.IsTrue(kvp.Value.BusyConnectionCount < 300);
-                    Assert.IsTrue(kvp.Value.FreeConnectionCount < 300);
+                    Assert.IsTrue(kvp.Value.BusyConnectionCount < 3 * threadCount);
+                    Assert.IsTrue(kvp.Value.FreeConnectionCount < 3 * threadCount);
                 }
 
                 var flag = threads.Aggregate(false, (current, thread) => current || (thread.IsAlive));
@@ -97,6 +108,5 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         private List<Thread> threads;
         private volatile bool stopped;
-        private const int threadCount = 100;
     }
 }
