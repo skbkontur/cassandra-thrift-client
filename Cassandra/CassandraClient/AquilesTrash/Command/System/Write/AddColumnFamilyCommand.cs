@@ -1,14 +1,11 @@
-﻿using Apache.Cassandra;
-
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write
 {
     public class AddColumnFamilyCommand : KeyspaceDependantCommandBase
     {
-        public AddColumnFamilyCommand(string keyspace, AquilesColumnFamily columnFamilyDefinition)
+        public AddColumnFamilyCommand(string keyspace, ColumnFamily columnFamilyDefinition)
             : base(keyspace)
         {
             this.columnFamilyDefinition = columnFamilyDefinition;
@@ -16,12 +13,11 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            var columnFamily = ModelConverterHelper.Convert<AquilesColumnFamily, CfDef>(columnFamilyDefinition);
-            Output = cassandraClient.system_add_column_family(columnFamily);
+            Output = cassandraClient.system_add_column_family(columnFamilyDefinition.ToCassandraCfDef(keyspace));
         }
 
         public string Output { get; private set; }
         public override bool IsFierce { get { return true; } }
-        private readonly AquilesColumnFamily columnFamilyDefinition;
+        private readonly ColumnFamily columnFamilyDefinition;
     }
 }

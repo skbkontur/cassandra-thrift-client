@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Read;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using log4net;
 
@@ -28,20 +27,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             commandExecuter.Execute(retrieveKeyspacesCommand);
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
-            var result = new List<Keyspace>();
-            // ReSharper disable LoopCanBeConvertedToQuery
-            foreach(var aquilesKeyspace in retrieveKeyspacesCommand.Keyspaces)
-                // ReSharper restore LoopCanBeConvertedToQuery
-            {
-                if(!aquilesKeyspace.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
-                    result.Add(aquilesKeyspace.ToKeyspace());
-            }
-            return result;
+            return retrieveKeyspacesCommand.Keyspaces
+                .Where(keyspace => !keyspace.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
+                .ToList();
         }
 
         public void UpdateKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new UpdateKeyspaceCommand(keyspace.ToAquilesKeyspace()));
+            commandExecuter.Execute(new UpdateKeyspaceCommand(keyspace));
             WaitUntilAgreementIsReached();
         }
 
@@ -60,7 +53,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new AddKeyspaceCommand(keyspace.ToAquilesKeyspace()));
+            commandExecuter.Execute(new AddKeyspaceCommand(keyspace));
             WaitUntilAgreementIsReached();
         }
 

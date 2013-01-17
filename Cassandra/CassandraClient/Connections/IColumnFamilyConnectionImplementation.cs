@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {

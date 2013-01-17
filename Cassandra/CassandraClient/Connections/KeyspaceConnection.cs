@@ -3,12 +3,9 @@ using System.Linq;
 using System.Text;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Read;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Write;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 using SKBKontur.Cassandra.CassandraClient.Core;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using log4net;
 
@@ -25,13 +22,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddColumnFamily(ColumnFamily columnFamily)
         {
-            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName, columnFamily.ToAquilesColumnFamily(keyspaceName)));
+            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName, columnFamily));
             WaitUntilAgreementIsReached();
         }
 
         public void AddColumnFamily(string columnFamilyName)
         {
-            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName, new AquilesColumnFamily {Name = columnFamilyName, Keyspace = keyspaceName}));
+            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName,
+                                                               new ColumnFamily {Name = columnFamilyName}));
             WaitUntilAgreementIsReached();
         }
 
@@ -39,24 +37,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var describeKeyspaceCommand = new DescribeKeyspaceCommand(keyspaceName);
             commandExecuter.Execute(describeKeyspaceCommand);
-
-            var keyspaceInformation = describeKeyspaceCommand.KeyspaceInformation;
-            var result = new Keyspace
-                {
-                    ColumnFamilies =
-                        keyspaceInformation.ColumnFamilies.ToDictionary(pair => pair.Key,
-                                                                        pair => pair.Value.ToColumnFamily()),
-                    Name = keyspaceInformation.Name,
-                    ReplicaPlacementStrategy = keyspaceInformation.ReplicationPlacementStrategy,
-                    ReplicationFactor = keyspaceInformation.ReplicationFactor
-                };
-            return result;
+            return describeKeyspaceCommand.KeyspaceInformation;
         }
 
         public void UpdateColumnFamily(ColumnFamily columnFamily)
         {
-            AquilesColumnFamily aquilesColumnFamily = columnFamily.ToAquilesColumnFamily(keyspaceName);
-            commandExecuter.Execute(new UpdateColumnFamilyCommand(keyspaceName, aquilesColumnFamily));
+            commandExecuter.Execute(new UpdateColumnFamilyCommand(keyspaceName, columnFamily));
             WaitUntilAgreementIsReached();
         }
 

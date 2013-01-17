@@ -1,8 +1,5 @@
-﻿using Apache.Cassandra;
-
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.Base;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Converter;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Model;
 
 namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Read
 {
@@ -16,10 +13,10 @@ namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash.Command.System.Read
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             var keyspaceDescription = cassandraClient.describe_keyspace(keyspace);
-            KeyspaceInformation = ModelConverterHelper.Convert<AquilesKeyspace, KsDef>(keyspaceDescription);
+            KeyspaceInformation = keyspaceDescription.FromCassandraKsDef();
         }
 
         public override bool IsFierce { get { return true; } }
-        public AquilesKeyspace KeyspaceInformation { get; private set; }
+        public Keyspace KeyspaceInformation { get; private set; }
     }
 }
