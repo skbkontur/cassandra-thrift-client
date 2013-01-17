@@ -2,7 +2,6 @@
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
@@ -23,7 +22,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000)
         {
             var counts = GetCounts(keys);
-            while (counts.Count > 0)
+            while(counts.Count > 0)
             {
                 var rows = GetRows(keys, null, batchSize);
                 var d = rows.Select(row => new KeyValuePair<string, IEnumerable<string>>(row.Key, row.Value.Select(col => col.Name)));
@@ -31,8 +30,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 var newCounts = new Dictionary<string, int>();
                 foreach(var keyValuePair in counts)
                 {
-                    if (keyValuePair.Value > batchSize)
-                        newCounts.Add(keyValuePair.Key, keyValuePair.Value-batchSize);
+                    if(keyValuePair.Value > batchSize)
+                        newCounts.Add(keyValuePair.Key, keyValuePair.Value - batchSize);
                 }
                 counts = newCounts;
             }
@@ -40,9 +39,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void DeleteRow(string key, long? timestamp = null)
         {
-            implementation.DeleteRow(ByteEncoderHelper.UTF8Encoder.ToByteArray(key), timestamp);
+            implementation.DeleteRow(StringHelpers.StringToBytes(key), timestamp);
         }
-
 
         public void AddColumn(string key, Column column)
         {
@@ -125,12 +123,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public string[] GetKeys(string exclusiveStartKey, int count)
         {
-            if (count == int.MaxValue) count--;
-            if (count <= 0) return new string[0];
+            if(count == int.MaxValue) count--;
+            if(count <= 0) return new string[0];
             var result = implementation.GetKeys(StringHelpers.StringToBytes(exclusiveStartKey), count + 1).Select(StringHelpers.BytesToString).ToArray();
-            if (result.Length == 0) return result;
-            if (result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
-            if (result.Length > count) result = result.Take(count).ToArray();
+            if(result.Length == 0) return result;
+            if(result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
+            if(result.Length > count) result = result.Take(count).ToArray();
             return result;
         }
 
@@ -171,12 +169,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns)
         {
-            if (count == int.MaxValue) count--;
-            if (count <= 0) return new string[0];
+            if(count == int.MaxValue) count--;
+            if(count <= 0) return new string[0];
             var result = implementation.GetRowsWhere(StringHelpers.StringToBytes(exclusiveStartKey), count + 1, conditions, columns.Select(StringHelpers.StringToBytes).ToList()).Select(StringHelpers.BytesToString).ToArray();
-            if (result.Length == 0) return result;
-            if (result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
-            if (result.Length > count) result = result.Take(count).ToArray();
+            if(result.Length == 0) return result;
+            if(result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
+            if(result.Length > count) result = result.Take(count).ToArray();
             return result;
         }
 

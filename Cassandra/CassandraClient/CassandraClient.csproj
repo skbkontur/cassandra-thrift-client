@@ -92,13 +92,6 @@
     <Compile Include="AquilesTrash\Command\System\Write\UpdateColumnFamilyCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\Write\UpdateKeyspaceCommand.cs" />
     <Compile Include="AquilesTrash\Command\System\Write\TruncateColumnFamilyCommand.cs" />
-    <Compile Include="AquilesTrash\Encoders\ASCIIEncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Encoders\ByteEncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Encoders\GUIDEncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Encoders\IByteEncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Encoders\LongEncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Encoders\UTF8EncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Encoders\UUIDEncoderHelper.cs" />
     <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraCluster.cs" />

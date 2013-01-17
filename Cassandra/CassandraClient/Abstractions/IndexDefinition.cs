@@ -2,7 +2,7 @@
 
 using Apache.Cassandra;
 
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -20,7 +20,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 return null;
             return new ColumnDef
                 {
-                    Name = ByteEncoderHelper.UTF8Encoder.ToByteArray(indexDefinition.Name),
+                    Name = StringHelpers.StringToBytes(indexDefinition.Name),
                     Index_type = IndexType.KEYS,
                     Validation_class = indexDefinition.ValidationClass.ToString()
                 };
@@ -28,11 +28,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public static IndexDefinition FromCassandraColumnDef(this ColumnDef columnDef)
         {
-            if (columnDef == null)
+            if(columnDef == null)
                 return null;
             return new IndexDefinition
                 {
-                    Name = ByteEncoderHelper.UTF8Encoder.FromByteArray(columnDef.Name),
+                    Name = StringHelpers.BytesToString(columnDef.Name),
                     ValidationClass =
                         columnDef.Validation_class.IndexOf("LongType", StringComparison.OrdinalIgnoreCase) != -1
                             ? ValidationClass.LongType

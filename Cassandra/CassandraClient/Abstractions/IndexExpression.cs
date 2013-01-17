@@ -1,4 +1,4 @@
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash.Encoders;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             return new Apache.Cassandra.IndexExpression
                 {
-                    Column_name = ByteEncoderHelper.UTF8Encoder.ToByteArray(indexExpression.ColumnName),
+                    Column_name = StringHelpers.StringToBytes(indexExpression.ColumnName),
                     Value = indexExpression.Value,
                     Op = indexExpression.IndexOperator.ToCassandraIndexOperator()
                 };
