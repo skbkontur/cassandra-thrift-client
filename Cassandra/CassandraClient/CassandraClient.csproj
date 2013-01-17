@@ -67,8 +67,6 @@
     <Compile Include="Abstractions\Internal\SliceRange.cs" />
     <Compile Include="Abstractions\Keyspace.cs" />
     <Compile Include="Abstractions\ValidationClass.cs" />
-    <Compile Include="Abstractions\ValidationResult.cs" />
-    <Compile Include="Abstractions\ValidationStatus.cs" />
     <Compile Include="AquilesTrash\Command\Base\KeyspaceColumnFamilyDependantCommandBase.cs" />
     <Compile Include="AquilesTrash\Command\Base\KeyspaceDependantCommandBase.cs" />
     <Compile Include="AquilesTrash\Command\Base\CommandBase.cs" />
@@ -101,9 +99,6 @@
     <Compile Include="AquilesTrash\Encoders\LongEncoderHelper.cs" />
     <Compile Include="AquilesTrash\Encoders\UTF8EncoderHelper.cs" />
     <Compile Include="AquilesTrash\Encoders\UUIDEncoderHelper.cs" />
-    <Compile Include="AquilesTrash\Exceptions\AquilesCommandException.cs" />
-    <Compile Include="AquilesTrash\Exceptions\AquilesCommandParameterException.cs" />
-    <Compile Include="AquilesTrash\Exceptions\AquilesException.cs" />
     <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraCluster.cs" />
