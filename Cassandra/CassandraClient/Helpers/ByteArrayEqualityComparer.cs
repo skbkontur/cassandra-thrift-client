@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SKBKontur.Cassandra.CassandraClient.AquilesTrash
+namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public class ByteArrayEqualityComparer : IEqualityComparer<byte[]>
     {

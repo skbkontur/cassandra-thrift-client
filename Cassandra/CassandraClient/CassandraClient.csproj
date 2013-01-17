@@ -92,7 +92,7 @@
     <Compile Include="Commands\System\Write\UpdateColumnFamilyCommand.cs" />
     <Compile Include="Commands\System\Write\UpdateKeyspaceCommand.cs" />
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
-    <Compile Include="AquilesTrash\ByteArrayEqualityComparer.cs" />
+    <Compile Include="Helpers\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraClusterSettings.cs" />

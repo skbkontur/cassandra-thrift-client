@@ -4,8 +4,8 @@ using System.Linq;
 using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
-using SKBKontur.Cassandra.CassandraClient.AquilesTrash;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
