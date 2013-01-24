@@ -6,6 +6,7 @@ using System.Text;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -14,43 +15,42 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public override void SetUp()
         {
             base.SetUp();
-            var cassandraClient = new CassandraClient(cassandraCluster);
-            cassandraClient.RemoveAllKeyspaces();
-
             var indexes = new List<IndexDefinition>
                 {
                     new IndexDefinition
-                        {Name = "col1", ValidationClass = ValidationClass.LongType},
+                        {Name = "col1", ValidationClass = DataType.LongType},
                     new IndexDefinition
-                        {Name = "col2", ValidationClass = ValidationClass.UTF8Type},
+                        {Name = "col2", ValidationClass = DataType.UTF8Type},
                     new IndexDefinition
-                        {Name = "col3", ValidationClass = ValidationClass.UTF8Type},
+                        {Name = "col3", ValidationClass = DataType.UTF8Type},
                     new IndexDefinition
                         {
-                            Name = "col4", ValidationClass = ValidationClass.LongType
+                            Name = "col4", ValidationClass = DataType.LongType
                         }
                 };
 
-            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            clusterConnection.AddKeyspace(new Keyspace
+            cassandraCluster.ActualizeKeyspaces(new[]
                 {
-                    ColumnFamilies = new Dictionary<string, ColumnFamily>
+                    new KeyspaceScheme
                         {
-                            {
-                                Constants.ColumnFamilyName, new ColumnFamily
-                                    {
-                                        Name = Constants.ColumnFamilyName,
-                                        Indexes = indexes
-                                    }
+                            Name = KeyspaceName,
+                            Configuration = new KeyspaceConfiguration
+                                {
+                                    ColumnFamilies = new[]
+                                        {
+                                            new ColumnFamily
+                                                {
+                                                    Name = Constants.ColumnFamilyName,
+                                                    Indexes = indexes
+                                                }
+                                        },
+                                    ReplicationFactor = 1,
+                                    ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple
                                 }
-                        },
-                    Name = Constants.KeyspaceName,
-                    ReplicaPlacementStrategy =
-                        "org.apache.cassandra.locator.SimpleStrategy",
-                    ReplicationFactor = 1
+                        }
                 });
 
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             for(int i = 0; i < count; i++)
             {
                 var columns = new List<Column>
@@ -83,7 +83,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestOneIndexEQ()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             {
                 for(int i = 0; i < count; i += 10)
                 {
@@ -98,7 +98,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestOneIndexRange()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
 
             string[] res = conn.GetRowsWhere(null, 1000, new[]
                 {
@@ -129,7 +129,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestTwoIndexes()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             string[] res = conn.GetRowsWhere(null, 1000, new[]
                 {
                     new IndexExpression
@@ -152,7 +152,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestTimedIndex()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             string[] res = conn.GetRowsWhere(null, 1000, new[]
                 {
                     new IndexExpression

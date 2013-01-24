@@ -3,6 +3,7 @@
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
@@ -49,6 +50,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         public void CheckConnections()
         {
             commandExecuter.CheckConnections();
+        }
+
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces)
+        {
+            new SchemeActualizer(this).ActualizeKeyspaces(keyspaces);
         }
 
         public void Dispose()

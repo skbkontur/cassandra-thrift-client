@@ -9,7 +9,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void SimpleTest()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             Assert.IsFalse(conn.IsRowExist("trashId"));
             conn.AddBatch("id1", new[]
                 {
@@ -44,7 +44,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestTryGetColumn()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             Column column;
             
             Assert.IsFalse(conn.TryGetColumn("id1", "qzz", out column));

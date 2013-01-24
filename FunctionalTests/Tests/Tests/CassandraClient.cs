@@ -4,6 +4,7 @@ using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -29,22 +30,43 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         public void AddKeyspace(string keySpaceName, string columnFamilyName)
         {
-            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            clusterConnection.AddKeyspace(new Keyspace
+            cassandraCluster.ActualizeKeyspaces(new[]
                 {
-                    ColumnFamilies = new Dictionary<string, ColumnFamily>
+                    new KeyspaceScheme
                         {
-                            {
-                                columnFamilyName, new ColumnFamily
-                                    {
-                                        Name = columnFamilyName
-                                    }
+                            Name = keySpaceName,
+                            Configuration = new KeyspaceConfiguration
+                                {
+                                    ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
+                                    ReplicationFactor = 1,
+                                    ColumnFamilies = new[]
+                                        {
+                                            new ColumnFamily
+                                                {
+                                                    Name = columnFamilyName
+                                                }
+                                        }
                                 }
-                        },
-                    Name = keySpaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                    ReplicationFactor = 1
-                });
+                        }
+                }
+                );
+
+//            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+//            clusterConnection.AddKeyspace(new Keyspace
+//                {
+//                    ColumnFamilies = new Dictionary<string, ColumnFamily>
+//                        {
+//                            {
+//                                columnFamilyName, new ColumnFamily
+//                                    {
+//                                        Name = columnFamilyName
+//                                    }
+//                                }
+//                        },
+//                    Name = keySpaceName,
+//                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
+//                    ReplicationFactor = 1
+//                });
         }
 
         public bool TryGetColumn(string keySpaceName, string columnFamilyName, string key, string columnName,
@@ -117,10 +139,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         public Dictionary<string, int> GetCounts(string keySpaceName, string columnFamilyName, IEnumerable<string> keys)
         {
-            Dictionary<string, int> result;
             var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
-            result = columnFamilyConnection.GetCounts(keys);
-            return result;
+            return columnFamilyConnection.GetCounts(keys);
         }
 
         public void CheckConnections()

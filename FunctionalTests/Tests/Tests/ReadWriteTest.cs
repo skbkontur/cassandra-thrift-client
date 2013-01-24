@@ -16,7 +16,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public override void SetUp()
         {
             base.SetUp();
-            connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             checkConnectionsThread = new Thread(CheckConnections);
             checkConnectionsThread.Start();
         }

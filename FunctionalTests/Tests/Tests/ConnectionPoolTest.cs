@@ -80,7 +80,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 {
                     if(stopped)
                         break;
-                    var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+                    var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
 
                     var list = new List<Column>();
                     for(int j = 0; j < 1000; j++)

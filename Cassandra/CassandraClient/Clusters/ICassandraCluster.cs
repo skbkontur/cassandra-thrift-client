@@ -3,6 +3,7 @@ using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
+using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
@@ -13,5 +14,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
         void CheckConnections();
+        void ActualizeKeyspaces(KeyspaceScheme[] keyspaces);
     }
 }

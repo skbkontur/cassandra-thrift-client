@@ -50,6 +50,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\CompactionStrategy.cs" />
+    <Compile Include="Abstractions\CompactionStrategyOptions.cs" />
+    <Compile Include="Abstractions\CompactionStrategyType.cs" />
+    <Compile Include="Abstractions\StringValueAttribute.cs" />
+    <Compile Include="Abstractions\ToStringValueEnumExtensions.cs" />
     <Compile Include="Abstractions\Column.cs" />
     <Compile Include="Abstractions\ColumnFamily.cs" />
     <Compile Include="Abstractions\CommandContext.cs" />
@@ -66,7 +71,7 @@
     <Compile Include="Abstractions\Internal\SlicePredicate.cs" />
     <Compile Include="Abstractions\Internal\SliceRange.cs" />
     <Compile Include="Abstractions\Keyspace.cs" />
-    <Compile Include="Abstractions\ValidationClass.cs" />
+    <Compile Include="Abstractions\DataType.cs" />
     <Compile Include="Commands\Base\KeyspaceColumnFamilyDependantCommandBase.cs" />
     <Compile Include="Commands\Base\KeyspaceDependantCommandBase.cs" />
     <Compile Include="Commands\Base\CommandBase.cs" />
@@ -92,6 +97,9 @@
     <Compile Include="Commands\System\Write\UpdateColumnFamilyCommand.cs" />
     <Compile Include="Commands\System\Write\UpdateKeyspaceCommand.cs" />
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
+    <Compile Include="Scheme\KeyspaceConfiguration.cs" />
+    <Compile Include="Scheme\KeyspaceScheme.cs" />
+    <Compile Include="Scheme\SchemeActualizer.cs" />
     <Compile Include="Helpers\ByteArrayEqualityComparer.cs" />
     <Compile Include="Clusters\CassandraCluster.cs" />
     <Compile Include="Clusters\ICassandraCluster.cs" />
@@ -143,6 +151,7 @@
     <Compile Include="Exceptions\CassandraUnknownException.cs" />
     <Compile Include="Helpers\StringHelpers.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Scheme\ReplicaPlacementStrategy.cs" />
     <Compile Include="TimeStatistics.cs" />
   </ItemGroup>
   <ItemGroup />

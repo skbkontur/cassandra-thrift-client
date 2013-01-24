@@ -1,6 +1,4 @@
-﻿using System;
-
-using Apache.Cassandra;
+﻿using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
@@ -9,7 +7,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     public class IndexDefinition
     {
         public string Name { get; set; }
-        public ValidationClass ValidationClass { get; set; }
+        public DataType ValidationClass { get; set; }
     }
 
     internal static class IndexDefinitionExtensions
@@ -22,7 +20,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 {
                     Name = StringHelpers.StringToBytes(indexDefinition.Name),
                     Index_type = IndexType.KEYS,
-                    Validation_class = indexDefinition.ValidationClass.ToString()
+                    Validation_class = indexDefinition.ValidationClass.ToStringValue()
                 };
         }
 
@@ -33,12 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             return new IndexDefinition
                 {
                     Name = StringHelpers.BytesToString(columnDef.Name),
-                    ValidationClass =
-                        columnDef.Validation_class.IndexOf("LongType", StringComparison.OrdinalIgnoreCase) != -1
-                            ? ValidationClass.LongType
-                            : (columnDef.Validation_class.IndexOf("UTF8Type", StringComparison.OrdinalIgnoreCase) != -1)
-                                  ? ValidationClass.UTF8Type
-                                  : ValidationClass.Undefined
+                    ValidationClass = columnDef.Validation_class.FromStringValue<DataType>()
                 };
         }
     }

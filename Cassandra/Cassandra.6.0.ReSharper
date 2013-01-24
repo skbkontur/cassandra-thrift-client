@@ -98,6 +98,9 @@
         <Abbreviation Text="CI" />
         <Abbreviation Text="SBD" />
         <Abbreviation Text="CIR" />
+        <Abbreviation Text="GC" />
+        <Abbreviation Text="UUID" />
+        <Abbreviation Text="UTF" />
       </Naming2>
       <CustomMemberReorderingPatterns><![CDATA[<Patterns xmlns="urn:shemas-jetbrains-com:member-reordering-patterns">
 

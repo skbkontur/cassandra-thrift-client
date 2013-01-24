@@ -25,7 +25,17 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             var container = new Container(new ContainerConfiguration(assemblies));
             cassandraCluster = container.Get<ICassandraCluster>();
             ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
+            KeyspaceName = "TestKeyspace_" + Guid.NewGuid().ToString("N");
+            if(!keyspacesDeleted)
+            {
+                new CassandraClient(cassandraCluster).RemoveAllKeyspaces();
+                keyspacesDeleted = true;
+            }
         }
+
+        private static bool keyspacesDeleted;
+
+        protected string KeyspaceName { get; private set; }
 
         protected ICassandraCluster cassandraCluster;
     }

@@ -8,11 +8,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class ColumnFamily
     {
-        public int? RowCacheSize { get; set; }
-        public int? GCGraceSeconds { get; set; }
+        internal int Id { get; set; }
         public string Name { get; set; }
-        public int Id { get; set; }
+        public double? RowCacheSize { get; set; }
+        public int? GCGraceSeconds { get; set; }
         public List<IndexDefinition> Indexes { get; set; }
+        public double? KeyCacheSize { get; set; }
+        public double? ReadRepairChance { get; set; }
+        private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
+        public CompactionStrategy CompactionStrategy { get { return compactionStrategy; } set { compactionStrategy = value; } }
     }
 
     internal static class ColumnFamilyExtensions
@@ -22,19 +26,25 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             if (columnFamily == null)
                 return null;
             var result = new CfDef
-                {
-                    Id = columnFamily.Id,
-                    Keyspace = keyspace,
-                    Name = columnFamily.Name,
-                    Column_type = "Standard",
-                    Comparator_type = "UTF8Type"
-                };
-            if (columnFamily.GCGraceSeconds.HasValue)
-                result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
-            if(columnFamily.Indexes != null)
-                result.Column_metadata = new List<ColumnDef>(columnFamily.Indexes.Select(definition => definition.ToCassandraColumnDef()));
+            {
+                Id = columnFamily.Id,
+                Name = columnFamily.Name,
+                Keyspace = keyspace,
+                Column_type = "Standard",
+                Comparator_type = DataType.UTF8Type.ToStringValue(),
+            };
             if (columnFamily.RowCacheSize.HasValue)
                 result.Row_cache_size = columnFamily.RowCacheSize.Value;
+            if (columnFamily.GCGraceSeconds.HasValue)
+                result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
+            if (columnFamily.Indexes != null)
+                result.Column_metadata = new List<ColumnDef>(columnFamily.Indexes.Select(definition => definition.ToCassandraColumnDef()));
+            if (columnFamily.KeyCacheSize.HasValue)
+                result.Key_cache_size = columnFamily.KeyCacheSize.Value;
+            if (columnFamily.ReadRepairChance.HasValue)
+                result.Read_repair_chance = columnFamily.ReadRepairChance.Value;
+            result.Compaction_strategy = columnFamily.CompactionStrategy.CompactionStrategyType.ToStringValue();
+            result.Compaction_strategy_options = columnFamily.CompactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();
             return result;
         }
 
@@ -44,13 +54,29 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 return null;
             var result = new ColumnFamily
                 {
-                    GCGraceSeconds = cfDef.Gc_grace_seconds,
-                    RowCacheSize = (int?)cfDef.Row_cache_size,
                     Name = cfDef.Name,
                     Id = cfDef.Id
                 };
+            if (cfDef.__isset.gc_grace_seconds)
+                result.GCGraceSeconds = cfDef.Gc_grace_seconds;
+            if (cfDef.__isset.row_cache_size)
+                result.RowCacheSize = cfDef.Row_cache_size;
+            if (cfDef.__isset.key_cache_size)
+                result.KeyCacheSize = cfDef.Key_cache_size;
+            if (cfDef.__isset.read_repair_chance)
+                result.ReadRepairChance = cfDef.Read_repair_chance;
             if (cfDef.Column_metadata != null)
                 result.Indexes = new List<IndexDefinition>(cfDef.Column_metadata.Select(def => def.FromCassandraColumnDef()));
+
+            var compactionStrategyType = cfDef.Compaction_strategy.FromStringValue<CompactionStrategyType>();
+            if(compactionStrategyType == CompactionStrategyType.Leveled)
+            {
+                var options = cfDef.Compaction_strategy_options.FromCassandraCompactionStrategyOptions();
+                result.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(options);
+            }
+            else
+                result.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
+
             return result;
         }
     }

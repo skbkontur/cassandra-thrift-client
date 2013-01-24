@@ -14,21 +14,21 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             base.SetUp();
             var cassandraClient = new CassandraClient(cassandraCluster);
-            cassandraClient.RemoveAllKeyspaces();
-            cassandraClient.AddKeyspace(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            //cassandraClient.RemoveAllKeyspaces();
+            cassandraClient.AddKeyspace(KeyspaceName, Constants.ColumnFamilyName);
         }
 
         [Test]
         public void TestEmpty()
         {
-            CollectionAssert.IsEmpty(cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName)
+            CollectionAssert.IsEmpty(cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName)
                                          .GetKeys());
         }
 
         [Test]
         public void TestOneKey()
         {
-            var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var key = Guid.NewGuid().ToString();
             connection.AddColumn(key, new Column
                 {
@@ -42,7 +42,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestManyKeys()
         {
-            var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var keys = new List<string>();
             for(int i = 0; i < 100; i++)
             {
@@ -61,7 +61,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestExclusiveStartKey()
         {
-            var connection = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var keys = new List<string>();
             for(var i = 0; i < 100; i++)
             {

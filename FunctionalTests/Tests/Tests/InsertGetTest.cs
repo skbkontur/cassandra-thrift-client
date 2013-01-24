@@ -9,19 +9,19 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestAddGet()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
         }
 
         [Test]
         public void TestDeleteAdd()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
-            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
             CheckNotFound("someRow", "someColumnName");
             Thread.Sleep(1);
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
         }
         
@@ -29,32 +29,32 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestDoubleAdd()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue2");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue2");
             Check("someRow", "someColumnName", "someColumnValue2");
         }
 
         [Test]
         public void TestAddDelete()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
-            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
+            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
             CheckNotFound("someRow", "someColumnName");
         }
 
         [Test]
         public void TestDoubleDelete()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
-            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
-            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
+            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
             CheckNotFound("someRow", "someColumnName");
         }
 
         [Test]
         public void TestDeleteNotExistingColumn()
         {
-            cassandraClient.DeleteColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
             CheckNotFound("someRow", "someColumnName");
         }
 
@@ -67,15 +67,15 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestSmallerTimestampInSecondAdd()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1", 10);
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue2", 9);
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1", 10);
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue2", 9);
             Check("someRow", "someColumnName", "someColumnValue1", 10);
         }
 
         [Test]
         public void TestTimeToLive()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", ttl : 1);
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", ttl : 1);
             Thread.Sleep(10000);
             CheckNotFound("row", "columnName");
         }
@@ -83,7 +83,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestTimeToLiveNotDependsOnTimestamp()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 30);
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "row", "columnName", "columnValue", 0, 30);
             Thread.Sleep(15000);
             Check("row", "columnName", "columnValue", 0, 30);
             Thread.Sleep(45000);

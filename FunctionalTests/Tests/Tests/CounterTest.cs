@@ -24,11 +24,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     cols[j] = ToColumn(columnName, columnValue, 100);
                 }
 
-                cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "row", cols);
+                cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "row", cols);
             }
             var finish1 = DateTime.Now;
             var start = DateTime.Now;
-            var count = cassandraClient.GetCount(Constants.KeyspaceName, Constants.ColumnFamilyName, "row");
+            var count = cassandraClient.GetCount(KeyspaceName, Constants.ColumnFamilyName, "row");
             var finish = DateTime.Now;
             Assert.AreEqual(rowsCount * columnsCount, count);
             Console.WriteLine("GetCount Completed at " + (finish - start).TotalMilliseconds + "ms");
@@ -38,9 +38,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestGetEmptyCount()
         {
-            var count = cassandraClient.GetCount(Constants.KeyspaceName, Constants.ColumnFamilyName, "roww");
+            var count = cassandraClient.GetCount(KeyspaceName, Constants.ColumnFamilyName, "roww");
             Assert.AreEqual(0, count);
-            count = cassandraClient.GetCount(Constants.KeyspaceName, Constants.ColumnFamilyName, "row");
+            count = cassandraClient.GetCount(KeyspaceName, Constants.ColumnFamilyName, "row");
             Assert.AreEqual(0, count);
         }
         [Test]
@@ -57,9 +57,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     cols[j] = ToColumn(columnName, columnValue, 100);
                 }
                 rows[i] = "row" + i;
-                cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "row" + i, cols);
+                cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "row" + i, cols);
             }
-            var counts = cassandraClient.GetCounts(Constants.KeyspaceName, Constants.ColumnFamilyName, rows);
+            var counts = cassandraClient.GetCounts(KeyspaceName, Constants.ColumnFamilyName, rows);
             for (int i = 0; i < 10; ++i )
             {
                 Assert.AreEqual(10 * i, counts["row" + i]);

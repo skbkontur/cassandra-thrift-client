@@ -81,6 +81,7 @@
     <Compile Include="ObjectComparer.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ToStringValueEnumExtensionsTest.cs" />
     <Compile Include="XmlHelpers.cs" />
   </ItemGroup>
   <ItemGroup>

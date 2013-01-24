@@ -13,7 +13,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test, Description("После удаления row его id остается до compaction'а")]
         public void RangeGhostsTest()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             conn.AddColumn("qxx", new Column
                 {
                     Name = "qzz",
@@ -42,7 +42,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test, Description("После удаления всех колонок из row сам row также удаляется после compaction'а")]
         public void RangeGhostsTestVersion2()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
 
             conn.AddColumn("qxx", new Column
                 {
@@ -72,7 +72,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void DeleteRowsSimpleTest()
         {
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var rowKeys = new List<string> {"1", "2", "3", "4", "5"};
             foreach(var rowKey in rowKeys)
             {
@@ -108,7 +108,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
             const int addTimestamp = 1;
             var keys = new List<string>();
-            var conn = cassandraCluster.RetrieveColumnFamilyConnection(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             for(int i = 0; i < rowCount; i++)
             {
                 var forAdd = new List<KeyValuePair<string, IEnumerable<Column>>>();

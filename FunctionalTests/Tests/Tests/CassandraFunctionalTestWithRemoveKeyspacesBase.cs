@@ -15,8 +15,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             base.SetUp();
             cassandraClient = new CassandraClient(cassandraCluster);
-            cassandraClient.RemoveAllKeyspaces();
-            cassandraClient.AddKeyspace(Constants.KeyspaceName, Constants.ColumnFamilyName);
+            cassandraClient.AddKeyspace(KeyspaceName, Constants.ColumnFamilyName);
         }
 
         protected static Column ToColumn(string columnName, string columnValue, long? timestamp = null, int? ttl = null)
@@ -43,8 +42,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected void Check(string key, string columnName, string columnValue, long? timestamp = null, int? ttl = null)
         {
             Column tryGetResult;
-            Assert.IsTrue(cassandraClient.TryGetColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, key, columnName, out tryGetResult));
-            Column result = cassandraClient.GetColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, key, columnName);
+            Assert.IsTrue(cassandraClient.TryGetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName, out tryGetResult));
+            Column result = cassandraClient.GetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName);
             tryGetResult.AssertEqualsTo(result);
             Assert.AreEqual(columnName, result.Name);
             Assert.AreEqual(columnValue, ToString(result.Value));
@@ -58,9 +57,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected void CheckNotFound(string key, string columnName)
         {
             RunMethodWithException<ColumnIsNotFoundException>(
-                () => cassandraClient.GetColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, key, columnName));
+                () => cassandraClient.GetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName));
             Column column;
-            Assert.IsFalse(cassandraClient.TryGetColumn(Constants.KeyspaceName, Constants.ColumnFamilyName, key, columnName, out column));
+            Assert.IsFalse(cassandraClient.TryGetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName, out column));
         }
 
         protected ICassandraClient cassandraClient;

@@ -10,8 +10,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestDeleteBatch()
         {
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};
-            cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
-            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
+            cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
+            cassandraClient.DeleteBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
             foreach(var column in columns)
                 CheckNotFound("someKey", column.Name);
         }
@@ -20,8 +20,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestDeleteBatchWithSmallTimestampIsNotDelete()
         {
             var columns = new[] { ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f") };
-            cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
-            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name), 123);
+            cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
+            cassandraClient.DeleteBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name), 123);
             foreach (var column in columns)
                 Check("someKey", column.Name, ToString(column.Value));
         }
@@ -30,9 +30,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestDoubleDeleteBatch()
         {
             var columns = new[] { ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f") };
-            cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
-            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
-            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
+            cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
+            cassandraClient.DeleteBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
+            cassandraClient.DeleteBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns.Select(column => column.Name));
             foreach (var column in columns)
                 CheckNotFound("someKey", column.Name);
         }
@@ -40,12 +40,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestPermanentDelete()
         {
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
-            cassandraClient.DeleteBatch(Constants.KeyspaceName, Constants.ColumnFamilyName,
+            cassandraClient.DeleteBatch(KeyspaceName, Constants.ColumnFamilyName,
                 "someRow", new[] { "someColumnName" }, long.MaxValue);
             CheckNotFound("someRow", "someColumnName");
-            cassandraClient.Add(Constants.KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
+            cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             CheckNotFound("someRow", "someColumnName");
         }
 
@@ -53,7 +53,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestAddBatch()
         {
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};
-            cassandraClient.AddBatch(Constants.KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
+            cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "someKey", columns);
             foreach(var column in columns)
                 Check("someKey", column.Name, ToString(column.Value));
         }
