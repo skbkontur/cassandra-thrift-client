@@ -6,7 +6,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class CounterTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class CounterTest : CassandraFunctionalTestBase
     {
         [Test]
         public void TestGetCount()

@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class DescribeVersionTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class DescribeVersionTest : CassandraFunctionalTestBase
     {
         [Test, Ignore("Тест, который можно запустить ручками, во время выполнения вырубить кассандру и убедиться, что DescribeVersion делает сетевой вызов")]
         public void TestDescribeVersion()

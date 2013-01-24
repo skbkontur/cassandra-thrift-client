@@ -8,7 +8,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class DeleteTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class DeleteTest : CassandraFunctionalTestBase
     {
         [Test, Description("После удаления row его id остается до compaction'а")]
         public void RangeGhostsTest()

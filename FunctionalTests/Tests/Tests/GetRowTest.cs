@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class GetRowTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class GetRowTest : CassandraFunctionalTestBase
     {
         [Test]
         public void TestGetFullRow()

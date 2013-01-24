@@ -8,7 +8,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class StressTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class StressTest : CassandraFunctionalTestBase
     {
         [Test, Ignore]
         public void TestStress()

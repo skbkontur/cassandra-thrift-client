@@ -6,7 +6,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class ConnectionTimeoutTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class ConnectionTimeoutTest : CassandraFunctionalTestBase
     {
         [Test]
         public void Test()

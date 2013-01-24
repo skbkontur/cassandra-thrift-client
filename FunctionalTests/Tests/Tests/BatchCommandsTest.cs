@@ -7,7 +7,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class BatchCommandsTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class BatchCommandsTest : CassandraFunctionalTestBase
     {
         [Test]
         public void TestDeleteBatch()

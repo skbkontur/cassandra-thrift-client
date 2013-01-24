@@ -11,7 +11,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class ReadWriteTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class ReadWriteTest : CassandraFunctionalTestBase
     {
         public override void SetUp()
         {

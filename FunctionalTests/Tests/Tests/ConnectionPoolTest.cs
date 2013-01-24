@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class ConnectionPoolTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class ConnectionPoolTest : CassandraFunctionalTestBase
     {
         [Test]
         public void TestSimple()

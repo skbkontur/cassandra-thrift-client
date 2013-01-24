@@ -4,7 +4,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public class IsRowExistTest : CassandraFunctionalTestWithRemoveKeyspacesBase
+    public class IsRowExistTest : CassandraFunctionalTestBase
     {
         [Test]
         public void SimpleTest()

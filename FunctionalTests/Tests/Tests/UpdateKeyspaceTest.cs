@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using Cassandra.Tests;
@@ -6,6 +7,7 @@ using Cassandra.Tests;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -14,25 +16,36 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestUpdateKeyspace()
         {
-            var beforeAddKeyspaceCount = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Length;
-            cassandraCluster.RetrieveClusterConnection().AddKeyspace(new Keyspace
+            var keyspaceName = Guid.NewGuid().ToString("N");
+            cassandraCluster.ActualizeKeyspaces(new[]{new KeyspaceScheme
                 {
-                    Name = KeyspaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                    ReplicationFactor = 1,
-                    ColumnFamilies = new Dictionary<string, ColumnFamily>
+                    Name = keyspaceName,
+                    Configuration = new KeyspaceConfiguration
                         {
-                            {"1", new ColumnFamily {Name = "1"}},
-                            {"2", new ColumnFamily {Name = "2"}},
-                            {"3", new ColumnFamily {Name = "3"}}
+                            ReplicationFactor = 1,
+                            ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
+                            ColumnFamilies = new[]
+                                {
+                                    new ColumnFamily
+                                        {
+                                            Name = "1"
+                                        },
+                                    new ColumnFamily
+                                        {
+                                            Name = "2"
+                                        }, 
+                                    new ColumnFamily
+                                        {
+                                            Name = "3"
+                                        }, 
+                                }
                         }
-                });
+                }});
 
             var keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
-            Assert.AreEqual(beforeAddKeyspaceCount + 1, keyspaces.Length);
             AssertKeyspacesEquals(new Keyspace
                 {
-                    Name = KeyspaceName,
+                    Name = keyspaceName,
                     ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
                     ReplicationFactor = 1,
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
@@ -41,22 +54,22 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                             {"2", new ColumnFamily {Name = "2"}},
                             {"3", new ColumnFamily {Name = "3"}}
                         }
-                }, keyspaces.Single(keyspace1 => keyspace1.Name == KeyspaceName));
+                }, keyspaces.Single(keyspace1 => keyspace1.Name == keyspaceName));
 
             cassandraCluster.RetrieveClusterConnection().UpdateKeyspace(new Keyspace
                 {
-                    Name = KeyspaceName,
+                    Name = keyspaceName,
                     ReplicaPlacementStrategy = "org.apache.cassandra.locator.NetworkTopologyStrategy",
                     ReplicationFactor = 3
                 });
 
-            var keyspace = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Single(keyspace1 => keyspace1.Name == KeyspaceName);
+            var keyspace = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Single(keyspace1 => keyspace1.Name == keyspaceName);
 
             //The replication factor is zero, because for NetworkTopologyStrategy this setting does not work and should be adjusted 
             //per datacenter
             AssertKeyspacesEquals(new Keyspace
                 {
-                    Name = KeyspaceName,
+                    Name = keyspaceName,
                     ReplicaPlacementStrategy = "org.apache.cassandra.locator.NetworkTopologyStrategy",
                     ReplicationFactor = 0,
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
