@@ -5,6 +5,7 @@ using System.Linq;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -13,9 +14,25 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public override void SetUp()
         {
             base.SetUp();
-            var cassandraClient = new CassandraClient(cassandraCluster);
-            //cassandraClient.RemoveAllKeyspaces();
-            cassandraClient.AddKeyspace(KeyspaceName, Constants.ColumnFamilyName);
+            cassandraCluster.ActualizeKeyspaces(new[]
+                {
+                    new KeyspaceScheme
+                        {
+                            Name = KeyspaceName,
+                            Configuration = new KeyspaceConfiguration
+                                {
+                                    ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
+                                    ReplicationFactor = 1,
+                                    ColumnFamilies = new[]
+                                        {
+                                            new ColumnFamily
+                                                {
+                                                    Name = Constants.ColumnFamilyName
+                                                }
+                                        }
+                                }
+                        }
+                });
         }
 
         [Test]

@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -13,60 +11,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public CassandraClient(ICassandraCluster cassandraCluster)
         {
             this.cassandraCluster = cassandraCluster;
-        }
-
-        public void RemoveAllKeyspaces()
-        {
-            //TODO хак из-за бага в кассандре.Убрать с версии 0.7.5
-            try
-            {
-                UnsafeRemoveKeyspaces();
-            }
-            catch(Exception)
-            {
-                UnsafeRemoveKeyspaces();
-            }
-        }
-
-        public void AddKeyspace(string keySpaceName, string columnFamilyName)
-        {
-            cassandraCluster.ActualizeKeyspaces(new[]
-                {
-                    new KeyspaceScheme
-                        {
-                            Name = keySpaceName,
-                            Configuration = new KeyspaceConfiguration
-                                {
-                                    ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
-                                    ReplicationFactor = 1,
-                                    ColumnFamilies = new[]
-                                        {
-                                            new ColumnFamily
-                                                {
-                                                    Name = columnFamilyName
-                                                }
-                                        }
-                                }
-                        }
-                }
-                );
-
-//            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-//            clusterConnection.AddKeyspace(new Keyspace
-//                {
-//                    ColumnFamilies = new Dictionary<string, ColumnFamily>
-//                        {
-//                            {
-//                                columnFamilyName, new ColumnFamily
-//                                    {
-//                                        Name = columnFamilyName
-//                                    }
-//                                }
-//                        },
-//                    Name = keySpaceName,
-//                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-//                    ReplicationFactor = 1
-//                });
         }
 
         public bool TryGetColumn(string keySpaceName, string columnFamilyName, string key, string columnName,
@@ -141,25 +85,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
             return columnFamilyConnection.GetCounts(keys);
-        }
-
-        public void CheckConnections()
-        {
-            cassandraCluster.CheckConnections();
-        }
-
-        private void UnsafeRemoveKeyspaces()
-        {
-            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            var result = clusterConnection.RetrieveKeyspaces();
-            foreach(var keyspace in result)
-                RemoveKeyspace(keyspace.Name);
-        }
-
-        private void RemoveKeyspace(string keyspaceName)
-        {
-            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            clusterConnection.RemoveKeyspace(keyspaceName);
         }
 
         private readonly ICassandraCluster cassandraCluster;
