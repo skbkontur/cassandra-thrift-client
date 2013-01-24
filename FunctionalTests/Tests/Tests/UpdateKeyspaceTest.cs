@@ -14,6 +14,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestUpdateKeyspace()
         {
+            var beforeAddKeyspaceCount = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Length;
             cassandraCluster.RetrieveClusterConnection().AddKeyspace(new Keyspace
                 {
                     Name = KeyspaceName,
@@ -28,7 +29,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 });
 
             var keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
-            Assert.AreEqual(1, keyspaces.Length);
+            Assert.AreEqual(beforeAddKeyspaceCount + 1, keyspaces.Length);
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = KeyspaceName,
@@ -40,7 +41,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                             {"2", new ColumnFamily {Name = "2"}},
                             {"3", new ColumnFamily {Name = "3"}}
                         }
-                }, keyspaces[0]);
+                }, keyspaces.Single(keyspace1 => keyspace1.Name == KeyspaceName));
 
             cassandraCluster.RetrieveClusterConnection().UpdateKeyspace(new Keyspace
                 {
