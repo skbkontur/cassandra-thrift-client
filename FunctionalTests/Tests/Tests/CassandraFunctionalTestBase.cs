@@ -7,11 +7,8 @@ using Cassandra.Tests;
 using GroboContainer.Core;
 using GroboContainer.Impl;
 
-using NUnit.Framework;
-
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.FunctionalTests.Logger;
 using SKBKontur.Cassandra.FunctionalTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
@@ -20,7 +17,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
     {
         public override void SetUp()
         {
-            TestNameHolder.TestName = TestContext.CurrentContext.Test.Name;
             base.SetUp();
             KeyspaceName = "TestKeyspace_" + Guid.NewGuid().ToString("N");
             var assemblies = new List<Assembly>(AssembliesLoader.Load()) {Assembly.GetExecutingAssembly()};

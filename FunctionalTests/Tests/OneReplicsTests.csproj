@@ -67,12 +67,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssembliesLoader.cs" />
-    <Compile Include="Logger\TestNameHolder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CassandraClusterSettings.cs" />
     <Compile Include="Tests\BatchCommandsTest.cs" />
-    <Compile Include="Tests\CassandraClient.cs" />
-    <Compile Include="Tests\CassandraClientExtensions.cs" />
     <Compile Include="Tests\CassandraFunctionalTestWithRemoveKeyspacesBase.cs" />
     <Compile Include="Tests\CassandraFunctionalTestBase.cs" />
     <Compile Include="Tests\ConnectionPoolTest.cs" />
@@ -83,7 +80,6 @@
     <Compile Include="Tests\DescribeVersionTest.cs" />
     <Compile Include="Tests\GetKeysTest.cs" />
     <Compile Include="Tests\GetRowTest.cs" />
-    <Compile Include="Tests\ICassandraClient.cs" />
     <Compile Include="Tests\IsRowExistTest.cs" />
     <Compile Include="Tests\MultiThreadStressTest.cs" />
     <Compile Include="Tests\ReadWriteTest.cs" />

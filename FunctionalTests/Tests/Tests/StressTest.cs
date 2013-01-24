@@ -36,8 +36,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             {
                 if(i % 1000 == 0)
                     Log("Writing " + i + " of " + columnValues.Length);
-                cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, key, columnNames[i],
-                                    columnValues[i]);
+                columnFamilyConnection.AddColumn(key, new Column
+                    {
+                        Name = columnNames[i],
+                        Value = columnValues[i]
+                   });
             }
             Log("Start reading...");
             for(int i = 0; i < columnValues.Length; i++)

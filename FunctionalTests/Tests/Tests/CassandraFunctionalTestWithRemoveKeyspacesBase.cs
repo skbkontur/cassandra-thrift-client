@@ -15,7 +15,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public override void SetUp()
         {
             base.SetUp();
-            cassandraClient = new CassandraClient(cassandraCluster);
             cassandraCluster.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
@@ -81,7 +80,5 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Column column;
             Assert.IsFalse(columnFamilyConnection.TryGetColumn(key, columnName, out column));
         }
-
-        protected ICassandraClient cassandraClient;
     }
 }
