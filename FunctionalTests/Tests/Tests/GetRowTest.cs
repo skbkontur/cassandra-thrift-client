@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 columns[i] = ToColumn(columnName, columnValue, 100);
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "row", columnName, columnValue, 100);
             }
-            Column[] actualColumns = cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, "row").ToArray();
+            Column[] actualColumns = columnFamilyConnection.GetRow("row", 10).ToArray();
             actualColumns.AssertEqualsTo(columns.OrderBy(x => x.Name).ToArray());
         }
 
@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 rows[i] = "row" + i;
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, rows[i], "columnName", "columnValue", 100);
             }
-            string[] actualRows = cassandraClient.GetKeys(KeyspaceName, Constants.ColumnFamilyName).ToArray();
+            string[] actualRows = columnFamilyConnection.GetKeys(10).ToArray();
             actualRows.OrderBy(x => x).ToArray().AssertEqualsTo(rows.OrderBy(x => x).ToArray());
         }
 
@@ -49,7 +49,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 columns[i] = ToColumn(columnName, columnValue, 100);
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "row", columnName, columnValue, 100);
             }
-            Column[] actualColumns = cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, "row", 4);
+            Column[] actualColumns = columnFamilyConnection.GetColumns("row", null, 4);
             actualColumns.AssertEqualsTo(columns);
         }
 
@@ -64,7 +64,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 columns[i] = ToColumn(columnName, columnValue, 100);
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "row", columnName, columnValue, 100);
             }
-            Column[] actualColumns = cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, "row", 3);
+            Column[] actualColumns = columnFamilyConnection.GetColumns("row", null, 3);
             Assert.AreEqual(3, actualColumns.Length);
             for(int i = 0; i < 3; i++)
                 actualColumns[i].AssertEqualsTo(columns[i]);
@@ -79,7 +79,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Column column = ToColumn(columnName, columnValue, timestamp);
             const string key = "row";
             cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, key, column.Name, column.Value, timestamp);
-            Column[] actualColumns = cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, key, 1, column.Name);
+            Column[] actualColumns = columnFamilyConnection.GetColumns(key, column.Name, 1);
             Assert.AreEqual(0, actualColumns.Length);
         }
 
@@ -88,7 +88,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             const string key = "a";
             cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, key, "b", new byte[] {3});
-            CollectionAssert.IsEmpty(cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, key, 100, "c"));
+            CollectionAssert.IsEmpty(columnFamilyConnection.GetColumns(key, "c", 100));
         }
 
         [Test]
@@ -103,7 +103,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 columns[i] = ToColumn(columnName, columnValue, 100);
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, key, columns[i].Name, columns[i].Value, 100);
             }
-            Column[] actualColumns = cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, key, 4, columns[0].Name);
+            Column[] actualColumns = columnFamilyConnection.GetColumns(key, columns[0].Name, 4);
             Assert.AreEqual(3, actualColumns.Length);
             for(int i = 0; i < 3; i++)
                 actualColumns[i].AssertEqualsTo(columns[i + 1]);
@@ -121,7 +121,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 columns[i] = ToColumn(columnName, columnValue, 100);
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, key, columns[i].Name, columns[i].Value, 100);
             }
-            Column[] actualColumns = cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, key, 4, "columnName");
+            Column[] actualColumns = columnFamilyConnection.GetColumns(key, "columnName", 4);
             Assert.AreEqual(4, actualColumns.Length);
             for(int i = 0; i < 4; i++)
                 actualColumns[i].AssertEqualsTo(columns[i]);
@@ -130,7 +130,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestGetRowEmpty()
         {
-            CollectionAssert.IsEmpty(cassandraClient.GetRow(KeyspaceName, Constants.ColumnFamilyName, "emptyRow", int.MaxValue));
+            CollectionAssert.IsEmpty(columnFamilyConnection.GetColumns("emptyRow", null, int.MaxValue));
         }
 
         [Test]

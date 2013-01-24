@@ -18,7 +18,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
             Check("someRow", "someColumnName", "someColumnValue");
-            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            columnFamilyConnection.DeleteBatch("someRow", new []{"someColumnName"});
             CheckNotFound("someRow", "someColumnName");
             Thread.Sleep(1);
             cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue");
@@ -38,7 +38,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestAddDelete()
         {
             cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
-            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            columnFamilyConnection.DeleteBatch("someRow", new []{"someColumnName"});
             CheckNotFound("someRow", "someColumnName");
         }
 
@@ -46,15 +46,15 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         public void TestDoubleDelete()
         {
             cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName", "someColumnValue1");
-            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
-            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            columnFamilyConnection.DeleteBatch("someRow", new []{"someColumnName"});
+            columnFamilyConnection.DeleteBatch("someRow", new []{"someColumnName"});
             CheckNotFound("someRow", "someColumnName");
         }
 
         [Test]
         public void TestDeleteNotExistingColumn()
         {
-            cassandraClient.DeleteColumn(KeyspaceName, Constants.ColumnFamilyName, "someRow", "someColumnName");
+            columnFamilyConnection.DeleteBatch("someRow", new[] { "someColumnName" });
             CheckNotFound("someRow", "someColumnName");
         }
 

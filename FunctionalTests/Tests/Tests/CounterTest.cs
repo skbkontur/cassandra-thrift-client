@@ -24,11 +24,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     cols[j] = ToColumn(columnName, columnValue, 100);
                 }
 
-                cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "row", cols);
+                columnFamilyConnection.AddBatch("row", cols);
             }
             var finish1 = DateTime.Now;
             var start = DateTime.Now;
-            var count = cassandraClient.GetCount(KeyspaceName, Constants.ColumnFamilyName, "row");
+            var count = columnFamilyConnection.GetCount("row");
             var finish = DateTime.Now;
             Assert.AreEqual(rowsCount * columnsCount, count);
             Console.WriteLine("GetCount Completed at " + (finish - start).TotalMilliseconds + "ms");
@@ -38,9 +38,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestGetEmptyCount()
         {
-            var count = cassandraClient.GetCount(KeyspaceName, Constants.ColumnFamilyName, "roww");
+            var count = columnFamilyConnection.GetCount("roww");
             Assert.AreEqual(0, count);
-            count = cassandraClient.GetCount(KeyspaceName, Constants.ColumnFamilyName, "row");
+            count = columnFamilyConnection.GetCount("row");
             Assert.AreEqual(0, count);
         }
         [Test]
@@ -57,9 +57,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     cols[j] = ToColumn(columnName, columnValue, 100);
                 }
                 rows[i] = "row" + i;
-                cassandraClient.AddBatch(KeyspaceName, Constants.ColumnFamilyName, "row" + i, cols);
+                columnFamilyConnection.AddBatch("row" + i, cols);
             }
-            var counts = cassandraClient.GetCounts(KeyspaceName, Constants.ColumnFamilyName, rows);
+            var counts = columnFamilyConnection.GetCounts(rows);
             for (int i = 0; i < 10; ++i )
             {
                 Assert.AreEqual(10 * i, counts["row" + i]);
