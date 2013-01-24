@@ -62,8 +62,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected void Check(string key, string columnName, string columnValue, long? timestamp = null, int? ttl = null)
         {
             Column tryGetResult;
-            Assert.IsTrue(cassandraClient.TryGetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName, out tryGetResult));
-            Column result = cassandraClient.GetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName);
+            Assert.IsTrue(columnFamilyConnection.TryGetColumn(key, columnName, out tryGetResult));
+            Column result = columnFamilyConnection.GetColumn(key, columnName);
             tryGetResult.AssertEqualsTo(result);
             Assert.AreEqual(columnName, result.Name);
             Assert.AreEqual(columnValue, ToString(result.Value));
@@ -77,9 +77,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected void CheckNotFound(string key, string columnName)
         {
             RunMethodWithException<ColumnIsNotFoundException>(
-                () => cassandraClient.GetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName));
+                () => columnFamilyConnection.GetColumn(key, columnName));
             Column column;
-            Assert.IsFalse(cassandraClient.TryGetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnName, out column));
+            Assert.IsFalse(columnFamilyConnection.TryGetColumn(key, columnName, out column));
         }
 
         protected ICassandraClient cassandraClient;

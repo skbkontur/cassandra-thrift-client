@@ -13,19 +13,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             this.cassandraCluster = cassandraCluster;
         }
 
-        public bool TryGetColumn(string keySpaceName, string columnFamilyName, string key, string columnName,
-                                 out Column result)
-        {
-            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
-            return columnFamilyConnection.TryGetColumn(key, columnName, out result);
-        }
-
-        public Column GetColumn(string keySpaceName, string columnFamilyName, string key, string columnName)
-        {
-            var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
-            return columnFamilyConnection.GetColumn(key, columnName);
-        }
-
         public void DeleteColumn(string keySpaceName, string columnFamilyName, string key, string columnName)
         {
             var columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);

@@ -106,7 +106,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     if(i % 1000 == 0)
                         Log(key, "Reading " + i + " of " + columnValues.Length);
                     Column column;
-                    Assert.IsTrue(cassandraClient.TryGetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnNames[i], out column));
+                    Assert.IsTrue(cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName)
+                        .TryGetColumn(key, columnNames[i], out column));
                 }
                 threadStatuses[threadIndex] = 1;
             }

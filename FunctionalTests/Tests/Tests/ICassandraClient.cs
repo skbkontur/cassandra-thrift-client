@@ -6,8 +6,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public interface ICassandraClient
     {
-        bool TryGetColumn(string keySpaceName, string columnFamilyName, string key, string columnName, out Column result);
-        Column GetColumn(string keySpaceName, string columnFamilyName, string key, string columnName);
         void DeleteColumn(string keySpaceName, string columnFamilyName, string key, string columnName);
 
         void Add(string keySpaceName, string columnFamilyName, string key, string columnName, byte[] columnValue,

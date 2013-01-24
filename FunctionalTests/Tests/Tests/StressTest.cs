@@ -34,10 +34,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Log("Start writing...");
             for(int i = 0; i < columnValues.Length; i++)
             {
-                if (i % 1000 == 0)
-                {
+                if(i % 1000 == 0)
                     Log("Writing " + i + " of " + columnValues.Length);
-                }
                 cassandraClient.Add(KeyspaceName, Constants.ColumnFamilyName, key, columnNames[i],
                                     columnValues[i]);
             }
@@ -47,7 +45,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 if(i % 1000 == 0)
                     Log("Reading " + i + " of " + columnValues.Length);
                 Column column;
-                Assert.IsTrue(cassandraClient.TryGetColumn(KeyspaceName, Constants.ColumnFamilyName, key, columnNames[i], out column));
+                Assert.IsTrue(cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName)
+                                  .TryGetColumn(key, columnNames[i], out column));
             }
         }
 
