@@ -69,9 +69,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
             finally
             {
-                var commandName = command.Name;
-                var commandContext = command.CommandContext;
-                var timeStatistics = timeStatisticsDictionary.GetOrAdd(commandName, x => new TimeStatistics(string.Format("Cassandra.{0}{1}", commandName, commandContext)));
+                var timeStatisticsTitle = string.Format("Cassandra.{0}{1}", command.Name, command.CommandContext);
+                var timeStatistics = timeStatisticsDictionary.GetOrAdd(timeStatisticsTitle, x => new TimeStatistics(timeStatisticsTitle));
                 timeStatistics.AddTime(stopwatch.ElapsedMilliseconds);
             }
         }
