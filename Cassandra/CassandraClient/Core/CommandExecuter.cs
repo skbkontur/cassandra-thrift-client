@@ -37,31 +37,33 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             clusterConnectionPool.CheckConnections();
         }
 
-        public void Execute(ICommand command)
+        public void Execute(Func<int, ICommand> createCommand)
         {
             var stopwatch = Stopwatch.StartNew();
+            var command = createCommand(0);
             logger.DebugFormat("Start executing {0} command.", command.Name);
             try
             {
-                for(int i = 0; i < settings.Attempts; ++i)
+                for (int i = 0; i < settings.Attempts; ++i)
                 {
-                    IPEndPoint[] endpoints = command.IsFierce ? new[] {settings.EndpointForFierceCommands} : endpointManager.GetEndPoints();
-                    foreach(var endpoint in endpoints)
+                    IPEndPoint[] endpoints = command.IsFierce ? new[] { settings.EndpointForFierceCommands } : endpointManager.GetEndPoints();
+                    foreach (var endpoint in endpoints)
                     {
                         try
                         {
-                            using(var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey {IpEndPoint = endpoint, Keyspace = command.CommandContext.KeyspaceName, IsFierce = command.IsFierce}))
+                            using (var thriftConnection = clusterConnectionPool.BorrowConnection(new ConnectionPoolKey { IpEndPoint = endpoint, Keyspace = command.CommandContext.KeyspaceName, IsFierce = command.IsFierce }))
                                 thriftConnection.ExecuteCommand(command);
                             endpointManager.Good(endpoint);
                             return;
                         }
-                        catch(Exception e)
+                        catch (Exception e)
                         {
                             string message = string.Format("An error occured while executing cassandra command '{0}'", command.Name);
                             var exception = CassandraExceptionTransformer.Transform(e, message);
                             logger.WarnFormat(string.Format("Attempt {0} on {1} failed.", i, endpoint), exception);
                             endpointManager.Bad(endpoint);
-                            if(i + 1 == settings.Attempts)
+                            command = createCommand(i + 1);
+                            if (i + 1 == settings.Attempts)
                                 throw new CassandraAttemptsException(settings.Attempts, exception);
                         }
                     }
@@ -72,7 +74,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 var timeStatisticsTitle = string.Format("Cassandra.{0}{1}", command.Name, command.CommandContext);
                 var timeStatistics = timeStatisticsDictionary.GetOrAdd(timeStatisticsTitle, x => new TimeStatistics(timeStatisticsTitle));
                 timeStatistics.AddTime(stopwatch.ElapsedMilliseconds);
-            }
+            }            
+        }
+
+        public void Execute(ICommand command)
+        {
+            Execute(attempt => command);
         }
 
         public void Dispose()

@@ -9,6 +9,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     public interface ICommandExecuter : IDisposable
     {
         void Execute(ICommand command);
+        void Execute(Func<int, ICommand> createCommand);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
         void CheckConnections();
     }

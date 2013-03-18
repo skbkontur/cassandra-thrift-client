@@ -97,6 +97,7 @@
     <Compile Include="Commands\System\Write\UpdateColumnFamilyCommand.cs" />
     <Compile Include="Commands\System\Write\UpdateKeyspaceCommand.cs" />
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
+    <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Scheme\KeyspaceConfiguration.cs" />
     <Compile Include="Scheme\KeyspaceScheme.cs" />
     <Compile Include="Scheme\SchemeActualizer.cs" />

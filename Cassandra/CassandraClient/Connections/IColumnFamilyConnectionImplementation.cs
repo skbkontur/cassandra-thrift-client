@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
@@ -11,6 +12,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key);
         void DeleteRow(byte[] key, long? timestamp);
         void AddColumn(byte[] key, Column column);
+        
+        void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair);
+
         Column GetColumn(byte[] key, byte[] columnName);
         bool TryGetColumn(byte[] key, byte[] columnName, out Column result);
         void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null);

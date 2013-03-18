@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -45,6 +46,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void AddColumn(string key, Column column)
         {
             implementation.AddColumn(StringHelpers.StringToBytes(key), column);
+        }
+
+        public void AddColumn(Func<int, KeyColumnPair<string>> createKeyColumnPair)
+        {
+            implementation.AddColumn(attempt => createKeyColumnPair(attempt).ConvertKey(StringHelpers.StringToBytes));
         }
 
         public Column GetColumn(string key, string columnName)

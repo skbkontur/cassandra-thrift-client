@@ -61,9 +61,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddColumn(byte[] key, Column column)
         {
-            if (!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
+            var command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[]>(key, column));
+            ExecuteCommand(command);
+        }
+
+        public void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair)
+        {
+            ExecuteCommand(attempt => CreateInsertCommand(attempt, createKeyColumnPair));
+        }
+
+        private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[]>> createKeyColumnPair)
+        {
+            var keyColumnPair = createKeyColumnPair(attempt);
+            CheckColumnHasTimestampValue(keyColumnPair.Column);
+            return new InsertCommand(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
+        }
+
+        private void CheckColumnHasTimestampValue(Column column)
+        {
+            if(!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
                 throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
-            ExecuteCommand(new InsertCommand(keyspaceName, columnFamilyName, key, writeConsistencyLevel, column));
         }
 
         public Column GetColumn(byte[] key, byte[] columnName)
@@ -229,6 +246,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private void ExecuteCommand(KeyspaceColumnFamilyDependantCommandBase commandBase)
         {
             commandExecuter.Execute(commandBase);
+        }
+
+        private void ExecuteCommand(Func<int, KeyspaceColumnFamilyDependantCommandBase> createCommand)
+        {
+            commandExecuter.Execute(createCommand);
         }
 
         private readonly ICommandExecuter commandExecuter;
