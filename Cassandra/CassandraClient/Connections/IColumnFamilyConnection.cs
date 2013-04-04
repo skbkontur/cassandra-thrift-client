@@ -18,6 +18,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         bool TryGetColumn(string key, string columnName, out Column result);
         void DeleteBatch(string key, IEnumerable<string> columnNames, long? timestamp = null);
         void AddBatch(string key, IEnumerable<Column> columns);
+        void AddBatch(Func<int, KeyColumnsPair<string>> createKeyColumnsPair);
         void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data);
         void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data, long? timestamp = null);
         List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count);

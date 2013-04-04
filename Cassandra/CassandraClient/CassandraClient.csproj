@@ -53,6 +53,7 @@
     <Compile Include="Abstractions\CompactionStrategy.cs" />
     <Compile Include="Abstractions\CompactionStrategyOptions.cs" />
     <Compile Include="Abstractions\CompactionStrategyType.cs" />
+    <Compile Include="Abstractions\KeyColumnsPair.cs" />
     <Compile Include="Abstractions\StringValueAttribute.cs" />
     <Compile Include="Abstractions\ToStringValueEnumExtensions.cs" />
     <Compile Include="Abstractions\Column.cs" />

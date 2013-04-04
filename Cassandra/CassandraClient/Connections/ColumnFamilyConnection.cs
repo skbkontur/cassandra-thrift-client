@@ -79,6 +79,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             implementation.AddBatch(StringHelpers.StringToBytes(key), columns);
         }
 
+        public void AddBatch(Func<int, KeyColumnsPair<string>> createKeyColumnsPair)
+        {
+            implementation.AddBatch(attempt => createKeyColumnsPair(attempt).ConvertKey(StringHelpers.StringToBytes));
+        }
+
         public void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data)
         {
             var keyToColumns = new Dictionary<string, List<Column>>();

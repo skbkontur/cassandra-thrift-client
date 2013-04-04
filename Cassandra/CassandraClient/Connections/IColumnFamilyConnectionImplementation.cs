@@ -14,6 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         void AddColumn(byte[] key, Column column);
         
         void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair);
+        void AddBatch(Func<int, KeyColumnsPair<byte[]>> createKeyColumnsPair);
 
         Column GetColumn(byte[] key, byte[] columnName);
         bool TryGetColumn(byte[] key, byte[] columnName, out Column result);

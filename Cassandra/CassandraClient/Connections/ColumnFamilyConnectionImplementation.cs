@@ -36,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public bool IsRowExist(byte[] key)
         {
-            var keys = GetKeys(key, 1);
+            List<byte[]> keys = GetKeys(key, 1);
             return keys.Count == 1 && ByteArrayEqualityComparer.SimpleComparer.Equals(keys[0], key);
         }
 
@@ -61,26 +61,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddColumn(byte[] key, Column column)
         {
-            var command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[]>(key, column));
+            KeyspaceColumnFamilyDependantCommandBase command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[]>(key, column));
             ExecuteCommand(command);
         }
 
         public void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair)
         {
             ExecuteCommand(attempt => CreateInsertCommand(attempt, createKeyColumnPair));
-        }
-
-        private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[]>> createKeyColumnPair)
-        {
-            var keyColumnPair = createKeyColumnPair(attempt);
-            CheckColumnHasTimestampValue(keyColumnPair.Column);
-            return new InsertCommand(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
-        }
-
-        private void CheckColumnHasTimestampValue(Column column)
-        {
-            if(!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
-                throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
         }
 
         public Column GetColumn(byte[] key, byte[] columnName)
@@ -104,8 +91,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddBatch(byte[] key, IEnumerable<Column> columns)
         {
-            var mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
+            List<IMutation> mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
             ExecuteMutations(key, mutationsList);
+        }
+
+        public void AddBatch(Func<int, KeyColumnsPair<byte[]>> createKeyColumnsPair)
+        {
+            ExecuteMutations(attempt =>
+                {
+                    KeyColumnsPair<byte[]> pair = createKeyColumnsPair(attempt);
+                    return new KeyValuePair<byte[], List<IMutation>>(
+                        pair.Key,
+                        ToMutationsList(pair.Columns, cassandraClusterSettings.AllowNullTimestamp));
+                });
         }
 
         public void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null)
@@ -198,10 +196,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
+        private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[]>> createKeyColumnPair)
+        {
+            KeyColumnPair<byte[]> keyColumnPair = createKeyColumnPair(attempt);
+            CheckColumnHasTimestampValue(keyColumnPair.Column);
+            return new InsertCommand(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
+        }
+
+        private void CheckColumnHasTimestampValue(Column column)
+        {
+            if(!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
+                throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
+        }
+
         private static List<IMutation> ToMutationsList(IEnumerable<Column> columns, bool allowNullTimestamp)
         {
             var result = new List<IMutation>();
-            foreach(var column in columns)
+            foreach(Column column in columns)
             {
                 if(!allowNullTimestamp && !column.Timestamp.HasValue)
                     throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
@@ -230,9 +241,29 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(batchMutateCommand);
         }
 
+        private void ExecuteMutations(Func<int, KeyValuePair<byte[], List<IMutation>>> createKeyMutationsListPair)
+        {
+            ExecuteCommand(attempt =>
+                {
+                    KeyValuePair<byte[], List<IMutation>> keyMutationsListPair = createKeyMutationsListPair(attempt);
+
+                    var columnFamilyMutations = new Dictionary<byte[], List<IMutation>>
+                        {
+                            {keyMutationsListPair.Key, keyMutationsListPair.Value}
+                        };
+
+                    var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
+                        {
+                            {columnFamilyName, columnFamilyMutations}
+                        };
+
+                    return new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);
+                });
+        }
+
         private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IMutation>>> mutationsList)
         {
-            var dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
+            Dictionary<byte[], List<IMutation>> dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
             var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
                 {
                     {columnFamilyName, dict}
