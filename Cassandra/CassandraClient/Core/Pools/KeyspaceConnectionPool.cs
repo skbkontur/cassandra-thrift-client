@@ -25,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         {
             IPooledThriftConnection result;
             ConnectionType connectionType;
-            if(!freeConnections.TryDequeue(out result))
+            if(!freeConnections.TryPop(out result))
             {
                 result = CreateConnection();
                 if(!result.IsAlive || !result.Ping())
@@ -53,7 +53,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             IPooledThriftConnection res;
             if(!busyConnections.TryRemove(connection.Id, out res))
                 throw new FailedReleaseException(connection);
-            freeConnections.Enqueue(connection);
+            freeConnections.Push(connection);
         }
 
         public KeyspaceConnectionPoolKnowledge GetKnowledge()
@@ -90,7 +90,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         private readonly IPEndPoint endPoint;
         private readonly string keyspaceName;
         private readonly bool isFierce;
-        private readonly ConcurrentQueue<IPooledThriftConnection> freeConnections = new ConcurrentQueue<IPooledThriftConnection>();
+        private readonly ConcurrentStack<IPooledThriftConnection> freeConnections = new ConcurrentStack<IPooledThriftConnection>();
         private readonly ConcurrentDictionary<Guid, IPooledThriftConnection> busyConnections = new ConcurrentDictionary<Guid, IPooledThriftConnection>();
         private readonly ILog logger = LogManager.GetLogger(typeof(KeyspaceConnectionPool));
     }
