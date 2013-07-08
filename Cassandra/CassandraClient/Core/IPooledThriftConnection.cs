@@ -7,7 +7,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     public interface IPooledThriftConnection : IDisposable
     {
         Guid Id { get; }
-        bool IsAlive { get; set; }
+        bool IsAlive { get; }
         void ExecuteCommand(ICommand command);
         bool Ping();
         void Kill();

@@ -42,7 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         public Guid Id { get; private set; }
-        public bool IsAlive { get { return thriftConnection.IsAlive; } set { thriftConnection.IsAlive = value; } }
+        public bool IsAlive { get { return thriftConnection.IsAlive; } }
 
         public override string ToString()
         {
