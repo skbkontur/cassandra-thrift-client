@@ -1,0 +1,13 @@
+bin
+obj
+Debug
+debug
+[Dd]ebug
+*.suo
+desktop.ini
+/Assemblies/Cassandra/Server/bin/db
+/Assemblies/Cassandra/log
+*.user
+_ReSharper.*
+/Assemblies/Cassandra.CassandraClient.*
+/Assemblies/Cassandra.Tests.*
