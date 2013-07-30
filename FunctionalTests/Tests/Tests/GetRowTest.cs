@@ -95,6 +95,76 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         }
 
         [Test]
+        public void TestGetRowExclusiveFirstColumnWithReversed()
+        {
+            var columns = new Column[4];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                string columnName = "columnName" + i;
+                string columnValue = "columnValue" + i;
+                columns[i] = ToColumn(columnName, columnValue, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            Column[] actualColumns = columnFamilyConnection.GetColumns("row", "columnName3", 2, true);
+            Assert.AreEqual(2, actualColumns.Length);
+            for (int i = 0; i < 2; i++)
+                actualColumns[i].AssertEqualsTo(columns[2 - i]);
+        }
+
+        [Test]
+        public void TestGetColumnsFormSlice()
+        {
+            var columns = new Column[10];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                string columnName = "columnName" + i;
+                string columnValue = "columnValue" + i;
+                columns[i] = ToColumn(columnName, columnValue, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            Column[] actualColumns = columnFamilyConnection.GetColumns("row", "columnName3", "columnName8", 3);
+            Assert.AreEqual(3, actualColumns.Length);
+            for (int i = 0; i < 3; i++)
+                actualColumns[i].AssertEqualsTo(columns[i + 3]);
+        }
+
+        [Test]
+        public void TestGetColumnsFormSliceWithNoExistenceEndColumn()
+        {
+            var columns = new Column[6];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                string columnName = "columnName" + i;
+                string columnValue = "columnValue" + i;
+                columns[i] = ToColumn(columnName, columnValue, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            Column[] actualColumns = columnFamilyConnection.GetColumns("row", "columnName3", "columnName8", 50);
+            Assert.AreEqual(3, actualColumns.Length);
+            for (int i = 0; i < 3; i++)
+                actualColumns[i].AssertEqualsTo(columns[i + 3]);
+        }
+
+        [Test]
+        public void TestGetColumnsFormSliceReversed()
+        {
+            var columns = new Column[10];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                string columnName = "columnName" + i;
+                string columnValue = "columnValue" + i;
+                columns[i] = ToColumn(columnName, columnValue, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            Column[] actualColumns = columnFamilyConnection.GetColumns("row", "columnName8", "columnName3", 3, true);
+            Assert.AreEqual(3, actualColumns.Length);
+            for (int i = 0; i < 3; i++)
+            {
+                actualColumns[i].AssertEqualsTo(columns[8 - i]);
+            }
+        }
+
+        [Test]
         public void TestGetRowFirstColumnIsBig()
         {
             const string key = "a";

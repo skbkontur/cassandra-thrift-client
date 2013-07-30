@@ -119,12 +119,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(key, mutationsList);
         }
 
-        public Column[] GetRow(byte[] key, byte[] startColumnName, int count)
+        public Column[] GetRow(byte[] key, byte[] startColumnName, int count, bool reversed)
+        {
+            return GetRow(key, startColumnName, null, count, reversed);
+        }
+
+        public Column[] GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed)
         {
             var aquilesSlicePredicate = new SlicePredicate(new SliceRange
                 {
                     Count = count,
-                    StartColumn = startColumnName
+                    StartColumn = startColumnName,
+                    EndColumn = endColumnName,
+                    Reversed = reversed
                 });
             var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
             ExecuteCommand(getSliceCommand);

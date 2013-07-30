@@ -25,7 +25,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count);
         List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, IndexExpression[] conditions, List<byte[]> columns);
         void Truncate();
-        Column[] GetRow(byte[] key, byte[] startColumnName, int count);
+        Column[] GetRow(byte[] key, byte[] startColumnName, int count, bool reversed);
+        Column[] GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed);
         List<byte[]> GetKeys(byte[] startKey, int count);
     }
 }

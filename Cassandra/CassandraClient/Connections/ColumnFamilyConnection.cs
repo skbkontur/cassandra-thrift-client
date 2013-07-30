@@ -105,21 +105,32 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public Column[] GetColumns(string key, string exclusiveStartColumnName, int count)
         {
-            if(count == int.MaxValue) count--;
-            if(count <= 0) return new Column[0];
+            return GetColumns(key, exclusiveStartColumnName, count, false);
+        }
+
+        public Column[] GetColumns(string key, string exclusiveStartColumnName, int count, bool reversed)
+        {
+            if (count == int.MaxValue) count--;
+            if (count <= 0) return new Column[0];
             Column[] result = implementation.GetRow(StringHelpers.StringToBytes(key), StringHelpers.StringToBytes(exclusiveStartColumnName),
-                                                    count + 1);
-            if(result.Length == 0)
+                                                    count + 1, reversed);
+            if (result.Length == 0)
                 return result;
-            if(result[0].Name == exclusiveStartColumnName)
+            if (result[0].Name == exclusiveStartColumnName)
                 result = result.Skip(1).ToArray();
-            if(result.Length > count)
+            if (result.Length > count)
             {
                 List<Column> list = result.ToList();
                 list.RemoveAt(result.Length - 1);
                 result = list.ToArray();
             }
             return result;
+        }
+
+        public Column[] GetColumns(string key, string startColumnName, string endColumnName, int count, bool reversed = false)
+        {
+            return implementation.GetRow(StringHelpers.StringToBytes(key), StringHelpers.StringToBytes(startColumnName),
+                                         StringHelpers.StringToBytes(endColumnName), count, reversed);
         }
 
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
