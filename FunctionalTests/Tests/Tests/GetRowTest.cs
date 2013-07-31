@@ -109,6 +109,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Assert.AreEqual(2, actualColumns.Length);
             for (int i = 0; i < 2; i++)
                 actualColumns[i].AssertEqualsTo(columns[2 - i]);
+
+            actualColumns = columnFamilyConnection.GetColumns("row", "columnName3", 999, true);
+            Assert.AreEqual(3, actualColumns.Length);
+            for (int i = 0; i < 3; i++)
+                actualColumns[i].AssertEqualsTo(columns[2 - i]);
         }
 
         [Test]
@@ -125,6 +130,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Column[] actualColumns = columnFamilyConnection.GetColumns("row", "columnName3", "columnName8", 3);
             Assert.AreEqual(3, actualColumns.Length);
             for (int i = 0; i < 3; i++)
+                actualColumns[i].AssertEqualsTo(columns[i + 3]);
+
+            actualColumns = columnFamilyConnection.GetColumns("row", "columnName3", "columnName8", 999);
+            Assert.AreEqual(6, actualColumns.Length);
+            for (int i = 0; i < 6; i++)
                 actualColumns[i].AssertEqualsTo(columns[i + 3]);
         }
 
