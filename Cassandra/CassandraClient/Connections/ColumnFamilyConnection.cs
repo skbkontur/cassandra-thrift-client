@@ -170,6 +170,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return res.ToDictionary(x => StringHelpers.BytesToString(x.Key), x => x.Value);
         }
 
+        [Obsolete("Это устаревший метод. Надо пользоваться методом GetRowsExclusive")]
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)
         {
             return
@@ -177,6 +178,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                        StringHelpers.StringToBytes(startColumnName), count).
                     Select(row => new KeyValuePair<string, Column[]>(StringHelpers.BytesToString(row.Key), row.Value)).
                     ToList();
+        }
+
+        public List<KeyValuePair<string, Column[]>> GetRowsExclusive(IEnumerable<string> keys, string exclusiveStartColumnName, int count)
+        {
+            var rows = implementation.GetRows(keys.Select(StringHelpers.StringToBytes), StringHelpers.StringToBytes(exclusiveStartColumnName), count + 1);
+            var result = rows.Select(row =>
+                {
+                    var columns = row.Value;
+                    if(columns != null && columns.Length > 0)
+                    {
+                        if(columns[0].Name == exclusiveStartColumnName)
+                            columns = columns.Skip(1).ToArray();
+                        if (columns.Length > count)
+                            columns = columns.Skip(1).ToArray();
+                    }
+                    return new KeyValuePair<string, Column[]>(StringHelpers.BytesToString(row.Key), columns);
+                }).ToList();
+            return result;
         }
 
         public string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value)
