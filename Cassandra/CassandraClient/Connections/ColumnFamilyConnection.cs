@@ -191,7 +191,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                         if(columns[0].Name == exclusiveStartColumnName)
                             columns = columns.Skip(1).ToArray();
                         if (columns.Length > count)
-                            columns = columns.Skip(1).ToArray();
+                            columns = columns.Take(count).ToArray();
                     }
                     return new KeyValuePair<string, Column[]>(StringHelpers.BytesToString(row.Key), columns);
                 }).ToList();
