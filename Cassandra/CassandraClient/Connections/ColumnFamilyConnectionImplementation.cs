@@ -138,6 +138,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return getSliceCommand.Output.ToArray();
         }
 
+        public Column[] GetColumns(byte[] key, List<byte[]> columnNames)
+        {
+            var slicePredicate = new SlicePredicate(columnNames);
+            var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, slicePredicate);
+            ExecuteCommand(getSliceCommand);
+            return getSliceCommand.Output.ToArray();
+        }
+
         public List<byte[]> GetKeys(byte[] startKey, int count)
         {
             var keyRange = new KeyRange {StartKey = startKey ?? new byte[0], EndKey = new byte[0], Count = count};

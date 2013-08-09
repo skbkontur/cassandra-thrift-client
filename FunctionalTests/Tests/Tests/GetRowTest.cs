@@ -175,6 +175,50 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         }
 
         [Test]
+        public void TestGetColumnsByNames()
+        {
+            var columns = new Column[10];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                columns[i] = ToColumn("columnName" + i, "columnValue" + i, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            var actualColumns = columnFamilyConnection.GetColumns("row", new []{ "columnName5", "columnName3"});
+            Assert.AreEqual(2, actualColumns.Length);
+            
+            actualColumns[0].AssertEqualsTo(columns[3]);
+            actualColumns[1].AssertEqualsTo(columns[5]);
+        }
+
+        [Test]
+        public void TestGetColumnsByNamesWhenOneColumnNameIsNotExists()
+        {
+            var columns = new Column[10];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                columns[i] = ToColumn("columnName" + i, "columnValue" + i, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            var actualColumns = columnFamilyConnection.GetColumns("row", new[] { "columnName5", "columnName11" });
+            Assert.AreEqual(1, actualColumns.Length);
+
+            actualColumns[0].AssertEqualsTo(columns[5]);
+        }
+
+        [Test]
+        public void TestGetColumnsByNamesWhenNoElements()
+        {
+            var columns = new Column[10];
+            for (int i = 0; i < columns.Length; i++)
+            {
+                columns[i] = ToColumn("columnName" + i, "columnValue" + i, 100);
+                columnFamilyConnection.AddColumn("row", columns[i]);
+            }
+            var actualColumns = columnFamilyConnection.GetColumns("row", null);
+            Assert.AreEqual(0, actualColumns.Length);
+        }
+
+        [Test]
         public void TestGetRowFirstColumnIsBig()
         {
             const string key = "a";

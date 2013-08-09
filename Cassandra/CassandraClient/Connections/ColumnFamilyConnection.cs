@@ -133,6 +133,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                          StringHelpers.StringToBytes(endColumnName), count, reversed);
         }
 
+        public Column[] GetColumns(string key, string[] columnNames)
+        {
+            if (columnNames == null || columnNames.Length == int.MaxValue || columnNames.Length == 0)
+            {
+                return new Column[0];
+            }
+            var result = implementation.GetColumns(StringHelpers.StringToBytes(key), columnNames.Select(StringHelpers.StringToBytes).ToList());
+            return result;
+        }
+
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
         {
             return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetColumns);

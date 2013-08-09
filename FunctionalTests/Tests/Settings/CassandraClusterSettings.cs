@@ -10,7 +10,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Settings
     {
         public IPEndPoint[] Endpoints { get { return new[]
             {
-                new IPEndPoint(new IPAddress(new byte[]{127, 0, 0, 1}), 9898)
+                new IPEndPoint(new IPAddress(new byte[]{127, 0, 0, 1}), 9160)
                 /*new IPEndPoint(new IPAddress(new byte[] {192, 168, 89, 157}), 9898),
                 new IPEndPoint(new IPAddress(new byte[] {192, 168, 88, 155}), 9898),
                 new IPEndPoint(new IPAddress(new byte[] {192, 168, 89, 212}), 9898),
