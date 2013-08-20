@@ -14,9 +14,6 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 
-
-@REM automatic JAVA_HOME discover, thanks to http://chriskopec.com/blog/2009/jun/15/automatic-discovery-java_home-batch-file/
-
 FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtime Environment" /v CurrentVersion') DO set CurVer=%%B
 FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtime Environment\%CurVer%" /v JavaHome') DO set JAVA_HOME=%%B
 
@@ -31,8 +28,8 @@ pushd %~dp0..
 if NOT DEFINED CASSANDRA_HOME set CASSANDRA_HOME=%CD%
 popd
 
-if NOT DEFINED CASSANDRA_MAIN set CASSANDRA_MAIN=org.apache.cassandra.thrift.CassandraDaemon
-if NOT DEFINED JAVA_HOME goto err
+if NOT DEFINED CASSANDRA_MAIN set CASSANDRA_MAIN=org.apache.cassandra.service.CassandraDaemon
+if NOT DEFINED JAVA_HOME goto :err
 
 REM ***** JAVA options *****
 set JAVA_OPTS=-ea^
@@ -47,7 +44,7 @@ set JAVA_OPTS=-ea^
  -XX:MaxTenuringThreshold=1^
  -XX:CMSInitiatingOccupancyFraction=75^
  -XX:+UseCMSInitiatingOccupancyOnly^
- -Dcom.sun.management.jmxremote.port=8190^
+ -Dcom.sun.management.jmxremote.port=7199^
  -Dcom.sun.management.jmxremote.ssl=false^
  -Dcom.sun.management.jmxremote.authenticate=false^
  -Dlog4j.configuration=log4j-server.properties^

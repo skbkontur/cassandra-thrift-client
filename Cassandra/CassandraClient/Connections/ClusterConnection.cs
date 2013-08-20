@@ -28,7 +28,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
             return retrieveKeyspacesCommand.Keyspaces
-                .Where(keyspace => !keyspace.Name.Equals("system", StringComparison.OrdinalIgnoreCase))
+                .Where(keyspace => !IsSystemKeyspace(keyspace.Name))
                 .ToList();
         }
 
@@ -86,6 +86,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", agreeds.Key, string.Join(",", agreeds.Value)));
             logger.Info(stringBuilder.ToString());
         }
+
+        private bool IsSystemKeyspace(string keyspaceName)
+        {
+            return systemKeyspaceNames.Any(s => s.Equals(keyspaceName, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private readonly string[] systemKeyspaceNames = new[] {"system", "system_auth", "system_traces"};
 
         private readonly ICommandExecuter commandExecuter;
 
