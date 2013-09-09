@@ -53,7 +53,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new AddKeyspaceCommand(keyspace));
+            var addKeyspaceCommand = new AddKeyspaceCommand(keyspace);
+            commandExecuter.Execute(addKeyspaceCommand);
+            logger.InfoFormat("Keyspace adding result: {0}", addKeyspaceCommand.Output);
             WaitUntilAgreementIsReached();
         }
 
