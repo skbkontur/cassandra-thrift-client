@@ -10,6 +10,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         bool IsRowExist(string key);
         void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000);
         void DeleteRow(string key, long? timestamp = null);
+        void DeleteColumn(string key, string columnName, long? timestamp = null);
         void AddColumn(string key, Column column);
 
         void AddColumn(Func<int, KeyColumnPair<string>> createKeyColumnPair);
