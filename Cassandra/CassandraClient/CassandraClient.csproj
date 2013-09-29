@@ -37,9 +37,6 @@
     <Reference Include="Apache.Cassandra.1210">
       <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.1210.dll</HintPath>
     </Reference>
-    <Reference Include="GroboSerializer">
-      <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
