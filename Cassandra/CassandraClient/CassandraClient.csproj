@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
     <AssemblyName>Cassandra.CassandraClient</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -34,8 +34,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.128">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.128.dll</HintPath>
+    <Reference Include="Apache.Cassandra.1210">
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.1210.dll</HintPath>
     </Reference>
     <Reference Include="GroboSerializer">
       <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
@@ -49,7 +49,8 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thrift">
+    <Reference Include="Thrift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
