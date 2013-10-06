@@ -21,6 +21,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
     internal static class ColumnFamilyExtensions
     {
+        private static string ToCassandraCachingValue(this ColumnFamily columnFamily)
+        {
+            if(columnFamily.RowCacheSize > 0 && columnFamily.KeyCacheSize > 0)
+                return "ALL";
+            if(columnFamily.RowCacheSize == 0 && columnFamily.KeyCacheSize > 0)
+                return "KEYS_ONLY";
+            if(columnFamily.RowCacheSize > 0 && columnFamily.KeyCacheSize == 0)
+                return "ROWS_ONLY";
+            if(columnFamily.RowCacheSize == 0 && columnFamily.KeyCacheSize == 0)
+                return "NONE";
+            return "NONE";
+        }
+
         public static CfDef ToCassandraCfDef(this ColumnFamily columnFamily, string keyspace)
         {
             if (columnFamily == null)
@@ -32,6 +45,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 Keyspace = keyspace,
                 Column_type = "Standard",
                 Comparator_type = DataType.UTF8Type.ToStringValue(),
+                Caching = columnFamily.ToCassandraCachingValue()
             };
             if (columnFamily.RowCacheSize.HasValue)
                 result.Row_cache_size = columnFamily.RowCacheSize.Value;
