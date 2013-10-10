@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using Thrift.Protocol;
 using Thrift.Transport;
@@ -16,11 +17,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
             isDisposed = false;
+            isAlive = true;
             this.ipEndPoint = ipEndPoint;
             this.keyspaceName = keyspaceName;
-            string address = ipEndPoint.Address.ToString();
-            int port = ipEndPoint.Port;
-            TSocket tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
+            var address = ipEndPoint.Address.ToString();
+            var port = ipEndPoint.Port;
+            var tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
             socket = tsocket.TcpClient.Client;
             socket.NoDelay = true;
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
@@ -43,6 +45,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             lock(lockObject)
             {
+                if(!isAlive)
+                {
+                    var e = new DeadConnectionException();
+                    logger.Error(string.Format("Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
+                    throw e;
+                }
                 try
                 {
                     command.Execute(cassandraClient);
@@ -50,16 +58,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 catch(Exception e)
                 {
                     logger.Error(string.Format("Команда завершилась неудачей. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
+                    isAlive = false;
                     throw;
                 }
             }
         }
 
-        public bool Ping()
+        public override string ToString()
+        {
+            return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", ipEndPoint, keyspaceName);
+        }
+
+        public DateTime CreationDateTime { get; private set; }
+
+        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen() && Ping(); } }
+
+        private bool Ping()
         {
             lock(lockObject)
             {
-                if(bad)
+                if(!isAlive)
                     return false;
                 if(lastSuccessPingDateTime.HasValue && DateTime.UtcNow - lastSuccessPingDateTime.Value < TimeSpan.FromMinutes(1))
                     return true;
@@ -71,21 +89,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 catch(Exception e)
                 {
                     logger.Error("Error while ping", e);
-                    bad = true;
+                    isAlive = false;
                     return false;
                 }
                 return true;
             }
         }
-
-        public override string ToString()
-        {
-            return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", ipEndPoint, keyspaceName);
-        }
-
-        public DateTime CreationDateTime { get; private set; }
-
-        public bool IsAlive { get { return CassandraTransportIsOpen(); } }
 
         private bool CassandraTransportIsOpen()
         {
@@ -122,7 +131,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         private DateTime? lastSuccessPingDateTime;
-        private bool bad;
+        private bool isAlive;
 
         private readonly string keyspaceName;
         private readonly IPEndPoint ipEndPoint;

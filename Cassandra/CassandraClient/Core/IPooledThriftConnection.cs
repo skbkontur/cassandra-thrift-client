@@ -9,7 +9,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         Guid Id { get; }
         bool IsAlive { get; }
         void ExecuteCommand(ICommand command);
-        bool Ping();
         void Kill();
     }
 }
