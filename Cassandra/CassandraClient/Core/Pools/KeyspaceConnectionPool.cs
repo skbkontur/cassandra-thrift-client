@@ -28,7 +28,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             if(!freeConnections.TryPop(out result))
             {
                 result = CreateConnection();
-                if(!result.IsAlive || !result.Ping())
+                if(!result.IsAlive)
                 {
                     thriftConnection = null;
                     return ConnectionType.Undefined;
@@ -37,7 +37,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             }
             else
             {
-                if (!result.IsAlive || !result.Ping())
+                if(!result.IsAlive)
                     return TryBorrowConnection(out thriftConnection);
                 connectionType = ConnectionType.FromPool;
             }

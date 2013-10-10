@@ -25,11 +25,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             thriftConnection.ExecuteCommand(command);
         }
 
-        public bool Ping()
-        {
-            return thriftConnection.Ping();
-        }
-
         public void Kill()
         {
             try
