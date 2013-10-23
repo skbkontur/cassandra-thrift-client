@@ -6,10 +6,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public static class ItemHealthExtensions
     {
-        public static IEnumerable<T> ShuffleByHealth<T>(this IEnumerable<T> items, Func<T, double> healthSelector) where T : class
+        public static IEnumerable<T2> ShuffleByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector) where T2 : class
         {
-            var itemsWithHealth = new HashSet<KeyValuePair<T, double>>(items.Select(x => new KeyValuePair<T, double>(x, healthSelector(x))));
-            var result = new T[itemsWithHealth.Count];
+            var itemsWithHealth = new HashSet<KeyValuePair<T2, double>>(items.Select(x => new KeyValuePair<T2, double>(resultSelector(x), healthSelector(x))));
+            var result = new T2[itemsWithHealth.Count];
 
             for(var i = 0; i < result.Length; i++)
             {
@@ -34,6 +34,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                 }
             }
             return result;
+        }
+
+        public static IEnumerable<T> ShuffleByHealth<T>(this IEnumerable<T> items, Func<T, double> healthSelector) where T: class
+        {
+            return items.ShuffleByHealth(healthSelector, x => x);
         }
 
         private static Random Random { get { return random ?? (random = new Random()); } }
