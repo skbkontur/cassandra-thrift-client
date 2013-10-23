@@ -63,6 +63,7 @@
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
     <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
+    <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />
     <Compile Include="HelpersTests\StringHelpersTest.cs" />
     <Compile Include="CoreTestHelpers.cs" />
     <Compile Include="CoreTests\BadlistTest.cs" />
