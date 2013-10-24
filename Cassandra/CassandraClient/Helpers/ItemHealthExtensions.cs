@@ -6,6 +6,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     public static class ItemHealthExtensions
     {
+        public static T2 RandomItemByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector) where T2 : class
+        {
+            return items.ShuffleByHealth(healthSelector, resultSelector).First();
+        }
+
         public static IEnumerable<T2> ShuffleByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector) where T2 : class
         {
             var itemsWithHealth = new HashSet<KeyValuePair<T, double>>(items.Select(x => new KeyValuePair<T, double>(x, healthSelector(x))));
