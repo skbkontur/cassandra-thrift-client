@@ -15,8 +15,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireWithoutRegisteredKeys()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));            
-            Assert.Throws<EmptyPoolException>( () => pool.Acquire());
+            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            Assert.Throws<EmptyPoolException>(() => pool.Acquire());
         }
 
         [Test]
@@ -189,6 +189,98 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             Assert.That(reacquiredItems[new ItemKey("key2")], Is.InRange(1650, 1950));
         }
 
+        [Test]
+        public void TestAcquireOnlyLiveItemsWithDeadNode()
+        {
+            using(var pool = new MultiPool<Item, ItemKey>(
+                x => x.Value == "key2" ?
+                         new Pool<Item>(y => new Item(x) {IsAlive = false}) :
+                         new Pool<Item>(y => new Item(x))))
+            {
+                pool.RegisterKey(new ItemKey("key1"));
+                pool.RegisterKey(new ItemKey("key2"));
+
+                var items = Enumerable
+                    .Range(0, 1)
+                    .SelectMany(n =>
+                        {
+                            var item1 = pool.Acquire();
+                            var item2 = pool.Acquire();
+                            Assert.That(item1.IsAlive);
+                            Assert.That(item2.IsAlive);
+                            return new[] {item1, item2};
+                        })
+                    .ToList();
+
+                items.ForEach(pool.Release);
+            }
+        }
+
+        [Test]
+        public void TestAcquireNewFromDeadNode()
+        {
+            var acquireFromDeadNodeCount = 0;
+            var pool = new MultiPool<Item, ItemKey>(x =>
+                {
+                    if(x.Value == "key2")
+                    {
+                        return new Pool<Item>(y =>
+                            {
+                                acquireFromDeadNodeCount++;
+                                return new Item(x) {IsAlive = false};
+                            });
+                    }
+                    return new Pool<Item>(y => new Item(x));
+                });
+            pool.RegisterKey(new ItemKey("key1"));
+            pool.RegisterKey(new ItemKey("key2"));
+
+            var acquiredItems = Enumerable
+                .Range(0, 100)
+                .SelectMany(n =>
+                    {
+                        var item1 = pool.Acquire();
+                        var item2 = pool.Acquire();
+                        Assert.That(item1.IsAlive);
+                        Assert.That(item2.IsAlive);
+                        return new[] {item1, item2};
+                    })
+                .ToList();
+
+            Assert.That(acquireFromDeadNodeCount, Is.InRange(0, 20));
+
+            acquiredItems.ForEach(pool.Release);
+
+            var reacquiredItems = Enumerable
+                .Range(0, 2000)
+                .SelectMany(n =>
+                    {
+                        var item1 = pool.Acquire();
+                        var item2 = pool.Acquire();
+                        pool.Good(item1.PoolKey);
+                        pool.Good(item2.PoolKey);
+                        pool.Release(item1);
+                        pool.Release(item2);
+                        return new[] {item1, item2};
+                    })
+                .GroupBy(x => x.PoolKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+
+            Assert.That(acquireFromDeadNodeCount, Is.InRange(0, 20));
+            Assert.That(!reacquiredItems.ContainsKey(new ItemKey("key2")));
+        }
+
+        [Test]
+        public void TestAcquireNewWithDeadNodes()
+        {
+            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x) {IsAlive = false}));
+            pool.RegisterKey(new ItemKey("key1"));
+            pool.RegisterKey(new ItemKey("key2"));
+
+            Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire());
+            Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire());
+        }
+
         private class ItemKey : IEquatable<ItemKey>
         {
             public ItemKey(string value)
@@ -229,8 +321,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             {
             }
 
+            public bool IsAlive { get; set; }
             public ItemKey PoolKey { get; private set; }
-            public bool IsAlive { get; private set; }
         }
     }
 }

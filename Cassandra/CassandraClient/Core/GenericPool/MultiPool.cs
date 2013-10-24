@@ -3,12 +3,14 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
+using Cassandra.Tests.CoreTests.PoolTests;
+
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public class MultiPool<TItem, TKey>
+    public class MultiPool<TItem, TKey> : IDisposable
         where TKey : IEquatable<TKey>
         where TItem : class, IDisposable, IPoolKeyContainer<TKey>, ILiveness
     {
@@ -32,9 +34,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             if(pool == null)
             {
-                return poolWithHealths
-                    .RandomItemByHealth(x => x.Health.Value, x => x.Pool)
-                    .AcquireNew();
+                var newItems = poolWithHealths
+                    .ShuffleByHealth(x => x.Health.Value, x => x.Pool)
+                    .Select(x => x.AcquireNew());
+
+                foreach(var newItem in newItems)
+                {
+                    if(!newItem.IsAlive)
+                    {
+                        Bad(newItem.PoolKey);
+                        continue;
+                    }
+                    return newItem;
+                }
+                throw new AllItemsIsDeadExceptions(string.Format("Cannot acquire connection from any of pool with keys [{0}]", string.Join(", ", pools.Keys.Select(x => x.ToString()))));
             }
 
             return result;
@@ -99,5 +112,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private const double deadHealth = 0.01;
         private const double aliveRate = 1.5;
         private const double dieRate = 0.7;
+
+        public void Dispose()
+        {
+            
+        }
     }
 }
