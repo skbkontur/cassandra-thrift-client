@@ -8,11 +8,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
     {
         public static IEnumerable<T2> ShuffleByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector) where T2 : class
         {
-            var itemsWithHealth = new HashSet<KeyValuePair<T2, double>>(items.Select(x => new KeyValuePair<T2, double>(resultSelector(x), healthSelector(x))));
-            var result = new T2[itemsWithHealth.Count];
+            var itemsWithHealth = new HashSet<KeyValuePair<T, double>>(items.Select(x => new KeyValuePair<T, double>(x, healthSelector(x))));
 
-            for(var i = 0; i < result.Length; i++)
+            for (var i = 0; i < itemsWithHealth.Count; i++)
             {
+                T2 result = null;
                 var healthSum = itemsWithHealth.Sum(h => h.Value);
 
                 var randomValue = Random.NextDouble();
@@ -21,19 +21,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                     randomValue -= itemWithHealth.Value / healthSum;
                     if(randomValue < epsilon)
                     {
-                        result[i] = itemWithHealth.Key;
+                        result = resultSelector(itemWithHealth.Key);
                         itemsWithHealth.Remove(itemWithHealth);
                         break;
                     }
                 }
-                if(result[i] == null)
+                if (result == null)
                 {
                     var last = itemsWithHealth.Last();
-                    result[i] = last.Key;
+                    result = resultSelector(last.Key);
                     itemsWithHealth.Remove(last);
                 }
+                yield return result;
             }
-            return result;
         }
 
         public static IEnumerable<T> ShuffleByHealth<T>(this IEnumerable<T> items, Func<T, double> healthSelector) where T: class
