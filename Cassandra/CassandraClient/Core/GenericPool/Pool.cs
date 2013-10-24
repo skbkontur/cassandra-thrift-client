@@ -7,7 +7,7 @@ using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public class Pool<T> : IDisposable where T : class, IDisposable
+    public class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
     {
         public Pool(Func<Pool<T>, T> itemFactory)
         {
@@ -29,8 +29,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public bool TryAcquireExists(out T result)
         {
-            if(freeItems.TryPop(out result))
+            while(freeItems.TryPop(out result))
             {
+                if(!result.IsAlive)
+                {
+                    result.Dispose();
+                    continue;
+                }                    
                 MarkItemAsBusy(result);
                 return true;
             }

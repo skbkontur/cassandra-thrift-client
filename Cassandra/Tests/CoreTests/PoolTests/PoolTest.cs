@@ -6,7 +6,6 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 namespace Cassandra.Tests.CoreTests.PoolTests
 {
@@ -28,6 +27,34 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 var item = pool.Acquire();
                 Assert.That(item, Is.EqualTo(lastFactoryResult));
                 Assert.That(factoryInvokeCount, Is.EqualTo(1));
+            }
+        }
+
+        [Test]
+        public void DisposeAndReleaseDeadItemsThroughAcquire()
+        {
+            using(var pool = new Pool<Item>(x => new Item()))
+            {
+                var item1 = pool.Acquire();
+                item1.IsAlive = false;
+                pool.Release(item1);
+                var item2 = pool.Acquire();
+                Assert.That(item2, Is.Not.EqualTo(item1));
+                Assert.That(item1.Disposed);
+            }
+        }
+
+        [Test]
+        public void DisposeAndReleaseDeadItemsThroughAcquireExists()
+        {
+            using(var pool = new Pool<Item>(x => new Item()))
+            {
+                var item1 = pool.Acquire();
+                item1.IsAlive = false;
+                pool.Release(item1);
+                Item item2;
+                Assert.That(!pool.TryAcquireExists(out item2));                
+                Assert.That(item1.Disposed);
             }
         }
 
@@ -155,8 +182,13 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             }
         }
 
-        private class Item : IDisposable
+        private class Item : IDisposable, ILiveness
         {
+            public Item()
+            {
+                IsAlive = true;
+            }
+
             public void Dispose()
             {
                 Disposed = true;
@@ -177,6 +209,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
             public bool IsUse { get; private set; }
             public bool Disposed { get; private set; }
+            public bool IsAlive { get; set; }
         }
     }
 }

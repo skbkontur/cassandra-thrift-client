@@ -217,11 +217,12 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             public string Value { get; set; }
         }
 
-        private class Item : IDisposable, IPoolKeyContainer<ItemKey>
+        private class Item : IDisposable, IPoolKeyContainer<ItemKey>, ILiveness
         {
             public Item(ItemKey key)
             {
                 PoolKey = key;
+                IsAlive = true;
             }
 
             public void Dispose()
@@ -229,6 +230,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             }
 
             public ItemKey PoolKey { get; private set; }
+            public bool IsAlive { get; private set; }
         }
     }
 }

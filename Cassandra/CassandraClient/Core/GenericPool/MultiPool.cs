@@ -10,7 +10,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
     public class MultiPool<TItem, TKey>
         where TKey : IEquatable<TKey>
-        where TItem : class, IDisposable, IPoolKeyContainer<TKey>
+        where TItem : class, IDisposable, IPoolKeyContainer<TKey>, ILiveness
     {
         public MultiPool(Func<TKey, Pool<TItem>> poolFactory)
         {

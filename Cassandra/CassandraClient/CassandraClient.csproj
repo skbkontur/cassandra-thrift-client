@@ -104,6 +104,7 @@
     <Compile Include="Core\GenericPool\Exceptions\EmptyPoolException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\InvalidPoolKeyException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\FailedReleaseItemException.cs" />
+    <Compile Include="Core\GenericPool\ILiveness.cs" />
     <Compile Include="Core\GenericPool\IPoolKeyContainer.cs" />
     <Compile Include="Core\GenericPool\Exceptions\ItemInPoolCollisionException.cs" />
     <Compile Include="Core\GenericPool\MultiPool.cs" />
