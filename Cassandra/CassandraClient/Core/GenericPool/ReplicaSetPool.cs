@@ -10,11 +10,11 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public class MultiPool<TItem, TKey> : IDisposable
+    public class ReplicaSetPool<TItem, TKey> : IDisposable
         where TKey : IEquatable<TKey>
         where TItem : class, IDisposable, IPoolKeyContainer<TKey>, ILiveness
     {
-        public MultiPool(Func<TKey, Pool<TItem>> poolFactory)
+        public ReplicaSetPool(Func<TKey, Pool<TItem>> poolFactory)
         {
             this.poolFactory = poolFactory;
         }

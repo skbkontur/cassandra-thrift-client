@@ -10,19 +10,19 @@ using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 namespace Cassandra.Tests.CoreTests.PoolTests
 {
     [TestFixture]
-    public class MultiPoolTest
+    public class ReplicaSetPoolTest
     {
         [Test]
         public void TestAcquireWithoutRegisteredKeys()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             Assert.Throws<EmptyPoolException>(() => pool.Acquire());
         }
 
         [Test]
         public void TestAcquireItem()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             pool.RegisterKey(new ItemKey("key1"));
             var item1 = pool.Acquire();
             pool.Release(item1);
@@ -33,7 +33,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestReleaseItemOfNotRegisterPool()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             pool.RegisterKey(new ItemKey("key1"));
             var item1 = pool.Acquire();
             pool.Release(item1);
@@ -44,7 +44,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestReleaseItemNotAcquiredFromPool()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             pool.RegisterKey(new ItemKey("key1"));
             var item1 = pool.Acquire();
             pool.Release(item1);
@@ -55,7 +55,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireItemFromKeysWithHealthNodes()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             pool.RegisterKey(new ItemKey("key1"));
             pool.RegisterKey(new ItemKey("key2"));
 
@@ -98,7 +98,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireItemFromKeysWithPartiallyBadNodes()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             pool.RegisterKey(new ItemKey("key1"));
             pool.RegisterKey(new ItemKey("key2"));
             pool.Bad(new ItemKey("key2"));
@@ -146,7 +146,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAliveAfterDead()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
             pool.RegisterKey(new ItemKey("key1"));
             pool.RegisterKey(new ItemKey("key2"));
             Enumerable.Range(0, 100).ToList().ForEach(x => pool.Bad(new ItemKey("key2"))); // Health: 0.01
@@ -192,7 +192,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireOnlyLiveItemsWithDeadNode()
         {
-            using(var pool = new MultiPool<Item, ItemKey>(
+            using(var pool = new ReplicaSetPool<Item, ItemKey>(
                 x => x.Value == "key2" ?
                          new Pool<Item>(y => new Item(x) {IsAlive = false}) :
                          new Pool<Item>(y => new Item(x))))
@@ -220,7 +220,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         public void TestAcquireNewFromDeadNode()
         {
             var acquireFromDeadNodeCount = 0;
-            var pool = new MultiPool<Item, ItemKey>(x =>
+            var pool = new ReplicaSetPool<Item, ItemKey>(x =>
                 {
                     if(x.Value == "key2")
                     {
@@ -273,7 +273,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            var pool = new MultiPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x) {IsAlive = false}));
+            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x) {IsAlive = false}));
             pool.RegisterKey(new ItemKey("key1"));
             pool.RegisterKey(new ItemKey("key2"));
 
