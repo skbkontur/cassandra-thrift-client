@@ -14,8 +14,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
         public static IEnumerable<T2> ShuffleByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector) where T2 : class
         {
             var itemsWithHealth = new HashSet<KeyValuePair<T, double>>(items.Select(x => new KeyValuePair<T, double>(x, healthSelector(x))));
+            var totalItemListLength = itemsWithHealth.Count;
 
-            for (var i = 0; i < itemsWithHealth.Count; i++)
+            for (var i = 0; i < totalItemListLength; i++)
             {
                 T2 result = null;
                 var healthSum = itemsWithHealth.Sum(h => h.Value);
