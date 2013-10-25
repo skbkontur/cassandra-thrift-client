@@ -15,18 +15,22 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
         }
     }
 
     public class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IReplicaSetPool<TItem, TItemKey, TReplicaKey>
-        where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
+        where TItem : class, IDisposable, ILiveness
     {
         public ReplicaSetPool(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
                               IEqualityComparer<TReplicaKey> replicaKeyComparer,
-                              IEqualityComparer<TItemKey> itemKeyComparer)
+                              IEqualityComparer<TItemKey> itemKeyComparer,
+                              Func<TItem, TReplicaKey> getReplicaKeyByItem,
+                              Func<TItem, TItemKey> getItemKeyByItem)
         {
             this.poolFactory = poolFactory;
+            this.getReplicaKeyByItem = getReplicaKeyByItem;
+            this.getItemKeyByItem = getItemKeyByItem;
             replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(replicaKeyComparer);
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
         }
@@ -58,7 +62,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 {
                     if(!newItem.IsAlive)
                     {
-                        Bad(newItem.ReplicaKey);
+                        Bad(getReplicaKeyByItem(newItem));
                         continue;
                     }
                     return newItem;
@@ -71,7 +75,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public void Release(TItem item)
         {
-            GetPool(item.PoolKey, item.ReplicaKey, false).Release(item);
+            GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
         }
 
         public void RegisterKey(TReplicaKey key)
@@ -115,6 +119,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;
+        private readonly Func<TItem, TReplicaKey> getReplicaKeyByItem;
+        private readonly Func<TItem, TItemKey> getItemKeyByItem;
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
         private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
 

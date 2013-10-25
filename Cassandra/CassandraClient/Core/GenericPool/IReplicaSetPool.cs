@@ -3,7 +3,7 @@
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
     public interface IReplicaSetPool<TItem, in TItemKey, in TReplicaKey> : IDisposable
-        where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness 
+        where TItem : class, IDisposable, ILiveness 
     {
         TItem Acquire(TItemKey itemKey);
 
