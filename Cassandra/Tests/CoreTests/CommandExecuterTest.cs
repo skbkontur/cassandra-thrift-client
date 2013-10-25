@@ -19,8 +19,8 @@ namespace Cassandra.Tests.CoreTests
         public override void SetUp()
         {
             base.SetUp();
-            dataConnectionPool = GetMock<IReplicaSetPool<IThriftConnection, string, IPEndPoint>>();
-            fierceConnectionPool = GetMock<IReplicaSetPool<IThriftConnection, string, IPEndPoint>>();
+            dataConnectionPool = GetMock<IPoolSet<IThriftConnection, string>>();
+            fierceConnectionPool = GetMock<IPoolSet<IThriftConnection, string>>();
             cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
             executer = new CommandExecuter(dataConnectionPool, fierceConnectionPool, cassandraClusterSettings);
             command = GetMock<ICommand>();
@@ -141,7 +141,7 @@ namespace Cassandra.Tests.CoreTests
         private CommandExecuter executer;
         private ICassandraClusterSettings cassandraClusterSettings;
         private ICommand command;
-        private IReplicaSetPool<IThriftConnection, string, IPEndPoint> dataConnectionPool;
-        private IReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceConnectionPool;
+        private IPoolSet<IThriftConnection, string> dataConnectionPool;
+        private IPoolSet<IThriftConnection, string> fierceConnectionPool;
     }
 }

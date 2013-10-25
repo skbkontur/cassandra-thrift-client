@@ -19,19 +19,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
         }
 
-        private static IReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
+        private static IPoolSet<IThriftConnection, string> CreateDataConnectionPool(ICassandraClusterSettings settings)
         {
-            var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
+            var replicaSetPool = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
                 (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.Timeout, replicaKey, key)),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
                 );
             foreach(var endpoint in settings.Endpoints)
-                result.RegisterReplica(endpoint);                
-            return result;
+                replicaSetPool.RegisterReplica(endpoint);
+            return replicaSetPool;
          }
 
-        private static IReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateFierceConnectionPool(ICassandraClusterSettings settings)
+        private static IPoolSet<IThriftConnection, string> CreateFierceConnectionPool(ICassandraClusterSettings settings)
         {
             var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
                 (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.FierceTimeout, replicaKey, key)),

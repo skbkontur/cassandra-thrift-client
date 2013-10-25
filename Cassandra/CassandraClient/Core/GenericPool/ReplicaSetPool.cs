@@ -8,28 +8,7 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    internal static class ReplicaSetPool
-    {
-        public static IReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
-            where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
-            where TItemKey : IEquatable<TItemKey>
-            where TReplicaKey : IEquatable<TReplicaKey>
-        {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
-        }
-
-        public static IReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
-            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
-            Func<TItem, TReplicaKey> getReplicaKeyByItem,
-            Func<TItem, TItemKey> getItemKeyByItem)
-            where TItem : class, IDisposable, ILiveness
-            where TItemKey : IEquatable<TItemKey>
-        {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem);
-        }
-    }
-
-    internal class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IReplicaSetPool<TItem, TItemKey, TReplicaKey>
+    internal class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IPoolSet<TItem, TItemKey>
         where TItem : class, IDisposable, ILiveness
     {
         public ReplicaSetPool(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
@@ -190,5 +169,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private const double deadHealth = 0.01;
         private const double aliveRate = 1.5;
         private const double dieRate = 0.7;
+    }
+
+    internal static class ReplicaSetPool
+    {
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
+            where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
+            where TItemKey : IEquatable<TItemKey>
+            where TReplicaKey : IEquatable<TReplicaKey>
+        {
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
+        }
+
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
+            Func<TItem, TReplicaKey> getReplicaKeyByItem,
+            Func<TItem, TItemKey> getItemKeyByItem)
+            where TItem : class, IDisposable, ILiveness
+            where TItemKey : IEquatable<TItemKey>
+        {
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem);
+        }
     }
 }

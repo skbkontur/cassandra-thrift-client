@@ -2,7 +2,6 @@
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
@@ -21,8 +20,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         public bool IsAlive { get { return thriftConnection.IsAlive; } }
-        public string KeyspaceName { get; private set; }
-        public IPEndPoint ReplicaKey { get; private set; }
 
         public void ExecuteCommand(ICommand command)
         {
@@ -30,6 +27,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         public DateTime CreationDateTime { get { return thriftConnection.CreationDateTime; } }
+        public string KeyspaceName { get; private set; }
+        public IPEndPoint ReplicaKey { get; private set; }
 
         private readonly ThriftConnection thriftConnection;
     }
