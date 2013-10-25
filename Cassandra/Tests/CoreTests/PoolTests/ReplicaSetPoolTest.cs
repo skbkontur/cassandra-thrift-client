@@ -20,6 +20,16 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         }
 
         [Test]
+        public void TestAcquireWithItemKeyIsNull()
+        {
+            var pool = CreateReplicaSetPool();
+            var item1 = pool.Acquire(null);
+            pool.Release(item1);
+            var item2 = pool.Acquire(null);
+            Assert.That(item2, Is.EqualTo(item1));
+        }
+
+        [Test]
         public void TestAcquireItemWithSameKey()
         {
             var pool = CreateReplicaSetPool();

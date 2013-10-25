@@ -33,7 +33,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             if(ReferenceEquals(null, other)) return false;
             if(ReferenceEquals(this, other)) return true;
             return Equals(other.IpEndPoint, IpEndPoint) && Equals(other.Keyspace, Keyspace) && other.IsFierce.Equals(IsFierce);
-        }
+        }   
 
         public override string ToString()
         {
