@@ -2,6 +2,7 @@
 
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
+using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
@@ -10,9 +11,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
     public class CassandraCluster : ICassandraCluster
     {
         public CassandraCluster(ICassandraClusterSettings settings)
-            : this(new CommandExecuter(new ClusterConnectionPool(k => new KeyspaceConnectionPool(settings, k)), new EndpointManager(new Badlist()), settings), settings)
+            : this(new CommandExecuter(CreateClusterConnectionPool(settings), settings), settings)
         {
         }
+
+        private static ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> CreateClusterConnectionPool(ICassandraClusterSettings settings)
+        {
+            var result = new ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper>((key, replicaKey) => new Pool<ThriftConnectionWrapper>(pool => new ThriftConnectionWrapper(key, replicaKey, settings.Timeout, replicaKey.Value, key.Keyspace)));
+            foreach(var endpoint in settings.Endpoints)
+                result.RegisterKey(new IPEndPointWrapper(endpoint));                
+            return result;
+         }
 
         private CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings)
         {
