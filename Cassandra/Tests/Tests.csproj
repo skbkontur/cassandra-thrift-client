@@ -62,7 +62,7 @@
     <Compile Include="Arg.cs" />
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
     <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
-    <Compile Include="CoreTests\PoolTests\MultiPoolTest.cs" />
+    <Compile Include="CoreTests\PoolTests\ReplicaSetPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\PoolTest.cs" />
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
     <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />

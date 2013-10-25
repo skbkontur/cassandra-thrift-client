@@ -15,66 +15,72 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireWithoutRegisteredKeys()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            Assert.Throws<EmptyPoolException>(() => pool.Acquire());
+            var pool = CreateReplicaSetPool(0);
+            Assert.Throws<EmptyPoolException>(() => pool.Acquire(new ItemKey("key1")));
         }
 
         [Test]
-        public void TestAcquireItem()
+        public void TestAcquireItemWithSameKey()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            pool.RegisterKey(new ItemKey("key1"));
-            var item1 = pool.Acquire();
+            var pool = CreateReplicaSetPool();
+            var item1 = pool.Acquire(new ItemKey("key1"));
             pool.Release(item1);
-            var item2 = pool.Acquire();
+            var item2 = pool.Acquire(new ItemKey("key1"));
             Assert.That(item2, Is.EqualTo(item1));
+        }
+
+        [Test]
+        public void TestAcquireItemWithDifferentKeys()
+        {
+            var pool = CreateReplicaSetPool();
+            var item1 = pool.Acquire(new ItemKey("key1"));
+            pool.Release(item1);
+            var item2 = pool.Acquire(new ItemKey("key2"));
+            Assert.That(item2, Is.Not.EqualTo(item1));
         }
 
         [Test]
         public void TestReleaseItemOfNotRegisterPool()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            pool.RegisterKey(new ItemKey("key1"));
-            var item1 = pool.Acquire();
+            var pool = CreateReplicaSetPool();
+            var item1 = pool.Acquire(new ItemKey("key2"));
             pool.Release(item1);
-            var item2 = new Item(new ItemKey("key2"));
+            var item2 = new Item(new ItemKey("key2"), new ReplicaKey("replica2"));
             Assert.Throws<InvalidPoolKeyException>(() => pool.Release(item2));
         }
 
         [Test]
         public void TestReleaseItemNotAcquiredFromPool()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            pool.RegisterKey(new ItemKey("key1"));
-            var item1 = pool.Acquire();
+            var pool = CreateReplicaSetPool();
+            var item1 = pool.Acquire(new ItemKey("key1"));
             pool.Release(item1);
-            var item2 = new Item(new ItemKey("key1"));
+            var item2 = new Item(new ItemKey("key1"), new ReplicaKey("replica1"));
             Assert.Throws<FailedReleaseItemException>(() => pool.Release(item2));
         }
 
         [Test]
         public void TestAcquireItemFromKeysWithHealthNodes()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            pool.RegisterKey(new ItemKey("key1"));
-            pool.RegisterKey(new ItemKey("key2"));
+            var pool = CreateReplicaSetPool(2);
+            var itemKey = new ItemKey("key1");
 
             var acquiredItems = Enumerable
                 .Range(0, 100)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
                         return new[] {item1, item2};
                     })
                 .ToList();
 
             var acquiredItemCount = acquiredItems
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(acquiredItemCount[new ItemKey("key1")], Is.InRange(80, 120));
-            Assert.That(acquiredItemCount[new ItemKey("key2")], Is.InRange(80, 120));
+            Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(80, 120));
+            Assert.That(acquiredItemCount[new ReplicaKey("replica2")], Is.InRange(80, 120));
 
             acquiredItems.ForEach(pool.Release);
 
@@ -82,47 +88,46 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Range(0, 10000)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
                         pool.Release(item1);
                         pool.Release(item2);
                         return new[] {item1, item2};
                     })
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(reacquiredItems[new ItemKey("key1")], Is.InRange(9000, 11000));
-            Assert.That(reacquiredItems[new ItemKey("key2")], Is.InRange(9000, 11000));
+            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(9000, 11000));
+            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(9000, 11000));
         }
 
         [Test]
         public void TestAcquireItemFromKeysWithPartiallyBadNodes()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            pool.RegisterKey(new ItemKey("key1"));
-            pool.RegisterKey(new ItemKey("key2"));
-            pool.Bad(new ItemKey("key2"));
-            pool.Bad(new ItemKey("key2"));
-            pool.Bad(new ItemKey("key2"));
-            pool.Bad(new ItemKey("key2"));
-            pool.Bad(new ItemKey("key2")); // Health: 0.168
+            var pool = CreateReplicaSetPool(2);
+            var itemKey = new ItemKey("key1");
+            pool.Bad(new ReplicaKey("replica2"));
+            pool.Bad(new ReplicaKey("replica2"));
+            pool.Bad(new ReplicaKey("replica2"));
+            pool.Bad(new ReplicaKey("replica2"));
+            pool.Bad(new ReplicaKey("replica2")); // Health: 0.168
 
             var acquiredItems = Enumerable
                 .Range(0, 100)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
                         return new[] {item1, item2};
                     })
                 .ToList();
 
             var acquiredItemCount = acquiredItems
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(acquiredItemCount[new ItemKey("key1")], Is.InRange(160, 180));
-            Assert.That(acquiredItemCount[new ItemKey("key2")], Is.InRange(20, 40));
+            Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(160, 180));
+            Assert.That(acquiredItemCount[new ReplicaKey("replica2")], Is.InRange(20, 40));
 
             acquiredItems.ForEach(pool.Release);
 
@@ -130,43 +135,43 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Range(0, 10000)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
                         pool.Release(item1);
                         pool.Release(item2);
                         return new[] {item1, item2};
                     })
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(reacquiredItems[new ItemKey("key1")], Is.InRange(16500, 17500));
-            Assert.That(reacquiredItems[new ItemKey("key2")], Is.InRange(2500, 3500));
+            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(16500, 17500));
+            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(2500, 3500));
         }
 
         [Test]
         public void TestAliveAfterDead()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x)));
-            pool.RegisterKey(new ItemKey("key1"));
-            pool.RegisterKey(new ItemKey("key2"));
-            Enumerable.Range(0, 100).ToList().ForEach(x => pool.Bad(new ItemKey("key2"))); // Health: 0.01
+            var pool = CreateReplicaSetPool(2);
+            var itemKey = new ItemKey("key1");
+            Enumerable.Range(0, 100).ToList().ForEach(x => pool.Bad(new ReplicaKey("replica2"))); // Health: 0.01
 
             var acquiredItems = Enumerable
                 .Range(0, 100)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
                         return new[] {item1, item2};
                     })
                 .ToList();
 
             var acquiredItemCount = acquiredItems
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(acquiredItemCount[new ItemKey("key1")], Is.InRange(190, 200));
-            Assert.That(acquiredItemCount[new ItemKey("key2")], Is.InRange(0, 10) | Throws.InstanceOf<KeyNotFoundException>());
+            Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(190, 200));
+            int count;
+            Assert.That(acquiredItemCount.TryGetValue(new ReplicaKey("replica2"), out count) ? count : 0, Is.InRange(0, 10));
 
             acquiredItems.ForEach(pool.Release);
 
@@ -174,38 +179,39 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Range(0, 2000)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
-                        pool.Good(item1.PoolKey);
-                        pool.Good(item2.PoolKey);
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
+                        pool.Good(item1.ReplicaKey);
+                        pool.Good(item2.ReplicaKey);
                         pool.Release(item1);
                         pool.Release(item2);
                         return new[] {item1, item2};
                     })
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(reacquiredItems[new ItemKey("key1")], Is.InRange(2050, 2350));
-            Assert.That(reacquiredItems[new ItemKey("key2")], Is.InRange(1650, 1950));
+            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(2050, 2350));
+            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(1650, 1950));
         }
 
         [Test]
         public void TestAcquireOnlyLiveItemsWithDeadNode()
         {
-            using(var pool = new ReplicaSetPool<Item, ItemKey>(
-                x => x.Value == "key2" ?
-                         new Pool<Item>(y => new Item(x) {IsAlive = false}) :
-                         new Pool<Item>(y => new Item(x))))
+            using(var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>(
+                (x, r) => r.Name == "replica2" ?
+                              new Pool<Item>(y => new Item(x, r) {IsAlive = false}) :
+                              new Pool<Item>(y => new Item(x, r))))
             {
-                pool.RegisterKey(new ItemKey("key1"));
-                pool.RegisterKey(new ItemKey("key2"));
+                var itemKey = new ItemKey("key1");
+                pool.RegisterKey(new ReplicaKey("replica1"));
+                pool.RegisterKey(new ReplicaKey("replica2"));
 
                 var items = Enumerable
                     .Range(0, 1)
                     .SelectMany(n =>
                         {
-                            var item1 = pool.Acquire();
-                            var item2 = pool.Acquire();
+                            var item1 = pool.Acquire(itemKey);
+                            var item2 = pool.Acquire(itemKey);
                             Assert.That(item1.IsAlive);
                             Assert.That(item2.IsAlive);
                             return new[] {item1, item2};
@@ -220,27 +226,28 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         public void TestAcquireNewFromDeadNode()
         {
             var acquireFromDeadNodeCount = 0;
-            var pool = new ReplicaSetPool<Item, ItemKey>(x =>
+            var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>((x, r) =>
                 {
-                    if(x.Value == "key2")
+                    if(r.Name == "replica2")
                     {
                         return new Pool<Item>(y =>
                             {
                                 acquireFromDeadNodeCount++;
-                                return new Item(x) {IsAlive = false};
+                                return new Item(x, r) {IsAlive = false};
                             });
                     }
-                    return new Pool<Item>(y => new Item(x));
+                    return new Pool<Item>(y => new Item(x, r));
                 });
-            pool.RegisterKey(new ItemKey("key1"));
-            pool.RegisterKey(new ItemKey("key2"));
+            pool.RegisterKey(new ReplicaKey("replica1"));
+            pool.RegisterKey(new ReplicaKey("replica2"));
+            var itemKey = new ItemKey("key1");
 
             var acquiredItems = Enumerable
                 .Range(0, 100)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
                         Assert.That(item1.IsAlive);
                         Assert.That(item2.IsAlive);
                         return new[] {item1, item2};
@@ -255,30 +262,42 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Range(0, 2000)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire();
-                        var item2 = pool.Acquire();
-                        pool.Good(item1.PoolKey);
-                        pool.Good(item2.PoolKey);
+                        var item1 = pool.Acquire(itemKey);
+                        var item2 = pool.Acquire(itemKey);
+                        pool.Good(item1.ReplicaKey);
+                        pool.Good(item2.ReplicaKey);
                         pool.Release(item1);
                         pool.Release(item2);
                         return new[] {item1, item2};
                     })
-                .GroupBy(x => x.PoolKey)
-                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ItemKey>.Default);
+                .GroupBy(x => x.ReplicaKey)
+                .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
             Assert.That(acquireFromDeadNodeCount, Is.InRange(0, 20));
-            Assert.That(!reacquiredItems.ContainsKey(new ItemKey("key2")));
+            Assert.That(!reacquiredItems.ContainsKey(new ReplicaKey("replica2")));
         }
 
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey>(x => new Pool<Item>(y => new Item(x) {IsAlive = false}));
-            pool.RegisterKey(new ItemKey("key1"));
-            pool.RegisterKey(new ItemKey("key2"));
+            var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}));
+            pool.RegisterKey(new ReplicaKey("replica1"));
+            pool.RegisterKey(new ReplicaKey("replica2"));
 
-            Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire());
-            Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire());
+            Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
+            Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
+        }
+
+        private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
+        {
+            var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)));
+            Enumerable
+                .Range(1, replicaCount)
+                .Select(n => string.Format(nameFormat, n))
+                .Select(x => new ReplicaKey(x))
+                .ToList()
+                .ForEach(pool.RegisterKey);
+            return pool;
         }
 
         private class ItemKey : IEquatable<ItemKey>
@@ -306,14 +325,44 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 return (Value != null ? Value.GetHashCode() : 0);
             }
 
-            public string Value { get; set; }
+            private string Value { get; set; }
         }
 
-        private class Item : IDisposable, IPoolKeyContainer<ItemKey>, ILiveness
+        private class ReplicaKey : IEquatable<ReplicaKey>
         {
-            public Item(ItemKey key)
+            public ReplicaKey(string name)
+            {
+                Name = name;
+            }
+
+            public bool Equals(ReplicaKey other)
+            {
+                if(ReferenceEquals(null, other)) return false;
+                if(ReferenceEquals(this, other)) return true;
+                return string.Equals(Name, other.Name);
+            }
+
+            public override bool Equals(object obj)
+            {
+                if(ReferenceEquals(null, obj)) return false;
+                if(ReferenceEquals(this, obj)) return true;
+                return obj.GetType() == GetType() && Equals((ReplicaKey)obj);
+            }
+
+            public override int GetHashCode()
+            {
+                return (Name != null ? Name.GetHashCode() : 0);
+            }
+
+            public string Name { get; private set; }
+        }
+
+        private class Item : IDisposable, IPoolKeyContainer<ItemKey, ReplicaKey>, ILiveness
+        {
+            public Item(ItemKey key, ReplicaKey replicaKey)
             {
                 PoolKey = key;
+                ReplicaKey = replicaKey;
                 IsAlive = true;
             }
 
@@ -323,6 +372,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
             public bool IsAlive { get; set; }
             public ItemKey PoolKey { get; private set; }
+            public ReplicaKey ReplicaKey { get; private set; }
         }
     }
 }

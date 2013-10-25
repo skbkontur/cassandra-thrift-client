@@ -108,7 +108,7 @@
     <Compile Include="Core\GenericPool\ILiveness.cs" />
     <Compile Include="Core\GenericPool\IPoolKeyContainer.cs" />
     <Compile Include="Core\GenericPool\Exceptions\ItemInPoolCollisionException.cs" />
-    <Compile Include="Core\GenericPool\MultiPool.cs" />
+    <Compile Include="Core\GenericPool\ReplicaSetPool.cs" />
     <Compile Include="Core\GenericPool\Utils\ObjectReferenceEqualityComparer.cs" />
     <Compile Include="Core\GenericPool\Pool.cs" />
     <Compile Include="Helpers\ItemHealthExtensions.cs" />
