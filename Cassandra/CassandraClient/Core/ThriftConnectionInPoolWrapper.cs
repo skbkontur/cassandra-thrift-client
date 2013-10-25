@@ -8,11 +8,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class ThriftConnectionInPoolWrapper : IThriftConnection
     {
-        public ThriftConnectionInPoolWrapper(ConnectionKey poolKey, int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        public ThriftConnectionInPoolWrapper(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
             thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName);
-            PoolKey = poolKey;
             ReplicaKey = ipEndPoint;
+            KeyspaceName = keyspaceName;
         }
 
         public void Dispose()
@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         public bool IsAlive { get { return thriftConnection.IsAlive; } }
-        public ConnectionKey PoolKey { get; private set; }
+        public string KeyspaceName { get; private set; }
         public IPEndPoint ReplicaKey { get; private set; }
 
         public void ExecuteCommand(ICommand command)

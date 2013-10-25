@@ -190,8 +190,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .GroupBy(x => x.ReplicaKey)
                 .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(2050, 2350));
-            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(1650, 1950));
+            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(2000, 2700));
+            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(1300, 2000));
         }
 
         [Test]

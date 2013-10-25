@@ -16,10 +16,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class CommandExecuter : ICommandExecuter
     {
-        public CommandExecuter(IReplicaSetPool<IThriftConnection, ConnectionKey, IPEndPoint> clusterConnectionPool,
-                               ICassandraClusterSettings settings)
+        public CommandExecuter(
+            IReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool,
+            IReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceCommandsConnectionPool,
+            ICassandraClusterSettings settings)
         {
-            this.clusterConnectionPool = clusterConnectionPool;
+            this.dataCommandsConnectionPool = dataCommandsConnectionPool;
+            this.fierceCommandsConnectionPool = fierceCommandsConnectionPool;
             this.settings = settings;
         }
 
@@ -36,6 +39,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             var stopwatch = Stopwatch.StartNew();
             var command = createCommand(0);
+            var pool = command.IsFierce ? fierceCommandsConnectionPool : dataCommandsConnectionPool;
             logger.DebugFormat("Start executing {0} command.", command.Name);
             try
             {
@@ -44,16 +48,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     IThriftConnection connectionInPool = null;
                     try
                     {
-                        connectionInPool = clusterConnectionPool.Acquire(new ConnectionKey(command.CommandContext.KeyspaceName, command.IsFierce));
+                        
+                        connectionInPool = pool.Acquire(command.CommandContext.KeyspaceName);
                         try
                         {
                             connectionInPool.ExecuteCommand(command);
-                            clusterConnectionPool.Good(connectionInPool);
+                            pool.Good(connectionInPool);
                             return;
                         }
                         finally
                         {
-                            clusterConnectionPool.Release(connectionInPool);
+                            pool.Release(connectionInPool);
                         }
                     }
                     catch(Exception e)
@@ -68,7 +73,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                             logger.WarnFormat(string.Format("Attempt {0} to all nodes failed.", i), exception);
 
                         if(connectionInPool != null)
-                            clusterConnectionPool.Bad(connectionInPool);
+                            pool.Bad(connectionInPool);
 
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)
@@ -91,11 +96,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void Dispose()
         {
-            clusterConnectionPool.Dispose();
+            dataCommandsConnectionPool.Dispose();
+            fierceCommandsConnectionPool.Dispose();
         }
 
         private readonly ConcurrentDictionary<string, TimeStatistics> timeStatisticsDictionary = new ConcurrentDictionary<string, TimeStatistics>();
-        private readonly IReplicaSetPool<IThriftConnection, ConnectionKey, IPEndPoint> clusterConnectionPool;
+        private readonly IReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool;
+        private readonly IReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceCommandsConnectionPool;
         private readonly ICassandraClusterSettings settings;
         private readonly ILog logger = LogManager.GetLogger(typeof(CommandExecuter));
     }

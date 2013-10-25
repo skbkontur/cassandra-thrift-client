@@ -12,19 +12,33 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
     public class CassandraCluster : ICassandraCluster
     {
         public CassandraCluster(ICassandraClusterSettings settings)
-            : this(new CommandExecuter(CreateClusterConnectionPool(settings), settings), settings)
+            : this(new CommandExecuter(
+                CreateDataConnectionPool(settings), 
+                CreateFierceConnectionPool(settings), 
+                settings), settings)
         {
         }
 
-        private static IReplicaSetPool<IThriftConnection, ConnectionKey, IPEndPoint> CreateClusterConnectionPool(ICassandraClusterSettings settings)
+        private static IReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
         {
-            var result = ReplicaSetPool.Create<IThriftConnection, ConnectionKey, IPEndPoint>(
-                (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(key, settings.Timeout, replicaKey, key.Keyspace)),
+            var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
+                (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.Timeout, replicaKey, key)),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
-                c => ((ThriftConnectionInPoolWrapper)c).PoolKey
+                c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
                 );
             foreach(var endpoint in settings.Endpoints)
                 result.RegisterKey(endpoint);                
+            return result;
+         }
+
+        private static IReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateFierceConnectionPool(ICassandraClusterSettings settings)
+        {
+            var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
+                (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.FierceTimeout, replicaKey, key)),
+                c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
+                c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
+                );
+            result.RegisterKey(settings.EndpointForFierceCommands);                
             return result;
          }
 
