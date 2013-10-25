@@ -197,7 +197,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireOnlyLiveItemsWithDeadNode()
         {
-            using(var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>(
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(
                 (x, r) => r.Name == "replica2" ?
                               new Pool<Item>(y => new Item(x, r) {IsAlive = false}) :
                               new Pool<Item>(y => new Item(x, r))))
@@ -226,7 +226,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         public void TestAcquireNewFromDeadNode()
         {
             var acquireFromDeadNodeCount = 0;
-            var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>((x, r) =>
+            var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, r) =>
                 {
                     if(r.Name == "replica2")
                     {
@@ -280,7 +280,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}));
+            var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) { IsAlive = false }));
             pool.RegisterKey(new ReplicaKey("replica1"));
             pool.RegisterKey(new ReplicaKey("replica2"));
 
@@ -288,9 +288,9 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
         }
 
-        private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
+        private static IReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
         {
-            var pool = new ReplicaSetPool<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)));
+            var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)));
             Enumerable
                 .Range(1, replicaCount)
                 .Select(n => string.Format(nameFormat, n))

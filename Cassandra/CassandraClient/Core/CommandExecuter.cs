@@ -16,7 +16,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class CommandExecuter : ICommandExecuter
     {
-        public CommandExecuter(ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool,
+        public CommandExecuter(IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool,
                                ICassandraClusterSettings settings)
         {
             this.clusterConnectionPool = clusterConnectionPool;
@@ -95,7 +95,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         private readonly ConcurrentDictionary<string, TimeStatistics> timeStatisticsDictionary = new ConcurrentDictionary<string, TimeStatistics>();
-        private readonly ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool;
+        private readonly IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool;
         private readonly ICassandraClusterSettings settings;
         private readonly ILog logger = LogManager.GetLogger(typeof(CommandExecuter));
     }

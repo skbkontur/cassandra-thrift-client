@@ -8,14 +8,27 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IDisposable
-        where TItemKey : IEquatable<TItemKey>
-        where TReplicaKey : IEquatable<TReplicaKey>
+    public static class ReplicaSetPool
+    {
+        public static IReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
+            where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
+            where TItemKey : IEquatable<TItemKey>
+            where TReplicaKey : IEquatable<TReplicaKey>
+        {
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default);
+        }
+    }
+
+    public class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IReplicaSetPool<TItem, TItemKey, TReplicaKey>
         where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
     {
-        public ReplicaSetPool(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
+        public ReplicaSetPool(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
+                              IEqualityComparer<TReplicaKey> replicaKeyComparer,
+                              IEqualityComparer<TItemKey> itemKeyComparer)
         {
             this.poolFactory = poolFactory;
+            replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(replicaKeyComparer);
+            pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
         }
 
         public void Dispose()
@@ -94,7 +107,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             if(!createNewIfNotExists)
             {
                 Pool<TItem> result;
-                if (!pools.TryGetValue(key, out result))
+                if(!pools.TryGetValue(key, out result))
                     throw new InvalidPoolKeyException(string.Format("Pool with key [{0}] does not exists", key));
                 return result;
             }
@@ -102,10 +115,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;
-        private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(EqualityComparer<PoolKey>.Default);
-        private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(EqualityComparer<TReplicaKey>.Default);
+        private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
+        private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
 
-        private class PoolKey : IEquatable<PoolKey>
+        private class PoolKey
         {
             public PoolKey(TItemKey itemKey, TReplicaKey replicaKey)
             {
@@ -113,31 +126,37 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 ReplicaKey = replicaKey;
             }
 
-            public bool Equals(PoolKey other)
+            public TItemKey ItemKey { get; private set; }
+            public TReplicaKey ReplicaKey { get; private set; }
+        }
+
+        private class PoolKeyEqualityComparer : IEqualityComparer<PoolKey>
+        {
+            public PoolKeyEqualityComparer(IEqualityComparer<TReplicaKey> replicaKeyComparer, IEqualityComparer<TItemKey> itemKeyComparer)
             {
-                if(ReferenceEquals(null, other)) return false;
-                if(ReferenceEquals(this, other)) return true;
-                return EqualityComparer<TItemKey>.Default.Equals(ItemKey, other.ItemKey) && EqualityComparer<TReplicaKey>.Default.Equals(ReplicaKey, other.ReplicaKey);
+                this.replicaKeyComparer = replicaKeyComparer;
+                this.itemKeyComparer = itemKeyComparer;
             }
 
-            public override bool Equals(object obj)
+            public bool Equals(PoolKey x, PoolKey y)
             {
-                if(ReferenceEquals(null, obj)) return false;
-                if(ReferenceEquals(this, obj)) return true;
-                if(obj.GetType() != GetType()) return false;
-                return Equals((PoolKey)obj);
+                if(ReferenceEquals(x, y)) return true;
+                if(ReferenceEquals(null, x) || ReferenceEquals(null, y)) return false;
+                return
+                    itemKeyComparer.Equals(x.ItemKey, y.ItemKey) &&
+                    replicaKeyComparer.Equals(x.ReplicaKey, y.ReplicaKey);
             }
 
-            public override int GetHashCode()
+            public int GetHashCode(PoolKey obj)
             {
                 unchecked
                 {
-                    return (EqualityComparer<TItemKey>.Default.GetHashCode(ItemKey) * 397) ^ EqualityComparer<TReplicaKey>.Default.GetHashCode(ReplicaKey);
+                    return (itemKeyComparer.GetHashCode(obj.ItemKey) * 397) ^ replicaKeyComparer.GetHashCode(obj.ReplicaKey);
                 }
             }
 
-            public TItemKey ItemKey { get; private set; }
-            public TReplicaKey ReplicaKey { get; private set; }
+            private readonly IEqualityComparer<TReplicaKey> replicaKeyComparer;
+            private readonly IEqualityComparer<TItemKey> itemKeyComparer;
         }
 
         private const double aliveHealth = 1.0;

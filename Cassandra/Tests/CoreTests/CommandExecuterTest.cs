@@ -20,7 +20,7 @@ namespace Cassandra.Tests.CoreTests
         {
             base.SetUp();
 
-            clusterConnectionPool = GetMock<ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper>>();
+            clusterConnectionPool = GetMock<IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper>>();
             endpointManager = GetMock<IEndpointManager>();
             cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
             ipEndPoint1 = new IPEndPoint(new IPAddress(new byte[] {1, 1, 1, 1}), 1221);
@@ -171,7 +171,7 @@ namespace Cassandra.Tests.CoreTests
         private CommandExecuter executer;
         private ICassandraClusterSettings cassandraClusterSettings;
         private IEndpointManager endpointManager;
-        private ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool;
+        private IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool;
         private IPEndPoint ipEndPoint3;
         private IPEndPoint ipEndPoint1;
         private IPEndPoint ipEndPoint2;

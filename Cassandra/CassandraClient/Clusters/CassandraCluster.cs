@@ -15,9 +15,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
         }
 
-        private static ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> CreateClusterConnectionPool(ICassandraClusterSettings settings)
+        private static IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> CreateClusterConnectionPool(ICassandraClusterSettings settings)
         {
-            var result = new ReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper>((key, replicaKey) => new Pool<ThriftConnectionWrapper>(pool => new ThriftConnectionWrapper(key, replicaKey, settings.Timeout, replicaKey.Value, key.Keyspace)));
+            var result = ReplicaSetPool.Create<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper>((key, replicaKey) => new Pool<ThriftConnectionWrapper>(pool => new ThriftConnectionWrapper(key, replicaKey, settings.Timeout, replicaKey.Value, key.Keyspace)));
             foreach(var endpoint in settings.Endpoints)
                 result.RegisterKey(new IPEndPointWrapper(endpoint));                
             return result;
