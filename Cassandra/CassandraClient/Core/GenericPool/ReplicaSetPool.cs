@@ -47,6 +47,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public void Dispose()
         {
+            pools.Values.ToList().ForEach(p => p.Dispose());
         }
 
         public TItem Acquire(TItemKey itemKey)

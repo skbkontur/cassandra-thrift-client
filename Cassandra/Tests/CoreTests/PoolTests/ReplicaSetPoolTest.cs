@@ -30,6 +30,23 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         }
 
         [Test]
+        public void TestDisposeItemsAfterPoolDispose()
+        {
+            Item item1;
+            Item item2;
+            Item item3;
+            using(var pool = CreateReplicaSetPool())
+            {
+                item1 = pool.Acquire(new ItemKey("key1"));
+                item2 = pool.Acquire(new ItemKey("key1"));
+                item3 = pool.Acquire(new ItemKey("key1"));
+            }
+            Assert.That(item1.Disposed);
+            Assert.That(item2.Disposed);
+            Assert.That(item3.Disposed);
+        }
+
+        [Test]
         public void TestAcquireItemWithSameKey()
         {
             var pool = CreateReplicaSetPool();
@@ -290,7 +307,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) { IsAlive = false }));
+            var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}));
             pool.RegisterReplica(new ReplicaKey("replica1"));
             pool.RegisterReplica(new ReplicaKey("replica2"));
 
@@ -378,11 +395,13 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
             public void Dispose()
             {
+                Disposed = true;
             }
 
             public bool IsAlive { get; set; }
             public ItemKey PoolKey { get; private set; }
             public ReplicaKey ReplicaKey { get; private set; }
+            public bool Disposed { get; private set; }
         }
     }
 }
