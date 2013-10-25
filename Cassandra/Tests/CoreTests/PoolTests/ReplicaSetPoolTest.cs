@@ -106,11 +106,11 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         {
             var pool = CreateReplicaSetPool(2);
             var itemKey = new ItemKey("key1");
-            pool.Bad(new ReplicaKey("replica2"));
-            pool.Bad(new ReplicaKey("replica2"));
-            pool.Bad(new ReplicaKey("replica2"));
-            pool.Bad(new ReplicaKey("replica2"));
-            pool.Bad(new ReplicaKey("replica2")); // Health: 0.168
+            pool.BadReplica(new ReplicaKey("replica2"));
+            pool.BadReplica(new ReplicaKey("replica2"));
+            pool.BadReplica(new ReplicaKey("replica2"));
+            pool.BadReplica(new ReplicaKey("replica2"));
+            pool.BadReplica(new ReplicaKey("replica2")); // Health: 0.168
 
             var acquiredItems = Enumerable
                 .Range(0, 100)
@@ -153,7 +153,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         {
             var pool = CreateReplicaSetPool(2);
             var itemKey = new ItemKey("key1");
-            Enumerable.Range(0, 100).ToList().ForEach(x => pool.Bad(new ReplicaKey("replica2"))); // Health: 0.01
+            Enumerable.Range(0, 100).ToList().ForEach(x => pool.BadReplica(new ReplicaKey("replica2"))); // Health: 0.01
 
             var acquiredItems = Enumerable
                 .Range(0, 100)
@@ -181,8 +181,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                     {
                         var item1 = pool.Acquire(itemKey);
                         var item2 = pool.Acquire(itemKey);
-                        pool.Good(item1.ReplicaKey);
-                        pool.Good(item2.ReplicaKey);
+                        pool.Good(item1);
+                        pool.Good(item2);
                         pool.Release(item1);
                         pool.Release(item2);
                         return new[] {item1, item2};
@@ -264,8 +264,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                     {
                         var item1 = pool.Acquire(itemKey);
                         var item2 = pool.Acquire(itemKey);
-                        pool.Good(item1.ReplicaKey);
-                        pool.Good(item2.ReplicaKey);
+                        pool.Good(item1);
+                        pool.Good(item2);
                         pool.Release(item1);
                         pool.Release(item2);
                         return new[] {item1, item2};
@@ -288,7 +288,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
         }
 
-        private static IReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
+        private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
         {
             var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)));
             Enumerable
@@ -297,7 +297,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Select(x => new ReplicaKey(x))
                 .ToList()
                 .ForEach(pool.RegisterKey);
-            return pool;
+            return (ReplicaSetPool<Item, ItemKey, ReplicaKey>)pool;
         }
 
         private class ItemKey : IEquatable<ItemKey>

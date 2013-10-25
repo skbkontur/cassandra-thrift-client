@@ -48,7 +48,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         try
                         {
                             connectionInPool.ExecuteCommand(command);
-                            clusterConnectionPool.Good((connectionInPool as ThriftConnectionInPoolWrapper).ReplicaKey);
+                            clusterConnectionPool.Good(connectionInPool);
                             return;
                         }
                         finally
@@ -63,12 +63,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         var exception = CassandraExceptionTransformer.Transform(e, message);
 
                         if(connectionInPool != null)
-                            logger.WarnFormat(string.Format("Attempt {0} on {1} failed.", i, (connectionInPool as ThriftConnectionInPoolWrapper).ReplicaKey), exception);
+                            logger.WarnFormat(string.Format("Attempt {0} on {1} failed.", i, connectionInPool.ToString()), exception);
                         else
                             logger.WarnFormat(string.Format("Attempt {0} to all nodes failed.", i), exception);
 
                         if(connectionInPool != null)
-                            clusterConnectionPool.Bad((connectionInPool as ThriftConnectionInPoolWrapper).ReplicaKey);
+                            clusterConnectionPool.Bad(connectionInPool);
 
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)

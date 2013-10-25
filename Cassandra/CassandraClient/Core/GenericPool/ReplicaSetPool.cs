@@ -8,7 +8,7 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public static class ReplicaSetPool
+    internal static class ReplicaSetPool
     {
         public static IReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
@@ -19,8 +19,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         public static IReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
-            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, 
-            Func<TItem, TReplicaKey> getReplicaKeyByItem, 
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
+            Func<TItem, TReplicaKey> getReplicaKeyByItem,
             Func<TItem, TItemKey> getItemKeyByItem)
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
@@ -29,7 +29,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
     }
 
-    public class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IReplicaSetPool<TItem, TItemKey, TReplicaKey>
+    internal class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IReplicaSetPool<TItem, TItemKey, TReplicaKey>
         where TItem : class, IDisposable, ILiveness
     {
         public ReplicaSetPool(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
@@ -72,7 +72,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 {
                     if(!newItem.IsAlive)
                     {
-                        Bad(getReplicaKeyByItem(newItem));
+                        Bad(newItem);
                         continue;
                     }
                     return newItem;
@@ -93,24 +93,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             replicaHealth.GetOrAdd(key, k => new Health {Value = 1.0});
         }
 
-        public void Bad(TReplicaKey key)
+        public void Bad(TItem item)
+        {
+            BadReplica(getReplicaKeyByItem(item));
+        }
+
+        public void Good(TItem item)
+        {
+            GoodReplica(getReplicaKeyByItem(item));
+        }
+
+        internal void BadReplica(TReplicaKey replicaKey)
         {
             Health health;
-            if(replicaHealth.TryGetValue(key, out health))
+            if(replicaHealth.TryGetValue(replicaKey, out health))
             {
                 var healthValue = health.Value * dieRate;
                 if(healthValue < deadHealth) healthValue = deadHealth;
-                health.Value = healthValue;
-            }
-        }
-
-        public void Good(TReplicaKey key)
-        {
-            Health health;
-            if(replicaHealth.TryGetValue(key, out health))
-            {
-                var healthValue = health.Value * aliveRate;
-                if(healthValue > aliveHealth) healthValue = aliveHealth;
                 health.Value = healthValue;
             }
         }
@@ -126,6 +125,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 return result;
             }
             return pools.GetOrAdd(key, x => poolFactory(x.ItemKey, x.ReplicaKey));
+        }
+
+        private void GoodReplica(TReplicaKey replicaKey)
+        {
+            Health health;
+            if(replicaHealth.TryGetValue(replicaKey, out health))
+            {
+                var healthValue = health.Value * aliveRate;
+                if(healthValue > aliveHealth) healthValue = aliveHealth;
+                health.Value = healthValue;
+            }
         }
 
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;

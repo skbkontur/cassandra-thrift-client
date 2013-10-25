@@ -10,7 +10,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         void Release(TItem item);
         
         void RegisterKey(TReplicaKey key);
-        void Bad(TReplicaKey key);
-        void Good(TReplicaKey key);
+        void Bad(TItem key);
+        void Good(TItem key);
     }
 }
