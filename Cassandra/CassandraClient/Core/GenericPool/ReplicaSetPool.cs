@@ -38,24 +38,56 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             TItem result = null;
 
-            var pool = replicaHealths
-                .ShuffleByHealth(x => x.Value.Value, x => GetPool(itemKey, x.Key))
-                .FirstOrDefault(x => x.TryAcquireExists(out result));
+            var totalReplicaCount = GetPoolItemCountByKey(itemKey, replicaHealths);
+            var totalReplicaHealth = replicaHealths.Select(x => x.Value.Value).Sum();
 
-            if(pool == null)
-            {
-                var newItems = replicaHealths
-                    .ShuffleByHealth(x => x.Value.Value, x => GetPool(itemKey, x.Key))
-                    .Select(x => x.AcquireNew());
-
-                foreach(var newItem in newItems)
-                {
-                    if(!newItem.IsAlive)
+            var existingAcquired = replicaHealths
+                .ShuffleByHealth(x => x.Value.Value)
+                .Any(x =>
                     {
-                        Bad(newItem);
-                        continue;
+                        var pool1 = GetPool(itemKey, x.Key);
+                        
+                        if(pool1.TryAcquireExists(out result))
+                            return true;
+                        
+                        var health = x.Value.Value;
+                        
+                        if(pool1.TotalCount == 0 || (pool1.TotalCount / (double)totalReplicaCount) <= (health / totalReplicaHealth))
+                        {
+                            result = pool1.AcquireNew();
+                            if (!result.IsAlive)
+                            {
+                                Bad(result);
+                                return false;
+                            }
+                            return true;
+                        }
+
+                        return false;
+                    });
+
+            if(!existingAcquired)
+            {
+                var replicaKeys = replicaHealths
+                    .ShuffleByHealth(x => x.Value.Value, x => x.Key);
+
+                foreach(var replicaKey in replicaKeys)
+                {
+                    var replicaPool = GetPool(itemKey, replicaKey);
+                    try
+                    {
+                        var newItem = replicaPool.AcquireNew();
+                        if(!newItem.IsAlive)
+                        {
+                            Bad(newItem);
+                            continue;
+                        }
+                        return newItem;
                     }
-                    return newItem;
+                    catch
+                    {
+                        BadReplica(replicaKey);
+                    }
                 }
                 throw new AllItemsIsDeadExceptions(string.Format("Cannot acquire connection from any of pool with keys [{0}]", string.Join(", ", pools.Keys.Select(x => x.ToString()))));
             }
@@ -63,14 +95,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             return result;
         }
 
+        private int GetPoolItemCountByKey(TItemKey itemKey, KeyValuePair<TReplicaKey, Health>[] replicaHealths)
+        {
+            var totalReplicaCount = replicaHealths.Select(x => x.Key).Select(x => GetPool(itemKey, x)).Sum(x => x.TotalCount);
+            return totalReplicaCount;
+        }
+
         public void Release(TItem item)
         {
             GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
-        }
-
-        public void RegisterReplica(TReplicaKey key)
-        {
-            replicaHealth.GetOrAdd(key, k => new Health {Value = 1.0});
         }
 
         public void Bad(TItem item)
@@ -81,6 +114,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Good(TItem item)
         {
             GoodReplica(getReplicaKeyByItem(item));
+        }
+
+        public void RegisterReplica(TReplicaKey key)
+        {
+            replicaHealth.GetOrAdd(key, k => new Health {Value = 1.0});
         }
 
         internal void BadReplica(TReplicaKey replicaKey)

@@ -178,49 +178,45 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAliveAfterDead()
         {
+            const int itemCount = 100;
+            const int attemptCount = 40;
+
             var pool = CreateReplicaSetPool(2);
             var itemKey = new ItemKey("key1");
             Enumerable.Range(0, 100).ToList().ForEach(x => pool.BadReplica(new ReplicaKey("replica2"))); // Health: 0.01
 
             var acquiredItems = Enumerable
-                .Range(0, 100)
-                .SelectMany(n =>
-                    {
-                        var item1 = pool.Acquire(itemKey);
-                        var item2 = pool.Acquire(itemKey);
-                        return new[] {item1, item2};
-                    })
+                .Range(0, itemCount)
+                .Select(n => pool.Acquire(itemKey))
                 .ToList();
 
             var acquiredItemCount = acquiredItems
                 .GroupBy(x => x.ReplicaKey)
                 .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(190, 200));
+            Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(0.95 * itemCount, itemCount));
             int count;
-            Assert.That(acquiredItemCount.TryGetValue(new ReplicaKey("replica2"), out count) ? count : 0, Is.InRange(0, 10));
+            Assert.That(acquiredItemCount.TryGetValue(new ReplicaKey("replica2"), out count) ? count : 0, Is.InRange(0.00 * itemCount, 0.05 * itemCount));
 
             acquiredItems.ForEach(pool.Release);
 
+
             var reacquiredItems = Enumerable
-                .Range(0, 2000)
+                .Range(0, attemptCount)
                 .SelectMany(n =>
                     {
-                        var item1 = pool.Acquire(itemKey);
-                        var item2 = pool.Acquire(itemKey);
-                        pool.Good(item1);
-                        pool.Good(item2);
-                        pool.Release(item1);
-                        pool.Release(item2);
-                        return new[] {item1, item2};
+                        var items = Enumerable.Range(0, itemCount).Select(i => pool.Acquire(itemKey)).ToList();
+                        items.ForEach(pool.Good);
+                        items.ForEach(pool.Release);
+                        return items;
                     })
                 .GroupBy(x => x.ReplicaKey)
                 .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(2000, 2700));
-            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(1300, 2000));
+            Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(0.53 * itemCount * attemptCount, 0.57 * itemCount * attemptCount));
+            Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(0.43 * itemCount * attemptCount, 0.47 * itemCount * attemptCount));
         }
-
+                
         [Test]
         public void TestAcquireOnlyLiveItemsWithDeadNode()
         {
@@ -248,6 +244,77 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 items.ForEach(pool.Release);
             }
         }
+
+        [Test]
+        public void TestCreationItemsOnDeadReplica()
+        {
+            const int attemptCount = 100;
+            const int itemCount = 100;
+            int deadNodeAttemptCount = 0;
+
+            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(
+                (x, r) => r.Name == "replica2" ?
+                              new Pool<Item>(y =>
+                              {
+                                  deadNodeAttemptCount++;
+                                  return new Item(x, r) { IsAlive = false };
+                              }) :
+                              new Pool<Item>(y => new Item(x, r))))
+            {
+                var itemKey = new ItemKey("key1");
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                Enumerable
+                    .Range(0, attemptCount)
+                    .ToList()
+                    .ForEach(n =>
+                    {
+                        var items = Enumerable.Range(0, itemCount).Select(x => pool.Acquire(itemKey)).ToList();
+                        items.ForEach(pool.Good);
+                        items.ForEach(pool.Release);
+                    });
+
+                Assert.That(deadNodeAttemptCount, Is.InRange(0, 0.02 * attemptCount * itemCount));
+            }
+        }
+
+        [Test]
+        public void TestCreationItemsAfterDeadReplica()
+        {
+            const int attemptCount = 100;
+            const int itemCount = 100;
+            int deadNodeAttemptCount = 0;
+
+            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(
+                (x, r) => r.Name == "replica2" ?
+                              new Pool<Item>(y =>
+                              {
+                                  deadNodeAttemptCount++;
+                                  return new Item(x, r) { IsAlive = false };
+                              }) :
+                              new Pool<Item>(y => new Item(x, r))))
+            {
+                Enumerable.Range(0, 100).ToList().ForEach(x => pool.BadReplica(new ReplicaKey("replica2"))); // Health: 0.01
+
+                var itemKey = new ItemKey("key1");
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                Enumerable
+                    .Range(0, attemptCount)
+                    .ToList()
+                    .ForEach(n =>
+                    {
+                        var items = Enumerable.Range(0, itemCount).Select(x => pool.Acquire(itemKey)).ToList();
+                        items.ForEach(pool.Good);
+                        items.ForEach(pool.Release);
+                    });
+
+                Assert.That(deadNodeAttemptCount, Is.InRange(0, 0.015 * attemptCount * itemCount));
+            }
+        }
+
 
         [Test]
         public void TestAcquireNewFromDeadNode()
