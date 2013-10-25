@@ -54,7 +54,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             var replicaHealths = replicaHealth.ToArray();
 
             if(replicaHealths.Length == 0)
-                throw new EmptyPoolException("Cannot acquire items without configured replicas. Use RegisterKey method to fill pool");
+                throw new EmptyPoolException("Cannot acquire items without configured replicas. Use RegisterReplica method to fill pool");
 
             TItem result = null;
 
@@ -88,7 +88,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
         }
 
-        public void RegisterKey(TReplicaKey key)
+        public void RegisterReplica(TReplicaKey key)
         {
             replicaHealth.GetOrAdd(key, k => new Health {Value = 1.0});
         }

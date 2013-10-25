@@ -27,7 +27,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
                 );
             foreach(var endpoint in settings.Endpoints)
-                result.RegisterKey(endpoint);                
+                result.RegisterReplica(endpoint);                
             return result;
          }
 
@@ -38,7 +38,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
                 );
-            result.RegisterKey(settings.EndpointForFierceCommands);                
+            result.RegisterReplica(settings.EndpointForFierceCommands);                
             return result;
          }
 

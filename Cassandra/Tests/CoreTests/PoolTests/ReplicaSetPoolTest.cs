@@ -213,8 +213,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                               new Pool<Item>(y => new Item(x, r))))
             {
                 var itemKey = new ItemKey("key1");
-                pool.RegisterKey(new ReplicaKey("replica1"));
-                pool.RegisterKey(new ReplicaKey("replica2"));
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
 
                 var items = Enumerable
                     .Range(0, 1)
@@ -248,8 +248,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                     }
                     return new Pool<Item>(y => new Item(x, r));
                 });
-            pool.RegisterKey(new ReplicaKey("replica1"));
-            pool.RegisterKey(new ReplicaKey("replica2"));
+            pool.RegisterReplica(new ReplicaKey("replica1"));
+            pool.RegisterReplica(new ReplicaKey("replica2"));
             var itemKey = new ItemKey("key1");
 
             var acquiredItems = Enumerable
@@ -291,8 +291,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         public void TestAcquireNewWithDeadNodes()
         {
             var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) { IsAlive = false }));
-            pool.RegisterKey(new ReplicaKey("replica1"));
-            pool.RegisterKey(new ReplicaKey("replica2"));
+            pool.RegisterReplica(new ReplicaKey("replica1"));
+            pool.RegisterReplica(new ReplicaKey("replica2"));
 
             Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
             Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
@@ -306,7 +306,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Select(n => string.Format(nameFormat, n))
                 .Select(x => new ReplicaKey(x))
                 .ToList()
-                .ForEach(pool.RegisterKey);
+                .ForEach(pool.RegisterReplica);
             return (ReplicaSetPool<Item, ItemKey, ReplicaKey>)pool;
         }
 

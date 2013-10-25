@@ -6,10 +6,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         where TItem : class, IDisposable, ILiveness 
     {
         TItem Acquire(TItemKey itemKey);
-
         void Release(TItem item);
         
-        void RegisterKey(TReplicaKey key);
+        void RegisterReplica(TReplicaKey key);
         void Bad(TItem key);
         void Good(TItem key);
     }
