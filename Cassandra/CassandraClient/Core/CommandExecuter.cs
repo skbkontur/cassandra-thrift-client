@@ -16,7 +16,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     public class CommandExecuter : ICommandExecuter
     {
-        public CommandExecuter(IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool,
+        public CommandExecuter(IReplicaSetPool<IThriftConnection, ConnectionKey, IPEndPoint> clusterConnectionPool,
                                ICassandraClusterSettings settings)
         {
             this.clusterConnectionPool = clusterConnectionPool;
@@ -41,19 +41,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             {
                 for(var i = 0; i < settings.Attempts; ++i)
                 {
-                    ThriftConnectionWrapper connection = null;
+                    IThriftConnection connectionInPool = null;
                     try
                     {
-                        connection = clusterConnectionPool.Acquire(new ConnectionKey(command.CommandContext.KeyspaceName, command.IsFierce));
+                        connectionInPool = clusterConnectionPool.Acquire(new ConnectionKey(command.CommandContext.KeyspaceName, command.IsFierce));
                         try
                         {
-                            connection.ExecuteCommand(command);
-                            clusterConnectionPool.Good(connection.ReplicaKey);
+                            connectionInPool.ExecuteCommand(command);
+                            clusterConnectionPool.Good((connectionInPool as ThriftConnectionInPoolWrapper).ReplicaKey);
                             return;
                         }
-                        finally 
+                        finally
                         {
-                            clusterConnectionPool.Release(connection);
+                            clusterConnectionPool.Release(connectionInPool);
                         }
                     }
                     catch(Exception e)
@@ -62,13 +62,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
                         var exception = CassandraExceptionTransformer.Transform(e, message);
 
-                        if(connection != null)
-                            logger.WarnFormat(string.Format("Attempt {0} on {1} failed.", i, connection.PoolKey), exception);
+                        if(connectionInPool != null)
+                            logger.WarnFormat(string.Format("Attempt {0} on {1} failed.", i, (connectionInPool as ThriftConnectionInPoolWrapper).ReplicaKey), exception);
                         else
                             logger.WarnFormat(string.Format("Attempt {0} to all nodes failed.", i), exception);
 
-                        if(connection != null)
-                            clusterConnectionPool.Bad(connection.ReplicaKey);
+                        if(connectionInPool != null)
+                            clusterConnectionPool.Bad((connectionInPool as ThriftConnectionInPoolWrapper).ReplicaKey);
 
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)
@@ -95,63 +95,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         private readonly ConcurrentDictionary<string, TimeStatistics> timeStatisticsDictionary = new ConcurrentDictionary<string, TimeStatistics>();
-        private readonly IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> clusterConnectionPool;
+        private readonly IReplicaSetPool<IThriftConnection, ConnectionKey, IPEndPoint> clusterConnectionPool;
         private readonly ICassandraClusterSettings settings;
         private readonly ILog logger = LogManager.GetLogger(typeof(CommandExecuter));
-    }
-
-    public class IPEndPointWrapper : IEquatable<IPEndPointWrapper>
-    {
-        public IPEndPointWrapper(IPEndPoint value)
-        {
-            Value = value;
-        }
-
-        public bool Equals(IPEndPointWrapper other)
-        {
-            if(ReferenceEquals(null, other)) return false;
-            if(ReferenceEquals(this, other)) return true;
-            return Equals(Value, other.Value);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(ReferenceEquals(null, obj)) return false;
-            if(ReferenceEquals(this, obj)) return true;
-            if(obj.GetType() != this.GetType()) return false;
-            return Equals((IPEndPointWrapper)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            return (Value != null ? Value.GetHashCode() : 0);
-        }
-
-        public IPEndPoint Value { get; set; }
-    }
-
-    public class ThriftConnectionWrapper : IDisposable, IPoolKeyContainer<ConnectionKey, IPEndPointWrapper>, ILiveness
-    {
-        public ThriftConnectionWrapper(ConnectionKey poolKey, IPEndPointWrapper ipEndPointWrapper, int timeout, IPEndPoint ipEndPoint, string keyspaceName)
-        {
-            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName);
-            PoolKey = poolKey;
-            ReplicaKey = ipEndPointWrapper;
-        }
-
-        public void ExecuteCommand(ICommand command)
-        {
-            thriftConnection.ExecuteCommand(command);
-        }
-
-        public void Dispose()
-        {
-            thriftConnection.Dispose();
-        }
-
-        public bool IsAlive { get { return thriftConnection.IsAlive; } }
-        private readonly ThriftConnection thriftConnection;
-        public ConnectionKey PoolKey { get; private set; }
-        public IPEndPointWrapper ReplicaKey { get; private set; }
     }
 }

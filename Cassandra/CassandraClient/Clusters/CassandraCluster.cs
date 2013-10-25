@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
@@ -15,11 +16,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
         }
 
-        private static IReplicaSetPool<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper> CreateClusterConnectionPool(ICassandraClusterSettings settings)
+        private static IReplicaSetPool<IThriftConnection, ConnectionKey, IPEndPoint> CreateClusterConnectionPool(ICassandraClusterSettings settings)
         {
-            var result = ReplicaSetPool.Create<ThriftConnectionWrapper, ConnectionKey, IPEndPointWrapper>((key, replicaKey) => new Pool<ThriftConnectionWrapper>(pool => new ThriftConnectionWrapper(key, replicaKey, settings.Timeout, replicaKey.Value, key.Keyspace)));
+            var result = ReplicaSetPool.Create<IThriftConnection, ConnectionKey, IPEndPoint>(
+                (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(key, settings.Timeout, replicaKey, key.Keyspace)),
+                c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
+                c => ((ThriftConnectionInPoolWrapper)c).PoolKey
+                );
             foreach(var endpoint in settings.Endpoints)
-                result.RegisterKey(new IPEndPointWrapper(endpoint));                
+                result.RegisterKey(endpoint);                
             return result;
          }
 

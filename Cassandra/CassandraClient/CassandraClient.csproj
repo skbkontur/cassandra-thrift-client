@@ -112,6 +112,9 @@
     <Compile Include="Core\GenericPool\ReplicaSetPool.cs" />
     <Compile Include="Core\GenericPool\Utils\ObjectReferenceEqualityComparer.cs" />
     <Compile Include="Core\GenericPool\Pool.cs" />
+    <Compile Include="Core\IThriftConnection.cs" />
+    <Compile Include="Core\IThriftConnectionInPoolWrapper.cs" />
+    <Compile Include="Core\ThriftConnectionInPoolWrapper.cs" />
     <Compile Include="Helpers\ItemHealthExtensions.cs" />
     <Compile Include="Scheme\KeyspaceConfiguration.cs" />
     <Compile Include="Scheme\KeyspaceScheme.cs" />

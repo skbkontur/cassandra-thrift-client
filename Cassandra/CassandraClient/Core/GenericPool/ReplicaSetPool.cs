@@ -17,6 +17,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         {
             return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
         }
+
+        public static IReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, 
+            Func<TItem, TReplicaKey> getReplicaKeyByItem, 
+            Func<TItem, TItemKey> getItemKeyByItem)
+            where TItem : class, IDisposable, ILiveness
+            where TItemKey : IEquatable<TItemKey>
+        {
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem);
+        }
     }
 
     public class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IReplicaSetPool<TItem, TItemKey, TReplicaKey>
