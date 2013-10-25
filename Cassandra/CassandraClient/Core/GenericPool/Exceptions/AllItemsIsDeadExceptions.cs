@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Cassandra.Tests.CoreTests.PoolTests
+namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions
 {
     public class AllItemsIsDeadExceptions : Exception
     {
