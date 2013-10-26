@@ -99,14 +99,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         private Pool<IThriftConnection> GetDataConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.Timeout, nodeEndpoint, keyspaceName));
+            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.Timeout));
             logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
+            return result;
+        }
+
+        private ThriftConnectionInPoolWrapper CreateThriftConnection(IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
+        {
+            var result = new ThriftConnectionInPoolWrapper(timeout, nodeEndpoint, keyspaceName);
+            logger.DebugFormat("Connection {0} was created.", result);
             return result;
         }
 
         private Pool<IThriftConnection> CreateFiercePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.FierceTimeout, nodeEndpoint, keyspaceName));
+            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.FierceTimeout));
             logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
             return result;
         }
