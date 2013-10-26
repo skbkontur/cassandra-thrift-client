@@ -227,8 +227,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                     .GroupBy(x => x.ReplicaKey)
                     .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
-                Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(0.53 * itemCount * attemptCount, 0.57 * itemCount * attemptCount));
-                Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(0.43 * itemCount * attemptCount, 0.47 * itemCount * attemptCount));
+                Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(0.53 * itemCount * attemptCount, 0.60 * itemCount * attemptCount));
+                Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(0.40 * itemCount * attemptCount, 0.47 * itemCount * attemptCount));
             }
         }
 
