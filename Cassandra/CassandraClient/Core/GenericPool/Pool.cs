@@ -106,18 +106,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private bool TryFreeItemPop(out T item)
         {
+            FreeItemInfo freeItemInfo;
             unusedItemCollectorLock.EnterReadLock();
+            bool result;
             try
             {
-                FreeItemInfo freeItemInfo;
-                var result = freeItems.TryPop(out freeItemInfo);
-                item = freeItemInfo.Item;
-                return result;
+                result = freeItems.TryPop(out freeItemInfo);
             }
             finally
             {
                 unusedItemCollectorLock.ExitReadLock();
             }
+            item = result ? freeItemInfo.Item : null;
+            return result;
         }
 
         private void MarkItemAsBusy(T result)
