@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Threading;
 
 namespace SKBKontur.Cassandra.CassandraDeploymentManager
 {
@@ -41,27 +43,47 @@ namespace SKBKontur.Cassandra.CassandraDeploymentManager
             proc.Start();
         }
 
-        private void Stop()
+        private IEnumerable<int> GetCassandraProcessIds()
         {
             using(var mos = new ManagementObjectSearcher("SELECT ProcessId, CommandLine FROM Win32_Process"))
             {
                 foreach(ManagementObject mo in mos.Get())
                 {
                     if(mo["CommandLine"] != null && mo["CommandLine"].ToString().Contains("internalflag=kontur"))
-                    {
-                        Process.GetProcessById(int.Parse(mo["ProcessId"].ToString())).Kill();
-                        Console.WriteLine("Killed process with id {0}", mo["ProcessId"]);
-                    }
+                        yield return int.Parse(mo["ProcessId"].ToString());
                 }
             }
+        }
+
+        private void Stop()
+        {
+            foreach(var processId in GetCassandraProcessIds())
+            {
+                Process.GetProcessById(processId).Kill();
+                Console.WriteLine("Kill cassandra process id={0}", processId);
+            }
+
+            Console.WriteLine("Start waiting for cassandra processs stop.");
+            while(GetCassandraProcessIds().Any())
+            {
+                Console.WriteLine("Waiting for cassandra processs stop.");
+                Thread.Sleep(1000);
+            }
+                
         }
 
         private void Deploy(string pathToCassandra, string deployPath)
         {
             if(Directory.Exists(deployPath))
+            {
                 Directory.Delete(deployPath, true);
+                Console.WriteLine("Deleted existed directory {0}.", deployPath);
+            }
+                
             Directory.CreateDirectory(deployPath);
+            Console.WriteLine("Deploying cassandra to {0}.", deployPath);
             DirectoryCopy(pathToCassandra, deployPath, true);
+            Console.WriteLine("Cassandra deployed to {0}.", deployPath);
         }
 
         private static void DirectoryCopy(string sourceDirName, string destDirName, bool copySubDirs)
