@@ -14,18 +14,16 @@
 @REM See the License for the specific language governing permissions and
 @REM limitations under the License.
 
-SET JAVA_HOME=C:\Program Files\Java\jre6
 @echo off
 if "%OS%" == "Windows_NT" setlocal
 
 if NOT DEFINED CASSANDRA_HOME set CASSANDRA_HOME=%~dp0..
-if NOT DEFINED JAVA_HOME goto err
+if NOT DEFINED JAVA_HOME goto :err
 
 REM Ensure that any user defined CLASSPATH variables are not used on startup
-set CLASSPATH=%CASSANDRA_HOME%\conf
+set CLASSPATH="%CASSANDRA_HOME%\conf"
 
 REM For each jar in the CASSANDRA_HOME lib directory call append to build the CLASSPATH variable.
-rem for %%i in (%CASSANDRA_HOME%\lib*.jar) do call :append %%~fi
 for %%i in ("%CASSANDRA_HOME%\lib\*.jar") do call :append "%%i"
 goto okClasspath
 
@@ -34,13 +32,13 @@ set CLASSPATH=%CLASSPATH%;%1
 goto :eof
 
 :okClasspath
-REM Include the build\classes directory so it works in development
-set CASSANDRA_CLASSPATH=%CLASSPATH%;%CASSANDRA_HOME%\build\classes
+REM Include the build\classes\main directory so it works in development
+set CASSANDRA_CLASSPATH=%CLASSPATH%;"%CASSANDRA_HOME%\build\classes\main";"%CASSANDRA_HOME%\build\classes\thrift"
 goto runNodeTool
 
 :runNodeTool
 echo Starting NodeTool
-"%JAVA_HOME%\bin\java" -cp "%CASSANDRA_CLASSPATH%" -Dlog4j.configuration=log4j-tools.properties org.apache.cassandra.tools.NodeCmd %*
+"%JAVA_HOME%\bin\java" -cp %CASSANDRA_CLASSPATH% -Dlog4j.configuration=log4j-tools.properties org.apache.cassandra.tools.NodeCmd %*
 goto finally
 
 :err

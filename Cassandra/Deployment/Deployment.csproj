@@ -12,6 +12,7 @@
     <AssemblyName>Cassandra.Deployment</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <ItemGroup>
     <Content Include="TC\Build.xml" />

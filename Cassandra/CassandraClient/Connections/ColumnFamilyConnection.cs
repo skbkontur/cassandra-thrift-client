@@ -43,6 +43,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             implementation.DeleteRow(StringHelpers.StringToBytes(key), timestamp);
         }
 
+        public void DeleteColumn(string key, string columnName, long? timestamp = null)
+        {
+            implementation.DeleteBatch(StringHelpers.StringToBytes(key), new[] { StringHelpers.StringToBytes(columnName) }, timestamp);
+        }
+
         public void AddColumn(string key, Column column)
         {
             implementation.AddColumn(StringHelpers.StringToBytes(key), column);

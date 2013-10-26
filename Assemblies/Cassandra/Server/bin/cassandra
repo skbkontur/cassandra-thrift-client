@@ -19,6 +19,7 @@
 # OPTIONS:
 #   -f: start in foreground
 #   -p <filename>: log the pid to a file (useful to kill it later)
+#   -v: print version string and exit
 
 # CONTROLLING STARTUP:
 # 
@@ -60,32 +61,47 @@
 # Be aware that you will be entirely responsible for populating the needed
 # environment variables.
 
+# NB: Developers should be aware that this script should remain compatible with
+# POSIX sh and Solaris sh. This means, in particular, no $(( )) and no $( ).
+
 # If an include wasn't specified in the environment, then search for one...
 if [ "x$CASSANDRA_INCLUDE" = "x" ]; then
     # Locations (in order) to use when searching for an include file.
     for include in /usr/share/cassandra/cassandra.in.sh \
                    /usr/local/share/cassandra/cassandra.in.sh \
                    /opt/cassandra/cassandra.in.sh \
-                   ~/.cassandra.in.sh \
-                   `dirname $0`/cassandra.in.sh; do
-        if [ -r $include ]; then
-            . $include
+                   "$HOME/.cassandra.in.sh" \
+                   "`dirname "$0"`/cassandra.in.sh"; do
+        if [ -r "$include" ]; then
+            . "$include"
             break
         fi
     done
 # ...otherwise, source the specified include.
-elif [ -r $CASSANDRA_INCLUDE ]; then
-    . $CASSANDRA_INCLUDE
+elif [ -r "$CASSANDRA_INCLUDE" ]; then
+    . "$CASSANDRA_INCLUDE"
 fi
 
 # Use JAVA_HOME if set, otherwise look for java in PATH
-if [ -x $JAVA_HOME/bin/java ]; then
-    JAVA=$JAVA_HOME/bin/java
+if [ -n "$JAVA_HOME" ]; then
+    JAVA="$JAVA_HOME/bin/java"
 else
-    JAVA=`which java`
+    JAVA=java
 fi
 
-if [ -z $CASSANDRA_CONF -o -z $CLASSPATH ]; then
+# If numactl is available, use it. For Cassandra, the priority is to
+# avoid disk I/O. Even for the purpose of CPU efficiency, we don't
+# really have CPU<->data affinity anyway. Also, empirically test that numactl
+# works before trying to use it (CASSANDRA-3245).
+NUMACTL_ARGS="--interleave=all"
+if which numactl >/dev/null 2>/dev/null && numactl $NUMACTL_ARGS ls / >/dev/null 2>/dev/null
+then
+    NUMACTL="numactl $NUMACTL_ARGS"
+else
+    NUMACTL=""
+fi
+
+if [ -z "$CASSANDRA_CONF" -o -z "$CLASSPATH" ]; then
     echo "You must set the CASSANDRA_CONF and CLASSPATH vars" >&2
     exit 1
 fi
@@ -104,35 +120,36 @@ esac
 
 launch_service()
 {
-    pidpath=$1
-    foreground=$2
-    props=$3
-    class=$4
+    pidpath="$1"
+    foreground="$2"
+    props="$3"
+    class="$4"
     cassandra_parms="-Dlog4j.configuration=log4j-server.properties -Dlog4j.defaultInitOverride=true"
 
     if [ "x$pidpath" != "x" ]; then
         cassandra_parms="$cassandra_parms -Dcassandra-pidfile=$pidpath"
     fi
-    
+
     # The cassandra-foreground option will tell CassandraDaemon not
     # to close stdout/stderr, but it's up to us not to background.
     if [ "x$foreground" != "x" ]; then
         cassandra_parms="$cassandra_parms -Dcassandra-foreground=yes"
-        exec $JAVA $JVM_OPTS $cassandra_parms -cp $CLASSPATH $props $class
+        exec $NUMACTL "$JAVA" $JVM_OPTS $cassandra_parms -cp "$CLASSPATH" $props "$class"
     # Startup CassandraDaemon, background it, and write the pid.
     else
-        exec $JAVA $JVM_OPTS $cassandra_parms -cp $CLASSPATH $props $class <&- &
-        [ ! -z $pidpath ] && printf "%d" $! > $pidpath
+        exec $NUMACTL "$JAVA" $JVM_OPTS $cassandra_parms -cp "$CLASSPATH" $props "$class" <&- &
+        [ ! -z "$pidpath" ] && printf "%d" $! > "$pidpath"
+        true
     fi
 
     return $?
 }
 
 # Parse any command line options.
-args=`getopt fahp:bD: "$@"`
+args=`getopt vfhp:bD: "$@"`
 eval set -- "$args"
 
-classname="org.apache.cassandra.thrift.CassandraDaemon"
+classname="org.apache.cassandra.service.CassandraDaemon"
 
 while true; do
     case "$1" in
@@ -148,13 +165,13 @@ while true; do
             echo "Usage: $0 [-f] [-h] [-p pidfile]"
             exit 0
         ;;
+        -v)
+            "$JAVA" -cp "$CLASSPATH" org.apache.cassandra.tools.GetVersion
+            exit 0
+        ;;
         -D)
             properties="$properties -D$2"
             shift 2
-        ;;
-        -a)
-            classname="org.apache.cassandra.avro.CassandraDaemon"
-            shift
         ;;
         --)
             shift

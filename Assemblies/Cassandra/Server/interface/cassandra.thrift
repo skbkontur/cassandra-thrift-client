@@ -55,7 +55,7 @@ namespace rb CassandraThrift
 # An effort should be made not to break forward-client-compatibility either
 # (e.g. one should avoid removing obsolete fields from the IDL), but no
 # guarantees in this respect are made by the Cassandra project.
-const string VERSION = "19.20.0"
+const string VERSION = "19.36.0"
 
 
 #
@@ -140,6 +140,18 @@ exception UnavailableException {
 
 /** RPC timeout was exceeded.  either a node failed mid-operation, or load was too high, or the requested op was too large. */
 exception TimedOutException {
+    /**
+     * if a write operation was acknowledged by some replicas but not by enough to
+     * satisfy the required ConsistencyLevel, the number of successful
+     * replies will be given here. In case of atomic_batch_mutate method this field
+     * will be set to -1 if the batch was written to the batchlog and to 0 if it wasn't.
+     */
+    1: optional i32 acknowledged_by
+
+    /**
+     * in case of atomic_batch_mutate method this field tells if the batch was written to the batchlog.
+     */
+    2: optional bool acknowledged_by_batchlog
 }
 
 /** invalid authentication request (invalid keyspace, user does not exist, or credentials invalid) */
@@ -152,7 +164,12 @@ exception AuthorizationException {
     1: required string why
 }
 
-/** schemas are not in agreement across all nodes */
+/**
+ * NOTE: This up outdated exception left for backward compatibility reasons,
+ * no actual schema agreement validation is done starting from Cassandra 1.2
+ *
+ * schemas are not in agreement across all nodes
+ */
 exception SchemaDisagreementException {
 }
 
@@ -293,11 +310,15 @@ struct IndexExpression {
     3: required binary value,
 }
 
+/**
+ * @deprecated use a KeyRange with row_filter in get_range_slices instead
+ */
 struct IndexClause {
-    1: required list<IndexExpression> expressions
+    1: required list<IndexExpression> expressions,
     2: required binary start_key,
     3: required i32 count=100,
 }
+
 
 /**
 The semantics of start keys and tokens are slightly different.
@@ -312,6 +333,7 @@ struct KeyRange {
     2: optional binary end_key,
     3: optional string start_token,
     4: optional string end_token,
+    6: optional list<IndexExpression> row_filter,
     5: required i32 count=100
 }
 
@@ -382,7 +404,8 @@ struct AuthenticationRequest {
 
 enum IndexType {
     KEYS,
-    CUSTOM
+    CUSTOM,
+    COMPOSITES
 }
 
 /* describes a column in a column family. */
@@ -403,27 +426,46 @@ struct CfDef {
     5: optional string comparator_type="BytesType",
     6: optional string subcomparator_type,
     8: optional string comment,
-    9: optional double row_cache_size=0,
-    11: optional double key_cache_size=200000,
-    12: optional double read_repair_chance=1.0,
+    12: optional double read_repair_chance,
     13: optional list<ColumnDef> column_metadata,
     14: optional i32 gc_grace_seconds,
     15: optional string default_validation_class,
     16: optional i32 id,
     17: optional i32 min_compaction_threshold,
     18: optional i32 max_compaction_threshold,
-    19: optional i32 row_cache_save_period_in_seconds,
-    20: optional i32 key_cache_save_period_in_seconds,
     24: optional bool replicate_on_write,
-    25: optional double merge_shards_chance,
     26: optional string key_validation_class,
-    27: optional string row_cache_provider,
     28: optional binary key_alias,
     29: optional string compaction_strategy,
     30: optional map<string,string> compaction_strategy_options,
-    31: optional i32 row_cache_keys_to_save,
     32: optional map<string,string> compression_options,
     33: optional double bloom_filter_fp_chance,
+    34: optional string caching="keys_only",
+    37: optional double dclocal_read_repair_chance = 0.0,
+    38: optional bool populate_io_cache_on_flush,
+
+    /* All of the following are now ignored and unsupplied. */
+
+    /** @deprecated */
+    9: optional double row_cache_size,
+    /** @deprecated */
+    11: optional double key_cache_size,
+    /** @deprecated */
+    19: optional i32 row_cache_save_period_in_seconds,
+    /** @deprecated */
+    20: optional i32 key_cache_save_period_in_seconds,
+    /** @deprecated */
+    21: optional i32 memtable_flush_after_mins,
+    /** @deprecated */
+    22: optional i32 memtable_throughput_in_mb,
+    /** @deprecated */
+    23: optional double memtable_operations_in_millions,
+    /** @deprecated */
+    25: optional double merge_shards_chance,
+    /** @deprecated */
+    27: optional string row_cache_provider,
+    /** @deprecated */
+    31: optional i32 row_cache_keys_to_save,
 }
 
 /* describes a keyspace. */
@@ -432,8 +474,8 @@ struct KsDef {
     2: required string strategy_class,
     3: optional map<string,string> strategy_options,
 
-    /** @deprecated */
-    4: optional i32 replication_factor, 
+    /** @deprecated ignored */
+    4: optional i32 replication_factor,
 
     5: required list<CfDef> cf_defs,
     6: optional bool durable_writes=1,
@@ -469,6 +511,20 @@ struct CqlResult {
     2: optional list<CqlRow> rows,
     3: optional i32 num,
     4: optional CqlMetadata schema
+}
+
+struct CqlPreparedResult {
+    1: required i32 itemId,
+    2: required i32 count,
+    3: optional list<string> variable_types,
+    4: optional list<string> variable_names
+}
+
+/** Represents input splits used by hadoop ColumnFamilyRecordReaders */
+struct CfSplit {
+    1: required string start_token,
+    2: required string end_token,
+    3: required i64 row_count
 }
 
 service Cassandra {
@@ -536,7 +592,19 @@ service Cassandra {
                                   4:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
                  throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
 
-  /** Returns the subset of columns specified in SlicePredicate for the rows matching the IndexClause */
+  /**
+   returns a range of columns, wrapping to the next rows if necessary to collect max_results.
+  */
+  list<KeySlice> get_paged_slice(1:required string column_family,
+                                 2:required KeyRange range,
+                                 3:required binary start_column,
+                                 4:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
+                 throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
+
+  /**
+    Returns the subset of columns specified in SlicePredicate for the rows matching the IndexClause
+    @deprecated use get_range_slices instead with range.row_filter specified
+    */
   list<KeySlice> get_indexed_slices(1:required ColumnParent column_parent,
                                     2:required IndexClause index_clause,
                                     3:required SlicePredicate column_predicate,
@@ -584,7 +652,6 @@ service Cassandra {
                       3:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
       throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
 
-
   /**
     Mutate many columns or super columns for many row keys. See also: Mutation.
 
@@ -593,7 +660,16 @@ service Cassandra {
   void batch_mutate(1:required map<binary, map<string, list<Mutation>>> mutation_map,
                     2:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
        throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
-       
+
+  /**
+    Atomically mutate many columns or super columns for many row keys. See also: Mutation.
+
+    mutation_map maps key to column family to a list of Mutation objects to take place at that scope.
+  **/
+  void atomic_batch_mutate(1:required map<binary, map<string, list<Mutation>>> mutation_map,
+                           2:required ConsistencyLevel consistency_level=ConsistencyLevel.ONE)
+       throws (1:InvalidRequestException ire, 2:UnavailableException ue, 3:TimedOutException te),
+
   /**
    Truncate will mark and entire column family as deleted.
    From the user's perspective a successful call to truncate will result complete data deletion from cfname.
@@ -603,7 +679,7 @@ service Cassandra {
    some hosts are down.
   */
   void truncate(1:required string cfname)
-       throws (1: InvalidRequestException ire, 2: UnavailableException ue),
+       throws (1: InvalidRequestException ire, 2: UnavailableException ue, 3: TimedOutException te),
 
 
     
@@ -639,6 +715,12 @@ service Cassandra {
   list<TokenRange> describe_ring(1:required string keyspace)
                    throws (1:InvalidRequestException ire),
 
+  /** get the mapping between token->node ip
+      without taking replication into consideration
+      https://issues.apache.org/jira/browse/CASSANDRA-4092 */
+  map<string, string> describe_token_map()
+                    throws (1:InvalidRequestException ire),
+  
   /** returns the partitioner used by this cluster */
   string describe_partitioner(),
 
@@ -659,6 +741,16 @@ service Cassandra {
                                3:required string end_token,
                                4:required i32 keys_per_split)
     throws (1:InvalidRequestException ire),
+
+  /** Enables tracing for the next query in this connection and returns the UUID for that trace session
+      The next query will be traced idependently of trace probability and the returned UUID can be used to query the trace keyspace */
+  binary trace_next_query(),
+
+  list<CfSplit> describe_splits_ex(1:required string cfName,
+                                   2:required string start_token,
+                                   3:required string end_token,
+                                   4:required i32 keys_per_split)
+    throws (1:InvalidRequestException ire), 
 
   /** adds a column family. returns the new schema id. */
   string system_add_column_family(1:required CfDef cf_def)
@@ -693,4 +785,45 @@ service Cassandra {
             2:UnavailableException ue,
             3:TimedOutException te,
             4:SchemaDisagreementException sde)
+
+  CqlResult execute_cql3_query(1:required binary query, 2:required Compression compression, 3:required ConsistencyLevel consistency)
+    throws (1:InvalidRequestException ire,
+            2:UnavailableException ue,
+            3:TimedOutException te,
+            4:SchemaDisagreementException sde)
+
+
+  /**
+   * Prepare a CQL (Cassandra Query Language) statement by compiling and returning
+   * - the type of CQL statement
+   * - an id token of the compiled CQL stored on the server side.
+   * - a count of the discovered bound markers in the statement 
+   */
+  CqlPreparedResult prepare_cql_query(1:required binary query, 2:required Compression compression)
+    throws (1:InvalidRequestException ire)
+
+  CqlPreparedResult prepare_cql3_query(1:required binary query, 2:required Compression compression)
+    throws (1:InvalidRequestException ire)
+
+             
+  /**
+   * Executes a prepared CQL (Cassandra Query Language) statement by passing an id token and  a list of variables
+   * to bind and returns a CqlResult containing the results.
+   */
+  CqlResult execute_prepared_cql_query(1:required i32 itemId, 2:required list<binary> values)
+    throws (1:InvalidRequestException ire,
+            2:UnavailableException ue,
+            3:TimedOutException te,
+            4:SchemaDisagreementException sde)
+
+  CqlResult execute_prepared_cql3_query(1:required i32 itemId, 2:required list<binary> values, 3:required ConsistencyLevel consistency)
+    throws (1:InvalidRequestException ire,
+            2:UnavailableException ue,
+            3:TimedOutException te,
+            4:SchemaDisagreementException sde)
+
+  /**
+   * @deprecated This is now a no-op. Please use the CQL3 specific methods instead.
+   */
+  void set_cql_version(1: required string version) throws (1:InvalidRequestException ire)
 }
