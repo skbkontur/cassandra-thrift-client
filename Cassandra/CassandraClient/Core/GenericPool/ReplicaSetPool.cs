@@ -118,7 +118,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public void RegisterReplica(TReplicaKey key)
         {
-            replicaHealth.GetOrAdd(key, k => new Health {Value = 1.0});
+            replicaHealth.GetOrAdd(key, k => new Health {Value = aliveHealth});
         }
 
         internal void BadReplica(TReplicaKey replicaKey)
