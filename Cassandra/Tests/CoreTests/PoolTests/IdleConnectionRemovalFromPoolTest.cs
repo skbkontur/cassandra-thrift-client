@@ -22,7 +22,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Thread.Sleep(TimeSpan.FromMilliseconds(101));
                 var item3 = pool.Acquire();
                 pool.Release(item3);
-                var count = pool.RemoveIdleItem(TimeSpan.FromMilliseconds(100));
+                var count = pool.RemoveIdleItems(TimeSpan.FromMilliseconds(100));
                 
                 var item4 = pool.Acquire();
                 var item5 = pool.Acquire();

@@ -88,7 +88,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             public DateTime IdleTime { get; private set; }
         }
 
-        public int RemoveIdleItem(TimeSpan minIdleTimeSpan)
+        public int RemoveIdleItems(TimeSpan minIdleTimeSpan)
         {
             var tempStack = new Stack<FreeItemInfo>();
             var x = DateTime.UtcNow;
