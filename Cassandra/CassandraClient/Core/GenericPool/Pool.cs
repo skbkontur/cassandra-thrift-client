@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
+
+using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
@@ -64,23 +67,32 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             unusedItemCollectorLock.EnterWriteLock();
             try
             {
-                var tempStack = new Stack<FreeItemInfo>();
-                var x = DateTime.UtcNow;
-                FreeItemInfo item;
                 var result = 0;
-                while(freeItems.TryPop(out item))
+                var timer = Stopwatch.StartNew();
+                try
                 {
-                    if(x - item.IdleTime >= minIdleTimeSpan)
+                    var tempStack = new Stack<FreeItemInfo>();
+                    var now = DateTime.UtcNow;
+                    FreeItemInfo item;
+                    
+                    while(freeItems.TryPop(out item))
                     {
-                        result++;
-                        item.Item.Dispose();
-                        continue;
+                        if(now - item.IdleTime >= minIdleTimeSpan)
+                        {
+                            result++;
+                            item.Item.Dispose();
+                            continue;
+                        }
+                        tempStack.Push(item);
                     }
-                    tempStack.Push(item);
+                    while(tempStack.Count > 0)
+                        freeItems.Push(tempStack.Pop());
+                    return result;
                 }
-                while(tempStack.Count > 0)
-                    freeItems.Push(tempStack.Pop());
-                return result;
+                finally
+                {
+                    logger.InfoFormat("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
+                }
             }
             finally
             {
@@ -115,7 +127,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
-
+        private ILog logger = LogManager.GetLogger(typeof(Pool<T>));
         private readonly Func<Pool<T>, T> itemFactory;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
         private readonly ConcurrentDictionary<T, object> busyItems = new ConcurrentDictionary<T, object>(ObjectReferenceEqualityComparer<T>.Default);
