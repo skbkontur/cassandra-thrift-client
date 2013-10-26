@@ -6,6 +6,8 @@ using System.Linq;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
+using log4net;
+
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
     internal class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IPoolSet<TItem, TItemKey>
@@ -46,16 +48,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 .Any(x =>
                     {
                         var pool1 = GetPool(itemKey, x.Key);
-                        
+
                         if(pool1.TryAcquireExists(out result))
                             return true;
-                        
+
                         var health = x.Value.Value;
-                        
+
                         if(pool1.TotalCount == 0 || (pool1.TotalCount / (double)totalReplicaCount) <= (health / totalReplicaHealth))
                         {
                             result = pool1.AcquireNew();
-                            if (!result.IsAlive)
+                            if(!result.IsAlive)
                             {
                                 Bad(result);
                                 return false;
@@ -95,12 +97,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             return result;
         }
 
-        private int GetPoolItemCountByKey(TItemKey itemKey, KeyValuePair<TReplicaKey, Health>[] replicaHealths)
-        {
-            var totalReplicaCount = replicaHealths.Select(x => x.Key).Select(x => GetPool(itemKey, x)).Sum(x => x.TotalCount);
-            return totalReplicaCount;
-        }
-
         public void Release(TItem item)
         {
             GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
@@ -119,6 +115,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void RegisterReplica(TReplicaKey key)
         {
             replicaHealth.GetOrAdd(key, k => new Health {Value = aliveHealth});
+            logger.InfoFormat("New node [{0}] was added in client topology.", key);
         }
 
         internal void BadReplica(TReplicaKey replicaKey)
@@ -129,7 +126,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 var healthValue = health.Value * dieRate;
                 if(healthValue < deadHealth) healthValue = deadHealth;
                 health.Value = healthValue;
+                logger.DebugFormat("Health of node [{0}] was decreased. Current health: {1}", replicaKey, healthValue);
             }
+        }
+
+        private int GetPoolItemCountByKey(TItemKey itemKey, KeyValuePair<TReplicaKey, Health>[] replicaHealths)
+        {
+            var totalReplicaCount = replicaHealths.Select(x => x.Key).Select(x => GetPool(itemKey, x)).Sum(x => x.TotalCount);
+            return totalReplicaCount;
         }
 
         private Pool<TItem> GetPool(TItemKey itemKey, TReplicaKey replicaKey, bool createNewIfNotExists = true)
@@ -153,7 +157,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 var healthValue = health.Value * aliveRate;
                 if(healthValue > aliveHealth) healthValue = aliveHealth;
                 health.Value = healthValue;
+                logger.DebugFormat("Health of node [{0}] was increased. Current health: {1}", replicaKey, healthValue);
             }
+            
         }
 
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;
@@ -161,6 +167,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private readonly Func<TItem, TItemKey> getItemKeyByItem;
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
         private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
+        private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<TItem, TItemKey, TReplicaKey>));
 
         private class PoolKey
         {
