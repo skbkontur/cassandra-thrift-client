@@ -63,10 +63,10 @@ namespace SKBKontur.Cassandra.CassandraDeploymentManager
                 Console.WriteLine("Kill cassandra process id={0}", processId);
             }
 
-            Console.WriteLine("Start waiting for cassandra processs stop.");
+            Console.WriteLine("Start waiting for cassandra process stop.");
             while(GetCassandraProcessIds().Any())
             {
-                Console.WriteLine("Waiting for cassandra processs stop.");
+                Console.WriteLine("Waiting for cassandra process stop.");
                 Thread.Sleep(1000);
             }
                 
