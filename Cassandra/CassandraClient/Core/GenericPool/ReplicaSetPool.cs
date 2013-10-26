@@ -39,9 +39,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Dispose()
         {
             disposeEvent.Set();
+            if(unusedItemsCollectorThread != null)
+            {
+                if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
+                    logger.WarnFormat("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
+            }
             pools.Values.ToList().ForEach(p => p.Dispose());
-            if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
-                logger.WarnFormat("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
             disposeEvent.Dispose();
         }
 
