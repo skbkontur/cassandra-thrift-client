@@ -8,6 +8,8 @@ using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
+using log4net;
+
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public class CassandraCluster : ICassandraCluster
@@ -72,10 +74,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             commandExecuter.Dispose();
         }
 
-        private static ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
+        private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
         {
             var replicaSetPool = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
-                (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.Timeout, replicaKey, key)),
+                (key, replicaKey) => GetDataConnectionPool(settings, replicaKey, key),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
                 );
@@ -84,10 +86,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return replicaSetPool;
         }
 
-        private static ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateFierceConnectionPool(ICassandraClusterSettings settings)
+        private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateFierceConnectionPool(ICassandraClusterSettings settings)
         {
             var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
-                (key, replicaKey) => new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.FierceTimeout, replicaKey, key)),
+                (key, replicaKey) => CreateFiercePool(settings, replicaKey, key),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName
                 );
@@ -95,6 +97,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return result;
         }
 
+        private Pool<IThriftConnection> GetDataConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
+        {
+            var result = new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.Timeout, nodeEndpoint, keyspaceName));
+            logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
+            return result;
+        }
+
+        private Pool<IThriftConnection> CreateFiercePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
+        {
+            var result = new Pool<IThriftConnection>(pool => new ThriftConnectionInPoolWrapper(settings.FierceTimeout, nodeEndpoint, keyspaceName));
+            logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
+            return result;
+        }
+
+        private readonly ILog logger = LogManager.GetLogger(typeof(CassandraCluster));
         private readonly ICassandraClusterSettings clusterSettings;
         private readonly ICommandExecuter commandExecuter;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool;
