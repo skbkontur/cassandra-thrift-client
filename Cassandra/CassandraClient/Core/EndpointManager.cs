@@ -1,7 +1,7 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using log4net;
 
@@ -40,42 +40,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public IPEndPoint[] GetEndPoints()
         {
-            var healthes = badlist.GetHealthes();
-            var result = new IPEndPoint[healthes.Length];
-            var set = new HashSet<KeyValuePair<IPEndPoint, double>>(healthes);
-            for (var i = 0; i < result.Length; ++i)
-            {
-                var sum = set.Sum(h => h.Value);
-
-                double rnd = Random.NextDouble();
-                foreach (var t in set)
-                {
-                    rnd -= t.Value / sum;
-                    if (rnd < eps)
-                    {
-                        result[i] = t.Key;
-                        set.Remove(t);
-                        break;
-                    }
-                }
-                if (result[i] == null)
-                {
-                    var last = set.Last();
-                    result[i] = last.Key;
-                    set.Remove(last);
-                }
-            }
-            return result;
+            return badlist.GetHealthes().ShuffleByHealth(x => x.Value, x => x.Key).ToArray();
         }
 
-        private static Random Random { get { return random ?? (random = new Random()); } }
-
         private readonly IBadlist badlist;
-
-        [ThreadStatic]
-        private static Random random;
-
         private readonly ILog logger = LogManager.GetLogger(typeof(EndpointManager));
-        private const double eps = 1e-15;
     }
 }
