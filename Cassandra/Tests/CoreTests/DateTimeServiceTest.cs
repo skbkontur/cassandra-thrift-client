@@ -64,5 +64,25 @@ namespace Cassandra.Tests.CoreTests
             Console.WriteLine(maxDiff);
             Assert.That(maxDiff < 50000);
         }
+        
+        [Test]
+        public void TestReturnsUtcLongTest()
+        {
+            long maxDiff = 0;
+            DateTime start = DateTime.UtcNow;
+            do
+            {
+                for(int i = 0; i < 1000000; ++i)
+                {
+                    DateTime cur = DateTimeService.UtcNow;
+                    DateTime actual = DateTime.UtcNow;
+                    long diff = Math.Abs(cur.Ticks - actual.Ticks);
+                    maxDiff = Math.Max(maxDiff, diff);
+                }
+                Console.WriteLine(maxDiff);
+            } while (DateTime.UtcNow - start < TimeSpan.FromSeconds(100));
+            Console.WriteLine(maxDiff);
+            Assert.That(maxDiff < 50000);
+        }
     }
 }
