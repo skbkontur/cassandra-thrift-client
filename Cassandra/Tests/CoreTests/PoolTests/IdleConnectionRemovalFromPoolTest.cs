@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 
 using NUnit.Framework;
@@ -31,6 +32,60 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Assert.That(item4, Is.EqualTo(item3));
                 Assert.That(item5, Is.Not.EqualTo(item1) & Is.Not.EqualTo(item2) & Is.Not.EqualTo(item3));
                 Assert.That(item2.Disposed);
+            }
+        }
+
+        [Test]
+        public void TestRemoveConnectionMultiThread()
+        {
+            var creationCount = 0;
+            using(var pool = new Pool<Item>(x =>
+                {
+                    Interlocked.Increment(ref creationCount);
+                    return new Item();
+                }))
+            {
+                var items = Enumerable.Range(0, 10000).ToList().Select(x => pool.Acquire()).ToList();
+                items.ForEach(pool.Release);
+                Thread.Sleep(21);
+                creationCount = 0;
+
+                const int threadCount = 100;
+                var threads = Enumerable
+                    .Range(0, threadCount)
+                    .Select(n => (ThreadStart)(() =>
+                        {
+                            for(var i = 0; i < 3000; i++)
+                            {
+                                var random = new Random(n);
+                                var item = pool.Acquire();
+                                Thread.Sleep(random.Next(10));
+                                pool.Release(item);    
+                            }                            
+                        }))
+                    .Select(x => new Thread(x))
+                    .ToList();
+
+                var removeThread = new Thread(() =>
+                    {
+                        for(var i = 0; i < 1000; i++)
+                        {
+                            Thread.Sleep(10);
+                            pool.RemoveIdleItems(TimeSpan.FromMilliseconds(20));
+                        }
+                    });
+
+                threads.ForEach(x => x.Start());
+                removeThread.Start();
+
+                removeThread.Join();
+                threads.ForEach(x => x.Join());
+
+                Assert.That(creationCount, Is.EqualTo(0));
+                Assert.That(pool.TotalCount, Is.LessThanOrEqualTo(threadCount));
+                Assert.That(pool.FreeItemCount, Is.LessThanOrEqualTo(threadCount));
+                Assert.That(pool.BusyItemCount, Is.EqualTo(0));
+
             }
         }
 

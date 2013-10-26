@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
@@ -24,7 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         public T Acquire()
-        {
+        {            
             T result;
             return TryAcquireExists(out result) ? result : AcquireNew();
         }
@@ -33,18 +33,31 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         {
             result = null;
             FreeItemInfo freeItem;
-            while (freeItems.TryPop(out freeItem))
+            while(TryPop(out freeItem))
             {
                 result = freeItem.Item;
                 if(!result.IsAlive)
                 {
                     result.Dispose();
                     continue;
-                }                    
+                }
                 MarkItemAsBusy(result);
                 return true;
             }
             return false;
+        }
+
+        private bool TryPop(out FreeItemInfo freeItem)
+        {
+            xxx.AcquireReaderLock(TimeSpan.FromHours(1));
+            try
+            {
+                return freeItems.TryPop(out freeItem);
+            }
+            finally
+            {
+                xxx.ReleaseReaderLock();
+            }
         }
 
         public void Release(T item)
@@ -62,6 +75,37 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             return result;
         }
 
+        public int RemoveIdleItems(TimeSpan minIdleTimeSpan)
+        {
+            xxx.AcquireWriterLock(TimeSpan.FromMinutes(10));
+            try
+            {
+                var tempStack = new Stack<FreeItemInfo>();
+                var x = DateTime.UtcNow;
+                FreeItemInfo item;
+                var result = 0;
+                while (freeItems.TryPop(out item))
+                {
+                    if (x - item.IdleTime >= minIdleTimeSpan)
+                    {
+                        result++;
+                        item.Item.Dispose();
+                        continue;
+                    }
+                    tempStack.Push(item);
+                }
+                while (tempStack.Count > 0)
+                    freeItems.Push(tempStack.Pop());
+                return result;
+            }
+            finally
+            {
+                xxx.ReleaseWriterLock();
+            }
+        }
+
+        public readonly ReaderWriterLock xxx = new ReaderWriterLock();
+        
         public int TotalCount { get { return FreeItemCount + BusyItemCount; } }
         public int FreeItemCount { get { return freeItems.Count; } }
         public int BusyItemCount { get { return busyItems.Count; } }
@@ -71,6 +115,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             if(!busyItems.TryAdd(result, new object()))
                 throw new ItemInPoolCollisionException();
         }
+
 
         private readonly Func<Pool<T>, T> itemFactory;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
@@ -86,29 +131,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             public T Item { get; private set; }
             public DateTime IdleTime { get; private set; }
-        }
-
-        public int RemoveIdleItems(TimeSpan minIdleTimeSpan)
-        {
-            var tempStack = new Stack<FreeItemInfo>();
-            var x = DateTime.UtcNow;
-            FreeItemInfo item;
-            var result = 0;
-            while(freeItems.TryPop(out item))
-            {
-                if(x - item.IdleTime >= minIdleTimeSpan)
-                {
-                    result++;
-                    item.Item.Dispose();
-                    continue;
-                }
-                tempStack.Push(item);
-            }
-            while(tempStack.Count > 0)
-            {
-                freeItems.Push(tempStack.Pop()); 
-            }
-            return result;
         }
     }
 }
