@@ -94,7 +94,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private bool TryFreeItemPop(out T item)
         {
-            unusedItemCollectorLock.ExitReadLock();
+            unusedItemCollectorLock.EnterReadLock();
             try
             {
                 FreeItemInfo freeItemInfo;
