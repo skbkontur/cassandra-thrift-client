@@ -20,18 +20,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               IEqualityComparer<TItemKey> itemKeyComparer,
                               Func<TItem, TReplicaKey> getReplicaKeyByItem,
                               Func<TItem, TItemKey> getItemKeyByItem,
-                              TimeSpan? minIdleTimeSpan = null)
+                              TimeSpan? itemIdleTimeout = null)
         {
+            if(itemIdleTimeout != null && itemIdleTimeout.Value <= TimeSpan.FromSeconds(10))
+                throw new IdleTimeoutToSmallException("Idle timeout of item must be greater than 10 seconds", "itemIdleTimeout");
             this.poolFactory = poolFactory;
             this.getReplicaKeyByItem = getReplicaKeyByItem;
             this.getItemKeyByItem = getItemKeyByItem;
             replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(replicaKeyComparer);
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
-            
+
             disposeEvent = new ManualResetEvent(false);
-            if(minIdleTimeSpan != null)
+            if(itemIdleTimeout != null)
             {
-                unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(minIdleTimeSpan.Value));
+                unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value));
                 unusedItemsCollectorThread.Start();
             }
         }
@@ -168,15 +170,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             }
         }
 
-        private void UnusedItemsCollectorProcedure(TimeSpan minIdleTimeSpan)
+        private void UnusedItemsCollectorProcedure(TimeSpan itemIdleTimeout)
         {
+            var checkInterval = TimeSpan.FromMilliseconds(itemIdleTimeout.TotalMilliseconds / 2);
             while(true)
             {
-                if(disposeEvent.WaitOne((int)minIdleTimeSpan.TotalMilliseconds / 2))
+                if(disposeEvent.WaitOne(checkInterval))
                     return;
                 var poolArray = pools.Values.ToArray();
                 foreach(var pool in poolArray)
-                    pool.RemoveIdleItems(minIdleTimeSpan);
+                    pool.RemoveIdleItems(itemIdleTimeout);
             }
         }
 

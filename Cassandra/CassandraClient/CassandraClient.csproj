@@ -103,6 +103,7 @@
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Core\GenericPool\Exceptions\AllItemsIsDeadExceptions.cs" />
     <Compile Include="Core\GenericPool\Exceptions\EmptyPoolException.cs" />
+    <Compile Include="Core\GenericPool\Exceptions\IdleTimeoutToSmallException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\InvalidPoolKeyException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\FailedReleaseItemException.cs" />
     <Compile Include="Core\GenericPool\ILiveness.cs" />

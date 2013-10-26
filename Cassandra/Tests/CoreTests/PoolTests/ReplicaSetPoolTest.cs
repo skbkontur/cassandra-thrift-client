@@ -425,6 +425,18 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             }
         }
 
+        [Test]
+        public void TestTryToPassWrongConnectionIdleTimeout()
+        {
+            Assert.Throws<IdleTimeoutToSmallException>(() => ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)), new TimeSpan()));
+        }
+
+        [Test]
+        public void TestTryToPassTooSmallConnectionIdleTimeout()
+        {
+            Assert.Throws<IdleTimeoutToSmallException>(() => ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)), TimeSpan.FromMilliseconds(50)));
+        }
+
         private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
         {
             var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)));
