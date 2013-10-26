@@ -12,11 +12,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
     public class CassandraCluster : ICassandraCluster
     {
         public CassandraCluster(ICassandraClusterSettings settings)
-            : this(new CommandExecuter(
-                CreateDataConnectionPool(settings), 
-                CreateFierceConnectionPool(settings), 
-                settings), settings)
         {
+            commandExecuter = new CommandExecuter(CreateDataConnectionPool(settings), CreateFierceConnectionPool(settings), settings);
+            clusterSettings = settings;
         }
 
         private static IPoolSet<IThriftConnection, string> CreateDataConnectionPool(ICassandraClusterSettings settings)
@@ -41,12 +39,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             result.RegisterReplica(settings.EndpointForFierceCommands);                
             return result;
          }
-
-        private CassandraCluster(ICommandExecuter commandExecuter, ICassandraClusterSettings clusterSettings)
-        {
-            this.commandExecuter = commandExecuter;
-            this.clusterSettings = clusterSettings;
-        }
 
         public IClusterConnection RetrieveClusterConnection()
         {
