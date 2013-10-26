@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
@@ -10,7 +8,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     {
         void Execute(ICommand command);
         void Execute(Func<int, ICommand> createCommand);
-        Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
         void CheckConnections();
     }
 }

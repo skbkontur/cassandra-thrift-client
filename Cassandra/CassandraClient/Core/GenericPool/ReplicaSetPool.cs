@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using log4net;
@@ -169,7 +170,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
         private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<TItem, TItemKey, TReplicaKey>));
 
-        private class PoolKey
+        public class PoolKey
         {
             public PoolKey(TItemKey itemKey, TReplicaKey replicaKey)
             {
@@ -214,6 +215,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private const double deadHealth = 0.01;
         private const double aliveRate = 1.5;
         private const double dieRate = 0.7;
+
+        public Dictionary<PoolKey, KeyspaceConnectionPoolKnowledge> GetActiveItemsInfo()
+        {
+            return pools.ToDictionary(x => x.Key, x => new KeyspaceConnectionPoolKnowledge
+                {
+                    FreeConnectionCount = x.Value.FreeItemCount,
+                    BusyConnectionCount = x.Value.BusyItemCount
+                });
+        }
     }
 
     internal static class ReplicaSetPool

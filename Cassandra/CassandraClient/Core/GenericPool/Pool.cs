@@ -57,7 +57,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             return result;
         }
 
-        public int TotalCount { get { return busyItems.Count + freeItems.Count; } }
+        public int TotalCount { get { return FreeItemCount + BusyItemCount; } }
+        public int FreeItemCount { get { return freeItems.Count; } }
+        public int BusyItemCount { get { return busyItems.Count; } }
 
         private void MarkItemAsBusy(T result)
         {

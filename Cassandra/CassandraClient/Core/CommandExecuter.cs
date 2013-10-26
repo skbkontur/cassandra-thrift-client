@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using log4net;
@@ -25,11 +23,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             this.dataCommandsConnectionPool = dataCommandsConnectionPool;
             this.fierceCommandsConnectionPool = fierceCommandsConnectionPool;
             this.settings = settings;
-        }
-
-        public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
-        {
-            return new Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge>();
         }
 
         public void CheckConnections()
