@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -397,6 +398,30 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
+            }
+        }
+
+        [Test]
+        public void TestRemoveUnusedConnection()
+        {
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)), TimeSpan.FromMilliseconds(100)))
+            {
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                var item1 = pool.Acquire(null);
+                var item2 = pool.Acquire(null);
+                pool.Release(item1);
+
+                Thread.Sleep(210);
+
+                pool.Release(item2);
+
+                var item3 = pool.Acquire(null);
+                var item4 = pool.Acquire(null);
+
+                Assert.That(item3, Is.EqualTo(item2));
+                Assert.That(item4, Is.Not.EqualTo(item1) & Is.Not.EqualTo(item2));
             }
         }
 

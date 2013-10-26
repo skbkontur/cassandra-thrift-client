@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
@@ -18,18 +19,43 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               IEqualityComparer<TReplicaKey> replicaKeyComparer,
                               IEqualityComparer<TItemKey> itemKeyComparer,
                               Func<TItem, TReplicaKey> getReplicaKeyByItem,
-                              Func<TItem, TItemKey> getItemKeyByItem)
+                              Func<TItem, TItemKey> getItemKeyByItem,
+                              TimeSpan? minIdleTimeSpan = null)
         {
             this.poolFactory = poolFactory;
             this.getReplicaKeyByItem = getReplicaKeyByItem;
             this.getItemKeyByItem = getItemKeyByItem;
             replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(replicaKeyComparer);
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
+            disposeEvent = new ManualResetEvent(false);
+            if(minIdleTimeSpan != null)
+            {
+                unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(minIdleTimeSpan.Value));
+                unusedItemsCollectorThread.Start();
+            }
+                
+        }
+
+        private void UnusedItemsCollectorProcedure(TimeSpan minIdleTimeSpan)
+        {
+            while(true)
+            {
+                if (disposeEvent.WaitOne((int)minIdleTimeSpan.TotalMilliseconds / 2))
+                    return;
+                var poolArray = pools.Values.ToArray();
+                foreach(var pool in poolArray)
+                    pool.RemoveIdleItems(minIdleTimeSpan);
+            }
         }
 
         public void Dispose()
         {
+            disposeEvent.Set();
             pools.Values.ToList().ForEach(p => p.Dispose());
+            if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
+            {
+                logger.WarnFormat("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
+            }
         }
 
         public TItem Acquire(TItemKey itemKey)
@@ -169,6 +195,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
         private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
         private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<TItem, TItemKey, TReplicaKey>));
+        private Thread unusedItemsCollectorThread;
+        private ManualResetEvent disposeEvent;
 
         public class PoolKey
         {
@@ -244,6 +272,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             where TItemKey : IEquatable<TItemKey>
         {
             return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem);
+        }
+
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, TimeSpan unusedItemsCollectingInterval)
+            where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
+            where TItemKey : IEquatable<TItemKey>
+            where TReplicaKey : IEquatable<TReplicaKey>
+        {
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, unusedItemsCollectingInterval);
         }
     }
 }
