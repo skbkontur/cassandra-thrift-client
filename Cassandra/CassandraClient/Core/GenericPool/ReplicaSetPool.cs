@@ -33,19 +33,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(minIdleTimeSpan.Value));
                 unusedItemsCollectorThread.Start();
             }
-                
-        }
-
-        private void UnusedItemsCollectorProcedure(TimeSpan minIdleTimeSpan)
-        {
-            while(true)
-            {
-                if (disposeEvent.WaitOne((int)minIdleTimeSpan.TotalMilliseconds / 2))
-                    return;
-                var poolArray = pools.Values.ToArray();
-                foreach(var pool in poolArray)
-                    pool.RemoveIdleItems(minIdleTimeSpan);
-            }
         }
 
         public void Dispose()
@@ -53,9 +40,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             disposeEvent.Set();
             pools.Values.ToList().ForEach(p => p.Dispose());
             if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
-            {
                 logger.WarnFormat("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
-            }
         }
 
         public TItem Acquire(TItemKey itemKey)
@@ -145,6 +130,27 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             logger.InfoFormat("New node [{0}] was added in client topology.", key);
         }
 
+        public Dictionary<PoolKey, KeyspaceConnectionPoolKnowledge> GetActiveItemsInfo()
+        {
+            return pools.ToDictionary(x => x.Key, x => new KeyspaceConnectionPoolKnowledge
+                {
+                    FreeConnectionCount = x.Value.FreeItemCount,
+                    BusyConnectionCount = x.Value.BusyItemCount
+                });
+        }
+
+        public class PoolKey
+        {
+            public PoolKey(TItemKey itemKey, TReplicaKey replicaKey)
+            {
+                ItemKey = itemKey;
+                ReplicaKey = replicaKey;
+            }
+
+            public TItemKey ItemKey { get; private set; }
+            public TReplicaKey ReplicaKey { get; private set; }
+        }
+
         internal void BadReplica(TReplicaKey replicaKey)
         {
             Health health;
@@ -154,6 +160,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 if(healthValue < deadHealth) healthValue = deadHealth;
                 health.Value = healthValue;
                 logger.DebugFormat("Health of node [{0}] was decreased. Current health: {1}", replicaKey, healthValue);
+            }
+        }
+
+        private void UnusedItemsCollectorProcedure(TimeSpan minIdleTimeSpan)
+        {
+            while(true)
+            {
+                if(disposeEvent.WaitOne((int)minIdleTimeSpan.TotalMilliseconds / 2))
+                    return;
+                var poolArray = pools.Values.ToArray();
+                foreach(var pool in poolArray)
+                    pool.RemoveIdleItems(minIdleTimeSpan);
             }
         }
 
@@ -186,7 +204,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 health.Value = healthValue;
                 logger.DebugFormat("Health of node [{0}] was increased. Current health: {1}", replicaKey, healthValue);
             }
-            
         }
 
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;
@@ -195,20 +212,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
         private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
         private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<TItem, TItemKey, TReplicaKey>));
-        private Thread unusedItemsCollectorThread;
-        private ManualResetEvent disposeEvent;
-
-        public class PoolKey
-        {
-            public PoolKey(TItemKey itemKey, TReplicaKey replicaKey)
-            {
-                ItemKey = itemKey;
-                ReplicaKey = replicaKey;
-            }
-
-            public TItemKey ItemKey { get; private set; }
-            public TReplicaKey ReplicaKey { get; private set; }
-        }
+        private readonly Thread unusedItemsCollectorThread;
+        private readonly ManualResetEvent disposeEvent;
 
         private class PoolKeyEqualityComparer : IEqualityComparer<PoolKey>
         {
@@ -243,15 +248,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private const double deadHealth = 0.01;
         private const double aliveRate = 1.5;
         private const double dieRate = 0.7;
-
-        public Dictionary<PoolKey, KeyspaceConnectionPoolKnowledge> GetActiveItemsInfo()
-        {
-            return pools.ToDictionary(x => x.Key, x => new KeyspaceConnectionPoolKnowledge
-                {
-                    FreeConnectionCount = x.Value.FreeItemCount,
-                    BusyConnectionCount = x.Value.BusyItemCount
-                });
-        }
     }
 
     internal static class ReplicaSetPool
