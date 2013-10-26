@@ -27,6 +27,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             this.getItemKeyByItem = getItemKeyByItem;
             replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(replicaKeyComparer);
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
+            
             disposeEvent = new ManualResetEvent(false);
             if(minIdleTimeSpan != null)
             {
@@ -41,6 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             pools.Values.ToList().ForEach(p => p.Dispose());
             if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
                 logger.WarnFormat("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
+            disposeEvent.Dispose();
         }
 
         public TItem Acquire(TItemKey itemKey)
@@ -263,19 +265,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
             Func<TItem, TReplicaKey> getReplicaKeyByItem,
-            Func<TItem, TItemKey> getItemKeyByItem)
+            Func<TItem, TItemKey> getItemKeyByItem,
+            TimeSpan unusedItemsIdleTimeout)
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, unusedItemsIdleTimeout);
         }
 
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, TimeSpan unusedItemsCollectingInterval)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, TimeSpan unusedItemsIdleTimeout)
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, unusedItemsCollectingInterval);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, unusedItemsIdleTimeout);
         }
     }
 }
