@@ -24,18 +24,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         public T Acquire()
-        {            
+        {
             T result;
             return TryAcquireExists(out result) ? result : AcquireNew();
         }
 
         public bool TryAcquireExists(out T result)
         {
-            result = null;
-            FreeItemInfo freeItem;
-            while(TryPop(out freeItem))
+            while(TryFreeItemPop(out result))
             {
-                result = freeItem.Item;
                 if(!result.IsAlive)
                 {
                     result.Dispose();
@@ -45,19 +42,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 return true;
             }
             return false;
-        }
-
-        private bool TryPop(out FreeItemInfo freeItem)
-        {
-            xxx.AcquireReaderLock(TimeSpan.FromHours(1));
-            try
-            {
-                return freeItems.TryPop(out freeItem);
-            }
-            finally
-            {
-                xxx.ReleaseReaderLock();
-            }
         }
 
         public void Release(T item)
@@ -77,16 +61,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public int RemoveIdleItems(TimeSpan minIdleTimeSpan)
         {
-            xxx.AcquireWriterLock(TimeSpan.FromMinutes(10));
+            unusedItemCollectorLock.EnterWriteLock();
             try
             {
                 var tempStack = new Stack<FreeItemInfo>();
                 var x = DateTime.UtcNow;
                 FreeItemInfo item;
                 var result = 0;
-                while (freeItems.TryPop(out item))
+                while(freeItems.TryPop(out item))
                 {
-                    if (x - item.IdleTime >= minIdleTimeSpan)
+                    if(x - item.IdleTime >= minIdleTimeSpan)
                     {
                         result++;
                         item.Item.Dispose();
@@ -94,21 +78,35 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     }
                     tempStack.Push(item);
                 }
-                while (tempStack.Count > 0)
+                while(tempStack.Count > 0)
                     freeItems.Push(tempStack.Pop());
                 return result;
             }
             finally
             {
-                xxx.ReleaseWriterLock();
+                unusedItemCollectorLock.ExitWriteLock();
             }
         }
 
-        public readonly ReaderWriterLock xxx = new ReaderWriterLock();
-        
         public int TotalCount { get { return FreeItemCount + BusyItemCount; } }
         public int FreeItemCount { get { return freeItems.Count; } }
         public int BusyItemCount { get { return busyItems.Count; } }
+
+        private bool TryFreeItemPop(out T item)
+        {
+            unusedItemCollectorLock.ExitReadLock();
+            try
+            {
+                FreeItemInfo freeItemInfo;
+                var result = freeItems.TryPop(out freeItemInfo);
+                item = freeItemInfo.Item;
+                return result;
+            }
+            finally
+            {
+                unusedItemCollectorLock.ExitReadLock();
+            }
+        }
 
         private void MarkItemAsBusy(T result)
         {
@@ -116,6 +114,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 throw new ItemInPoolCollisionException();
         }
 
+        private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
 
         private readonly Func<Pool<T>, T> itemFactory;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
