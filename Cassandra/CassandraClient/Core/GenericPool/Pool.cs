@@ -91,7 +91,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 }
                 finally
                 {
-                    logger.InfoFormat("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
+                    if (timer.ElapsedMilliseconds > 1)
+                        logger.WarnFormat("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
                 }
             }
             finally

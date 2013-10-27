@@ -154,6 +154,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             public TItemKey ItemKey { get; private set; }
             public TReplicaKey ReplicaKey { get; private set; }
+
+            public override string ToString()
+            {
+                return string.Format("PoolKey[Key: {0}, ReplicaKey: {1}]", ItemKey, ReplicaKey);
+            }
         }
 
         internal void BadReplica(TReplicaKey replicaKey)
@@ -175,9 +180,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             {
                 if(disposeEvent.WaitOne(checkInterval))
                     return;
-                var poolArray = pools.Values.ToArray();
+                var poolArray = pools.ToArray();
+                var totals = new Dictionary<PoolKey, int>();
                 foreach(var pool in poolArray)
-                    pool.RemoveIdleItems(itemIdleTimeout);
+                {
+                    var unusedItemCount = pool.Value.RemoveIdleItems(itemIdleTimeout);
+                    totals.Add(pool.Key, unusedItemCount);
+                }
+                logger.InfoFormat("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
             }
         }
 
