@@ -413,7 +413,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 var item2 = pool.Acquire(null);
                 pool.Release(item1);
 
-                Thread.Sleep(210);
+                Thread.Sleep(500);
 
                 pool.Release(item2);
 
