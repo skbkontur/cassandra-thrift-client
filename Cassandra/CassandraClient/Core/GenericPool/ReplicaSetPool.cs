@@ -22,8 +22,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               Func<TItem, TItemKey> getItemKeyByItem,
                               TimeSpan? itemIdleTimeout = null)
         {
-            if(itemIdleTimeout != null && itemIdleTimeout.Value <= TimeSpan.FromSeconds(10))
-                throw new IdleTimeoutToSmallException("Idle timeout of item must be greater than 10 seconds", "itemIdleTimeout");
             this.poolFactory = poolFactory;
             this.getReplicaKeyByItem = getReplicaKeyByItem;
             this.getItemKeyByItem = getItemKeyByItem;
