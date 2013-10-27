@@ -31,6 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             disposeEvent = new ManualResetEvent(false);
             if(itemIdleTimeout != null)
             {
+                logger.InfoFormat("Item idle timeout: {0}", itemIdleTimeout.Value);
                 unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value));
                 unusedItemsCollectorThread.Start();
             }
@@ -185,9 +186,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 foreach(var pool in poolArray)
                 {
                     var unusedItemCount = pool.Value.RemoveIdleItems(itemIdleTimeout);
-                    totals.Add(pool.Key, unusedItemCount);
+                    if (unusedItemCount > 0)
+                        totals.Add(pool.Key, unusedItemCount);
                 }
-                logger.InfoFormat("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
+                if (totals.Count > 0)
+                    logger.InfoFormat("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
+                logger.InfoFormat("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => string.Format("  {0}: Free: {1}, Busy: {2}", x.Key, x.Value.FreeItemCount, x.Value.BusyItemCount))));
             }
         }
 
