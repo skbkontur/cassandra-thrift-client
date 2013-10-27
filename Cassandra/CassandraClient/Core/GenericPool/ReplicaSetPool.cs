@@ -272,7 +272,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
             Func<TItem, TReplicaKey> getReplicaKeyByItem,
             Func<TItem, TItemKey> getItemKeyByItem,
-            TimeSpan unusedItemsIdleTimeout)
+            TimeSpan? unusedItemsIdleTimeout)
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
         {
