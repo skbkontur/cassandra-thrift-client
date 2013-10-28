@@ -459,7 +459,6 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)), TimeSpan.FromMilliseconds(100)))
             {
                 pool.RegisterReplica(new ReplicaKey("replica1"));
-                pool.RegisterReplica(new ReplicaKey("replica2"));
 
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
