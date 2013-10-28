@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -397,6 +398,82 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
+            }
+        }
+
+        [Test]
+        public void TestAcquireConnectionWithExceptionInOnePool()
+        {
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y =>
+                {
+                    if (z.Name == "replica1")
+                        throw new Exception("FakeException");
+                    return new Item(x, z);
+                })))
+            {
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                for(int i = 0; i < 1000; i++)
+                {
+                    var item = pool.Acquire(new ItemKey("1"));
+                    Assert.That(item.ReplicaKey.Name, Is.EqualTo("replica2"));
+                }
+            }
+        }
+
+        [Test]
+        public void TestTryAcquireConnectionWithExceptionAllPools()
+        {
+            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) =>
+                {
+                    return new Pool<Item>(y => { throw new Exception("FakeException"); });
+                }))
+            {
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                for (int i = 0; i < 1000; i++)
+                {
+                    try
+                    {
+                        pool.Acquire(new ItemKey("1"));
+                        Assert.Fail();
+                    }
+                    catch(Exception exception)
+                    {
+                        Assert.That(exception is AllItemsIsDeadExceptions);
+                        Assert.That(exception.InnerException, Is.Not.Null);
+                        Assert.That(exception.InnerException.Message, Is.EqualTo("FakeException"));
+                        Assert.That((exception as AggregateException).InnerExceptions.Count, Is.EqualTo(2));
+                        Assert.That((exception as AggregateException).InnerExceptions[0].Message, Is.EqualTo("FakeException"));
+                    }
+                    
+                }
+            }
+        }
+
+        [Test]
+        public void TestRemoveUnusedConnection()
+        {
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)), TimeSpan.FromMilliseconds(100)))
+            {
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                var item1 = pool.Acquire(null);
+                var item2 = pool.Acquire(null);
+                pool.Release(item1);
+
+                Thread.Sleep(500);
+
+                pool.Release(item2);
+
+                var item3 = pool.Acquire(null);
+                var item4 = pool.Acquire(null);
+
+                Assert.That(item3, Is.EqualTo(item2));
+                Assert.That(item4, Is.Not.EqualTo(item1) & Is.Not.EqualTo(item2));
             }
         }
 

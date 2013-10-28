@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -15,5 +16,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         int Attempts { get; }
         int Timeout { get; }
         int FierceTimeout { get; }
+        TimeSpan? ConnectionIdleTimeout { get; }
     }
 }

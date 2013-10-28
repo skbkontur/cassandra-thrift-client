@@ -61,9 +61,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         var exception = CassandraExceptionTransformer.Transform(e, message);
 
                         if(connectionInPool != null)
-                            logger.WarnFormat(string.Format("Attempt {0} on {1} failed.", i, connectionInPool), exception);
+                            logger.Warn(string.Format("Attempt {0} on {1} failed.", i, connectionInPool), exception);
                         else
-                            logger.WarnFormat(string.Format("Attempt {0} to all nodes failed.", i), exception);
+                            logger.Warn(string.Format("Attempt {0} to all nodes failed.", i), exception);
 
                         if(connectionInPool != null)
                             pool.Bad(connectionInPool);
