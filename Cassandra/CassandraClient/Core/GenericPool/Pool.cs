@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public bool TryAcquireExists(out T result)
         {
-            while(TryFreeItemPop(out result))
+            while(TryPopFreeItem(out result))
             {
                 if(!result.IsAlive)
                 {
@@ -105,7 +105,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public int FreeItemCount { get { return freeItems.Count; } }
         public int BusyItemCount { get { return busyItems.Count; } }
 
-        private bool TryFreeItemPop(out T item)
+        private bool TryPopFreeItem(out T item)
         {
             FreeItemInfo freeItemInfo;
             unusedItemCollectorLock.EnterReadLock();
