@@ -52,7 +52,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public TItem Acquire(TItemKey itemKey)
         {
             var replicaHealths = replicaHealth.ToArray();
-
             if(replicaHealths.Length == 0)
                 throw new EmptyPoolException("Cannot acquire items without configured replicas. Use RegisterReplica method to fill pool");
 
@@ -62,55 +61,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             var totalReplicaHealth = replicaHealths.Select(x => x.Value.Value).Sum();
 
             var existingAcquired = replicaHealths
-                .ShuffleByHealth(x => x.Value.Value)
-                .Any(x =>
-                    {
-                        var pool1 = GetPool(itemKey, x.Key);
-
-                        if(pool1.TryAcquireExists(out result))
-                            return true;
-
-                        var health = x.Value.Value;
-
-                        if(pool1.TotalCount == 0 || (pool1.TotalCount / (double)totalReplicaCount) <= (health / totalReplicaHealth))
-                        {
-                            try
-                            {
-                                result = pool1.AcquireNew();
-                                if(!result.IsAlive)
-                                {
-                                    Bad(result);
-                                    return false;
-                                }
-                                return true;
-                            }
-                            catch
-                            {
-                                BadReplica(x.Key);
-                                return false;
-                            }
-                        }
-                        return false;
-                    });
+                .ShuffleByHealth(x => x.Value.Value, x => new {Health = x.Value.Value, ReplicaKey = x.Key})
+                .Any(poolInfo =>
+                     TryAcquireExistsOrNew(
+                         new PoolKey(itemKey, poolInfo.ReplicaKey),
+                         GetDesiredActiveItemCountForReplica(poolInfo.Health, totalReplicaHealth, totalReplicaCount),
+                         out result));
 
             if(!existingAcquired)
             {
-                var replicaKeys = replicaHealths
-                    .ShuffleByHealth(x => x.Value.Value, x => x.Key);
-                
-                List<Exception> exceptions = new List<Exception>();
+                var replicaKeys = replicaHealths.ShuffleByHealth(x => x.Value.Value, x => x.Key);
+
+                var exceptions = new List<Exception>();
                 foreach(var replicaKey in replicaKeys)
                 {
                     var replicaPool = GetPool(itemKey, replicaKey);
                     try
                     {
-                        var newItem = replicaPool.AcquireNew();
-                        if(!newItem.IsAlive)
-                        {
-                            Bad(newItem);
-                            continue;
-                        }
-                        return newItem;
+                        TItem item;
+                        if(TryAcquireNew(replicaPool, out item))
+                            return item;
                     }
                     catch(Exception e)
                     {
@@ -165,13 +135,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 ReplicaKey = replicaKey;
             }
 
-            public TItemKey ItemKey { get; private set; }
-            public TReplicaKey ReplicaKey { get; private set; }
-
             public override string ToString()
             {
                 return string.Format("PoolKey[Key: {0}, ReplicaKey: {1}]", ItemKey, ReplicaKey);
             }
+
+            public TItemKey ItemKey { get; private set; }
+            public TReplicaKey ReplicaKey { get; private set; }
         }
 
         internal void BadReplica(TReplicaKey replicaKey)
@@ -186,6 +156,44 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             }
         }
 
+        private bool TryAcquireNew(Pool<TItem> replicaPool, out TItem result)
+        {
+            result = replicaPool.AcquireNew();
+            if(!result.IsAlive)
+            {
+                Bad(result);
+                result = null;
+                return false;
+            }
+            return true;
+        }
+
+        private static double GetDesiredActiveItemCountForReplica(double replicaHealth, double totalReplicaHealth, int totalReplicaCount)
+        {
+            return (replicaHealth / totalReplicaHealth) * totalReplicaCount;
+        }
+
+        private bool TryAcquireExistsOrNew(PoolKey poolKey, double replicaDesiredItemCount, out TItem result)
+        {
+            var pool = GetPool(poolKey);
+            if(pool.TryAcquireExists(out result))
+                return true;
+
+            if(pool.TotalCount <= replicaDesiredItemCount)
+            {
+                try
+                {
+                    return TryAcquireNew(pool, out result);
+                }
+                catch
+                {
+                    BadReplica(poolKey.ReplicaKey);
+                    return false;
+                }
+            }
+            return false;
+        }
+
         private void UnusedItemsCollectorProcedure(TimeSpan itemIdleTimeout)
         {
             var checkInterval = TimeSpan.FromMilliseconds(itemIdleTimeout.TotalMilliseconds / 2);
@@ -198,10 +206,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 foreach(var pool in poolArray)
                 {
                     var unusedItemCount = pool.Value.RemoveIdleItems(itemIdleTimeout);
-                    if (unusedItemCount > 0)
+                    if(unusedItemCount > 0)
                         totals.Add(pool.Key, unusedItemCount);
                 }
-                if (totals.Count > 0)
+                if(totals.Count > 0)
                     logger.InfoFormat("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
                 logger.InfoFormat("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => string.Format("  {0}: Free: {1}, Busy: {2}", x.Key, x.Value.FreeItemCount, x.Value.BusyItemCount))));
             }
@@ -215,7 +223,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private Pool<TItem> GetPool(TItemKey itemKey, TReplicaKey replicaKey, bool createNewIfNotExists = true)
         {
-            var key = new PoolKey(itemKey, replicaKey);
+            return GetPool(new PoolKey(itemKey, replicaKey), createNewIfNotExists);
+        }
+
+        private Pool<TItem> GetPool(PoolKey key, bool createNewIfNotExists = true)
+        {
             if(!createNewIfNotExists)
             {
                 Pool<TItem> result;
