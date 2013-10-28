@@ -12,7 +12,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
-    internal class CassandraCluster : ICassandraCluster
+    public class CassandraCluster : ICassandraCluster
     {
         public CassandraCluster(ICassandraClusterSettings settings)
         {
