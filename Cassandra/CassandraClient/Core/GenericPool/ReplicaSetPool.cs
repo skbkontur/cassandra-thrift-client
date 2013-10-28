@@ -32,7 +32,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             if(itemIdleTimeout != null)
             {
                 logger.InfoFormat("Item idle timeout: {0}", itemIdleTimeout.Value);
-                unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value));
+                unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value))
+                    {
+                        IsBackground = true
+                    };
                 unusedItemsCollectorThread.Start();
             }
         }
