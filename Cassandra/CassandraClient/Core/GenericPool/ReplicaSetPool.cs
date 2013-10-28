@@ -74,15 +74,22 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
                         if(pool1.TotalCount == 0 || (pool1.TotalCount / (double)totalReplicaCount) <= (health / totalReplicaHealth))
                         {
-                            result = pool1.AcquireNew();
-                            if(!result.IsAlive)
+                            try
                             {
-                                Bad(result);
+                                result = pool1.AcquireNew();
+                                if(!result.IsAlive)
+                                {
+                                    Bad(result);
+                                    return false;
+                                }
+                                return true;
+                            }
+                            catch
+                            {
+                                BadReplica(x.Key);
                                 return false;
                             }
-                            return true;
                         }
-
                         return false;
                     });
 
@@ -90,7 +97,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             {
                 var replicaKeys = replicaHealths
                     .ShuffleByHealth(x => x.Value.Value, x => x.Key);
-
+                
+                List<Exception> exceptions = new List<Exception>();
                 foreach(var replicaKey in replicaKeys)
                 {
                     var replicaPool = GetPool(itemKey, replicaKey);
@@ -104,12 +112,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                         }
                         return newItem;
                     }
-                    catch
+                    catch(Exception e)
                     {
                         BadReplica(replicaKey);
+                        exceptions.Add(e);
                     }
                 }
-                throw new AllItemsIsDeadExceptions(string.Format("Cannot acquire connection from any of pool with keys [{0}]", string.Join(", ", pools.Keys.Select(x => x.ToString()))));
+                throw new AllItemsIsDeadExceptions(
+                    string.Format("Cannot acquire connection from any of pool with keys [{0}]", string.Join(", ", pools.Keys.Select(x => x.ToString()))),
+                    exceptions
+                    );
             }
 
             return result;
