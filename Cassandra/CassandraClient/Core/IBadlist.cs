@@ -3,7 +3,7 @@ using System.Net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public interface IBadlist
+    internal interface IBadlist
     {
         void Good(IPEndPoint endPoint);
         void Bad(IPEndPoint endPoint);

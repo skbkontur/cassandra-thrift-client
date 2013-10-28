@@ -2,7 +2,7 @@ using System.Threading;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class Health
+    internal class Health
     {
         public double Value
         {

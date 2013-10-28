@@ -2,7 +2,7 @@
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions
 {
-    public class FailedReleaseItemException : Exception
+    internal class FailedReleaseItemException : Exception
     {
         public FailedReleaseItemException(string message)
             : base(message)

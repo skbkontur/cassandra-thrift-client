@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
-    public class ByteArrayEqualityComparer : IEqualityComparer<byte[]>
+    internal class ByteArrayEqualityComparer : IEqualityComparer<byte[]>
     {
         public bool Equals(byte[] x, byte[] y)
         {

@@ -12,7 +12,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
+    internal class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
     {
         public Pool(Func<Pool<T>, T> itemFactory)
         {

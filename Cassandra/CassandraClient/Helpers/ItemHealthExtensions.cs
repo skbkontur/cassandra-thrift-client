@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
-    public static class ItemHealthExtensions
+    internal static class ItemHealthExtensions
     {
         public static T2 RandomItemByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector)
         {

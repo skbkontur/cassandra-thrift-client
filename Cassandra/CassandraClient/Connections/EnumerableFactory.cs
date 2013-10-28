@@ -7,7 +7,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class EnumerableFactory : IEnumerableFactory
+    internal class EnumerableFactory : IEnumerableFactory
     {
         public IEnumerable<string> GetRowsEnumerator(int bulkSize, Func<string, int, string[]> getRows, string initialStartKey = null)
         {

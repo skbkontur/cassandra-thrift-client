@@ -7,7 +7,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class EndpointManager : IEndpointManager
+    internal class EndpointManager : IEndpointManager
     {
         public EndpointManager(IBadlist badlist)
         {

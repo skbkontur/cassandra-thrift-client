@@ -1,6 +1,6 @@
 ﻿namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public interface ILiveness
+    internal interface ILiveness
     {
         bool IsAlive { get; }
     }

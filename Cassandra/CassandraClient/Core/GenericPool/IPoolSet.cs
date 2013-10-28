@@ -2,7 +2,7 @@
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
-    public interface IPoolSet<TItem, in TItemKey> : IDisposable
+    internal interface IPoolSet<TItem, in TItemKey> : IDisposable
         where TItem : class, IDisposable, ILiveness 
     {
         TItem Acquire(TItemKey itemKey);

@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils
 {
-    public class ObjectReferenceEqualityComparer<T> : EqualityComparer<T> where T : class
+    internal class ObjectReferenceEqualityComparer<T> : EqualityComparer<T> where T : class
     {
         public override bool Equals(T x, T y)
         {

@@ -13,7 +13,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     using IThriftConnectionReplicaSetPool = IPoolSet<IThriftConnection, string>;
 
-    public class CommandExecuter : ICommandExecuter
+    internal class CommandExecuter : ICommandExecuter
     {
         public CommandExecuter(
             IThriftConnectionReplicaSetPool dataCommandsConnectionPool,

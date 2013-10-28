@@ -4,7 +4,7 @@ using System.Threading;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public static class DateTimeService
+    internal static class DateTimeService
     {
         public static DateTime UtcNow
         {

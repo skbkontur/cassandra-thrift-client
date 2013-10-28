@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
-    public interface IClusterConnectionPool : IDisposable
+    internal interface IClusterConnectionPool : IDisposable
     {
         IPooledThriftConnection BorrowConnection(ConnectionPoolKey key);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();

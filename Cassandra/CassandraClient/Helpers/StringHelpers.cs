@@ -2,7 +2,7 @@ using System.Text;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
-    public static class StringHelpers
+    internal static class StringHelpers
     {
         public static string BytesToString(byte[] bytes)
         {

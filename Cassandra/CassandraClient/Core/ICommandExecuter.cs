@@ -4,7 +4,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public interface ICommandExecuter : IDisposable
+    internal interface ICommandExecuter : IDisposable
     {
         void Execute(ICommand command);
         void Execute(Func<int, ICommand> createCommand);

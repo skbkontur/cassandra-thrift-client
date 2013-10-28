@@ -4,7 +4,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public interface IPooledThriftConnection : IDisposable
+    internal interface IPooledThriftConnection : IDisposable
     {
         Guid Id { get; }
         bool IsAlive { get; }
