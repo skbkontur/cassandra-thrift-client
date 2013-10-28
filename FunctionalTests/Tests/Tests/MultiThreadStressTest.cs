@@ -29,9 +29,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 threads[i].Start();
                 threadStatuses[i] = 0;
             }
-            var checkConnectionsThread = new Thread(CheckConnections);
-            checkConnectionsThread.Start();
-            checkConnectionsThreadStatus = 0;
             while(true)
             {
                 int cnt = 0;
@@ -47,30 +44,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 }
                 if(cnt == threadCount)
                     break;
-                if (checkConnectionsThreadStatus == 2)
-                    throw new Exception(string.Format("Поток CheckConnections сдох"), checkConnectionsThreadException);
-            }
-            if (checkConnectionsThreadStatus == 2)
-                throw new Exception(string.Format("Поток CheckConnections сдох"), checkConnectionsThreadException);
-            checkConnectionsThread.Abort();
-        }
-
-        private void CheckConnections()
-        {
-            try
-            {
-                while(true)
-                {
-                    Log("CheckConnections", "Start CheckConnections");
-                    Thread.Sleep(10);
-                    cassandraCluster.CheckConnections();
-                    Log("CheckConnections", "Finish CheckConnections");
-                }
-            }
-            catch(Exception e)
-            {
-                checkConnectionsThreadStatus = 2;
-                checkConnectionsThreadException = e;
             }
         }
 
@@ -137,8 +110,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         private volatile int[] threadStatuses;
         private volatile Exception[] threadExceptions;
 
-        private volatile int checkConnectionsThreadStatus;
-        private volatile Exception checkConnectionsThreadException;
         private const int columnSize = 1000;
         private const int count = 20000;
         private const int threadCount = 10;

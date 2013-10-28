@@ -59,11 +59,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return result;
         }
 
-        public void CheckConnections()
-        {
-            commandExecuter.CheckConnections();
-        }
-
         public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces)
         {
             new SchemeActualizer(this).ActualizeKeyspaces(keyspaces);

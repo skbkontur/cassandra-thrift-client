@@ -25,10 +25,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             this.settings = settings;
         }
 
-        public void CheckConnections()
-        {
-        }
-
         public void Execute(Func<int, ICommand> createCommand)
         {
             var stopwatch = Stopwatch.StartNew();

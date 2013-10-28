@@ -65,13 +65,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
                 };
         }
 
-        public void CheckConnections()
-        {
-            /*var connections = freeConnections.ToArray();
-            foreach(var connection in connections)
-                connection.IsAlive = connection.Ping();*/
-        }
-
         public void Dispose()
         {
             var connections = freeConnections.Union(busyConnections.Values).ToArray();

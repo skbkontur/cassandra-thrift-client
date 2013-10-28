@@ -36,12 +36,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             return result;
         }
 
-        public void CheckConnections()
-        {
-            foreach(var keyspaceConnectionPool in keyspacePools.Values)
-                keyspaceConnectionPool.CheckConnections();
-        }
-
         public void Dispose()
         {
             foreach(var keyspaceConnectionPool in keyspacePools.Values)

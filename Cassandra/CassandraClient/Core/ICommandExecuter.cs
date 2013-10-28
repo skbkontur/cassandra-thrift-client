@@ -8,6 +8,5 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     {
         void Execute(ICommand command);
         void Execute(Func<int, ICommand> createCommand);
-        void CheckConnections();
     }
 }
