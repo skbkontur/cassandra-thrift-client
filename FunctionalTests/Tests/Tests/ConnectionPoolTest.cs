@@ -17,7 +17,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             DoTest(10);
         }
         
-        [Test, Ignore]
+        [Test]
         public void TestHard()
         {
             DoTest(100);
