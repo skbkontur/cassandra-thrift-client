@@ -12,7 +12,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         QUORUM
     }
 
-    public static class ConsistencyLevelExtensions
+    internal static class ConsistencyLevelExtensions
     {
         public static Apache.Cassandra.ConsistencyLevel ToThriftConsistencyLevel(this ConsistencyLevel consistencyLevel)
         {

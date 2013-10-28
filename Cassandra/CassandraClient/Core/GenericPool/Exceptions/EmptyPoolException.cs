@@ -2,7 +2,7 @@
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions
 {
-    public class EmptyPoolException : Exception
+    internal class EmptyPoolException : Exception
     {
         public EmptyPoolException(string message)
             : base(message)

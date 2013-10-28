@@ -7,7 +7,7 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class ColumnFamilyConnection : IColumnFamilyConnection
+    internal class ColumnFamilyConnection : IColumnFamilyConnection
     {
         public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation, IEnumerableFactory enumerableFactory)
         {

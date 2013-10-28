@@ -17,7 +17,7 @@ using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class ColumnFamilyConnectionImplementation : IColumnFamilyConnectionImplementation
+    internal class ColumnFamilyConnectionImplementation : IColumnFamilyConnectionImplementation
     {
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,

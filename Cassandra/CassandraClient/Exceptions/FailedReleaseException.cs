@@ -6,8 +6,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class FailedReleaseException : Exception
     {
-        public FailedReleaseException(IPooledThriftConnection connection)
-            : base(connection.ToString())
+        public FailedReleaseException(string message)
+            : base(message)
         {
         }
     }

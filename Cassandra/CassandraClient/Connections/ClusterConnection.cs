@@ -14,7 +14,7 @@ using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class ClusterConnection : IClusterConnection
+    internal class ClusterConnection : IClusterConnection
     {
         public ClusterConnection(ICommandExecuter commandExecuter)
         {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions
 {
-    public class AllItemsIsDeadExceptions : AggregateException
+    internal class AllItemsIsDeadExceptions : AggregateException
     {
         public AllItemsIsDeadExceptions(string message, IEnumerable<Exception> innerExceptions)
             : base(message, innerExceptions)

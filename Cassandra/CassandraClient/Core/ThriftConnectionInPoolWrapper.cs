@@ -5,7 +5,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class ThriftConnectionInPoolWrapper : IThriftConnection
+    internal class ThriftConnectionInPoolWrapper : IThriftConnection
     {
         public ThriftConnectionInPoolWrapper(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {

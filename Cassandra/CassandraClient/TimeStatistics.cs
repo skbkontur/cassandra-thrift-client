@@ -4,7 +4,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient
 {
-    public class TimeStatistics
+    internal class TimeStatistics
     {
         public TimeStatistics(string timeStatisticsTitle)
         {
@@ -20,7 +20,7 @@ namespace SKBKontur.Cassandra.CassandraClient
             double currentMaxTime;
             lock(locker)
             {
-                double d = Math.Max(milliseconds * 10, 1);
+                var d = Math.Max(milliseconds * 10, 1);
                 var bin = Math.Min((int)Math.Round(Math.Log10(d) * 30), counts.Length - 1);
                 counts[bin]++;
                 totalCount++;
@@ -40,8 +40,8 @@ namespace SKBKontur.Cassandra.CassandraClient
         private double GetQuantile95()
         {
             var index = (int)Math.Round(totalCount * 0.95);
-            int count = 0;
-            for(int i = 0; i < counts.Length; i++)
+            var count = 0;
+            for(var i = 0; i < counts.Length; i++)
             {
                 count += counts[i];
                 if(count >= index)

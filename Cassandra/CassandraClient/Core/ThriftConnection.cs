@@ -12,7 +12,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class ThriftConnection : IThriftConnection
+    internal class ThriftConnection : IThriftConnection
     {
         public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
