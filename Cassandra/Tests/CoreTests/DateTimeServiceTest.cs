@@ -49,11 +49,11 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtc()
         {
-            var maxLocalDiff = TimeSpan.FromTicks(0);
+            long maxLocalDiff = 0;
             var currentDateTime = DateTime.UtcNow;
             for (var i = 0; i < 1000; i++)
             {
-                var diff = currentDateTime - DateTime.UtcNow;
+                var diff = DateTime.UtcNow.Ticks - currentDateTime.Ticks;
                 if (maxLocalDiff < diff)
                     maxLocalDiff = diff;
             }
@@ -80,12 +80,13 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtcLongTest()
         {
-            var maxLocalDiff = TimeSpan.FromTicks(0);
+            long maxLocalDiff = 0;
             var currentDateTime = DateTime.UtcNow;
-            for(var i = 0; i < 1000; i++)
+            for (var i = 0; i < 1000; i++)
             {
-                var diff = currentDateTime - DateTime.UtcNow;
-                if(maxLocalDiff < diff)
+                var diff = DateTime.UtcNow.Ticks - currentDateTime.Ticks;
+
+                if (maxLocalDiff < diff)
                     maxLocalDiff = diff;
             }
 
