@@ -67,7 +67,7 @@ namespace Cassandra.Tests.CoreTests
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             dataConnectionPool.Expect(pool => pool.Release(thriftConnection));
-            dataConnectionPool.Expect(pool => pool.Bad(thriftConnection));
+            dataConnectionPool.Expect(pool => pool.Good(thriftConnection));
 
             var goodThriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(goodThriftConnection);
@@ -167,9 +167,9 @@ namespace Cassandra.Tests.CoreTests
 
             var thriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             dataConnectionPool.Expect(pool => pool.Release(thriftConnection));
-            dataConnectionPool.Expect(pool => pool.Bad(thriftConnection));
+            dataConnectionPool.Expect(pool => pool.Good(thriftConnection));
 
             RunMethodWithException<CassandraAttemptsException>(() => executer.Execute(command), "Operation failed for 1 attempts");
         }
@@ -199,7 +199,7 @@ namespace Cassandra.Tests.CoreTests
             fierceConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             fierceConnectionPool.Expect(pool => pool.Release(thriftConnection));
-            fierceConnectionPool.Expect(pool => pool.Bad(thriftConnection));
+            fierceConnectionPool.Expect(pool => pool.Good(thriftConnection));
 
             var goodThriftConnection = GetMock<IThriftConnection>();
             fierceConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(goodThriftConnection);
@@ -220,7 +220,7 @@ namespace Cassandra.Tests.CoreTests
             fierceConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             fierceConnectionPool.Expect(pool => pool.Release(thriftConnection));
-            fierceConnectionPool.Expect(pool => pool.Bad(thriftConnection));
+            fierceConnectionPool.Expect(pool => pool.Good(thriftConnection));
 
             RunMethodWithException<CassandraAttemptsException>(() => executer.Execute(command), "Operation failed for 1 attempts");
         }
