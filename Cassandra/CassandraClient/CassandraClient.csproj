@@ -106,6 +106,7 @@
     <Compile Include="Core\GenericPool\Exceptions\IdleTimeoutToSmallException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\InvalidPoolKeyException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\FailedReleaseItemException.cs" />
+    <Compile Include="Core\GenericPool\Exceptions\RemoveFromPoolFailedException.cs" />
     <Compile Include="Core\GenericPool\ILiveness.cs" />
     <Compile Include="Core\GenericPool\IPoolKeyContainer.cs" />
     <Compile Include="Core\GenericPool\Exceptions\ItemInPoolCollisionException.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Core\GenericPool\Pool.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
     <Compile Include="Core\ThriftConnectionInPoolWrapper.cs" />
+    <Compile Include="Exceptions\CassandraClientSchemaDisagreementExceptionException.cs" />
     <Compile Include="Helpers\ItemHealthExtensions.cs" />
     <Compile Include="Scheme\KeyspaceConfiguration.cs" />
     <Compile Include="Scheme\KeyspaceScheme.cs" />

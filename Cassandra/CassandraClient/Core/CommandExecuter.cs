@@ -39,16 +39,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     try
                     {
                         connectionInPool = pool.Acquire(command.CommandContext.KeyspaceName);
-                        try
-                        {
-                            connectionInPool.ExecuteCommand(command);
-                            pool.Good(connectionInPool);
-                            return;
-                        }
-                        finally
-                        {
-                            pool.Release(connectionInPool);
-                        }
+                        connectionInPool.ExecuteCommand(command);
+                        pool.Good(connectionInPool);
+                        pool.Release(connectionInPool);
+                        return;
                     }
                     catch(Exception e)
                     {
@@ -62,7 +56,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                             logger.Warn(string.Format("Attempt {0} to all nodes failed.", i), exception);
 
                         if(connectionInPool != null)
-                            pool.Bad(connectionInPool);
+                        {
+                            if (exception.ReduceReplicaLive)
+                                pool.Bad(connectionInPool);
+                            else
+                                pool.Good(connectionInPool); 
+
+                            if (exception.IsCorruptConnection)
+                                pool.Remove(connectionInPool);
+                            else
+                                pool.Release(connectionInPool);
+                        }
+                            
 
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)

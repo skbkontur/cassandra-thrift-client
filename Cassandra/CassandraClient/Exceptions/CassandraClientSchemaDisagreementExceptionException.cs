@@ -1,20 +1,21 @@
-using System;
+﻿using System;
 
 namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
-    public class CassandraClientSomethingNotFoundException : CassandraClientException
+    public class CassandraClientSchemaDisagreementExceptionException : CassandraClientException
     {
-        public CassandraClientSomethingNotFoundException(string message)
+         public CassandraClientSchemaDisagreementExceptionException(string message)
             : base(message)
         {
         }
 
-        public CassandraClientSomethingNotFoundException(string message, Exception innerException)
+        public CassandraClientSchemaDisagreementExceptionException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         public override bool IsCorruptConnection { get { return false; } }
         public override bool ReduceReplicaLive { get { return false; } }        
+        
     }
 }

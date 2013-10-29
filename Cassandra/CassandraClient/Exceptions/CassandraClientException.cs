@@ -2,16 +2,20 @@
 
 namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
-    public class CassandraClientException : Exception
+    public abstract class CassandraClientException : Exception
     {
-        public CassandraClientException(string message)
+        protected CassandraClientException(string message)
             : base(message)
         {
         }
 
-        public CassandraClientException(string message, Exception innerException)
+        protected CassandraClientException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
+
+        public virtual bool IsCorruptConnection { get { return true; } }
+
+        public virtual bool ReduceReplicaLive { get { return true; } }
     }
 }

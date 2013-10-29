@@ -87,6 +87,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     }
                     catch(Exception e)
                     {
+                        logger.Warn(string.Format("Cannot acquire new connection for replica [{0}]", replicaKey), e);
                         BadReplica(replicaKey);
                         exceptions.Add(e);
                     }
@@ -103,6 +104,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Release(TItem item)
         {
             GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
+        }
+
+        public void Remove(TItem item)
+        {
+            GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Remove(item);
         }
 
         public void Bad(TItem item)
@@ -188,8 +194,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 {
                     return TryAcquireNew(pool, out result);
                 }
-                catch
+                catch(Exception e)
                 {
+                    logger.Warn(string.Format("Cannot acquire new connection for replica [{0}]", poolKey.ReplicaKey), e);
                     BadReplica(poolKey.ReplicaKey);
                     return false;
                 }

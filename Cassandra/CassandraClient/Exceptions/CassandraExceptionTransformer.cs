@@ -10,7 +10,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public static class CassandraExceptionTransformer
     {
-        public static Exception Transform(Exception e, string message)
+        public static CassandraClientException Transform(Exception e, string message)
         {
             if (e is NotFoundException)
                 return new CassandraClientSomethingNotFoundException(message, e);
@@ -30,6 +30,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
                 return new CassandraClientTransportException(message, e);
             if (e is IOException)
                 return new CassandraClientIOException(message, e);
+            if (e is SchemaDisagreementException)
+                return new CassandraClientSchemaDisagreementExceptionException(message, e);
             return new CassandraUnknownException(message, e);
         }
     }

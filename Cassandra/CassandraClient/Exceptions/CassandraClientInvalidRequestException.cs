@@ -15,5 +15,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
             : base(message + Environment.NewLine + "Why: " + innerException.Why, innerException)
         {
         }
+
+        public override bool IsCorruptConnection { get { return false; } }
+        public override bool ReduceReplicaLive { get { return false; } }
     }
 }

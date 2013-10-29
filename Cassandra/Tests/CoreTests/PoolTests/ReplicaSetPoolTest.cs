@@ -476,6 +476,26 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             }
         }
 
+        [Test]
+        public void TestRemoveAcquiredConnectionFromPool()
+        {
+            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z))))
+            {
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+
+                var item1 = pool.Acquire(null);
+                var item2 = pool.Acquire(null);
+                pool.Release(item1);
+                pool.Remove(item2);
+
+                var item3 = pool.Acquire(null);
+                var item4 = pool.Acquire(null);
+
+                Assert.That(item3, Is.EqualTo(item1));
+                Assert.That(item4, Is.Not.EqualTo(item1) & Is.Not.EqualTo(item2));
+            }            
+        }
+
         private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
         {
             var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z)));
