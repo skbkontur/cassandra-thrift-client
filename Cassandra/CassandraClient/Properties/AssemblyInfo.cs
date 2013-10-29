@@ -9,10 +9,10 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyTitle("CassandraClient")]
 [assembly : AssemblyDescription("")]
 [assembly : AssemblyConfiguration("")]
-[assembly : AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("SKBKontur")]
 [assembly : AssemblyProduct("CassandraClient")]
-[assembly : AssemblyCopyright("Copyright © Microsoft 2011")]
-[assembly : AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © SKBKontur 2013")]
+[assembly: AssemblyTrademark("SKBKontur.CassandraClient")]
 [assembly : AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Cassandra.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -38,5 +38,6 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly : AssemblyVersion("1.0.0.0")]
-[assembly : AssemblyFileVersion("1.0.0.0")] 
+[assembly: AssemblyVersion("1.2.0")]
+[assembly: AssemblyFileVersion("1.2.0.0")]
+[assembly: AssemblyInformationalVersion("1.2.0 Release Candidate")]
