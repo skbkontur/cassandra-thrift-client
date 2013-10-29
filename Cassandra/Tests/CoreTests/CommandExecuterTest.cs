@@ -12,7 +12,6 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using Thrift;
@@ -66,7 +65,7 @@ namespace Cassandra.Tests.CoreTests
 
             var thriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             dataConnectionPool.Expect(pool => pool.Release(thriftConnection));
             dataConnectionPool.Expect(pool => pool.Bad(thriftConnection));
 
@@ -198,7 +197,7 @@ namespace Cassandra.Tests.CoreTests
 
             var thriftConnection = GetMock<IThriftConnection>();
             fierceConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             fierceConnectionPool.Expect(pool => pool.Release(thriftConnection));
             fierceConnectionPool.Expect(pool => pool.Bad(thriftConnection));
 
@@ -219,7 +218,7 @@ namespace Cassandra.Tests.CoreTests
 
             var thriftConnection = GetMock<IThriftConnection>();
             fierceConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new IOException("xxx"));
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(new InvalidRequestException("xxx"));
             fierceConnectionPool.Expect(pool => pool.Release(thriftConnection));
             fierceConnectionPool.Expect(pool => pool.Bad(thriftConnection));
 
