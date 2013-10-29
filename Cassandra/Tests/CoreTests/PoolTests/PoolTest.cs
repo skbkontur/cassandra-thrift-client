@@ -134,6 +134,47 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         }
 
         [Test]
+        public void TestRemoveItemFromPool()
+        {
+            using(var pool = new Pool<Item>(x => new Item()))
+            {
+                var item1 = pool.Acquire();
+                var item2 = pool.Acquire();
+                pool.Release(item1);
+                pool.Remove(item2);
+
+                var item3 = pool.Acquire();
+                var item4 = pool.Acquire();
+                Assert.That(item3, Is.EqualTo(item1));
+                Assert.That(item4, Is.Not.EqualTo(item1) & Is.Not.EqualTo(item2));
+            }
+        }
+
+        [Test]
+        public void TestTryRemoveReleasedItemFromPool()
+        {
+            using(var pool = new Pool<Item>(x => new Item()))
+            {
+                var item1 = pool.Acquire();
+                var item2 = pool.Acquire();
+                pool.Release(item1);
+                pool.Release(item2);
+                Assert.Throws<RemoveFromPoolFailedException>(() => pool.Remove(item2));
+            }
+        }
+
+        [Test]
+        public void TestTryRemoveItemDoesNotBelongInPool()
+        {
+            using(var pool = new Pool<Item>(x => new Item()))
+            {
+                var item1 = pool.Acquire();
+                pool.Release(item1);
+                Assert.Throws<RemoveFromPoolFailedException>(() => pool.Remove(new Item()));
+            }
+        }
+
+        [Test]
         public void MultiThreadTest()
         {
             using(var pool = new Pool<Item>(x => new Item()))

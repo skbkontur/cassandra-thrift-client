@@ -145,5 +145,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             public T Item { get; private set; }
             public DateTime IdleTime { get; private set; }
         }
+
+        public void Remove(T item)
+        {
+            object dummy;
+            if(!busyItems.TryRemove(item, out dummy))
+                throw new RemoveFromPoolFailedException("Cannot find item to remove in busy items. This item does not belong in this pool or in released state.");
+        }
     }
 }

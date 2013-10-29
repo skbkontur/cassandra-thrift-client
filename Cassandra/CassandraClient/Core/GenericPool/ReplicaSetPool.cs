@@ -108,7 +108,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public void Remove(TItem item)
         {
-            throw new NotImplementedException();
+            GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Remove(item);
         }
 
         public void Bad(TItem item)
