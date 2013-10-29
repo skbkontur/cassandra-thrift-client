@@ -66,7 +66,7 @@ namespace Cassandra.Tests.CoreTests
                 Console.WriteLine(maxDiff);
             } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(5));
             Console.WriteLine(maxDiff);
-            Assert.That(maxDiff < maxExpectedDiff);
+            Assert.That(maxDiff, Is.LessThanOrEqualTo(maxExpectedDiff));
         }
 
         [Test]
@@ -89,7 +89,7 @@ namespace Cassandra.Tests.CoreTests
                 Console.WriteLine(maxDiff);
             } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(100));
             Console.WriteLine(maxDiff);
-            Assert.That(maxDiff < maxExpectedDiff);
+            Assert.That(maxDiff, Is.LessThanOrEqualTo(maxExpectedDiff));
         }
 
         private static long CalculateDateTimeDiff()
@@ -100,7 +100,7 @@ namespace Cassandra.Tests.CoreTests
             {
                 var currentNow = DateTime.UtcNow;
                 Thread.Sleep(0);
-                var diff = previousNow.Ticks - currentNow.Ticks;
+                var diff = currentNow.Ticks - previousNow.Ticks;
                 previousNow = currentNow;
 
                 if(result < diff)
