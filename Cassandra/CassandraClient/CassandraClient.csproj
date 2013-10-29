@@ -115,6 +115,7 @@
     <Compile Include="Core\GenericPool\Pool.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
     <Compile Include="Core\ThriftConnectionInPoolWrapper.cs" />
+    <Compile Include="Exceptions\CassandraClientSchemaDisagreementExceptionException.cs" />
     <Compile Include="Helpers\ItemHealthExtensions.cs" />
     <Compile Include="Scheme\KeyspaceConfiguration.cs" />
     <Compile Include="Scheme\KeyspaceScheme.cs" />

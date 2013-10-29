@@ -105,6 +105,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
         }
 
+        public void Remove(TItem item)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Bad(TItem item)
         {
             BadReplica(getReplicaKeyByItem(item));
