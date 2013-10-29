@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Core;
 
@@ -48,6 +49,17 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtc()
         {
+            var maxLocalDiff = TimeSpan.FromTicks(0);
+            var currentDateTime = DateTime.UtcNow;
+            for (var i = 0; i < 1000; i++)
+            {
+                var diff = currentDateTime - DateTime.UtcNow;
+                if (maxLocalDiff < diff)
+                    maxLocalDiff = diff;
+            }
+
+            Console.WriteLine(maxLocalDiff);
+
             long maxDiff = 0;
             DateTime start = DateTime.UtcNow;
             do
@@ -68,6 +80,17 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtcLongTest()
         {
+            var maxLocalDiff = TimeSpan.FromTicks(0);
+            var currentDateTime = DateTime.UtcNow;
+            for(var i = 0; i < 1000; i++)
+            {
+                var diff = currentDateTime - DateTime.UtcNow;
+                if(maxLocalDiff < diff)
+                    maxLocalDiff = diff;
+            }
+
+            Console.WriteLine(maxLocalDiff);
+
             long maxDiff = 0;
             DateTime start = DateTime.UtcNow;
             do
