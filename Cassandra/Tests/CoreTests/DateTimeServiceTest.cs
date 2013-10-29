@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading;
 
 using SKBKontur.Cassandra.CassandraClient.Core;
 
@@ -51,9 +52,13 @@ namespace Cassandra.Tests.CoreTests
         {
             long maxLocalDiff = 0;
             var currentDateTime = DateTime.UtcNow;
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < 10000; i++)
             {
-                var diff = DateTime.UtcNow.Ticks - currentDateTime.Ticks;
+                var currentNow = DateTime.UtcNow;
+                Thread.Sleep(1);
+                var diff = currentNow.Ticks - currentDateTime.Ticks;
+                currentDateTime = currentNow;
+
                 if (maxLocalDiff < diff)
                     maxLocalDiff = diff;
             }
@@ -82,9 +87,12 @@ namespace Cassandra.Tests.CoreTests
         {
             long maxLocalDiff = 0;
             var currentDateTime = DateTime.UtcNow;
-            for (var i = 0; i < 1000; i++)
+            for (var i = 0; i < 10000; i++)
             {
-                var diff = DateTime.UtcNow.Ticks - currentDateTime.Ticks;
+                var currentNow = DateTime.UtcNow;
+                Thread.Sleep(1);
+                var diff = currentNow.Ticks - currentDateTime.Ticks;
+                currentDateTime = currentNow;
 
                 if (maxLocalDiff < diff)
                     maxLocalDiff = diff;
