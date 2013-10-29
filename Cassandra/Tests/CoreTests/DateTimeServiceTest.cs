@@ -1,8 +1,9 @@
 ﻿using System;
-
-using SKBKontur.Cassandra.CassandraClient.Core;
+using System.Threading;
 
 using NUnit.Framework;
+
+using SKBKontur.Cassandra.CassandraClient.Core;
 
 namespace Cassandra.Tests.CoreTests
 {
@@ -11,14 +12,14 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestPrecision()
         {
-            long last = DateTimeService.UtcNow.Ticks;
-            DateTime start = DateTime.UtcNow;
-            int count = 0;
+            var last = DateTimeService.UtcNow.Ticks;
+            var start = DateTime.UtcNow;
+            var count = 0;
             do
             {
-                for(int i = 0; i < 1000000; ++i)
+                for(var i = 0; i < 1000000; ++i)
                 {
-                    long cur = DateTimeService.UtcNow.Ticks;
+                    var cur = DateTimeService.UtcNow.Ticks;
                     if(cur != last)
                     {
                         last = cur;
@@ -32,13 +33,13 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestAscending()
         {
-            long last = DateTimeService.UtcNow.Ticks;
-            DateTime start = DateTime.UtcNow;
+            var last = DateTimeService.UtcNow.Ticks;
+            var start = DateTime.UtcNow;
             do
             {
-                for(int i = 0; i < 1000000; ++i)
+                for(var i = 0; i < 1000000; ++i)
                 {
-                    long cur = DateTimeService.UtcNow.Ticks;
+                    var cur = DateTimeService.UtcNow.Ticks;
                     Assert.That(cur >= last, string.Format("cur={0}\r\n last={1}", cur, last));
                     last = cur;
                 }
@@ -48,41 +49,65 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtc()
         {
+            var maxExpectedDiff = CalculateDateTimeDiff() * 2;
+            Console.WriteLine("Max expected diff: {0}", maxExpectedDiff);
+
             long maxDiff = 0;
-            DateTime start = DateTime.UtcNow;
+            var start = DateTime.UtcNow;
             do
             {
-                for(int i = 0; i < 1000000; ++i)
+                for(var i = 0; i < 1000000; ++i)
                 {
-                    DateTime cur = DateTimeService.UtcNow;
-                    DateTime actual = DateTime.UtcNow;
-                    long diff = Math.Abs(cur.Ticks - actual.Ticks);
+                    var cur = DateTimeService.UtcNow;
+                    var actual = DateTime.UtcNow;
+                    var diff = Math.Abs(cur.Ticks - actual.Ticks);
                     maxDiff = Math.Max(maxDiff, diff);
                 }
                 Console.WriteLine(maxDiff);
-            } while (DateTime.UtcNow - start < TimeSpan.FromSeconds(5));
+            } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(5));
             Console.WriteLine(maxDiff);
-            Assert.That(maxDiff < 50000);
+            Assert.That(maxDiff, Is.LessThanOrEqualTo(maxExpectedDiff));
         }
-        
+
         [Test]
         public void TestReturnsUtcLongTest()
         {
+            var maxExpectedDiff = CalculateDateTimeDiff() * 2;
+            Console.WriteLine("Max expected diff: {0}", maxExpectedDiff);
+
             long maxDiff = 0;
-            DateTime start = DateTime.UtcNow;
+            var start = DateTime.UtcNow;
             do
             {
-                for(int i = 0; i < 1000000; ++i)
+                for(var i = 0; i < 1000000; ++i)
                 {
-                    DateTime cur = DateTimeService.UtcNow;
-                    DateTime actual = DateTime.UtcNow;
-                    long diff = Math.Abs(cur.Ticks - actual.Ticks);
+                    var cur = DateTimeService.UtcNow;
+                    var actual = DateTime.UtcNow;
+                    var diff = Math.Abs(cur.Ticks - actual.Ticks);
                     maxDiff = Math.Max(maxDiff, diff);
                 }
                 Console.WriteLine(maxDiff);
-            } while (DateTime.UtcNow - start < TimeSpan.FromSeconds(100));
+            } while(DateTime.UtcNow - start < TimeSpan.FromSeconds(100));
             Console.WriteLine(maxDiff);
-            Assert.That(maxDiff < 50000);
+            Assert.That(maxDiff, Is.LessThanOrEqualTo(maxExpectedDiff));
+        }
+
+        private static long CalculateDateTimeDiff()
+        {
+            long result = 0;
+            var previousNow = DateTime.UtcNow;
+            for(var i = 0; i < 10000; i++)
+            {
+                var currentNow = DateTime.UtcNow;
+                Thread.Sleep(1);
+                var diff = currentNow.Ticks - previousNow.Ticks;
+                previousNow = currentNow;
+
+                if(result < diff)
+                    result = diff;
+            }
+            Console.WriteLine(result);
+            return result;
         }
     }
 }
