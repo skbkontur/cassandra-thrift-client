@@ -10,28 +10,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     {
         internal int Id { get; set; }
         public string Name { get; set; }
-        public double? RowCacheSize { get; set; }
         public int? GCGraceSeconds { get; set; }
         public List<IndexDefinition> Indexes { get; set; }
-        public double? KeyCacheSize { get; set; }
         public double? ReadRepairChance { get; set; }
         private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
         public CompactionStrategy CompactionStrategy { get { return compactionStrategy; } set { compactionStrategy = value; } }
+        public ColumnFamilyCaching Caching { get; set; }
     }
 
     internal static class ColumnFamilyExtensions
     {
         private static string ToCassandraCachingValue(this ColumnFamily columnFamily)
         {
-            if(columnFamily.RowCacheSize > 0 && columnFamily.KeyCacheSize > 0)
-                return "ALL";
-            if(columnFamily.RowCacheSize == 0 && columnFamily.KeyCacheSize > 0)
-                return "KEYS_ONLY";
-            if(columnFamily.RowCacheSize > 0 && columnFamily.KeyCacheSize == 0)
-                return "ROWS_ONLY";
-            if(columnFamily.RowCacheSize == 0 && columnFamily.KeyCacheSize == 0)
-                return "NONE";
-            return "NONE";
+            return columnFamily.Caching.ToCassandraStringValue();
         }
 
         public static CfDef ToCassandraCfDef(this ColumnFamily columnFamily, string keyspace)
@@ -47,14 +38,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 Comparator_type = DataType.UTF8Type.ToStringValue(),
                 Caching = columnFamily.ToCassandraCachingValue()
             };
-            if (columnFamily.RowCacheSize.HasValue)
-                result.Row_cache_size = columnFamily.RowCacheSize.Value;
             if (columnFamily.GCGraceSeconds.HasValue)
                 result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
             if (columnFamily.Indexes != null)
                 result.Column_metadata = new List<ColumnDef>(columnFamily.Indexes.Select(definition => definition.ToCassandraColumnDef()));
-            if (columnFamily.KeyCacheSize.HasValue)
-                result.Key_cache_size = columnFamily.KeyCacheSize.Value;
             if (columnFamily.ReadRepairChance.HasValue)
                 result.Read_repair_chance = columnFamily.ReadRepairChance.Value;
             result.Compaction_strategy = columnFamily.CompactionStrategy.CompactionStrategyType.ToStringValue();
@@ -73,10 +60,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 };
             if (cfDef.__isset.gc_grace_seconds)
                 result.GCGraceSeconds = cfDef.Gc_grace_seconds;
-            if (cfDef.__isset.row_cache_size)
-                result.RowCacheSize = cfDef.Row_cache_size;
-            if (cfDef.__isset.key_cache_size)
-                result.KeyCacheSize = cfDef.Key_cache_size;
+            if (cfDef.__isset.caching)
+                result.Caching = cfDef.Caching.ToColumnFamilyCaching();
             if (cfDef.__isset.read_repair_chance)
                 result.ReadRepairChance = cfDef.Read_repair_chance;
             if (cfDef.Column_metadata != null)

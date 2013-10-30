@@ -52,6 +52,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\ColumnFamilyCaching.cs" />
     <Compile Include="Abstractions\CompactionStrategy.cs" />
     <Compile Include="Abstractions\CompactionStrategyOptions.cs" />
     <Compile Include="Abstractions\CompactionStrategyType.cs" />
