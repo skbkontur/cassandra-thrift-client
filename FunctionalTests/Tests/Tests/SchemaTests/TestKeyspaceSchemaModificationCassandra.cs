@@ -30,58 +30,54 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestAddKeyspace()
         {
-            using(var clusterConnection = cluster.RetrieveClusterConnection())
-            {
-                var keyspaceName = GetRandomKeyspaceName();
-                var createdKeyspace = new Keyspace
-                    {
-                        Name = keyspaceName,
-                        ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                        ReplicationFactor = 1
-                    };
-                clusterConnection.AddKeyspace(createdKeyspace);
+            var clusterConnection = cluster.RetrieveClusterConnection();
 
-                var keyspaces = clusterConnection.RetrieveKeyspaces();
-                var actualKeyspace = keyspaces.First(x => x.Name == keyspaceName);
-                AssertKeyspacePropertiesEquals(createdKeyspace, actualKeyspace);
-            }
+            var keyspaceName = GetRandomKeyspaceName();
+            var createdKeyspace = new Keyspace
+                {
+                    Name = keyspaceName,
+                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
+                    ReplicationFactor = 1
+                };
+            clusterConnection.AddKeyspace(createdKeyspace);
+
+            var keyspaces = clusterConnection.RetrieveKeyspaces();
+            var actualKeyspace = keyspaces.First(x => x.Name == keyspaceName);
+            AssertKeyspacePropertiesEquals(createdKeyspace, actualKeyspace);
         }
 
         [Test]
         public void TestUpdateKeyspaceReplicationFactor()
         {
-            using(var clusterConnection = cluster.RetrieveClusterConnection())
-            {
-                var keyspaceName = GetRandomKeyspaceName();
-                var createdKeyspace = new Keyspace {Name = keyspaceName, ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy", ReplicationFactor = 1};
-                clusterConnection.AddKeyspace(createdKeyspace);
-                createdKeyspace.ReplicationFactor = 2;
-                clusterConnection.UpdateKeyspace(createdKeyspace);
+            var clusterConnection = cluster.RetrieveClusterConnection()
 
-                var keyspaces = clusterConnection.RetrieveKeyspaces();
-                var actualKeyspace = keyspaces.First(x => x.Name == keyspaceName);
-                AssertKeyspacePropertiesEquals(createdKeyspace, actualKeyspace);
-            }
+            var keyspaceName = GetRandomKeyspaceName();
+            var createdKeyspace = new Keyspace {Name = keyspaceName, ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy", ReplicationFactor = 1};
+            clusterConnection.AddKeyspace(createdKeyspace);
+            createdKeyspace.ReplicationFactor = 2;
+            clusterConnection.UpdateKeyspace(createdKeyspace);
+
+            var keyspaces = clusterConnection.RetrieveKeyspaces();
+            var actualKeyspace = keyspaces.First(x => x.Name == keyspaceName);
+            AssertKeyspacePropertiesEquals(createdKeyspace, actualKeyspace);
         }
-        
+
         [Test]
         public void TestTryAddKeyspaceWithInvalidName()
         {
-            using(var clusterConnection = cluster.RetrieveClusterConnection())
-            {
-                var createdKeyspace = new Keyspace {Name = "Keyspace-123-123", ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy", ReplicationFactor = 1};
-                Assert.Throws<CassandraClientInvalidRequestException>(() => clusterConnection.AddKeyspace(createdKeyspace));
-            }
+            var clusterConnection = cluster.RetrieveClusterConnection();
+
+            var createdKeyspace = new Keyspace {Name = "Keyspace-123-123", ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy", ReplicationFactor = 1};
+            Assert.Throws<CassandraClientInvalidRequestException>(() => clusterConnection.AddKeyspace(createdKeyspace));
         }
 
         [Test]
         public void TestTryAddKeyspaceWithInvalidReplicaPlacementStrategy()
         {
-            using(var clusterConnection = cluster.RetrieveClusterConnection())
-            {
-                var createdKeyspace = new Keyspace {Name = GetRandomKeyspaceName(), ReplicaPlacementStrategy = "InvalidStrategy", ReplicationFactor = 1};
-                Assert.Throws<CassandraClientInvalidRequestException>(() => clusterConnection.AddKeyspace(createdKeyspace));
-            }
+            var clusterConnection = cluster.RetrieveClusterConnection();
+
+            var createdKeyspace = new Keyspace {Name = GetRandomKeyspaceName(), ReplicaPlacementStrategy = "InvalidStrategy", ReplicationFactor = 1};
+            Assert.Throws<CassandraClientInvalidRequestException>(() => clusterConnection.AddKeyspace(createdKeyspace));
         }
 
         private static string GetRandomKeyspaceName()
