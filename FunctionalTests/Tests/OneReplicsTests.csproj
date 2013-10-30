@@ -90,7 +90,7 @@
     <Compile Include="Tests\ReadWriteTest.cs" />
     <Compile Include="Management\CassandraNode.cs" />
     <Compile Include="Tests\SchemaTests\FixtureSetUp.cs" />
-    <Compile Include="Tests\SchemaTests\TestCassandra12.cs" />
+    <Compile Include="Tests\SchemaTests\TestKeyspaceSchemaModificationCassandra.cs" />
     <Compile Include="Tests\SecondaryIndexTest.cs" />
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
