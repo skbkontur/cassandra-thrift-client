@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Net;
 
 using NUnit.Framework;
@@ -32,7 +31,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         {
             var clusterConnection = cluster.RetrieveClusterConnection();
 
-            var keyspaceName = GetRandomKeyspaceName();
+            var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
             var createdKeyspace = new Keyspace
                 {
                     Name = keyspaceName,
@@ -49,9 +48,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestUpdateKeyspaceReplicationFactor()
         {
-            var clusterConnection = cluster.RetrieveClusterConnection()
+            var clusterConnection = cluster.RetrieveClusterConnection();
 
-            var keyspaceName = GetRandomKeyspaceName();
+            var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
             var createdKeyspace = new Keyspace {Name = keyspaceName, ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy", ReplicationFactor = 1};
             clusterConnection.AddKeyspace(createdKeyspace);
             createdKeyspace.ReplicationFactor = 2;
@@ -76,13 +75,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         {
             var clusterConnection = cluster.RetrieveClusterConnection();
 
-            var createdKeyspace = new Keyspace {Name = GetRandomKeyspaceName(), ReplicaPlacementStrategy = "InvalidStrategy", ReplicationFactor = 1};
+            var createdKeyspace = new Keyspace { Name = TestSchemaUtils.GetRandomKeyspaceName(), ReplicaPlacementStrategy = "InvalidStrategy", ReplicationFactor = 1 };
             Assert.Throws<CassandraClientInvalidRequestException>(() => clusterConnection.AddKeyspace(createdKeyspace));
-        }
-
-        private static string GetRandomKeyspaceName()
-        {
-            return "K_" + Guid.NewGuid().ToString().Substring(0, 10).Replace("-", string.Empty);
         }
 
         private void AssertKeyspacePropertiesEquals(Keyspace createdKeyspace, Keyspace actualKeyspace)
