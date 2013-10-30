@@ -71,6 +71,37 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             InternalTestCaching(ColumnFamilyCaching.All);
         }
 
+        [Test]
+        public void TestUpdateCreateColumnFamily()
+        {
+            var name = TestSchemaUtils.GetRandomColumnFamilyName();
+            var originalColumnFamily = new ColumnFamily
+            {
+                Name = name,
+                CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions { SstableSizeInMb = 10 }),
+                GCGraceSeconds = 123,
+                ReadRepairChance = 0.3,
+                Caching = ColumnFamilyCaching.All
+            };
+            keyspaceConnection.AddColumnFamily(originalColumnFamily);
+
+            originalColumnFamily.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20});
+            originalColumnFamily.GCGraceSeconds = 321;
+            originalColumnFamily.ReadRepairChance = 0.9;
+            originalColumnFamily.Caching = ColumnFamilyCaching.None;
+            keyspaceConnection.UpdateColumnFamily(originalColumnFamily);
+
+            var columnFamilies = keyspaceConnection.DescribeKeyspace().ColumnFamilies.ToList();
+            Assert.That(columnFamilies.Count, Is.EqualTo(1));
+
+            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies.First().Value;
+            Assert.That(columnFamily.Name, Is.EqualTo(originalColumnFamily.Name));
+            Assert.That(columnFamily.CompactionStrategy.CompactionStrategyType, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyType));
+            Assert.That(columnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb));
+            Assert.That(columnFamily.GCGraceSeconds, Is.EqualTo(originalColumnFamily.GCGraceSeconds));
+            Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
+        }
+
         private void InternalTestCaching(ColumnFamilyCaching columnFamilyCaching)
         {
             var name = TestSchemaUtils.GetRandomColumnFamilyName();
