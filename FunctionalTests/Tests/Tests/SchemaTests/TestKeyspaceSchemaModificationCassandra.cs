@@ -32,16 +32,31 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         {
             using(var clusterConnection = cluster.RetrieveClusterConnection())
             {
-                var keyspaceName = Guid.NewGuid().ToString();
-                clusterConnection.AddKeyspace(new Keyspace
-                {
-                    Name = keyspaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                    ReplicationFactor = 1
-                });
+                var keyspaceName = GetRandomKeyspaceName();
+                var createdKeyspace = new Keyspace
+                    {
+                        Name = keyspaceName,
+                        ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
+                        ReplicationFactor = 1
+                    };
+                clusterConnection.AddKeyspace(createdKeyspace);
+
                 var keyspaces = clusterConnection.RetrieveKeyspaces();
-                Assert.That(keyspaces.Any(x => x.Name == keyspaceName));                
+                var actualKeyspace = keyspaces.First(x => x.Name == keyspaceName);
+                AssertKeyspacePropertiesEquals(createdKeyspace, actualKeyspace);
             }
+        }
+
+        private static string GetRandomKeyspaceName()
+        {
+            return "K_" + Guid.NewGuid().ToString().Substring(0, 10).Replace("-", string.Empty);
+        }
+
+        private void AssertKeyspacePropertiesEquals(Keyspace createdKeyspace, Keyspace actualKeyspace)
+        {
+            Assert.That(actualKeyspace.Name, Is.EqualTo(createdKeyspace.Name));
+            Assert.That(actualKeyspace.ReplicaPlacementStrategy, Is.EqualTo(createdKeyspace.ReplicaPlacementStrategy));
+            Assert.That(actualKeyspace.ReplicationFactor, Is.EqualTo(createdKeyspace.ReplicationFactor));
         }
 
         private CassandraNode node;
