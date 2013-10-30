@@ -16,7 +16,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public static void SetUp()
         {
-            Node = new CassandraNode(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory) + @"1.2")
+            Node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
             {
                 Name = "node_at_9360",
                 JmxPort = 7399,
