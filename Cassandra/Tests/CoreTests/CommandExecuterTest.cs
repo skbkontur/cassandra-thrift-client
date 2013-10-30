@@ -137,6 +137,65 @@ namespace Cassandra.Tests.CoreTests
             executer.Execute(command);
         }
 
+        [Test, Sequential]
+        public void TestHandleExceptionWithNoTransformationToAttemptsException(
+            [Values(
+                typeof(InvalidRequestException),
+                typeof(AuthenticationException),
+                typeof(AuthorizationException),
+                typeof(SchemaDisagreementException)
+                )]
+            Type commandExecutionException,
+            [Values(
+                typeof(CassandraClientInvalidRequestException),
+                typeof(CassandraClientAuthenticationException),
+                typeof(CassandraClientAuthorizationException),
+                typeof(CassandraClientSchemaDisagreementException)
+                )]
+            Type excpectedExceptionType
+            )
+        {
+            InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), excpectedExceptionType);
+        }
+
+        [Test, Sequential]
+        public void TestHandleExceptionWithTransformationToAttemptsException(
+            [Values(
+                typeof(NotFoundException),
+                typeof(UnavailableException),
+                typeof(TimedOutException),
+                typeof(TProtocolException),
+                typeof(TApplicationException),
+                typeof(TTransportException),
+                typeof(IOException),
+                typeof(Exception)
+                )]
+            Type commandExecutionException
+            )
+        {
+            InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), typeof(CassandraAttemptsException));
+        }
+
+        private void InternalTestExceptionTransformation(Exception commandExecutionException, Type expectedException)
+        {
+            command.Expect(command1 => command1.IsFierce).Return(false).Repeat.Any();
+            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2).Repeat.Any();
+
+            var thriftConnection = GetMock<IThriftConnection>();
+            
+            dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection).Repeat.Any();
+            thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(commandExecutionException).Repeat.Any();
+            
+            dataConnectionPool.Expect(pool => pool.Remove(thriftConnection)).Repeat.Any();
+            dataConnectionPool.Expect(pool => pool.Release(thriftConnection)).Repeat.Any();
+
+            dataConnectionPool.Expect(pool => pool.Bad(thriftConnection)).Repeat.Any();
+            dataConnectionPool.Expect(pool => pool.Good(thriftConnection)).Repeat.Any();
+
+
+            Assert.That(() => executer.Execute(command), Throws.Exception.InstanceOf(expectedException));
+        }
+
         [Test]
         public void TestRemoveConnectionIfPoolThrowExceptionInGoodMethod()
         {

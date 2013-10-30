@@ -57,18 +57,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
                         if(connectionInPool != null)
                         {
-                            if (exception.ReduceReplicaLive)
+                            if(exception.ReduceReplicaLive)
                                 pool.Bad(connectionInPool);
                             else
-                                pool.Good(connectionInPool); 
+                                pool.Good(connectionInPool);
 
-                            if (exception.IsCorruptConnection)
+                            if(exception.IsCorruptConnection)
                                 pool.Remove(connectionInPool);
                             else
                                 pool.Release(connectionInPool);
                         }
-                            
-
+                        if(!exception.UseAttempts)
+                        {
+                            throw exception;
+                        }
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)
                             throw new CassandraAttemptsException(settings.Attempts, exception);
