@@ -89,6 +89,7 @@
     <Compile Include="Tests\MultiThreadStressTest.cs" />
     <Compile Include="Tests\ReadWriteTest.cs" />
     <Compile Include="Management\CassandraNode.cs" />
+    <Compile Include="Tests\SchemaTests\TestColumnFamilySchemaModificationCassandra.cs" />
     <Compile Include="Tests\SchemaTests\FixtureSetUp.cs" />
     <Compile Include="Tests\SchemaTests\TestKeyspaceSchemaModificationCassandra.cs" />
     <Compile Include="Tests\SchemaTests\Utils\TestSchemaUtils.cs" />
