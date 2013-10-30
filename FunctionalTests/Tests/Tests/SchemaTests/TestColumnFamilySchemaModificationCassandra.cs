@@ -65,6 +65,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestCreateColumnFamilyWithKeyCache()
         {
+            InternalTestCaching(null);
             InternalTestCaching(ColumnFamilyCaching.KeysOnly);
             InternalTestCaching(ColumnFamilyCaching.RowsOnly);
             InternalTestCaching(ColumnFamilyCaching.None);
@@ -102,20 +103,26 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
         }
 
-        private void InternalTestCaching(ColumnFamilyCaching columnFamilyCaching)
+        private void InternalTestCaching(ColumnFamilyCaching? columnFamilyCaching)
         {
             var name = TestSchemaUtils.GetRandomColumnFamilyName();
-            keyspaceConnection.AddColumnFamily(new ColumnFamily
+            var originalColumnFamily = new ColumnFamily
                 {
-                    Name = name,
-                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
-                    GCGraceSeconds = 123,
-                    ReadRepairChance = 0.3,
-                    Caching = columnFamilyCaching
-                });
+                    Name = name, 
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}), 
+                    GCGraceSeconds = 123, 
+                    ReadRepairChance = 0.3
+                };
+            if(columnFamilyCaching != null)
+                originalColumnFamily.Caching = columnFamilyCaching.Value;
+            keyspaceConnection.AddColumnFamily(originalColumnFamily);
+
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
-            Assert.That(columnFamily.Caching, Is.EqualTo(columnFamilyCaching));
+            if (columnFamilyCaching != null)
+                Assert.That(columnFamily.Caching, Is.EqualTo(columnFamilyCaching));
+            else
+                Assert.That(columnFamily.Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
         }
 
         private CassandraNode node;
