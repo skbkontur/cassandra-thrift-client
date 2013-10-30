@@ -8,7 +8,7 @@ using SKBKontur.Cassandra.FunctionalTests.Management;
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
 {
     [SetUpFixture]
-    public static class StartSingleCassandraSetUp
+    public class StartSingleCassandraSetUp
     {
         internal static CassandraNode Node { get; private set; }
         private const string cassandraTemplates = @"Assemblies\CassandraTemplates";
