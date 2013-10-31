@@ -28,12 +28,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public CompressionAlgorithm Algorithm { get; set; }
         public CompressionOptions Options { get; private set; }
+        public static ColumnFamilyCompression Default { get { return @default; } }
+        private static readonly ColumnFamilyCompression @default = new ColumnFamilyCompression(CompressionAlgorithm.Snappy, null);
     }
 
     internal static class ColumnFamilyCompressionExtensions
     {
-        private const string cassandraCompressionAlgorithmKeyName = "sstable_compression";
-
         public static ColumnFamilyCompression FromCassandraCompressionOptions(this Dictionary<string, string> value)
         {
             if(value.ContainsKey(cassandraCompressionAlgorithmKeyName))
@@ -57,16 +57,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 result.Add(cassandraCompressionAlgorithmKeyName, value.Algorithm.ToCassandraCompressionAlgorithm());
                 return result;
             }
-            
+
             result.Add(cassandraCompressionAlgorithmKeyName, value.Algorithm.ToCassandraCompressionAlgorithm());
             if(value.Options != null)
             {
-                if (value.Options.ChunkLengthInKb != null)
+                if(value.Options.ChunkLengthInKb != null)
                     result.Add("chunk_length_kb", value.Options.ChunkLengthInKb.ToString());
-                if (value.Options.CrcCheckChance != null)
+                if(value.Options.CrcCheckChance != null)
                     result.Add("crc_check_chance", value.Options.CrcCheckChance.Value.ToString(CultureInfo.InvariantCulture));
             }
             return result;
         }
+
+        private const string cassandraCompressionAlgorithmKeyName = "sstable_compression";
     }
 }
