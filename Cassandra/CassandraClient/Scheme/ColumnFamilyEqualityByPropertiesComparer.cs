@@ -8,16 +8,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
 {
     internal class ColumnFamilyEqualityByPropertiesComparer
     {
-        public bool Equals(ColumnFamily x, ColumnFamily y)
+        public bool NeedUpdateColumnFamily(ColumnFamily columnFamilyWithNewProperties, ColumnFamily columnFamilyFromTarget)
         {
-            if(x.Name != y.Name)
-                throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different names ('{0}' and '{1}')", x.Name, y.Name));
+            if(columnFamilyWithNewProperties.Name != columnFamilyFromTarget.Name)
+                throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different names ('{0}' and '{1}')", columnFamilyWithNewProperties.Name, columnFamilyFromTarget.Name));
             return
-                (x.ReadRepairChance == null || x.ReadRepairChance.Equals(y.ReadRepairChance)) &&
-                (x.GCGraceSeconds == null || x.GCGraceSeconds.Equals(y.GCGraceSeconds)) &&
-                (x.Indexes == null || CompareIndexes(x.Indexes, y.Indexes)) &&
-                (x.CompactionStrategy == null || CompareCompactionStrategy(x.CompactionStrategy, y.CompactionStrategy)) &&
-                (x.Compression == null || CompareCompression(x.Compression, y.Compression));
+                (columnFamilyWithNewProperties.ReadRepairChance == null || columnFamilyWithNewProperties.ReadRepairChance.Equals(columnFamilyFromTarget.ReadRepairChance)) &&
+                (columnFamilyWithNewProperties.GCGraceSeconds == null || columnFamilyWithNewProperties.GCGraceSeconds.Equals(columnFamilyFromTarget.GCGraceSeconds)) &&
+                (columnFamilyWithNewProperties.Indexes == null || CompareIndexes(columnFamilyWithNewProperties.Indexes, columnFamilyFromTarget.Indexes)) &&
+                (columnFamilyWithNewProperties.CompactionStrategy == null || CompareCompactionStrategy(columnFamilyWithNewProperties.CompactionStrategy, columnFamilyFromTarget.CompactionStrategy)) &&
+                (columnFamilyWithNewProperties.Compression == null || CompareCompression(columnFamilyWithNewProperties.Compression, columnFamilyFromTarget.Compression));
         }
 
         private bool CompareCompression(ColumnFamilyCompression leftCompression, ColumnFamilyCompression rightCompression)
