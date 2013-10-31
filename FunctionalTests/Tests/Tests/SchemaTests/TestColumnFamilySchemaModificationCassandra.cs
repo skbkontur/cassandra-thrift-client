@@ -1,11 +1,11 @@
-﻿using System.Linq;
-using System.Net;
+﻿using System.Net;
 
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.FunctionalTests.Management;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
@@ -70,17 +70,17 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         }
 
         [Test]
-        public void TestUpdateCreateColumnFamily()
+        public void TestUpdateColumnFamily()
         {
             var name = TestSchemaUtils.GetRandomColumnFamilyName();
             var originalColumnFamily = new ColumnFamily
-            {
-                Name = name,
-                CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions { SstableSizeInMb = 10 }),
-                GCGraceSeconds = 123,
-                ReadRepairChance = 0.3,
-                Caching = ColumnFamilyCaching.All
-            };
+                {
+                    Name = name,
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    GCGraceSeconds = 123,
+                    ReadRepairChance = 0.3,
+                    Caching = ColumnFamilyCaching.All
+                };
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
             originalColumnFamily.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20});
@@ -97,14 +97,78 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
         }
 
+        [Test]
+        public void TestCreateColumnFamilyWithCompression()
+        {
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024, CrcCheckChance = 0.2}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 1024, CrcCheckChance = 0.2}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 0.2}));
+
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 0.000002}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 0.000000000002}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1}));
+
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.None());
+        }
+
+        [Test]
+        public void TestTryCreateColumnFamilyWithWrongChunkLength()
+        {
+            Assert.Throws<CassandraClientInvalidRequestException>(
+                () =>
+                keyspaceConnection.AddColumnFamily(new ColumnFamily
+                    {
+                        Name = TestSchemaUtils.GetRandomColumnFamilyName(),
+                        Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3, CrcCheckChance = 1})
+                    }));
+        }
+
+        [Test]
+        public void TestDefaultCompression()
+        {
+            var name = TestSchemaUtils.GetRandomColumnFamilyName();
+            var originalColumnFamily = new ColumnFamily
+                {
+                    Name = name,
+                    Compression = null
+                };
+            keyspaceConnection.AddColumnFamily(originalColumnFamily);
+
+            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
+            Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(CompressionAlgorithm.Snappy));
+            Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.Null);
+            Assert.That(columnFamily.Compression.Options.CrcCheckChance, Is.Null);
+        }
+
+        private void InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression compression)
+        {
+            var name = TestSchemaUtils.GetRandomColumnFamilyName();
+            var originalColumnFamily = new ColumnFamily
+                {
+                    Name = name,
+                    Compression = compression
+                };
+            keyspaceConnection.AddColumnFamily(originalColumnFamily);
+
+            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
+            Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(originalColumnFamily.Compression.Algorithm));
+            if(originalColumnFamily.Compression.Options != null)
+            {
+                Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.EqualTo(originalColumnFamily.Compression.Options.ChunkLengthInKb));
+                Assert.That(columnFamily.Compression.Options.CrcCheckChance, Is.EqualTo(originalColumnFamily.Compression.Options.CrcCheckChance));
+            }
+            else
+                Assert.That(columnFamily.Compression.Options, Is.Null);
+        }
+
         private void InternalTestCaching(ColumnFamilyCaching? columnFamilyCaching)
         {
             var name = TestSchemaUtils.GetRandomColumnFamilyName();
             var originalColumnFamily = new ColumnFamily
                 {
-                    Name = name, 
-                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}), 
-                    GCGraceSeconds = 123, 
+                    Name = name,
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    GCGraceSeconds = 123,
                     ReadRepairChance = 0.3
                 };
             if(columnFamilyCaching != null)
@@ -112,7 +176,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
-            if (columnFamilyCaching != null)
+            if(columnFamilyCaching != null)
                 Assert.That(columnFamily.Caching, Is.EqualTo(columnFamilyCaching));
             else
                 Assert.That(columnFamily.Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));

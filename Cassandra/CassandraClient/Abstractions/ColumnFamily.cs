@@ -18,6 +18,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public double? ReadRepairChance { get; set; }
         public CompactionStrategy CompactionStrategy { get { return compactionStrategy; } set { compactionStrategy = value; } }
         public ColumnFamilyCaching Caching { get; set; }
+        public ColumnFamilyCompression Compression { get; set; }
         internal int Id { get; set; }
 
         private void SetDefaults()
@@ -43,6 +44,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Comparator_type = DataType.UTF8Type.ToStringValue(),
                     Caching = columnFamily.ToCassandraCachingValue()
                 };
+            if (columnFamily.Compression != null)
+                result.Compression_options = columnFamily.Compression.ToCassandraCompressionDef();
             if(columnFamily.GCGraceSeconds.HasValue)
                 result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
             if(columnFamily.Indexes != null)
@@ -71,6 +74,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 result.ReadRepairChance = cfDef.Read_repair_chance;
             if(cfDef.Column_metadata != null)
                 result.Indexes = new List<IndexDefinition>(cfDef.Column_metadata.Select(def => def.FromCassandraColumnDef()));
+            if(cfDef.Compression_options != null)
+                result.Compression = cfDef.Compression_options.FromCassandraCompressionOptions();
 
             var compactionStrategyType = cfDef.Compaction_strategy.FromStringValue<CompactionStrategyType>();
             if(compactionStrategyType == CompactionStrategyType.Leveled)
