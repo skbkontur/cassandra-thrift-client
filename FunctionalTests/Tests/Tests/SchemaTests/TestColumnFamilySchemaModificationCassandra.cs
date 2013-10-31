@@ -51,10 +51,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                 };
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
-            var columnFamilies = keyspaceConnection.DescribeKeyspace().ColumnFamilies.ToList();
-            Assert.That(columnFamilies.Count, Is.EqualTo(1));
-
-            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies.First().Value;
+            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
             Assert.That(columnFamily.Name, Is.EqualTo(originalColumnFamily.Name));
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyType, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyType));
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb));
@@ -92,10 +89,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             originalColumnFamily.Caching = ColumnFamilyCaching.None;
             keyspaceConnection.UpdateColumnFamily(originalColumnFamily);
 
-            var columnFamilies = keyspaceConnection.DescribeKeyspace().ColumnFamilies.ToList();
-            Assert.That(columnFamilies.Count, Is.EqualTo(1));
-
-            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies.First().Value;
+            var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
             Assert.That(columnFamily.Name, Is.EqualTo(originalColumnFamily.Name));
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyType, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyType));
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb));
@@ -116,7 +110,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             if(columnFamilyCaching != null)
                 originalColumnFamily.Caching = columnFamilyCaching.Value;
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
-
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
             if (columnFamilyCaching != null)
