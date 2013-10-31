@@ -60,6 +60,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arg.cs" />
+    <Compile Include="CoreTests\ColumnFamilyEqualityByPropertiesComparerTest.cs" />
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
     <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\IdleConnectionRemovalFromPoolTest.cs" />
