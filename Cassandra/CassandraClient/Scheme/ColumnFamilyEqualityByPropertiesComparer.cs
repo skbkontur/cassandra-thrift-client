@@ -13,11 +13,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             if(x.Name != y.Name)
                 throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different names ('{0}' and '{1}')", x.Name, y.Name));
             return
-                x.ReadRepairChance.Equals(y.ReadRepairChance) &&
-                x.GCGraceSeconds.Equals(y.GCGraceSeconds) &&
-                CompareIndexes(x.Indexes, y.Indexes) &&
-                CompareCompactionStrategy(x.CompactionStrategy, y.CompactionStrategy) &&
-                CompareCompression(x.Compression, y.Compression);
+                (x.ReadRepairChance == null || x.ReadRepairChance.Equals(y.ReadRepairChance)) &&
+                (x.GCGraceSeconds == null || x.GCGraceSeconds.Equals(y.GCGraceSeconds)) &&
+                (x.Indexes == null || CompareIndexes(x.Indexes, y.Indexes)) &&
+                (x.CompactionStrategy == null || CompareCompactionStrategy(x.CompactionStrategy, y.CompactionStrategy)) &&
+                (x.Compression == null || CompareCompression(x.Compression, y.Compression));
         }
 
         private bool CompareCompression(ColumnFamilyCompression leftCompression, ColumnFamilyCompression rightCompression)

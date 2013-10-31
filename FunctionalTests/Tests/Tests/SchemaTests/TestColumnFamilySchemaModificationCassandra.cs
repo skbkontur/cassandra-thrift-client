@@ -13,7 +13,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
     [TestFixture]
     public class TestColumnFamilySchemaModificationCassandra
     {
-        [TestFixtureSetUp]
+        [SetUp]
         public void SetUp()
         {
             node = StartSingleCassandraSetUp.Node;

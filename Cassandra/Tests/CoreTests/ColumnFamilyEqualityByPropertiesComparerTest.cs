@@ -56,9 +56,15 @@ namespace Cassandra.Tests.CoreTests
                      )
                 );
             Assert.That(
-                !comparer.Equals(
+                comparer.Equals(
                     new ColumnFamily {Name = "123", ReadRepairChance = null},
                     new ColumnFamily {Name = "123", ReadRepairChance = 2}
+                     )
+                );
+            Assert.That(
+                !comparer.Equals(
+                    new ColumnFamily {Name = "123", ReadRepairChance = 2},
+                    new ColumnFamily {Name = "123", ReadRepairChance = null}
                      )
                 );
         }
@@ -166,9 +172,15 @@ namespace Cassandra.Tests.CoreTests
                      )
                 );
             Assert.That(
-                !comparer.Equals(
+                comparer.Equals(
                     new ColumnFamily {Name = "name", Compression = null},
                     new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}
+                     )
+                );
+            Assert.That(
+                !comparer.Equals(
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})},
+                    new ColumnFamily {Name = "name", Compression = null}
                      )
                 );
             Assert.That(
