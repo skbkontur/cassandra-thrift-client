@@ -2,20 +2,20 @@
 
 namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
-    public class CassandraClientSchemaDisagreementExceptionException : CassandraClientException
+    public class CassandraClientSchemaDisagreementException : CassandraClientException
     {
-         public CassandraClientSchemaDisagreementExceptionException(string message)
+         public CassandraClientSchemaDisagreementException(string message)
             : base(message)
         {
         }
 
-        public CassandraClientSchemaDisagreementExceptionException(string message, Exception innerException)
+        public CassandraClientSchemaDisagreementException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
         public override bool IsCorruptConnection { get { return false; } }
-        public override bool ReduceReplicaLive { get { return false; } }        
-        
+        public override bool ReduceReplicaLive { get { return false; } }
+        public override bool UseAttempts { get { return false; } }       
     }
 }

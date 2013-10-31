@@ -57,18 +57,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
                         if(connectionInPool != null)
                         {
-                            if (exception.ReduceReplicaLive)
+                            if(exception.ReduceReplicaLive)
                                 pool.Bad(connectionInPool);
                             else
-                                pool.Good(connectionInPool); 
+                                pool.Good(connectionInPool);
 
-                            if (exception.IsCorruptConnection)
+                            if(exception.IsCorruptConnection)
                                 pool.Remove(connectionInPool);
                             else
                                 pool.Release(connectionInPool);
                         }
-                            
-
+                        if(!exception.UseAttempts)
+                        {
+                            throw exception;
+                        }
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)
                             throw new CassandraAttemptsException(settings.Attempts, exception);
@@ -90,10 +92,22 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void Dispose()
         {
-            dataCommandsConnectionPool.Dispose();
-            fierceCommandsConnectionPool.Dispose();
+            if(!disposed)
+            {
+                lock(disposeLock)
+                {
+                    if(!disposed)
+                    {
+                        disposed = true;
+                        dataCommandsConnectionPool.Dispose();
+                        fierceCommandsConnectionPool.Dispose();
+                    }
+                }
+            }
         }
 
+        private volatile bool disposed;
+        private readonly object disposeLock = new object();
         private readonly ConcurrentDictionary<string, TimeStatistics> timeStatisticsDictionary = new ConcurrentDictionary<string, TimeStatistics>();
         private readonly IThriftConnectionReplicaSetPool dataCommandsConnectionPool;
         private readonly IThriftConnectionReplicaSetPool fierceCommandsConnectionPool;

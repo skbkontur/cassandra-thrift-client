@@ -31,7 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
             if (e is IOException)
                 return new CassandraClientIOException(message, e);
             if (e is SchemaDisagreementException)
-                return new CassandraClientSchemaDisagreementExceptionException(message, e);
+                return new CassandraClientSchemaDisagreementException(message, e);
             return new CassandraUnknownException(message, e);
         }
     }
