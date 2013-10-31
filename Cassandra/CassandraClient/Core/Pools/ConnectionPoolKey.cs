@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
@@ -17,11 +16,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         {
             unchecked
             {
-                int result = (IpEndPoint != null ? IpEndPoint.GetHashCode() : 0);
+                var result = (IpEndPoint != null ? IpEndPoint.GetHashCode() : 0);
                 result = (result * 397) ^ (Keyspace != null ? Keyspace.GetHashCode() : 0);
                 result = (result * 397) ^ IsFierce.GetHashCode();
                 return result;
             }
+        }
+
+        public override string ToString()
+        {
+            return string.Format("EndPoint={0}; KeySpace={1}, IsFierce={2}", IpEndPoint, Keyspace, IsFierce);
         }
 
         public IPEndPoint IpEndPoint { get; set; }
@@ -33,11 +37,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             if(ReferenceEquals(null, other)) return false;
             if(ReferenceEquals(this, other)) return true;
             return Equals(other.IpEndPoint, IpEndPoint) && Equals(other.Keyspace, Keyspace) && other.IsFierce.Equals(IsFierce);
-        }   
-
-        public override string ToString()
-        {
-            return string.Format("EndPoint={0}; KeySpace={1}, IsFierce={2}", IpEndPoint, Keyspace, IsFierce);
         }
     }
 }

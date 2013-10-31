@@ -1,8 +1,9 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+﻿using Apache.Cassandra;
+
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
-using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
+using ColumnExtensions = SKBKontur.Cassandra.CassandraClient.Abstractions.ColumnExtensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
@@ -18,7 +19,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            cassandraClient.insert(rowKey, BuildColumnParent(), column.ToCassandraColumn(), consistencyLevel);
+            cassandraClient.insert(rowKey, BuildColumnParent(), ColumnExtensions.ToCassandraColumn(column), consistencyLevel);
         }
 
         private readonly byte[] rowKey;

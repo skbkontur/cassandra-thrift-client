@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Reflection;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -19,7 +18,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             }
             var hashtable = (Hashtable)enumToString[enumType];
             var result = hashtable[value];
-            if (result == null)
+            if(result == null)
                 throw new Exception(string.Format("The string value not found for enum value '{0}' of type '{1}'", value, enumType.Name));
             return (string)result;
         }
@@ -39,7 +38,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             }
             var hashtable = (Hashtable)stringToEnum[enumType];
             var result = hashtable[value];
-            if (result == null)
+            if(result == null)
                 throw new Exception(string.Format("The enum value of type '{0}' not found for string value '{1}'", enumType.Name, value));
             return (T)result;
         }
@@ -50,7 +49,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             foreach(var value in Enum.GetValues(enumType))
             {
                 var stringValue = GetStringValue((Enum)value);
-                if (stringValue == null)
+                if(stringValue == null)
                     continue;
                 result.Add(value, GetStringValue((Enum)value));
             }
@@ -72,10 +71,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         private static string GetStringValue(Enum value)
         {
-            MemberInfo[] memberInfos = value.GetType().GetMember(value.ToString());
+            var memberInfos = value.GetType().GetMember(value.ToString());
             if(memberInfos.Length > 0)
             {
-                object[] attrs = memberInfos[0].GetCustomAttributes(typeof(StringValueAttribute), false);
+                var attrs = memberInfos[0].GetCustomAttributes(typeof(StringValueAttribute), false);
                 if(attrs.Length > 0)
                     return ((StringValueAttribute)attrs[0]).StringValue;
             }

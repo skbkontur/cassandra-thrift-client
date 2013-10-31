@@ -74,7 +74,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     var tempStack = new Stack<FreeItemInfo>();
                     var now = DateTime.UtcNow;
                     FreeItemInfo item;
-                    
+
                     while(freeItems.TryPop(out item))
                     {
                         if(now - item.IdleTime >= minIdleTimeSpan)
@@ -91,7 +91,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 }
                 finally
                 {
-                    if (timer.ElapsedMilliseconds > 1)
+                    if(timer.ElapsedMilliseconds > 1)
                         logger.WarnFormat("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
                 }
             }
@@ -99,6 +99,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             {
                 unusedItemCollectorLock.ExitWriteLock();
             }
+        }
+
+        public void Remove(T item)
+        {
+            object dummy;
+            if(!busyItems.TryRemove(item, out dummy))
+                throw new RemoveFromPoolFailedException("Cannot find item to remove in busy items. This item does not belong in this pool or in released state.");
         }
 
         public int TotalCount { get { return FreeItemCount + BusyItemCount; } }
@@ -129,7 +136,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
-        private ILog logger = LogManager.GetLogger(typeof(Pool<T>));
+        private readonly ILog logger = LogManager.GetLogger(typeof(Pool<T>));
         private readonly Func<Pool<T>, T> itemFactory;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
         private readonly ConcurrentDictionary<T, object> busyItems = new ConcurrentDictionary<T, object>(ObjectReferenceEqualityComparer<T>.Default);
@@ -144,13 +151,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             public T Item { get; private set; }
             public DateTime IdleTime { get; private set; }
-        }
-
-        public void Remove(T item)
-        {
-            object dummy;
-            if(!busyItems.TryRemove(item, out dummy))
-                throw new RemoveFromPoolFailedException("Cannot find item to remove in busy items. This item does not belong in this pool or in released state.");
         }
     }
 }

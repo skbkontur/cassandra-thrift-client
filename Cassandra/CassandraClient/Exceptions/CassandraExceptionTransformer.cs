@@ -12,27 +12,29 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
     {
         public static CassandraClientException Transform(Exception e, string message)
         {
+            // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
             if (e is NotFoundException)
                 return new CassandraClientSomethingNotFoundException(message, e);
-            if (e is InvalidRequestException)
+            if(e is InvalidRequestException)
                 return new CassandraClientInvalidRequestException(message, (InvalidRequestException)e);
-            if (e is UnavailableException)
+            if(e is UnavailableException)
                 return new CassandraClientUnavailableException(message, e);
-            if (e is TimedOutException)
+            if(e is TimedOutException)
                 return new CassandraClientTimedOutException(message, e);
-            if (e is TApplicationException)
+            if(e is TApplicationException)
                 return new CassandraClientApplicationException(message, (TApplicationException)e);
-            if (e is AuthenticationException)
+            if(e is AuthenticationException)
                 return new CassandraClientAuthenticationException(message, e);
-            if (e is AuthorizationException)
+            if(e is AuthorizationException)
                 return new CassandraClientAuthorizationException(message, e);
-            if (e is TTransportException)
+            if(e is TTransportException)
                 return new CassandraClientTransportException(message, e);
-            if (e is IOException)
+            if(e is IOException)
                 return new CassandraClientIOException(message, e);
-            if (e is SchemaDisagreementException)
+            if(e is SchemaDisagreementException)
                 return new CassandraClientSchemaDisagreementException(message, e);
             return new CassandraUnknownException(message, e);
+            // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
         }
     }
 }

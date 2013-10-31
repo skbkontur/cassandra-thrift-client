@@ -44,7 +44,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Comparator_type = DataType.UTF8Type.ToStringValue(),
                     Caching = columnFamily.ToCassandraCachingValue()
                 };
-            if (columnFamily.Compression != null)
+            if(columnFamily.Compression != null)
                 result.Compression_options = columnFamily.Compression.ToCassandraCompressionDef();
             if(columnFamily.GCGraceSeconds.HasValue)
                 result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;

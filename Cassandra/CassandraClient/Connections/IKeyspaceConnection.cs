@@ -1,5 +1,3 @@
-using System;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections

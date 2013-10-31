@@ -4,9 +4,9 @@
     {
         public override string ToString()
         {
-            if (string.IsNullOrEmpty(KeyspaceName))
+            if(string.IsNullOrEmpty(KeyspaceName))
                 return "";
-            if (string.IsNullOrEmpty(ColumnFamilyName))
+            if(string.IsNullOrEmpty(ColumnFamilyName))
                 return string.Format("(Keyspace: {0})", KeyspaceName);
             return string.Format("(Keyspace: {0}, ColumnFamily: {1})", KeyspaceName, ColumnFamilyName);
         }

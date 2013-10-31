@@ -11,7 +11,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 
         public SlicePredicate(SliceRange sliceRange)
         {
-            SliceRange = sliceRange ?? new SliceRange { Count = int.MaxValue };
+            SliceRange = sliceRange ?? new SliceRange {Count = int.MaxValue};
         }
 
         public List<byte[]> Columns { get; private set; }
@@ -22,7 +22,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
     {
         internal static Apache.Cassandra.SlicePredicate ToCassandraSlicePredicate(this SlicePredicate slicePredicate)
         {
-            if (slicePredicate == null)
+            if(slicePredicate == null)
                 return null;
             return new Apache.Cassandra.SlicePredicate
                 {

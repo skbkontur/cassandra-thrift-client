@@ -22,15 +22,6 @@ namespace Cassandra.Tests
             MockRepository.VerifyAll();
         }
 
-        
-
-        public static T GetMock<T>()
-        {
-            var mock = MockRepository.StrictMock<T>();
-            mock.Replay();
-            return mock;
-        }
-
         public static T GetStub<T>()
         {
             var mock = MockRepository.Stub<T>();
@@ -46,13 +37,6 @@ namespace Cassandra.Tests
         public static void RunMethodWithException<TE>(Action method) where TE : Exception
         {
             RunMethodWithException(method, (Action<TE>)null);
-        }
-
-        public static void RunMethodWithException<TE>(Action method, string expectedMessageSubstring)
-            where TE : Exception
-        {
-            Assert.That(!String.IsNullOrEmpty(expectedMessageSubstring));
-            RunMethodWithException<TE>(method, e => StringAssert.Contains(expectedMessageSubstring, e.Message));
         }
 
         public static void RunMethodWithException<TE>(Action method, Action<TE> exceptionCheckDelegate)
@@ -76,6 +60,20 @@ namespace Cassandra.Tests
         }
 
         public static MockRepository MockRepository { get; private set; }
+
+        protected static T GetMock<T>()
+        {
+            var mock = MockRepository.StrictMock<T>();
+            mock.Replay();
+            return mock;
+        }
+
+        protected static void RunMethodWithException<TE>(Action method, string expectedMessageSubstring)
+            where TE : Exception
+        {
+            Assert.That(!String.IsNullOrEmpty(expectedMessageSubstring));
+            RunMethodWithException<TE>(method, e => StringAssert.Contains(expectedMessageSubstring, e.Message));
+        }
 
         protected static void VerifyAll()
         {
@@ -101,8 +99,6 @@ namespace Cassandra.Tests
                 ordered.Dispose();
                 MockRepository.ReplayAll();
             }
-
-            
 
             private readonly IDisposable ordered;
         }

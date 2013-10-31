@@ -12,7 +12,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key);
         void DeleteRow(byte[] key, long? timestamp);
         void AddColumn(byte[] key, Column column);
-        
+
         void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair);
         void AddBatch(Func<int, KeyColumnsPair<byte[]>> createKeyColumnsPair);
 

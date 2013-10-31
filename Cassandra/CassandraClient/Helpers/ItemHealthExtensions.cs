@@ -16,14 +16,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
             var itemsWithHealth = new HashSet<KeyValuePair<T, double>>(items.Select(x => new KeyValuePair<T, double>(x, healthSelector(x))));
             var totalItemListLength = itemsWithHealth.Count;
 
-            for (var i = 0; i < totalItemListLength; i++)
+            for(var i = 0; i < totalItemListLength; i++)
             {
                 var result = default(T2);
                 var healthSum = itemsWithHealth.Sum(h => h.Value);
 
                 var valueFound = false;
                 var randomValue = Random.NextDouble();
-                foreach (var itemWithHealth in itemsWithHealth)
+                foreach(var itemWithHealth in itemsWithHealth)
                 {
                     randomValue -= itemWithHealth.Value / healthSum;
                     if(randomValue < epsilon)
@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                         break;
                     }
                 }
-                if (!valueFound)
+                if(!valueFound)
                 {
                     var last = itemsWithHealth.Last();
                     result = resultSelector(last.Key);

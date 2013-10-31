@@ -28,13 +28,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             {
             case CompressionAlgorithm.Snappy:
                 return "SnappyCompressor";
-                break;
             case CompressionAlgorithm.Deflate:
                 return "DeflateCompressor";
-                break;
             case CompressionAlgorithm.None:
                 return "";
-                break;
             default:
                 throw new ArgumentException(string.Format("Unknown compression algorithm '{0}'", value), "value");
             }

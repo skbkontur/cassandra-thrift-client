@@ -59,7 +59,7 @@ namespace Cassandra.Tests.CoreTests
                 comparer.NeedUpdateColumnFamily(
                     new ColumnFamily {Name = "123", ReadRepairChance = null},
                     new ColumnFamily {Name = "123", ReadRepairChance = 2}
-                     )
+                    )
                 );
             Assert.That(
                 !comparer.NeedUpdateColumnFamily(
@@ -175,7 +175,7 @@ namespace Cassandra.Tests.CoreTests
                 comparer.NeedUpdateColumnFamily(
                     new ColumnFamily {Name = "name", Compression = null},
                     new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}
-                     )
+                    )
                 );
             Assert.That(
                 !comparer.NeedUpdateColumnFamily(
@@ -294,7 +294,7 @@ namespace Cassandra.Tests.CoreTests
                                     new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
                                 }
                         }
-                    )
+                     )
                 );
         }
 

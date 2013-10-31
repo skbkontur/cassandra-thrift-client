@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Text;
 
 namespace Cassandra.Tests
@@ -12,10 +13,16 @@ namespace Cassandra.Tests
             var list = new List<CollectionSlot>();
             if(collection != null)
             {
-                for(int i = 0; i < collection.Count; ++i)
-                    list.Add(new CollectionSlot {Key = collection.GetKey(i), Values = collection.GetValues(i)});
+                list.AddRange(
+                    collection.Cast<object>().
+                               Select((t, i) => new CollectionSlot
+                                   {
+                                       Key = collection.GetKey(i),
+                                       Values = collection.GetValues(i)
+                                   }));
             }
-            list.Sort((x, y) => String.Compare(x.Key, y.Key));
+            list.Sort((x, y) => String.CompareOrdinal(x.Key, y.Key));
+
             var result = new StringBuilder();
             foreach(var slot in list)
                 result.Append((slot + "\r\n"));
@@ -31,7 +38,7 @@ namespace Cassandra.Tests
                 if(Values != null)
                 {
                     Array.Sort(Values);
-                    bool notFirst = false;
+                    var notFirst = false;
                     foreach(var value in Values)
                     {
                         if(notFirst) result.Append(", ");
@@ -43,10 +50,8 @@ namespace Cassandra.Tests
                 return result.ToString();
             }
 
-            public string Key;
-            public string[] Values;
+            public string Key { get; set; }
+            public string[] Values { get; set; }
         }
-
-        
     }
 }

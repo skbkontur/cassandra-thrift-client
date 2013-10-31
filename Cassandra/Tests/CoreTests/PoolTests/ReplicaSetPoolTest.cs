@@ -406,7 +406,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         {
             using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y =>
                 {
-                    if (z.Name == "replica1")
+                    if(z.Name == "replica1")
                         throw new Exception("FakeException");
                     return new Item(x, z);
                 })))
@@ -414,7 +414,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 pool.RegisterReplica(new ReplicaKey("replica1"));
                 pool.RegisterReplica(new ReplicaKey("replica2"));
 
-                for(int i = 0; i < 1000; i++)
+                for(var i = 0; i < 1000; i++)
                 {
                     var item = pool.Acquire(new ItemKey("1"));
                     Assert.That(item.ReplicaKey.Name, Is.EqualTo("replica2"));
@@ -425,15 +425,12 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestTryAcquireConnectionWithExceptionAllPools()
         {
-            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) =>
-                {
-                    return new Pool<Item>(y => { throw new Exception("FakeException"); });
-                }))
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); })))
             {
                 pool.RegisterReplica(new ReplicaKey("replica1"));
                 pool.RegisterReplica(new ReplicaKey("replica2"));
 
-                for (int i = 0; i < 1000; i++)
+                for(var i = 0; i < 1000; i++)
                 {
                     try
                     {
@@ -448,7 +445,6 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                         Assert.That((exception as AggregateException).InnerExceptions.Count, Is.EqualTo(2));
                         Assert.That((exception as AggregateException).InnerExceptions[0].Message, Is.EqualTo("FakeException"));
                     }
-                    
                 }
             }
         }
@@ -479,7 +475,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveAcquiredConnectionFromPool()
         {
-            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z))))
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z))))
             {
                 pool.RegisterReplica(new ReplicaKey("replica1"));
 
@@ -493,7 +489,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
                 Assert.That(item3, Is.EqualTo(item1));
                 Assert.That(item4, Is.Not.EqualTo(item1) & Is.Not.EqualTo(item2));
-            }            
+            }
         }
 
         private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")

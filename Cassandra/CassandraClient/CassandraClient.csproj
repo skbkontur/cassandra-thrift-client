@@ -164,7 +164,7 @@
     <Compile Include="Exceptions\CassandraExceptionTransformer.cs" />
     <Compile Include="Exceptions\ColumnIsNotFoundException.cs" />
     <Compile Include="Exceptions\CassandraUnknownException.cs" />
-    <Compile Include="Helpers\StringHelpers.cs" />
+    <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheme\ReplicaPlacementStrategy.cs" />
     <Compile Include="TimeStatistics.cs" />
