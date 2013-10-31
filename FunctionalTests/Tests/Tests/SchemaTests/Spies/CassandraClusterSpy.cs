@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using GroboContainer.Infection;
+
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
@@ -9,6 +11,7 @@ using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
 {
+    [IgnoredImplementation]
     public class CassandraClusterSpy : ICassandraCluster
     {
         public CassandraClusterSpy(Func<ICassandraCluster> cassandraClusterFactory)

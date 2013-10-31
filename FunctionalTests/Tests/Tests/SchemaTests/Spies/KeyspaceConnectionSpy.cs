@@ -1,8 +1,11 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+﻿using GroboContainer.Infection;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
 {
+    [IgnoredImplementation]
     public class KeyspaceConnectionSpy : IKeyspaceConnection
     {
         public KeyspaceConnectionSpy(IKeyspaceConnection innerConnection)
