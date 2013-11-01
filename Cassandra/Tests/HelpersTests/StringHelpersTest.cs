@@ -1,8 +1,8 @@
 using System.Text;
 
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
 using NUnit.Framework;
+
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace Cassandra.Tests.HelpersTests
 {
@@ -11,27 +11,27 @@ namespace Cassandra.Tests.HelpersTests
         [Test]
         public void TestToStringNull()
         {
-            Assert.IsNull(StringHelpers.BytesToString(null));
+            Assert.IsNull(StringExtensions.BytesToString(null));
         }
 
         [Test]
         public void TestToBytesNull()
         {
-            Assert.IsNull(StringHelpers.StringToBytes(null));
+            Assert.IsNull(StringExtensions.StringToBytes(null));
         }
 
         [Test]
         public void TestToString()
         {
-            byte[] bytes = Encoding.UTF8.GetBytes("qxx");
-            Assert.AreEqual("qxx", StringHelpers.BytesToString(bytes));
+            var bytes = Encoding.UTF8.GetBytes("qxx");
+            Assert.AreEqual("qxx", StringExtensions.BytesToString(bytes));
         }
 
         [Test]
         public void TestToBytes()
         {
-            byte[] expectedBytes = Encoding.UTF8.GetBytes("qxx");
-            CollectionAssert.AreEqual(expectedBytes, StringHelpers.StringToBytes("qxx"));
+            var expectedBytes = Encoding.UTF8.GetBytes("qxx");
+            CollectionAssert.AreEqual(expectedBytes, StringExtensions.StringToBytes("qxx"));
         }
     }
 }

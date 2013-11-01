@@ -48,8 +48,6 @@ namespace Cassandra.Tests.ObjComparer
             return true;
         }
 
-        
-
         private readonly CompareInterfaceAs compareInterfaceAs;
         private readonly CompareTypeAs compareTypeAs;
     }

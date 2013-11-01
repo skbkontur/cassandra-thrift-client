@@ -30,4 +30,4 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         private readonly List<byte[]> keys;
         private readonly SlicePredicate predicate;
     }
-} 
+}

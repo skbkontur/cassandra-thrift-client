@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Globalization;
 using System.Net;
 
 namespace Cassandra.Tests.ObjComparer
 {
     public class SimpleTypeWriter
     {
-        public string TryWrite(Type type, object value)
+        public static string TryWrite(Type type, object value)
         {
             if(type.IsEnum || type.IsPrimitive)
                 return value.ToString();
@@ -36,11 +37,11 @@ namespace Cassandra.Tests.ObjComparer
                     {typeof(IPEndPoint), ObjToString},
                     {
                         typeof(DateTime), o =>
-                                              {
-                                                  var t = (DateTime)o;
-                                                  return t.Ticks.ToString();
-                                              }
-                        },
+                            {
+                                var t = (DateTime)o;
+                                return t.Ticks.ToString(CultureInfo.InvariantCulture);
+                            }
+                    },
                 };
     }
 }

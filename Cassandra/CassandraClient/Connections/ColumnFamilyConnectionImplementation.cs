@@ -36,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public bool IsRowExist(byte[] key)
         {
-            List<byte[]> keys = GetKeys(key, 1);
+            var keys = GetKeys(key, 1);
             return keys.Count == 1 && ByteArrayEqualityComparer.SimpleComparer.Equals(keys[0], key);
         }
 
@@ -61,7 +61,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddColumn(byte[] key, Column column)
         {
-            KeyspaceColumnFamilyDependantCommandBase command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[]>(key, column));
+            var command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[]>(key, column));
             ExecuteCommand(command);
         }
 
@@ -91,7 +91,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddBatch(byte[] key, IEnumerable<Column> columns)
         {
-            List<IMutation> mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
+            var mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
             ExecuteMutations(key, mutationsList);
         }
 
@@ -99,7 +99,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             ExecuteMutations(attempt =>
                 {
-                    KeyColumnsPair<byte[]> pair = createKeyColumnsPair(attempt);
+                    var pair = createKeyColumnsPair(attempt);
                     return new KeyValuePair<byte[], List<IMutation>>(
                         pair.Key,
                         ToMutationsList(pair.Columns, cassandraClusterSettings.AllowNullTimestamp));
@@ -192,13 +192,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data)
         {
-            List<KeyValuePair<byte[], List<IMutation>>> mutationsList = data.Select(row => new KeyValuePair<byte[], List<IMutation>>(row.Key, ToMutationsList(row.Value, cassandraClusterSettings.AllowNullTimestamp))).ToList();
+            var mutationsList = data.Select(row => new KeyValuePair<byte[], List<IMutation>>(row.Key, ToMutationsList(row.Value, cassandraClusterSettings.AllowNullTimestamp))).ToList();
             ExecuteMutations(mutationsList);
         }
 
         public void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null)
         {
-            List<KeyValuePair<byte[], List<IMutation>>> mutationsList = data.Select(
+            var mutationsList = data.Select(
                 row => new KeyValuePair<byte[], List<IMutation>>(row.Key,
                                                                  new List<IMutation>
                                                                      {
@@ -213,7 +213,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[]>> createKeyColumnPair)
         {
-            KeyColumnPair<byte[]> keyColumnPair = createKeyColumnPair(attempt);
+            var keyColumnPair = createKeyColumnPair(attempt);
             CheckColumnHasTimestampValue(keyColumnPair.Column);
             return new InsertCommand(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
         }
@@ -227,7 +227,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private static List<IMutation> ToMutationsList(IEnumerable<Column> columns, bool allowNullTimestamp)
         {
             var result = new List<IMutation>();
-            foreach(Column column in columns)
+            foreach(var column in columns)
             {
                 if(!allowNullTimestamp && !column.Timestamp.HasValue)
                     throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Name));
@@ -260,7 +260,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             ExecuteCommand(attempt =>
                 {
-                    KeyValuePair<byte[], List<IMutation>> keyMutationsListPair = createKeyMutationsListPair(attempt);
+                    var keyMutationsListPair = createKeyMutationsListPair(attempt);
 
                     var columnFamilyMutations = new Dictionary<byte[], List<IMutation>>
                         {
@@ -278,7 +278,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IMutation>>> mutationsList)
         {
-            Dictionary<byte[], List<IMutation>> dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
+            var dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
             var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
                 {
                     {columnFamilyName, dict}
@@ -289,12 +289,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(batchMutateCommand);
         }
 
-        private void ExecuteCommand(KeyspaceColumnFamilyDependantCommandBase commandBase)
+        private void ExecuteCommand(ICommand commandBase)
         {
             commandExecuter.Execute(commandBase);
         }
 
-        private void ExecuteCommand(Func<int, KeyspaceColumnFamilyDependantCommandBase> createCommand)
+        private void ExecuteCommand(Func<int, ICommand> createCommand)
         {
             commandExecuter.Execute(createCommand);
         }

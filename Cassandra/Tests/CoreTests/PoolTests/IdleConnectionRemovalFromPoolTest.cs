@@ -24,7 +24,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 var item3 = pool.Acquire();
                 pool.Release(item3);
                 var count = pool.RemoveIdleItems(TimeSpan.FromMilliseconds(100));
-                
+
                 var item4 = pool.Acquire();
                 var item5 = pool.Acquire();
 
@@ -38,6 +38,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveConnectionMultiThread()
         {
+            // ReSharper disable AccessToDisposedClosure
+            // ReSharper disable AccessToModifiedClosure
             var creationCount = 0;
             using(var pool = new Pool<Item>(x =>
                 {
@@ -60,8 +62,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                                 var random = new Random(n);
                                 var item = pool.Acquire();
                                 Thread.Sleep(random.Next(10));
-                                pool.Release(item);    
-                            }                            
+                                pool.Release(item);
+                            }
                         }))
                     .Select(x => new Thread(x))
                     .ToList();
@@ -85,8 +87,9 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Assert.That(pool.TotalCount, Is.LessThanOrEqualTo(threadCount));
                 Assert.That(pool.FreeItemCount, Is.LessThanOrEqualTo(threadCount));
                 Assert.That(pool.BusyItemCount, Is.EqualTo(0));
-
             }
+            // ReSharper restore AccessToModifiedClosure
+            // ReSharper restore AccessToDisposedClosure
         }
 
         private class Item : IDisposable, ILiveness
@@ -101,22 +104,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Disposed = true;
             }
 
-            public bool IsAlive { get; set; }
+            public bool IsAlive { get; private set; }
 
-            public void Use(TimeSpan timeout)
-            {
-                IsUse = true;
-                try
-                {
-                    Thread.Sleep(timeout);
-                }
-                finally
-                {
-                    IsUse = false;
-                }
-            }
-
-            public bool IsUse { get; private set; }
             public bool Disposed { get; private set; }
         }
     }

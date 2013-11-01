@@ -34,7 +34,7 @@ namespace Cassandra.Tests.HelpersTests
             Assert.That(itemCounts[items[3]], Is.InRange(0.03 * count, 0.07 * count));
         }
 
-       [Test]
+        [Test]
         public void TestMultipleShuffledListResultLength()
         {
             const int count = 100000;
@@ -73,7 +73,7 @@ namespace Cassandra.Tests.HelpersTests
                     new HealthItem(1.0),
                     new HealthItem(1.0)
                 };
-            
+
             var itemCounts =
                 Enumerable.Range(0, count)
                           .Select(x => items.ShuffleByHealth(i => i.Health).ToArray())
@@ -95,7 +95,6 @@ namespace Cassandra.Tests.HelpersTests
 
             var itemCounts = items.ShuffleByHealth(i => i.Health).ToArray();
             Assert.That(itemCounts.Length, Is.EqualTo(2));
-
         }
 
         private class HealthItem

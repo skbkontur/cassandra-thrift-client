@@ -27,13 +27,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         }
 
         public DateTime CreationDateTime { get { return thriftConnection.CreationDateTime; } }
-        public string KeyspaceName { get; private set; }
-        public IPEndPoint ReplicaKey { get; private set; }
 
         public override string ToString()
         {
             return string.Format("ThriftConnectionInPoolWrapper[KeyspaceName: {0}, NodeEndPoint: {1}]", KeyspaceName, ReplicaKey);
         }
+
+        public string KeyspaceName { get; private set; }
+        public IPEndPoint ReplicaKey { get; private set; }
 
         private readonly ThriftConnection thriftConnection;
     }

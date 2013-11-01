@@ -68,7 +68,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                                       columnFamily.Name, keyspaceName);
                     var existsColumnFamily = existsColumnFamilies[columnFamily.Name];
                     columnFamily.Id = existsColumnFamily.Id;
-                    if (!columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
+                    if(!columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
                         keyspaceConnection.UpdateColumnFamily(columnFamily);
                 }
                 else
@@ -79,6 +79,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
         private readonly ICassandraCluster cassandraCluster;
 
         private readonly ILog logger = LogManager.GetLogger(typeof(SchemeActualizer));
-        private ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer;
+        private readonly ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer;
     }
 }

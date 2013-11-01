@@ -68,9 +68,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                                 pool.Release(connectionInPool);
                         }
                         if(!exception.UseAttempts)
-                        {
                             throw exception;
-                        }
                         command = createCommand(i + 1);
                         if(i + 1 == settings.Attempts)
                             throw new CassandraAttemptsException(settings.Attempts, exception);

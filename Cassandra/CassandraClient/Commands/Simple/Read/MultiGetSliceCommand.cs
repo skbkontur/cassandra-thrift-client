@@ -37,7 +37,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             foreach(var outputKeyValuePair in output)
             {
                 var columnOrSuperColumnList = outputKeyValuePair.Value.Select(x => x.Column)
-                    .Select(ColumnExtensions.FromCassandraColumn).ToList();
+                                                                .Select(ColumnExtensions.FromCassandraColumn).ToList();
                 Output.Add(outputKeyValuePair.Key, columnOrSuperColumnList);
             }
         }

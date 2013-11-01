@@ -2,9 +2,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class CompactionStrategy
     {
-        public CompactionStrategyType CompactionStrategyType { get; private set; }
-        public CompactionStrategyOptions CompactionStrategyOptions { get; private set; }
-
         public static CompactionStrategy LeveledCompactionStrategy(CompactionStrategyOptions options)
         {
             return new CompactionStrategy
@@ -21,5 +18,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     CompactionStrategyType = CompactionStrategyType.SizeTiered
                 };
         }
+
+        public CompactionStrategyType CompactionStrategyType { get; private set; }
+        public CompactionStrategyOptions CompactionStrategyOptions { get; private set; }
     }
 }

@@ -12,7 +12,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
     {
         internal static Apache.Cassandra.SliceRange ToCassandraSliceRange(this SliceRange sliceRange)
         {
-            if (sliceRange == null)
+            if(sliceRange == null)
                 return null;
             return new Apache.Cassandra.SliceRange
                 {

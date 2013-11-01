@@ -20,7 +20,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 (columnFamilyWithNewProperties.Compression == null || CompareCompression(columnFamilyWithNewProperties.Compression, columnFamilyFromTarget.Compression));
         }
 
-        private bool CompareCompression(ColumnFamilyCompression leftCompression, ColumnFamilyCompression rightCompression)
+        private static bool CompareCompression(ColumnFamilyCompression leftCompression, ColumnFamilyCompression rightCompression)
         {
             if(leftCompression == null && rightCompression == null)
                 return true;
@@ -42,7 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             return CompareCompression(leftCompression ?? ColumnFamilyCompression.Default, rightCompression ?? ColumnFamilyCompression.Default);
         }
 
-        private bool CompareCompactionStrategy(CompactionStrategy compactionStrategy, CompactionStrategy compactionStrategy1)
+        private static bool CompareCompactionStrategy(CompactionStrategy compactionStrategy, CompactionStrategy compactionStrategy1)
         {
             if((compactionStrategy == null && compactionStrategy1 == null))
                 return true;
@@ -59,7 +59,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             return false;
         }
 
-        private bool CompareIndexes(IEnumerable<IndexDefinition> leftIndices, IEnumerable<IndexDefinition> rightIndices)
+        private static bool CompareIndexes(IEnumerable<IndexDefinition> leftIndices, IEnumerable<IndexDefinition> rightIndices)
         {
             if(leftIndices == null && rightIndices == null)
                 return true;
