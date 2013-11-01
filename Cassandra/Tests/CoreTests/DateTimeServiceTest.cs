@@ -49,7 +49,7 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtc()
         {
-            var maxExpectedDiff = CalculateDateTimeDiff() * 2;
+            var maxExpectedDiff = CalculateDateTimeDiff() * 4;
             Console.WriteLine("Max expected diff: {0}", maxExpectedDiff);
 
             long maxDiff = 0;
@@ -72,7 +72,7 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void TestReturnsUtcLongTest()
         {
-            var maxExpectedDiff = CalculateDateTimeDiff() * 2;
+            var maxExpectedDiff = CalculateDateTimeDiff() * 4;
             Console.WriteLine("Max expected diff: {0}", maxExpectedDiff);
 
             long maxDiff = 0;
