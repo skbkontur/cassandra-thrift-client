@@ -73,6 +73,38 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(1));
         }
 
+        [Test]
+        public void TestActualizeWithNullProperties()
+        {
+            string keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
+            var scheme = new KeyspaceScheme
+                {
+                    Name = keyspaceName,
+                    Configuration = new KeyspaceConfiguration
+                        {
+                            ColumnFamilies = new[]
+                                {
+                                    new ColumnFamily
+                                        {
+                                            Name = "CF1",
+                                            Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {  ChunkLengthInKb = 1024 })
+                                        }
+                                }
+                        }
+                };
+            actualize.ActualizeKeyspaces(new[] {scheme});
+            
+            var actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
+            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithm.Deflate));
+
+            scheme.Configuration.ColumnFamilies[0].Compression = null;
+            scheme.Configuration.ColumnFamilies[0].Caching = ColumnFamilyCaching.All;
+            actualize.ActualizeKeyspaces(new[] {scheme});
+
+            actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
+            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithm.Deflate));
+        }
+
         private CassandraClusterSpy cluster;
         private SchemeActualizer actualize;
     }
