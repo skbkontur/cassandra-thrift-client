@@ -6,7 +6,7 @@ using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class PooledThriftConnection : IPooledThriftConnection
+    internal class PooledThriftConnection : IPooledThriftConnection
     {
         public PooledThriftConnection(IKeyspaceConnectionPool connectionPool, int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {

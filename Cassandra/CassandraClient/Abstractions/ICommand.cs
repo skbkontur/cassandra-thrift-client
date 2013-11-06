@@ -1,6 +1,6 @@
 ﻿namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
-    public interface ICommand
+    internal interface ICommand
     {
         void Execute(Apache.Cassandra.Cassandra.Client client);
         string Name { get; }

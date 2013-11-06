@@ -8,7 +8,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
-    public class ClusterConnectionPool : IClusterConnectionPool
+    internal class ClusterConnectionPool : IClusterConnectionPool
     {
         public ClusterConnectionPool(Func<ConnectionPoolKey, IKeyspaceConnectionPool> createKeyspaceConnectionPool)
         {
@@ -34,12 +34,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
             foreach(var keyspaceConnectionPool in keyspacePools)
                 result.Add(keyspaceConnectionPool.Key, keyspaceConnectionPool.Value.GetKnowledge());
             return result;
-        }
-
-        public void CheckConnections()
-        {
-            foreach(var keyspaceConnectionPool in keyspacePools.Values)
-                keyspaceConnectionPool.CheckConnections();
         }
 
         public void Dispose()

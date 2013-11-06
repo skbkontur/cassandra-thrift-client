@@ -5,7 +5,7 @@ using System.Net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class Badlist : IBadlist
+    internal class Badlist : IBadlist
     {
         public void Good(IPEndPoint endPoint)
         {

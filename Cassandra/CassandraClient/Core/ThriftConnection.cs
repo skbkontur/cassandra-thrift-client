@@ -12,7 +12,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public class ThriftConnection
+    internal class ThriftConnection : IThriftConnection
     {
         public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
         {
@@ -51,16 +51,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     logger.Error(string.Format("Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
                     throw e;
                 }
-                try
-                {
-                    command.Execute(cassandraClient);
-                }
-                catch(Exception e)
-                {
-                    logger.Error(string.Format("Команда завершилась неудачей. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
-                    isAlive = false;
-                    throw;
-                }
+                command.Execute(cassandraClient);
             }
         }
 

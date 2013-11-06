@@ -14,7 +14,7 @@ using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class ClusterConnection : IClusterConnection
+    internal class ClusterConnection : IClusterConnection
     {
         public ClusterConnection(ICommandExecuter commandExecuter)
         {
@@ -57,11 +57,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             commandExecuter.Execute(addKeyspaceCommand);
             logger.InfoFormat("Keyspace adding result: {0}", addKeyspaceCommand.Output);
             WaitUntilAgreementIsReached();
-        }
-
-        public void Dispose()
-        {
-            commandExecuter.Dispose();
         }
 
         private void WaitUntilAgreementIsReached()

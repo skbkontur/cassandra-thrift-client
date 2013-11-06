@@ -110,10 +110,10 @@ partitioner: org.apache.cassandra.dht.Murmur3Partitioner
 # will spread data evenly across them, subject to the granularity of
 # the configured compaction strategy.
 data_file_directories:
-    - C:/cassandraDB/data
+    - ../db/data
 
 # commit log
-commitlog_directory: C:/cassandraDB/commitlog
+commitlog_directory: ../db/commitlog
 
 # policy for data disk failures:
 # stop: shut down gossip and Thrift, leaving the node effectively dead, but
@@ -193,7 +193,7 @@ row_cache_save_period: 0
 row_cache_provider: SerializingCacheProvider
 
 # saved caches
-saved_caches_directory: C:/cassandraDB/saved_caches
+saved_caches_directory: ../db/saved_caches
 
 # commitlog_sync may be either "periodic" or "batch." 
 # When in batch mode, Cassandra won't ack writes until the commit log
@@ -307,11 +307,11 @@ trickle_fsync: false
 trickle_fsync_interval_in_kb: 10240
 
 # TCP port, for commands and data
-storage_port: 7000
+storage_port: 7100
 
 # SSL port, for encrypted communication.  Unused unless enabled in
 # encryption_options
-ssl_storage_port: 7001
+ssl_storage_port: 7101
 
 # Address to bind to and tell other Cassandra nodes to connect to. You
 # _must_ change this if you want multiple nodes to be able to
@@ -338,7 +338,7 @@ listen_address: localhost
 # same as the rpc_address. The port however is different and specified below.
 start_native_transport: true
 # port for the CQL native transport to listen for clients on
-native_transport_port: 9042
+native_transport_port: 9043
 # The minimum and maximum threads for handling requests when the native
 # transport is used. They are similar to rpc_min_threads and rpc_max_threads,
 # though the defaults differ slightly.

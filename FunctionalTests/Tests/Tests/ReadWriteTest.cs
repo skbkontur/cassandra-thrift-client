@@ -17,8 +17,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             base.SetUp();
             connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
-            checkConnectionsThread = new Thread(CheckConnections);
-            checkConnectionsThread.Start();
         }
 
         [Test]
@@ -43,7 +41,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             stop = true;
             for(int i = 0; i < threadsCount; i++)
                 threads[i].Join();
-            checkConnectionsThread.Join();
             base.TearDown();
         }
 
@@ -68,16 +65,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     logger.Error(e);
                     throw;
                 }
-            }
-        }
-
-        private void CheckConnections()
-        {
-            while(true)
-            {
-                if(stop) return;
-                cassandraCluster.CheckConnections();
-                Thread.Sleep(100);
             }
         }
 
@@ -109,7 +96,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         private readonly ILog logger = LogManager.GetLogger(typeof(ReadWriteTest));
         private Thread[] threads;
         private IColumnFamilyConnection connection;
-        private Thread checkConnectionsThread;
         private const int threadsCount = 30;
     }
 }

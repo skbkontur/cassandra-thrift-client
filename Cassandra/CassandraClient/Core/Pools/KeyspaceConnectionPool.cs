@@ -10,7 +10,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 {
-    public class KeyspaceConnectionPool : IKeyspaceConnectionPool
+    internal class KeyspaceConnectionPool : IKeyspaceConnectionPool
     {
         public KeyspaceConnectionPool(ICassandraClusterSettings settings, ConnectionPoolKey key)
         {
@@ -52,7 +52,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
         {
             IPooledThriftConnection res;
             if(!busyConnections.TryRemove(connection.Id, out res))
-                throw new FailedReleaseException(connection);
+                throw new FailedReleaseException(connection.ToString());
             freeConnections.Push(connection);
         }
 
@@ -63,13 +63,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
                     BusyConnectionCount = busyConnections.Count,
                     FreeConnectionCount = freeConnections.Count
                 };
-        }
-
-        public void CheckConnections()
-        {
-            /*var connections = freeConnections.ToArray();
-            foreach(var connection in connections)
-                connection.IsAlive = connection.Ping();*/
         }
 
         public void Dispose()

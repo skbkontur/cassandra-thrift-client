@@ -2,7 +2,7 @@
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    public interface IEndpointManager
+    internal interface IEndpointManager
     {
         void Register(IPEndPoint ipEndPoint);
         void Unregister(IPEndPoint ipEndPoint);

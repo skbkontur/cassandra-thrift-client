@@ -11,7 +11,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class KeyspaceConnection : IKeyspaceConnection
+    internal class KeyspaceConnection : IKeyspaceConnection
     {
         public KeyspaceConnection(ICommandExecuter commandExecuter,
                                   string keyspaceName)
