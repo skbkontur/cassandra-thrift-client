@@ -68,7 +68,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                                       columnFamily.Name, keyspaceName);
                     var existsColumnFamily = existsColumnFamilies[columnFamily.Name];
                     columnFamily.Id = existsColumnFamily.Id;
-                    if(!columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
+                    if(columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
                         keyspaceConnection.UpdateColumnFamily(columnFamily);
                 }
                 else

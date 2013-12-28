@@ -50,10 +50,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
             if(columnFamily.Indexes != null)
                 result.Column_metadata = new List<ColumnDef>(columnFamily.Indexes.Select(definition => definition.ToCassandraColumnDef()));
-            if(columnFamily.ReadRepairChance.HasValue)
+            if(columnFamily.ReadRepairChance != null)
                 result.Read_repair_chance = columnFamily.ReadRepairChance.Value;
-            result.Compaction_strategy = columnFamily.CompactionStrategy.CompactionStrategyType.ToStringValue();
-            result.Compaction_strategy_options = columnFamily.CompactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();
+
+            if(columnFamily.CompactionStrategy != null)
+            {
+                result.Compaction_strategy = columnFamily.CompactionStrategy.CompactionStrategyType.ToStringValue();
+                result.Compaction_strategy_options = columnFamily.CompactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();                
+            }
             return result;
         }
 

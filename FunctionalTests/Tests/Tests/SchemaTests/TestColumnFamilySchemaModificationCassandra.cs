@@ -90,6 +90,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             keyspaceConnection.UpdateColumnFamily(originalColumnFamily);
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
+
             Assert.That(columnFamily.Name, Is.EqualTo(originalColumnFamily.Name));
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyType, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyType));
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb));

@@ -21,22 +21,19 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareByReadRepairChanceProperty()
         {
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", ReadRepairChance = 1.0},
-                    new ColumnFamily {Name = "123", ReadRepairChance = 1.0}
-                    )
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", ReadRepairChance = 1.0}, new ColumnFamily {Name = "123", ReadRepairChance = 1.0})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", ReadRepairChance = 1.0}, new ColumnFamily {Name = "123", ReadRepairChance = 1.1})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", ReadRepairChance = 1.0}, new ColumnFamily {Name = "123", ReadRepairChance = null})
                 );
             Assert.That(
                 !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", ReadRepairChance = 1.0},
-                    new ColumnFamily {Name = "123", ReadRepairChance = 1.1}
-                     )
-                );
-            Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", ReadRepairChance = 1.0},
-                    new ColumnFamily {Name = "123", ReadRepairChance = null}
-                     )
+                    new ColumnFamily {Name = "123", ReadRepairChance = null}, 
+                    new ColumnFamily {Name = "123", ReadRepairChance = 1.2}
+                )
                 );
         }
 
@@ -44,28 +41,16 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareByGCGraceSecondsProperty()
         {
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", GCGraceSeconds = 1},
-                    new ColumnFamily {Name = "123", GCGraceSeconds = 1}
-                    )
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", GCGraceSeconds = 1}, new ColumnFamily {Name = "123", GCGraceSeconds = 1})
                 );
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", ReadRepairChance = 1},
-                    new ColumnFamily {Name = "123", ReadRepairChance = 2}
-                     )
+                comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", GCGraceSeconds = 1 }, new ColumnFamily { Name = "123", GCGraceSeconds = 2 })
                 );
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", ReadRepairChance = null},
-                    new ColumnFamily {Name = "123", ReadRepairChance = 2}
-                    )
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", GCGraceSeconds = null }, new ColumnFamily { Name = "123", GCGraceSeconds = 2 })
                 );
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "123", ReadRepairChance = 2},
-                    new ColumnFamily {Name = "123", ReadRepairChance = null}
-                     )
+                comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", GCGraceSeconds = 2 }, new ColumnFamily { Name = "123", GCGraceSeconds = null })
                 );
         }
 
@@ -73,10 +58,7 @@ namespace Cassandra.Tests.CoreTests
         public void TestTryCompareColumnFamiliesWithDifferentNames()
         {
             Assert.Throws<InvalidOperationException>(
-                () => comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", GCGraceSeconds = 1},
-                    new ColumnFamily {Name = "wrong_name", GCGraceSeconds = 1}
-                          )
+                () => comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "name", GCGraceSeconds = 1}, new ColumnFamily {Name = "wrong_name", GCGraceSeconds = 1})
                 );
         }
 
@@ -84,40 +66,33 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareColumnFamiliesByCompactionStrategy()
         {
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})}
-                    )
-                );
-            Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())}
-                    )
-                );
-            Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()}
-                    )
+                !comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})}, 
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})})
                 );
             Assert.That(
                 !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20})},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})}
-                     )
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())}, 
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())})
                 );
             Assert.That(
                 !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()}
-                     )
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()}, 
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()})
+                );
+            Assert.That(comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20})}, 
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})})
                 );
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())},
-                    new ColumnFamily {Name = "name", CompactionStrategy = null}
-                     )
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())}, 
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())}, 
+                    new ColumnFamily {Name = "name", CompactionStrategy = null})
                 );
         }
 
@@ -125,16 +100,14 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareColumnFamiliesByCaching()
         {
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All},
-                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All}
-                    )
+                !comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All}, 
+                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All})
                 );
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.None},
-                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All}
-                    )
+                !comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.None}, 
+                    new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All})
                 );
         }
 
@@ -142,52 +115,44 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareColumnFamiliesByCompression()
         {
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})}
-                    )
-                );
-            Assert.That(
                 !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3, CrcCheckChance = 1.0})},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})}
-                     )
-                );
-            Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}
-                     )
-                );
-            Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}
-                     )
-                );
-            Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.None()},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}
-                     )
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})})
                 );
             Assert.That(
                 comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = null},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}
-                    )
-                );
-            Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})},
-                    new ColumnFamily {Name = "name", Compression = null}
-                     )
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3, CrcCheckChance = 1.0})}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})})
                 );
             Assert.That(
                 comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", Compression = null},
-                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Snappy(null)}
-                    )
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1.0})}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.None()}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})})
+                );
+            Assert.That(
+                !comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Compression = null}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})}, 
+                    new ColumnFamily {Name = "name", Compression = null})
+                );
+            Assert.That(
+                !comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", Compression = null}, 
+                    new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Snappy(null)})
                 );
         }
 
@@ -195,35 +160,30 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareColumnFamiliesByIndexes()
         {
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily
-                        {
-                            Name = "name", Indexes = new List<IndexDefinition>
-                                {
-                                    new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
-                                }
-                        },
-                    new ColumnFamily
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily
+                    {
+                        Name = "name", Indexes = new List<IndexDefinition>
+                            {
+                                new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
+                            }
+                    }, new ColumnFamily
                         {
                             Name = "name",
                             Indexes = new List<IndexDefinition>
                                 {
                                     new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
                                 }
-                        }
-                    )
+                        })
                 );
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily
-                        {
-                            Name = "name", Indexes = new List<IndexDefinition>
-                                {
-                                    new IndexDefinition {Name = "column1", ValidationClass = DataType.BooleanType},
-                                    new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType}
-                                }
-                        },
-                    new ColumnFamily
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily
+                    {
+                        Name = "name", Indexes = new List<IndexDefinition>
+                            {
+                                new IndexDefinition {Name = "column1", ValidationClass = DataType.BooleanType},
+                                new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType}
+                            }
+                    }, new ColumnFamily
                         {
                             Name = "name",
                             Indexes = new List<IndexDefinition>
@@ -231,20 +191,17 @@ namespace Cassandra.Tests.CoreTests
                                     new IndexDefinition {Name = "column1", ValidationClass = DataType.BooleanType},
                                     new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType}
                                 }
-                        }
-                    )
+                        })
                 );
             Assert.That(
-                comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily
-                        {
-                            Name = "name", Indexes = new List<IndexDefinition>
-                                {
-                                    new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType},
-                                    new IndexDefinition {Name = "column1", ValidationClass = DataType.BooleanType}
-                                }
-                        },
-                    new ColumnFamily
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily
+                    {
+                        Name = "name", Indexes = new List<IndexDefinition>
+                            {
+                                new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType},
+                                new IndexDefinition {Name = "column1", ValidationClass = DataType.BooleanType}
+                            }
+                    }, new ColumnFamily
                         {
                             Name = "name",
                             Indexes = new List<IndexDefinition>
@@ -252,49 +209,42 @@ namespace Cassandra.Tests.CoreTests
                                     new IndexDefinition {Name = "column1", ValidationClass = DataType.BooleanType},
                                     new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType}
                                 }
-                        }
-                    )
+                        })
                 );
 
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily
-                        {
-                            Name = "name",
-                            Indexes = new List<IndexDefinition>
-                                {
-                                    new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
-                                }
-                        },
-                    new ColumnFamily
+                comparer.NeedUpdateColumnFamily(new ColumnFamily
+                    {
+                        Name = "name",
+                        Indexes = new List<IndexDefinition>
+                            {
+                                new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
+                            }
+                    }, new ColumnFamily
                         {
                             Name = "name",
                             Indexes = new List<IndexDefinition>
                                 {
                                     new IndexDefinition {Name = "column2", ValidationClass = DataType.BooleanType}
                                 }
-                        }
-                     )
+                        })
                 );
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily
-                        {
-                            Name = "name",
-                            Indexes = new List<IndexDefinition>
-                                {
-                                    new IndexDefinition {Name = "column", ValidationClass = DataType.DateType}
-                                }
-                        },
-                    new ColumnFamily
+                comparer.NeedUpdateColumnFamily(new ColumnFamily
+                    {
+                        Name = "name",
+                        Indexes = new List<IndexDefinition>
+                            {
+                                new IndexDefinition {Name = "column", ValidationClass = DataType.DateType}
+                            }
+                    }, new ColumnFamily
                         {
                             Name = "name",
                             Indexes = new List<IndexDefinition>
                                 {
                                     new IndexDefinition {Name = "column", ValidationClass = DataType.BooleanType}
                                 }
-                        }
-                     )
+                        })
                 );
         }
 
