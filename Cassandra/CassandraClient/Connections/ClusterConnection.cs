@@ -28,8 +28,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
             return retrieveKeyspacesCommand.Keyspaces
-                .Where(keyspace => !IsSystemKeyspace(keyspace.Name))
-                .ToList();
+                                           .Where(keyspace => !IsSystemKeyspace(keyspace.Name))
+                                           .ToList();
         }
 
         public void UpdateKeyspace(Keyspace keyspace)

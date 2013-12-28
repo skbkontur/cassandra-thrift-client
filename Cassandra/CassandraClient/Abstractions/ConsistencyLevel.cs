@@ -2,6 +2,7 @@ using System;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
+    // ReSharper disable InconsistentNaming
     public enum ConsistencyLevel
     {
         ALL,
@@ -11,6 +12,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         ONE,
         QUORUM
     }
+
+    // ReSharper restore InconsistentNaming
 
     internal static class ConsistencyLevelExtensions
     {

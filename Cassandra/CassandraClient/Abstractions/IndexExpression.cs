@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             return new Apache.Cassandra.IndexExpression
                 {
-                    Column_name = StringHelpers.StringToBytes(indexExpression.ColumnName),
+                    Column_name = StringExtensions.StringToBytes(indexExpression.ColumnName),
                     Value = indexExpression.Value,
                     Op = indexExpression.IndexOperator.ToCassandraIndexOperator()
                 };

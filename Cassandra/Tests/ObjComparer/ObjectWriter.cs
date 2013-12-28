@@ -1,5 +1,4 @@
 using System;
-using System.Reflection;
 using System.Xml;
 
 namespace Cassandra.Tests.ObjComparer
@@ -10,7 +9,6 @@ namespace Cassandra.Tests.ObjComparer
         {
             this.writer = writer;
             this.nodeProcessor = nodeProcessor;
-            simpleTypeWriter = new SimpleTypeWriter();
         }
 
         public void Write<T>(T value)
@@ -43,16 +41,15 @@ namespace Cassandra.Tests.ObjComparer
             WriteComplexTypeValue(type, value);
         }
 
-        private bool TryWriteKnownTypeValue(Type type, object value)
+        private static bool TryWriteKnownTypeValue(Type type, object value)
         {
             if(value == null) return false;
-            //if()
             return false;
         }
 
-        private bool IsBadType(Type type)
+        private static bool IsBadType(Type type)
         {
-            return false; //type == typeof(object);
+            return false;
         }
 
         private void WriteComplexTypeValue(Type type, object value)
@@ -81,10 +78,10 @@ namespace Cassandra.Tests.ObjComparer
             writer.WriteAttributeString("type", "array");
             var array = (Array)value;
             if(array.Rank > 1) throw new NotSupportedException("array with rank > 1");
-            Type elementType = type.GetElementType();
-            for(int i = 0; i < array.Length; ++i)
+            var elementType = type.GetElementType();
+            for(var i = 0; i < array.Length; ++i)
             {
-                object arrayItem = array.GetValue(i);
+                var arrayItem = array.GetValue(i);
                 Write(elementType, arrayItem, "item");
             }
             return true;
@@ -92,7 +89,7 @@ namespace Cassandra.Tests.ObjComparer
 
         private bool TryWriteSimpleTypeValue(Type type, object value)
         {
-            string result = simpleTypeWriter.TryWrite(type, value);
+            var result = SimpleTypeWriter.TryWrite(type, value);
             if(result != null)
             {
                 writer.WriteValue(result);
@@ -105,14 +102,14 @@ namespace Cassandra.Tests.ObjComparer
         {
             if(!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
                 return false;
-            MethodInfo getMethodHasValue = type.GetProperty("HasValue").GetGetMethod();
+            var getMethodHasValue = type.GetProperty("HasValue").GetGetMethod();
             var hasValue = (bool)getMethodHasValue.Invoke(value, new object[0]);
             if(!hasValue)
                 WriteNull();
             else
             {
-                MethodInfo getMethodValue = type.GetProperty("Value").GetGetMethod();
-                object nullableValue = getMethodValue.Invoke(value, new object[0]);
+                var getMethodValue = type.GetProperty("Value").GetGetMethod();
+                var nullableValue = getMethodValue.Invoke(value, new object[0]);
                 DoWrite(type.GetGenericArguments()[0], nullableValue);
             }
             return true;
@@ -134,7 +131,6 @@ namespace Cassandra.Tests.ObjComparer
         }
 
         private readonly INodeProcessor nodeProcessor;
-        private readonly SimpleTypeWriter simpleTypeWriter;
         private readonly XmlWriter writer;
     }
 }

@@ -10,13 +10,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             Column = column;
         }
 
-        public TKey Key { get; set; }
-
-        public Column Column { get; set; }
-
         public KeyColumnPair<TNewKey> ConvertKey<TNewKey>(Func<TKey, TNewKey> keyConverter)
         {
             return new KeyColumnPair<TNewKey>(keyConverter(Key), Column);
-        } 
+        }
+
+        public TKey Key { get; set; }
+
+        public Column Column { get; set; }
     }
 }

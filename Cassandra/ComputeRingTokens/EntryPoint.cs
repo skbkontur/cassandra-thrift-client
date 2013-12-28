@@ -22,13 +22,13 @@ namespace SKBKontur.Cassandra.ComputeRingTokens
 
         private static void PrintTokenRing(int nodesCount)
         {
-            for(int i = 0; i < nodesCount; i++)
+            for(var i = 0; i < nodesCount; i++)
             {
                 var tokenIndex = i + 1;
                 var bigInteger = new BigInteger(2);
                 bigInteger = BigInteger.Pow(bigInteger, 127);
                 bigInteger = tokenIndex * bigInteger / nodesCount;
-                Console.WriteLine(string.Format("Node №{0}:\t\t{1}", tokenIndex, bigInteger));
+                Console.WriteLine("Node №{0}:\t\t{1}", tokenIndex, bigInteger);
             }
         }
 

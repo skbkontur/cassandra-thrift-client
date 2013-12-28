@@ -12,7 +12,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
     {
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            List<KsDef> keySpaces = cassandraClient.describe_keyspaces();
+            var keySpaces = cassandraClient.describe_keyspaces();
             Keyspaces = BuildKeyspaces(keySpaces);
         }
 

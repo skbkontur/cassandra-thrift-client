@@ -15,9 +15,7 @@ namespace Cassandra.Tests
         {
             foreach(XmlNode node in parent.ChildNodes)
             {
-                if(localName.Equals(node.LocalName, StringComparison.OrdinalIgnoreCase)
-                   && typeof(T).IsAssignableFrom(node.GetType())
-                   && (namespaceUri == null || node.NamespaceURI == namespaceUri))
+                if(localName.Equals(node.LocalName, StringComparison.OrdinalIgnoreCase) && node is T && (namespaceUri == null || node.NamespaceURI == namespaceUri))
                     return (T)node;
             }
             return null;
@@ -26,7 +24,7 @@ namespace Cassandra.Tests
         public static string FormattedOuterXml(this XmlNode node)
         {
             var result = new StringBuilder();
-            XmlWriter writer = XmlWriter.Create(result, new XmlWriterSettings
+            var writer = XmlWriter.Create(result, new XmlWriterSettings
                 {
                     Indent = true,
                     OmitXmlDeclaration = !node.HasXmlDeclaration()

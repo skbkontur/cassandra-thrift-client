@@ -50,7 +50,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private static long GetUtcTicks()
         {
             if(!initialized) Init();
-            double elapsed = (double)(GetCounter() - startCounter) / frequency;
+            var elapsed = (double)(GetCounter() - startCounter) / frequency;
             if(elapsed > 1.0)
             {
                 //Тут происходят действия, направленные на то, чтобы функция UtcNow была неубывающей

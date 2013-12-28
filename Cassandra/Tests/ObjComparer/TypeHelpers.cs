@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Cassandra.Tests.ObjComparer
@@ -8,21 +9,17 @@ namespace Cassandra.Tests.ObjComparer
     {
         public static List<FieldInfo> GetTypeInstanceFields(Type type)
         {
-            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic
-                                                | BindingFlags.SetField | BindingFlags.Instance | BindingFlags.Static);
-            var result = new List<FieldInfo>();
+            const BindingFlags fieldFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetField | BindingFlags.Instance | BindingFlags.Static;
 
-            foreach(var info in fields)
-            {
-                if(!info.IsStatic && !info.IsLiteral)
-                    result.Add(info);
-            }
-            return result;
+            return type
+                .GetFields(fieldFlags)
+                .Where(info => !info.IsStatic && !info.IsLiteral)
+                .ToList();
         }
 
         public static List<FieldInfo> GetFields(Type type)
         {
-            Type currentType = type;
+            var currentType = type;
             var result = new List<FieldInfo>();
             while(currentType != null)
             {

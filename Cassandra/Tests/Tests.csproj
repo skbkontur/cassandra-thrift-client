@@ -60,8 +60,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arg.cs" />
+    <Compile Include="CoreTests\ColumnFamilyEqualityByPropertiesComparerTest.cs" />
     <Compile Include="CoreTests\DateTimeServiceTest.cs" />
-    <Compile Include="CoreTests\PoolTests\ClusterConnectionPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\IdleConnectionRemovalFromPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\ReplicaSetPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\PoolTest.cs" />
@@ -69,10 +69,7 @@
     <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />
     <Compile Include="HelpersTests\StringHelpersTest.cs" />
     <Compile Include="CoreTestHelpers.cs" />
-    <Compile Include="CoreTests\BadlistTest.cs" />
     <Compile Include="CoreTests\CommandExecuterTest.cs" />
-    <Compile Include="CoreTests\EndpointManagerProbabilityTest.cs" />
-    <Compile Include="CoreTests\EndpointManagerTest.cs" />
     <Compile Include="ObjComparer\CompareInterfaceAs.cs" />
     <Compile Include="ObjComparer\CompareTypeAs.cs" />
     <Compile Include="ObjComparer\INodeProcessor.cs" />

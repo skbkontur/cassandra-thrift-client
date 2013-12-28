@@ -53,7 +53,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 item1.IsAlive = false;
                 pool.Release(item1);
                 Item item2;
-                Assert.That(!pool.TryAcquireExists(out item2));                
+                Assert.That(!pool.TryAcquireExists(out item2));
                 Assert.That(item1.Disposed);
             }
         }
@@ -235,6 +235,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Disposed = true;
             }
 
+            public bool IsAlive { get; set; }
+
             public void Use(TimeSpan timeout)
             {
                 IsUse = true;
@@ -250,7 +252,6 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
             public bool IsUse { get; private set; }
             public bool Disposed { get; private set; }
-            public bool IsAlive { get; set; }
         }
     }
 }

@@ -10,7 +10,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         string ClusterName { get; }
         ConsistencyLevel ReadConsistencyLevel { get; }
         ConsistencyLevel WriteConsistencyLevel { get; }
-        IPEndPoint[] Endpoints { get;  }
+        IPEndPoint[] Endpoints { get; }
         IPEndPoint EndpointForFierceCommands { get; }
         bool AllowNullTimestamp { get; }
         int Attempts { get; }

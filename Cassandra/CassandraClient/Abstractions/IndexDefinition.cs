@@ -18,7 +18,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 return null;
             return new ColumnDef
                 {
-                    Name = StringHelpers.StringToBytes(indexDefinition.Name),
+                    Name = StringExtensions.StringToBytes(indexDefinition.Name),
                     Index_type = IndexType.KEYS,
                     Validation_class = indexDefinition.ValidationClass.ToStringValue()
                 };
@@ -30,7 +30,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 return null;
             return new IndexDefinition
                 {
-                    Name = StringHelpers.BytesToString(columnDef.Name),
+                    Name = StringExtensions.BytesToString(columnDef.Name),
                     ValidationClass = columnDef.Validation_class.FromStringValue<DataType>()
                 };
         }

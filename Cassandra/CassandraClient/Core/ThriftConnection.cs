@@ -55,14 +55,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
+        public DateTime CreationDateTime { get; private set; }
+
+        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen() && Ping(); } }
+
         public override string ToString()
         {
             return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", ipEndPoint, keyspaceName);
         }
-
-        public DateTime CreationDateTime { get; private set; }
-
-        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen() && Ping(); } }
 
         private bool Ping()
         {
