@@ -96,6 +96,17 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.That(columnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyOptions.SstableSizeInMb));
             Assert.That(columnFamily.GCGraceSeconds, Is.EqualTo(originalColumnFamily.GCGraceSeconds));
             Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
+
+            originalColumnFamily.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(5, 17);
+            keyspaceConnection.UpdateColumnFamily(originalColumnFamily);
+
+            columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
+            Assert.That(columnFamily.Name, Is.EqualTo(originalColumnFamily.Name));
+            Assert.That(columnFamily.CompactionStrategy.CompactionStrategyType, Is.EqualTo(originalColumnFamily.CompactionStrategy.CompactionStrategyType));
+            Assert.That(columnFamily.CompactionStrategy.MinCompactionThreshold, Is.EqualTo(originalColumnFamily.CompactionStrategy.MinCompactionThreshold));
+            Assert.That(columnFamily.CompactionStrategy.MaxCompactionThreshold, Is.EqualTo(originalColumnFamily.CompactionStrategy.MaxCompactionThreshold));
+            Assert.That(columnFamily.GCGraceSeconds, Is.EqualTo(originalColumnFamily.GCGraceSeconds));
+            Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
         }
 
         [Test]

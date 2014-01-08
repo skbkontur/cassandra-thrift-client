@@ -53,9 +53,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 return
                     (
                         compactionStrategy.CompactionStrategyType == compactionStrategy1.CompactionStrategyType &&
-                        (compactionStrategy.CompactionStrategyOptions == null && compactionStrategy1.CompactionStrategyOptions == null) ||
+                        ((compactionStrategy.CompactionStrategyOptions == null && compactionStrategy1.CompactionStrategyOptions == null) ||
                         (compactionStrategy.CompactionStrategyOptions != null && compactionStrategy1.CompactionStrategyOptions != null &&
-                         compactionStrategy.CompactionStrategyOptions.SstableSizeInMb == compactionStrategy1.CompactionStrategyOptions.SstableSizeInMb)
+                         compactionStrategy.CompactionStrategyOptions.SstableSizeInMb == compactionStrategy1.CompactionStrategyOptions.SstableSizeInMb)) &&
+                         (compactionStrategy.MinCompactionThreshold == null || compactionStrategy.MinCompactionThreshold == compactionStrategy1.MinCompactionThreshold) &&
+                         (compactionStrategy.MaxCompactionThreshold == null || compactionStrategy.MaxCompactionThreshold == compactionStrategy1.MaxCompactionThreshold)
                     );
             }
             return false;
