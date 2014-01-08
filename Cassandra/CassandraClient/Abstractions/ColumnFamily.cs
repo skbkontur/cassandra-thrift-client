@@ -53,10 +53,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             if(columnFamily.ReadRepairChance != null)
                 result.Read_repair_chance = columnFamily.ReadRepairChance.Value;
 
-            if(columnFamily.CompactionStrategy != null)
+            var compactionStrategy = columnFamily.CompactionStrategy;
+            if(compactionStrategy != null)
             {
-                result.Compaction_strategy = columnFamily.CompactionStrategy.CompactionStrategyType.ToStringValue();
-                result.Compaction_strategy_options = columnFamily.CompactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();                
+                result.Compaction_strategy = compactionStrategy.CompactionStrategyType.ToStringValue();
+                result.Compaction_strategy_options = compactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();
+                if(compactionStrategy.MinCompactionThreshold.HasValue)
+                    result.Min_compaction_threshold = compactionStrategy.MinCompactionThreshold.Value;
+                if(compactionStrategy.MaxCompactionThreshold.HasValue)
+                    result.Max_compaction_threshold = compactionStrategy.MaxCompactionThreshold.Value;
             }
             return result;
         }
@@ -85,10 +90,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             if(compactionStrategyType == CompactionStrategyType.Leveled)
             {
                 var options = cfDef.Compaction_strategy_options.FromCassandraCompactionStrategyOptions();
-                result.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(options);
+                result.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(options, cfDef.Min_compaction_threshold, cfDef.Max_compaction_threshold);
             }
             else
-                result.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
+                result.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(cfDef.Min_compaction_threshold, cfDef.Max_compaction_threshold);
 
             return result;
         }
