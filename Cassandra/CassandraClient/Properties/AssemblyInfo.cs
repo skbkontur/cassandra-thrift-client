@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly : AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SKBKontur")]
 [assembly : AssemblyProduct("CassandraClient")]
-[assembly: AssemblyCopyright("Copyright © SKBKontur 2013")]
+[assembly: AssemblyCopyright("Copyright © SKBKontur 2014")]
 [assembly: AssemblyTrademark("SKBKontur.CassandraClient")]
 [assembly : AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Cassandra.Tests")]
@@ -39,6 +39,6 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("1.3.0")]
-[assembly: AssemblyFileVersion("1.3.0.0")]
-[assembly: AssemblyInformationalVersion("1.3.0")]
+[assembly: AssemblyVersion("1.4.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
+[assembly: AssemblyInformationalVersion("1.4.0")]
