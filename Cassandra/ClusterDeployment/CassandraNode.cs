@@ -10,7 +10,7 @@ using log4net;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Management
 {
-    internal class CassandraNode
+    public class CassandraNode
     {
         public CassandraNode(string templateDirectory)
         {
