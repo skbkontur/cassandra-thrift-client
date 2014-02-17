@@ -8,9 +8,9 @@ using System.Threading;
 
 using log4net;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Management
+namespace SKBKontur.Cassandra.ClusterDeployment
 {
-    internal class CassandraNode
+    public class CassandraNode
     {
         public CassandraNode(string templateDirectory)
         {

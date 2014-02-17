@@ -11,4 +11,6 @@ desktop.ini
 _ReSharper.*
 /Assemblies/Cassandra.CassandraClient.*
 /Assemblies/Cassandra.Tests.*
-
+/Assemblies/Apache.Cassandra.1210.*
+/Assemblies/Thrift.*
+/Assemblies/Cassandra.ClusterDeployment.*

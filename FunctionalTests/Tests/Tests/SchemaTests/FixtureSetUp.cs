@@ -3,7 +3,7 @@ using System.IO;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.FunctionalTests.Management;
+using SKBKontur.Cassandra.ClusterDeployment;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
 {

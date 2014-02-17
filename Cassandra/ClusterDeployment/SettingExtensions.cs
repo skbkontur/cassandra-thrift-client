@@ -6,9 +6,9 @@ using GroboContainer.Infection;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Management
+namespace SKBKontur.Cassandra.ClusterDeployment
 {
-    internal static class SettingExtensions
+    public static class SettingExtensions
     {
         public static ICassandraClusterSettings CreateSettings(this CassandraNode node, IPAddress nodeAddress)
         {
@@ -26,9 +26,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Management
                     Timeout = (int)TimeSpan.FromSeconds(6).TotalMilliseconds
                 };
         }
-
+        
         [IgnoredImplementation]
-        private class CassandraSingleNodeClusterSettings : ICassandraClusterSettings
+        internal class CassandraSingleNodeClusterSettings : ICassandraClusterSettings
         {
             public string ClusterName { get; set; }
             public ConsistencyLevel ReadConsistencyLevel { get; set; }

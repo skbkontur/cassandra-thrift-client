@@ -34,12 +34,12 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.1210">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.1210.dll</HintPath>
-    </Reference>
     <Reference Include="Cassandra.CassandraClient, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.CassandraClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Cassandra.ClusterDeployment">
+      <HintPath>..\..\Assemblies\Cassandra.ClusterDeployment.dll</HintPath>
     </Reference>
     <Reference Include="Cassandra.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -47,9 +47,6 @@
     </Reference>
     <Reference Include="GroboContainer">
       <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
-    </Reference>
-    <Reference Include="GroboSerializer">
-      <HintPath>..\..\Assemblies\GroboSerializer.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <SpecificVersion>False</SpecificVersion>
@@ -61,17 +58,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Thrift">
-      <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssembliesLoader.cs" />
-    <Compile Include="Management\SettingExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\CassandraClusterSettings.cs" />
     <Compile Include="Tests\BatchCommandsTest.cs" />
@@ -88,7 +78,6 @@
     <Compile Include="Tests\IsRowExistTest.cs" />
     <Compile Include="Tests\MultiThreadStressTest.cs" />
     <Compile Include="Tests\ReadWriteTest.cs" />
-    <Compile Include="Management\CassandraNode.cs" />
     <Compile Include="Tests\SchemaTests\ActualizeKeyspaceTest.cs" />
     <Compile Include="Tests\SchemaTests\Spies\CassandraClusterSpy.cs" />
     <Compile Include="Tests\SchemaTests\Spies\KeyspaceConnectionSpy.cs" />
