@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 
+using GroboContainer.Infection;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
@@ -24,8 +26,9 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     Timeout = (int)TimeSpan.FromSeconds(6).TotalMilliseconds
                 };
         }
-
-        private class CassandraSingleNodeClusterSettings : ICassandraClusterSettings
+        
+        [IgnoredImplementation]
+        internal class CassandraSingleNodeClusterSettings : ICassandraClusterSettings
         {
             public string ClusterName { get; set; }
             public ConsistencyLevel ReadConsistencyLevel { get; set; }
