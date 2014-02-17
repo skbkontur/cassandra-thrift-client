@@ -5,7 +5,7 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
-using SKBKontur.Cassandra.FunctionalTests.Management;
+using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests

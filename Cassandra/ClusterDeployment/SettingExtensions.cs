@@ -4,7 +4,7 @@ using System.Net;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Management
+namespace SKBKontur.Cassandra.ClusterDeployment
 {
     public static class SettingExtensions
     {
