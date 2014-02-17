@@ -13,3 +13,4 @@ _ReSharper.*
 /Assemblies/Cassandra.Tests.*
 /Assemblies/Apache.Cassandra.1210.*
 /Assemblies/Thrift.*
+/Assemblies/Cassandra.ClusterDeployment.*
