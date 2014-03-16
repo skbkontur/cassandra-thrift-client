@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>CassandraClient</id>
+    <version>$version$</version>
+    <title>SKB Kontur Cassandra Client</title>
+    <projectUrl>https://git.skbkontur.ru/cassandra/cassandraclient</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+	  <authors>Alexander Kokovin, Fedor Fominykh, Ivan Burmistrov, Evgeny Tikhonov</authors>
+	  <description>Awesome cassandra client</description>
+    <copyright>Copyright 2014</copyright>
+  </metadata>
+<files>
+  <file src="CassandraClient\bin\Release\log4net.dll" target="lib\net40\" /> 
+  <file src="CassandraClient\bin\Release\Thrift.dll" target="lib\net40\" /> 
+  <file src="CassandraClient\bin\Release\Apache.Cassandra.1210.dll" target="lib\net40\" /> 
+  <file src="CassandraClient\bin\Release\Cassandra.CassandraClient.dll" target="lib\net40\" />  
+</files>
+</package>
