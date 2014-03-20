@@ -16,6 +16,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair);
         void AddBatch(Func<int, KeyColumnsPair<byte[]>> createKeyColumnsPair);
 
+        List<KeyValuePair<byte[], Column[]>> GetRegion(IEnumerable<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow);
+
         Column GetColumn(byte[] key, byte[] columnName);
         bool TryGetColumn(byte[] key, byte[] columnName, out Column result);
         void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null);
