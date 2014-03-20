@@ -193,6 +193,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                ToList();
         }
 
+        public List<KeyValuePair<string, Column[]>> GetRegion(IEnumerable<string> keys, string startColumnName, string finishColumnName, int limitPerRow)
+        {
+            return implementation
+                .GetRegion(keys.Select(StringExtensions.StringToBytes), StringExtensions.StringToBytes(startColumnName), StringExtensions.StringToBytes(finishColumnName), limitPerRow)
+                .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value))
+                .ToList();
+        }
+
         public List<KeyValuePair<string, Column[]>> GetRowsExclusive(IEnumerable<string> keys, string exclusiveStartColumnName, int count)
         {
             var rows = implementation.GetRows(keys.Select(StringExtensions.StringToBytes), StringExtensions.StringToBytes(exclusiveStartColumnName), count + 1);
