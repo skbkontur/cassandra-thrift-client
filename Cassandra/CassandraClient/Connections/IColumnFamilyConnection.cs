@@ -42,5 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         IEnumerable<string> GetKeys(int batchSize = 1000);
         int GetCount(string key);
         Dictionary<string, int> GetCounts(IEnumerable<string> keys);
+
+        ICassandraConnectionParameters GetConnectionParameters();
     }
 }

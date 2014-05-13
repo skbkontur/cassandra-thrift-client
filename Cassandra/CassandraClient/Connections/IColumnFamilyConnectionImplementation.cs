@@ -31,5 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         Column[] GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed);
         Column[] GetColumns(byte[] key, List<byte[]> columnNames);
         List<byte[]> GetKeys(byte[] startKey, int count);
+
+        ICassandraConnectionParameters GetConnectionParameters();
     }
 }

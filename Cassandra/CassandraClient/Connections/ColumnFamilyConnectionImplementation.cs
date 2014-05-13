@@ -32,6 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.commandExecuter = commandExecuter;
             this.readConsistencyLevel = readConsistencyLevel.ToThriftConsistencyLevel();
             this.writeConsistencyLevel = writeConsistencyLevel.ToThriftConsistencyLevel();
+            connectionParameters = new CassandraConnectionParameters(cassandraClusterSettings);
         }
 
         public bool IsRowExist(byte[] key)
@@ -169,6 +170,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             ExecuteCommand(getKeyRangeSliceCommand);
             return getKeyRangeSliceCommand.Output;
+        }
+
+        public ICassandraConnectionParameters GetConnectionParameters()
+        {
+            return connectionParameters;
         }
 
         public List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
@@ -320,5 +326,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private readonly ICassandraClusterSettings cassandraClusterSettings;
         private readonly ApacheConsistencyLevel readConsistencyLevel;
         private readonly ApacheConsistencyLevel writeConsistencyLevel;
+        private readonly ICassandraConnectionParameters connectionParameters;
     }
 }
