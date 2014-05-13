@@ -67,6 +67,7 @@
     <Compile Include="Tests\BatchCommandsTest.cs" />
     <Compile Include="Tests\CassandraFunctionalTestBase.cs" />
     <Compile Include="Tests\ConnectionPoolTest.cs" />
+    <Compile Include="Tests\ConnectionPropertiesTest.cs" />
     <Compile Include="Tests\ConnectionTimeoutTest.cs" />
     <Compile Include="Tests\Constants.cs" />
     <Compile Include="Tests\CounterTest.cs" />
