@@ -183,6 +183,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return res.ToDictionary(x => StringExtensions.BytesToString(x.Key), x => x.Value);
         }
 
+        public ICassandraConnectionParameters GetConnectionParameters()
+        {
+            return implementation.GetConnectionParameters();
+        }
+
         [Obsolete("Это устаревший метод. Надо пользоваться методом GetRowsExclusive")]
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)
         {
