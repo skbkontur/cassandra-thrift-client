@@ -30,7 +30,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             var stopwatch = Stopwatch.StartNew();
             var command = createCommand(0);
             var pool = command.IsFierce ? fierceCommandsConnectionPool : dataCommandsConnectionPool;
-            logger.DebugFormat("Start executing {0} command.", command.Name);
             try
             {
                 for(var i = 0; i < settings.Attempts; ++i)
