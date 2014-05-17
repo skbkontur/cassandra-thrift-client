@@ -161,7 +161,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 var healthValue = health.Value * dieRate;
                 if(healthValue < deadHealth) healthValue = deadHealth;
                 health.Value = healthValue;
-                logger.DebugFormat("Health of node [{0}] was decreased. Current health: {1}", replicaKey, healthValue);
             }
         }
 
@@ -256,7 +255,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 var healthValue = health.Value * aliveRate;
                 if(healthValue > aliveHealth) healthValue = aliveHealth;
                 health.Value = healthValue;
-                logger.DebugFormat("Health of node [{0}] was increased. Current health: {1}", replicaKey, healthValue);
             }
         }
 
