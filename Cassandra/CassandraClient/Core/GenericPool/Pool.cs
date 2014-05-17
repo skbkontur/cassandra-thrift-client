@@ -52,6 +52,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             object dummy;
             if(!busyItems.TryRemove(item, out dummy))
                 throw new FailedReleaseItemException(item.ToString());
+            Interlocked.Decrement(ref busyItemCount);
             freeItems.Push(new FreeItemInfo(item, DateTime.UtcNow));
         }
 
@@ -106,11 +107,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             object dummy;
             if(!busyItems.TryRemove(item, out dummy))
                 throw new RemoveFromPoolFailedException("Cannot find item to remove in busy items. This item does not belong in this pool or in released state.");
+            Interlocked.Decrement(ref busyItemCount);
         }
 
         public int TotalCount { get { return FreeItemCount + BusyItemCount; } }
         public int FreeItemCount { get { return freeItems.Count; } }
-        public int BusyItemCount { get { return busyItems.Count; } }
+        public int BusyItemCount { get { return busyItemCount; } }
 
         private bool TryPopFreeItem(out T item)
         {
@@ -133,8 +135,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         {
             if(!busyItems.TryAdd(result, new object()))
                 throw new ItemInPoolCollisionException();
+            Interlocked.Increment(ref busyItemCount);
         }
 
+        private volatile int busyItemCount;
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
         private readonly ILog logger = LogManager.GetLogger(typeof(Pool<T>));
         private readonly Func<Pool<T>, T> itemFactory;
