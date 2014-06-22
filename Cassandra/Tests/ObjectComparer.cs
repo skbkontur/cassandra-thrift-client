@@ -14,7 +14,7 @@ namespace Cassandra.Tests
         {
             var badXml = "<root></root>".ReformatXml();
 
-            string expectedStr = expected.ObjectToString();
+            var expectedStr = expected.ObjectToString();
             Assert.AreNotEqual(expectedStr.ReformatXml(), badXml, "bug(expected)");
             string actualStr = actual.ObjectToString();
             Assert.AreNotEqual(actualStr.ReformatXml(), badXml, "bug(actual)");

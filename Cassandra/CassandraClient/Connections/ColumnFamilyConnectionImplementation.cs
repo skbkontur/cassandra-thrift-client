@@ -74,16 +74,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public List<KeyValuePair<byte[], Column[]>> GetRegion(IEnumerable<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow)
         {
             var slicePredicate = new SlicePredicate(new SliceRange
-            {
-                Count = limitPerRow,
-                StartColumn = startColumnName,
-                EndColumn = finishColumnName,
-                Reversed = false
-            });
+                {
+                    Count = limitPerRow,
+                    StartColumn = startColumnName,
+                    EndColumn = finishColumnName,
+                    Reversed = false
+                });
             var command = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keys.ToList(), slicePredicate);
             ExecuteCommand(command);
             return command.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
-
         }
 
         public Column GetColumn(byte[] key, byte[] columnName)

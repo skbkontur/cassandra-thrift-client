@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
-
-using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {

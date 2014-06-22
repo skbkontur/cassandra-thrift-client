@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Net;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
-
-using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {

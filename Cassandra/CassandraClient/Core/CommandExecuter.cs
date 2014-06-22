@@ -2,12 +2,12 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
-using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {

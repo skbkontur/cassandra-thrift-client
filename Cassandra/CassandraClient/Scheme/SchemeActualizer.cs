@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
-
-using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Scheme
 {
