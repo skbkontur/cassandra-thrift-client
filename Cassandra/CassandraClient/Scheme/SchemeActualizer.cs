@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
         public SchemeActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener)
         {
             this.cassandraCluster = cassandraCluster;
-            this.eventListener = eventListener;
+            this.eventListener = eventListener ?? EmptyCassandraActualizerEventListener.Instance;
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
