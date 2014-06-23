@@ -2,13 +2,13 @@
 using System.Net;
 using System.Net.Sockets;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using Thrift.Protocol;
 using Thrift.Transport;
-
-using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {

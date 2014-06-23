@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.System.Read;
 using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
-
-using log4net;
 
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 

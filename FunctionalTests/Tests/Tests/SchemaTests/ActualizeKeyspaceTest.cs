@@ -17,7 +17,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         public void SetUp()
         {
             cluster = new CassandraClusterSpy(() => new CassandraCluster(StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback)));
-            actualize = new SchemeActualizer(cluster);
+            actualize = new SchemeActualizer(cluster, null);
         }
 
         [TearDown]

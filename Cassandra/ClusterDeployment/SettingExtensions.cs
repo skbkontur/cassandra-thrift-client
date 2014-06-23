@@ -26,7 +26,7 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     Timeout = (int)TimeSpan.FromSeconds(6).TotalMilliseconds
                 };
         }
-        
+
         [IgnoredImplementation]
         internal class CassandraSingleNodeClusterSettings : ICassandraClusterSettings
         {

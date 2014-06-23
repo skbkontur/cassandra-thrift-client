@@ -13,7 +13,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
         public static CassandraClientException Transform(Exception e, string message)
         {
             // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
-            if (e is NotFoundException)
+            if(e is NotFoundException)
                 return new CassandraClientSomethingNotFoundException(message, e);
             if(e is InvalidRequestException)
                 return new CassandraClientInvalidRequestException(message, (InvalidRequestException)e);

@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
-
-using log4net;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {

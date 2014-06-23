@@ -14,12 +14,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different names ('{0}' and '{1}')", columnFamilyWithNewProperties.Name, columnFamilyFromTarget.Name));
             return
                 !(
-                (columnFamilyWithNewProperties.ReadRepairChance == null || columnFamilyWithNewProperties.ReadRepairChance.Equals(columnFamilyFromTarget.ReadRepairChance)) &&
-                (columnFamilyWithNewProperties.GCGraceSeconds == null || columnFamilyWithNewProperties.GCGraceSeconds.Equals(columnFamilyFromTarget.GCGraceSeconds)) &&
-                (columnFamilyWithNewProperties.Indexes == null || CompareIndexes(columnFamilyWithNewProperties.Indexes, columnFamilyFromTarget.Indexes)) &&
-                (columnFamilyWithNewProperties.CompactionStrategy == null || CompareCompactionStrategy(columnFamilyWithNewProperties.CompactionStrategy, columnFamilyFromTarget.CompactionStrategy)) &&
-                (columnFamilyWithNewProperties.Compression == null || CompareCompression(columnFamilyWithNewProperties.Compression, columnFamilyFromTarget.Compression))
-                );
+                     (columnFamilyWithNewProperties.ReadRepairChance == null || columnFamilyWithNewProperties.ReadRepairChance.Equals(columnFamilyFromTarget.ReadRepairChance)) &&
+                     (columnFamilyWithNewProperties.GCGraceSeconds == null || columnFamilyWithNewProperties.GCGraceSeconds.Equals(columnFamilyFromTarget.GCGraceSeconds)) &&
+                     (columnFamilyWithNewProperties.Indexes == null || CompareIndexes(columnFamilyWithNewProperties.Indexes, columnFamilyFromTarget.Indexes)) &&
+                     (columnFamilyWithNewProperties.CompactionStrategy == null || CompareCompactionStrategy(columnFamilyWithNewProperties.CompactionStrategy, columnFamilyFromTarget.CompactionStrategy)) &&
+                     (columnFamilyWithNewProperties.Compression == null || CompareCompression(columnFamilyWithNewProperties.Compression, columnFamilyFromTarget.Compression))
+                 );
         }
 
         private static bool CompareCompression(ColumnFamilyCompression leftCompression, ColumnFamilyCompression rightCompression)
@@ -54,10 +54,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     (
                         compactionStrategy.CompactionStrategyType == compactionStrategy1.CompactionStrategyType &&
                         ((compactionStrategy.CompactionStrategyOptions == null && compactionStrategy1.CompactionStrategyOptions == null) ||
-                        (compactionStrategy.CompactionStrategyOptions != null && compactionStrategy1.CompactionStrategyOptions != null &&
-                         compactionStrategy.CompactionStrategyOptions.SstableSizeInMb == compactionStrategy1.CompactionStrategyOptions.SstableSizeInMb)) &&
-                         (compactionStrategy.MinCompactionThreshold == null || compactionStrategy.MinCompactionThreshold == compactionStrategy1.MinCompactionThreshold) &&
-                         (compactionStrategy.MaxCompactionThreshold == null || compactionStrategy.MaxCompactionThreshold == compactionStrategy1.MaxCompactionThreshold)
+                         (compactionStrategy.CompactionStrategyOptions != null && compactionStrategy1.CompactionStrategyOptions != null &&
+                          compactionStrategy.CompactionStrategyOptions.SstableSizeInMb == compactionStrategy1.CompactionStrategyOptions.SstableSizeInMb)) &&
+                        (compactionStrategy.MinCompactionThreshold == null || compactionStrategy.MinCompactionThreshold == compactionStrategy1.MinCompactionThreshold) &&
+                        (compactionStrategy.MaxCompactionThreshold == null || compactionStrategy.MaxCompactionThreshold == compactionStrategy1.MaxCompactionThreshold)
                     );
             }
             return false;

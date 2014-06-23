@@ -5,6 +5,7 @@ using System.Linq;
 using GroboContainer.Infection;
 
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
@@ -46,9 +47,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             return innerCluster.GetKnowledges();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null)
         {
-            innerCluster.ActualizeKeyspaces(keyspaces);
+            innerCluster.ActualizeKeyspaces(keyspaces, eventListener);
         }
 
         public int UpdateColumnFamilyInvokeCount { get { return keyspaceConnectionSpies.Sum(x => x.UpdateColumnFamilyInvokeCount); } }

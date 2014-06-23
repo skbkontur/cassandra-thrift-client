@@ -25,31 +25,6 @@ namespace SKBKontur.Cassandra.ClusterDeployment
             WaitForStart();
         }
 
-        private void WaitForStart()
-        {
-            var logFileName = Path.Combine(DeployDirectory, @"bin", DataBaseDirectory, @"log\system.log");
-            while(true)
-            {
-                if(File.Exists(logFileName))
-                {
-                    using(var file = new FileStream(logFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    {
-                        using(var reader = new StreamReader(file))
-                        {
-                            while(true)
-                            {
-                                var logContent = reader.ReadLine();
-                                if (!string.IsNullOrEmpty(logContent) && logContent.Contains("Listening for thrift clients..."))
-                                    return;                                
-                            }
-                        }
-                    }
-                }
-                Thread.Sleep(500);
-            }
-            
-        }
-
         public void Stop()
         {
             foreach(var processId in GetCassandraProcessIds(Name))
@@ -79,6 +54,28 @@ namespace SKBKontur.Cassandra.ClusterDeployment
         public string InitialToken { get; set; }
         public string ClusterName { get; set; }
         public int CqlPort { get; set; }
+
+        private void WaitForStart()
+        {
+            var logFileName = Path.Combine(DeployDirectory, @"bin", DataBaseDirectory, @"log\system.log");
+            while(true)
+            {
+                if(File.Exists(logFileName))
+                {
+                    using(var file = new FileStream(logFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using(var reader = new StreamReader(file))
+                    {
+                        while(true)
+                        {
+                            var logContent = reader.ReadLine();
+                            if(!string.IsNullOrEmpty(logContent) && logContent.Contains("Listening for thrift clients..."))
+                                return;
+                        }
+                    }
+                }
+                Thread.Sleep(500);
+            }
+        }
 
         private void Start()
         {
