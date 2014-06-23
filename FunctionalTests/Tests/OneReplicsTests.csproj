@@ -81,6 +81,7 @@
     <Compile Include="Tests\MultiThreadStressTest.cs" />
     <Compile Include="Tests\ReadWriteTest.cs" />
     <Compile Include="Tests\SchemaTests\ActualizeKeyspaceTest.cs" />
+    <Compile Include="Tests\SchemaTests\ActualizationEventsTest.cs" />
     <Compile Include="Tests\SchemaTests\Spies\CassandraClusterSpy.cs" />
     <Compile Include="Tests\SchemaTests\Spies\KeyspaceConnectionSpy.cs" />
     <Compile Include="Tests\SchemaTests\TestColumnFamilySchemaModificationCassandra.cs" />

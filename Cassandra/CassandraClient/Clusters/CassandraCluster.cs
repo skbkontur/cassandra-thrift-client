@@ -4,6 +4,7 @@ using System.Net;
 
 using log4net;
 
+using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
@@ -59,9 +60,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return result;
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null)
         {
-            new SchemeActualizer(this).ActualizeKeyspaces(keyspaces);
+            new SchemeActualizer(this, eventListener ?? EmptyCassandraActualizerEventListener.Instance).ActualizeKeyspaces(keyspaces);
         }
 
         public void Dispose()

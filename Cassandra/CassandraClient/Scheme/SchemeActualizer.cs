@@ -6,14 +6,16 @@ using log4net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
+using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 
 namespace SKBKontur.Cassandra.CassandraClient.Scheme
 {
     internal class SchemeActualizer
     {
-        public SchemeActualizer(ICassandraCluster cassandraCluster)
+        public SchemeActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener)
         {
             this.cassandraCluster = cassandraCluster;
+            this.eventListener = eventListener;
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
@@ -21,6 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
         {
             var clusterConnection = cassandraCluster.RetrieveClusterConnection();
             logger.Info("Start apply scheme...");
+            eventListener.ActualizationStarted();
             if(keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
                 logger.Info("Found 0 keyspaces in scheme, stop applying scheme");
@@ -28,10 +31,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             }
             logger.InfoFormat("Found {0} keyspaces in scheme", keyspaceShemas.Length);
             var keyspaces = clusterConnection.RetrieveKeyspaces().ToDictionary(keyspace => keyspace.Name, StringComparer.OrdinalIgnoreCase);
+            eventListener.SchemaRetrieved(keyspaces.Values.ToArray());
             logger.InfoFormat("Found {0} keyspaces in database", keyspaces.Count);
             foreach(var keyspaceScheme in keyspaceShemas)
             {
                 logger.InfoFormat("Start actualize scheme for keyspace {0}", keyspaceScheme.Name);
+                eventListener.KeyspaceActualizationStarted(keyspaceScheme.Name);
                 var keyspace = new Keyspace
                     {
                         Name = keyspaceScheme.Name,
@@ -49,8 +54,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     logger.InfoFormat("Keyspace {0} is new, so run add keyspace command", keyspaceScheme.Name);
                     keyspace.ColumnFamilies = keyspaceScheme.Configuration.ColumnFamilies.ToDictionary(family => family.Name);
                     clusterConnection.AddKeyspace(keyspace);
+                    eventListener.KeyspaceAdded(keyspace);
                 }
             }
+            eventListener.ActualizationCompleted();
         }
 
         private void ActualizeColumnFamilies(string keyspaceName, ColumnFamily[] columnFamilies)
@@ -69,14 +76,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     var existsColumnFamily = existsColumnFamilies[columnFamily.Name];
                     columnFamily.Id = existsColumnFamily.Id;
                     if(columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
+                    {
+                        eventListener.ColumnFamilyUpdated(keyspaceName, columnFamily);
                         keyspaceConnection.UpdateColumnFamily(columnFamily);
+                    }
                 }
                 else
+                {
+                    eventListener.ColumnFamilyAdded(keyspaceName, columnFamily);
                     keyspaceConnection.AddColumnFamily(columnFamily);
+                }
             }
         }
 
         private readonly ICassandraCluster cassandraCluster;
+        private readonly ICassandraActualizerEventListener eventListener;
 
         private readonly ILog logger = LogManager.GetLogger(typeof(SchemeActualizer));
         private readonly ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer;

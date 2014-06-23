@@ -76,6 +76,8 @@
     <Compile Include="Abstractions\Internal\SliceRange.cs" />
     <Compile Include="Abstractions\Keyspace.cs" />
     <Compile Include="Abstractions\DataType.cs" />
+    <Compile Include="Clusters\ActualizationEventListener\EmptyCassandraActualizerEventListener.cs" />
+    <Compile Include="Clusters\ActualizationEventListener\ICassandraActualizerEventListener.cs" />
     <Compile Include="Commands\Base\KeyspaceColumnFamilyDependantCommandBase.cs" />
     <Compile Include="Commands\Base\KeyspaceDependantCommandBase.cs" />
     <Compile Include="Commands\Base\CommandBase.cs" />
