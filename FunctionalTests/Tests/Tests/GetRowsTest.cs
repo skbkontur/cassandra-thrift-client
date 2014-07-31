@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -62,9 +63,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 var currentRowKey = rowKey;
                 var columns = new int[columnNamesCount].Select((x, i) => new Column
                     {
-                        Name = currentRowKey + ':' + IntToString(i),
+                        Name = IntToString(i),
                         Timestamp = DateTime.UtcNow.Ticks,
-                        Value = BitConverter.GetBytes(i * i)
+                        Value = Encoding.UTF8.GetBytes(currentRowKey + "_" + IntToString(i))
                     });
                 var keyValuePairs = columns.Select(column => new KeyValuePair<string, IEnumerable<Column>>(currentRowKey, new[] {column}));
                 columnFamilyConnection.BatchInsert(keyValuePairs);
@@ -73,8 +74,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             for(var i = 0; i < columnNamesCount; i++)
             {
                 var intColumnNames = GetRandomColumnIndexesFromRange(0, columnNamesCount, columnNamesCount).ToArray();
+                var orderedintColumnNames = intColumnNames.Distinct().OrderBy(i1 => i1).ToArray();
                 var strColumnNames = intColumnNames.Select(IntToString).ToArray();
-                var res = columnFamilyConnection.GetRows(rowKeys, strColumnNames);
+                var res = columnFamilyConnection.GetRows(rowKeys, strColumnNames.Concat(new[]{100, 101, 102}.Select(IntToString)).ToArray());
                 res.Sort((x, y) => String.Compare(x.Key, y.Key, StringComparison.Ordinal));
                 Assert.AreEqual(rowKeysCount, res.Count);
                 for(var j = 0; j < res.Count; j++)
@@ -82,11 +84,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     var row = res[j];
                     Assert.AreEqual(row.Key, rowKeys[j]);
                     var columns = row.Value;
-                    Assert.AreEqual(strColumnNames.Length, columns.Length);
+                    Assert.AreEqual(orderedintColumnNames.Length, columns.Length);
                     for(var k = 0; k < columns.Length; k++)
                     {
-                        Assert.AreEqual(columns[k].Name, row.Key + ':' + IntToString(intColumnNames[k]));
-                        CollectionAssert.AreEqual(columns[k].Value, BitConverter.GetBytes(intColumnNames[k]));
+                        Assert.AreEqual(IntToString(orderedintColumnNames[k]), columns[k].Name);
+                        Assert.AreEqual(row.Key + "_" + IntToString(orderedintColumnNames[k]), Encoding.UTF8.GetString(columns[k].Value));
                     }
                 }
             }
