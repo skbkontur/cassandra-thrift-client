@@ -189,6 +189,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
         }
 
+        public List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, List<byte[]> columnNames)
+        {
+            var multiGetSliceCommand = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel,
+                                                                keys.ToList(),
+                                                                new SlicePredicate(columnNames));
+            ExecuteCommand(multiGetSliceCommand);
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], Column[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+        }
+
         public void Truncate()
         {
             var truncateCommand = new TruncateColumnFamilyCommand(keyspaceName, columnFamilyName);
