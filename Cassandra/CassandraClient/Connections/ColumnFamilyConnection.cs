@@ -224,6 +224,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return result;
         }
 
+        public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string[] columnNames)
+        {
+            throw new NotImplementedException();
+        }
+
         public string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value)
         {
             return GetRowsWhere(null, maximalCount, new[] {new IndexExpression {ColumnName = key, IndexOperator = IndexOperator.EQ, Value = value}}, new[] {key});
