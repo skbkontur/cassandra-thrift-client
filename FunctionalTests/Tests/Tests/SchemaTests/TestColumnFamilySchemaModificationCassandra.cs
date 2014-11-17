@@ -147,7 +147,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
-            Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(CompressionAlgorithm.Snappy));
+            Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Snappy));
             Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.Null);
             Assert.That(columnFamily.Compression.Options.CrcCheckChance, Is.Null);
         }
