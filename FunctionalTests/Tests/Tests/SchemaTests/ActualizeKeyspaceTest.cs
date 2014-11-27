@@ -155,14 +155,14 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             actualize.ActualizeKeyspaces(new[] {scheme});
 
             var actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
-            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithm.Deflate));
+            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Deflate));
 
             scheme.Configuration.ColumnFamilies[0].Compression = null;
             scheme.Configuration.ColumnFamilies[0].Caching = ColumnFamilyCaching.All;
             actualize.ActualizeKeyspaces(new[] {scheme});
 
             actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
-            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithm.Deflate));
+            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Deflate));
         }
 
         private CassandraClusterSpy cluster;
