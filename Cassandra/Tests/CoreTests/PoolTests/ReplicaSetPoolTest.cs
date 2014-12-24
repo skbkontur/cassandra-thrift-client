@@ -400,6 +400,25 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
             }
         }
+ 
+        [Test]
+        public void TestConnectionCountInPool()
+        {
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>((x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false})))
+            {
+                pool.RegisterReplica(new ReplicaKey("replica1"));
+                pool.RegisterReplica(new ReplicaKey("replica2"));
+
+                for(var i = 0; i < 20; i++)
+                    Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
+
+                foreach(var itemInfo in pool.GetActiveItemsInfo())
+                {
+                    Assert.That(itemInfo.Value.BusyConnectionCount, Is.EqualTo(0));
+                    Assert.That(itemInfo.Value.FreeConnectionCount, Is.EqualTo(0));
+                }
+            }
+        }
 
         [Test]
         public void TestAcquireConnectionWithExceptionInOnePool()
