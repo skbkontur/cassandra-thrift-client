@@ -165,6 +165,53 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Deflate));
         }
 
+        [Test]
+        public void TestUpdateColumnFamilyCaching()
+        {
+            var name = TestSchemaUtils.GetRandomColumnFamilyName();
+            var originalColumnFamily = new ColumnFamily
+                {
+                    Name = name,
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    GCGraceSeconds = 123,
+                    ReadRepairChance = 0.3,
+                    Caching = ColumnFamilyCaching.All
+                };
+            var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
+            var keyspaceSchemes = new[]
+                {
+                    new KeyspaceScheme
+                        {
+                            Name = keyspaceName,
+                            Configuration = new KeyspaceConfiguration
+                                {
+                                    ColumnFamilies = new[]
+                                        {
+                                            originalColumnFamily
+                                        }
+                                }
+                        }
+                };
+
+            cluster.ActualizeKeyspaces(keyspaceSchemes);
+
+            originalColumnFamily.Caching = ColumnFamilyCaching.None;
+            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.None));
+
+            originalColumnFamily.Caching = ColumnFamilyCaching.KeysOnly;
+            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
+
+            originalColumnFamily.Caching = ColumnFamilyCaching.RowsOnly;
+            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.RowsOnly));
+
+            originalColumnFamily.Caching = ColumnFamilyCaching.All;
+            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.All));
+        }
+
         private CassandraClusterSpy cluster;
         private SchemeActualizer actualize;
     }
