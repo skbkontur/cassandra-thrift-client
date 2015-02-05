@@ -14,6 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different names ('{0}' and '{1}')", columnFamilyWithNewProperties.Name, columnFamilyFromTarget.Name));
             return
                 !(
+                     (columnFamilyWithNewProperties.Caching.Equals(columnFamilyFromTarget.Caching)) &&
                      (columnFamilyWithNewProperties.ReadRepairChance == null || columnFamilyWithNewProperties.ReadRepairChance.Equals(columnFamilyFromTarget.ReadRepairChance)) &&
                      (columnFamilyWithNewProperties.GCGraceSeconds == null || columnFamilyWithNewProperties.GCGraceSeconds.Equals(columnFamilyFromTarget.GCGraceSeconds)) &&
                      (columnFamilyWithNewProperties.Indexes == null || CompareIndexes(columnFamilyWithNewProperties.Indexes, columnFamilyFromTarget.Indexes)) &&
