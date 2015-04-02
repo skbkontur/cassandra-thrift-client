@@ -147,7 +147,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                     new ColumnFamily
                                         {
                                             Name = "CF1",
-                                            Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024})
+                                            Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024}),
+                                            Caching = ColumnFamilyCaching.KeysOnly
                                         }
                                 }
                         }
@@ -162,9 +163,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             actualize.ActualizeKeyspaces(new[] {scheme});
 
             actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
-            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Deflate));
+            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Snappy));
         }
-
+        
         [Test]
         public void TestUpdateColumnFamilyCaching()
         {

@@ -105,7 +105,7 @@ namespace Cassandra.Tests.CoreTests
                     new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All})
                 );
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(
+                comparer.NeedUpdateColumnFamily(
                     new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.None},
                     new ColumnFamily {Name = "name", Caching = ColumnFamilyCaching.All})
                 );
