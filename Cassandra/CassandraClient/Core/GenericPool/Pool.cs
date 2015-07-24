@@ -138,7 +138,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             Interlocked.Increment(ref busyItemCount);
         }
 
-        private volatile int busyItemCount;
+        private int busyItemCount;
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
         private readonly ILog logger = LogManager.GetLogger(typeof(Pool<T>));
         private readonly Func<Pool<T>, T> itemFactory;
