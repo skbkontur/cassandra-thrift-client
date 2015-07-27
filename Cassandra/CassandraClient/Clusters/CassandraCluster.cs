@@ -73,25 +73,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
         {
             var replicaSetPool = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
+                settings.Endpoints,
                 (key, replicaKey) => GetDataConnectionPool(settings, replicaKey, key),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
                 settings.ConnectionIdleTimeout
                 );
-            foreach(var endpoint in settings.Endpoints)
-                replicaSetPool.RegisterReplica(endpoint);
             return replicaSetPool;
         }
 
         private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateFierceConnectionPool(ICassandraClusterSettings settings)
         {
             var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
+                new [] {settings.EndpointForFierceCommands},
                 (key, replicaKey) => CreateFiercePool(settings, replicaKey, key),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
                 settings.ConnectionIdleTimeout
                 );
-            result.RegisterReplica(settings.EndpointForFierceCommands);
             return result;
         }
 

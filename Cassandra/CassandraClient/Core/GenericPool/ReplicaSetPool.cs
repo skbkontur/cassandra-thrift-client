@@ -15,17 +15,28 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
     internal class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IPoolSet<TItem, TItemKey>
         where TItem : class, IDisposable, ILiveness
     {
-        public ReplicaSetPool(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
+        public ReplicaSetPool(IList<TReplicaKey> replicas,
+                              Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
                               IEqualityComparer<TReplicaKey> replicaKeyComparer,
                               IEqualityComparer<TItemKey> itemKeyComparer,
                               Func<TItem, TReplicaKey> getReplicaKeyByItem,
                               Func<TItem, TItemKey> getItemKeyByItem,
                               TimeSpan? itemIdleTimeout = null)
         {
+            if(replicas.Count == 0)
+                throw new EmptyPoolException("Cannot create empty ReplicaSetPool");
+            logger.InfoFormat("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
+            replicaIndicies = new Dictionary<TReplicaKey, int>(replicaKeyComparer);
+            replicaHealths = new ReplicaHealth<TReplicaKey>[replicas.Count];
+            for(var idx = 0; idx < replicas.Count; idx++)
+            {
+                var replica = replicas[idx];
+                replicaIndicies.Add(replica, idx);
+                replicaHealths[idx] = new ReplicaHealth<TReplicaKey>(replica, aliveHealth);
+            }
             this.poolFactory = poolFactory;
             this.getReplicaKeyByItem = getReplicaKeyByItem;
             this.getItemKeyByItem = getItemKeyByItem;
-            replicaHealth = new ConcurrentDictionary<TReplicaKey, Health>(replicaKeyComparer);
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
 
             disposeEvent = new ManualResetEvent(false);
@@ -54,17 +65,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public TItem Acquire(TItemKey itemKey)
         {
-            var replicaHealths = replicaHealth.ToArray();
-            if(replicaHealths.Length == 0)
-                throw new EmptyPoolException("Cannot acquire items without configured replicas. Use RegisterReplica method to fill pool");
-
             TItem result = null;
 
-            var totalReplicaCount = GetPoolItemCountByKey(itemKey, replicaHealths);
-            var totalReplicaHealth = replicaHealths.Select(x => x.Value.Value).Sum();
+            var totalReplicaCount = GetPoolItemCountByKey(itemKey);
+            var totalReplicaHealth = replicaHealths.Select(x => x.Value).Sum();
 
             var existingAcquired = replicaHealths
-                .ShuffleByHealth(x => x.Value.Value, x => new {Health = x.Value.Value, ReplicaKey = x.Key})
+                .ShuffleByHealth(x => x.Value, x => new {Health = x.Value, x.ReplicaKey})
                 .Any(poolInfo =>
                      TryAcquireExistsOrNew(
                          new PoolKey(itemKey, poolInfo.ReplicaKey),
@@ -73,7 +80,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             if(!existingAcquired)
             {
-                var replicaKeys = replicaHealths.ShuffleByHealth(x => x.Value.Value, x => x.Key);
+                var replicaKeys = replicaHealths.ShuffleByHealth(x => x.Value, x => x.ReplicaKey);
 
                 var exceptions = new List<Exception>();
                 foreach(var replicaKey in replicaKeys)
@@ -121,12 +128,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             GoodReplica(getReplicaKeyByItem(item));
         }
 
-        public void RegisterReplica(TReplicaKey key)
-        {
-            replicaHealth.GetOrAdd(key, k => new Health {Value = aliveHealth});
-            logger.InfoFormat("New node [{0}] was added in client topology.", key);
-        }
-
         public Dictionary<PoolKey, KeyspaceConnectionPoolKnowledge> GetActiveItemsInfo()
         {
             return pools.ToDictionary(x => x.Key, x => new KeyspaceConnectionPoolKnowledge
@@ -155,12 +156,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         internal void BadReplica(TReplicaKey replicaKey)
         {
-            Health health;
-            if(replicaHealth.TryGetValue(replicaKey, out health))
+            int replicaIndex;
+            if(replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
             {
-                var healthValue = health.Value * dieRate;
+                var replicaHealth = replicaHealths[replicaIndex];
+                var healthValue = replicaHealth.Value * dieRate;
                 if(healthValue < deadHealth) healthValue = deadHealth;
-                health.Value = healthValue;
+                replicaHealth.Value = healthValue;
             }
         }
 
@@ -224,9 +226,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             }
         }
 
-        private int GetPoolItemCountByKey(TItemKey itemKey, KeyValuePair<TReplicaKey, Health>[] replicaHealths)
+        private int GetPoolItemCountByKey(TItemKey itemKey)
         {
-            var totalReplicaCount = replicaHealths.Select(x => x.Key).Select(x => GetPool(itemKey, x)).Sum(x => x.TotalCount);
+            var totalReplicaCount = replicaHealths.Select(x => x.ReplicaKey).Select(x => GetPool(itemKey, x)).Sum(x => x.TotalCount);
             return totalReplicaCount;
         }
 
@@ -249,20 +251,22 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private void GoodReplica(TReplicaKey replicaKey)
         {
-            Health health;
-            if(replicaHealth.TryGetValue(replicaKey, out health))
+            int replicaIndex;
+            if(replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
             {
-                var healthValue = health.Value * aliveRate;
+                var replicaHealth = replicaHealths[replicaIndex];
+                var healthValue = replicaHealth.Value * aliveRate;
                 if(healthValue > aliveHealth) healthValue = aliveHealth;
-                health.Value = healthValue;
+                replicaHealth.Value = healthValue;
             }
         }
 
+        private readonly Dictionary<TReplicaKey, int> replicaIndicies;
+        private readonly ReplicaHealth<TReplicaKey>[] replicaHealths;
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;
         private readonly Func<TItem, TReplicaKey> getReplicaKeyByItem;
         private readonly Func<TItem, TItemKey> getItemKeyByItem;
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
-        private readonly ConcurrentDictionary<TReplicaKey, Health> replicaHealth;
         private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<TItem, TItemKey, TReplicaKey>));
         private readonly Thread unusedItemsCollectorThread;
         private readonly ManualResetEvent disposeEvent;
@@ -304,15 +308,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
     internal static class ReplicaSetPool
     {
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
         }
 
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
+            TReplicaKey[] replicas,
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
             Func<TItem, TReplicaKey> getReplicaKeyByItem,
             Func<TItem, TItemKey> getItemKeyByItem,
@@ -320,15 +325,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, unusedItemsIdleTimeout);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, unusedItemsIdleTimeout);
         }
 
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, TimeSpan unusedItemsIdleTimeout)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, TimeSpan unusedItemsIdleTimeout)
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, unusedItemsIdleTimeout);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, unusedItemsIdleTimeout);
         }
     }
 }
