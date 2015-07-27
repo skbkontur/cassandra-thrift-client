@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CassandraClient</id>
-    <version>1.6.2</version>
+    <version>1.6.3</version>
     <title>SKB Kontur Cassandra Client</title>
     <projectUrl>https://git.skbkontur.ru/cassandra/cassandraclient</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
