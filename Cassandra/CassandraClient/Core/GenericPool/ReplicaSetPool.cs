@@ -267,7 +267,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private readonly Func<TItem, TReplicaKey> getReplicaKeyByItem;
         private readonly Func<TItem, TItemKey> getItemKeyByItem;
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
-        private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<TItem, TItemKey, TReplicaKey>));
+        private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<,,>));
         private readonly Thread unusedItemsCollectorThread;
         private readonly ManualResetEvent disposeEvent;
 
