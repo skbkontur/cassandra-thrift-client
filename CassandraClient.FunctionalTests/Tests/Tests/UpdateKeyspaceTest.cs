@@ -81,7 +81,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 }, keyspace);
         }
 
-        private void AssertKeyspacesEquals(Keyspace expected, Keyspace actual)
+        private static void AssertKeyspacesEquals(Keyspace expected, Keyspace actual)
         {
             Assert.AreEqual(expected.Name, actual.Name);
             Assert.AreEqual(expected.ReplicaPlacementStrategy, actual.ReplicaPlacementStrategy);
@@ -94,6 +94,33 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 Assert.NotNull(actual.ColumnFamilies);
                 actual.ColumnFamilies.Keys.OrderByDescending(s => s).ToArray().AssertEqualsTo(expected.ColumnFamilies.Keys.OrderByDescending(s => s).ToArray());
             }
+        }
+
+        [Test]
+        public void TestActualizeColumnFamily()
+        {
+            var keyspaceName = Guid.NewGuid().ToString("N");
+            const string columnFamilyName = "1";
+            var keyspaceScheme = new KeyspaceScheme
+                {
+                    Name = keyspaceName,
+                    Configuration = new KeyspaceConfiguration
+                        {
+                            ReplicationFactor = 1,
+                            ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
+                            ColumnFamilies = new[]{new ColumnFamily{Name = columnFamilyName}}
+                        }
+                };
+            cassandraCluster.ActualizeKeyspaces(new[]{keyspaceScheme});
+            var actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
+            Assert.IsNull(actualColumnFamily.BloomFilterFpChance);
+
+            keyspaceScheme.Configuration.ColumnFamilies.First().BloomFilterFpChance = 0.01;
+            cassandraCluster.ActualizeKeyspaces(new[]{keyspaceScheme});
+
+            actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
+            Assert.AreEqual(0.01, actualColumnFamily.BloomFilterFpChance);
+
         }
     }
 }
