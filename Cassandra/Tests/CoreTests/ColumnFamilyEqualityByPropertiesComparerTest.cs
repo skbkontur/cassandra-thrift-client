@@ -248,6 +248,23 @@ namespace Cassandra.Tests.CoreTests
                 );
         }
 
+        [Test]
+        public void TestCompareByBloomFilterFpChanceProperty()
+        {
+            Assert.That(
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = 0.1 }, new ColumnFamily { Name = "123", BloomFilterFpChance = 0.1 })
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = 0.1 }, new ColumnFamily { Name = "123", BloomFilterFpChance = 0.2 })
+                );
+            Assert.That(
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = null }, new ColumnFamily { Name = "123", BloomFilterFpChance = 0.2 })
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = 0.2 }, new ColumnFamily { Name = "123", BloomFilterFpChance = null })
+                );
+        }
+
         private ColumnFamilyEqualityByPropertiesComparer comparer;
     }
 }
