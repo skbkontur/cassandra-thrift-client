@@ -19,6 +19,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public CompactionStrategy CompactionStrategy { get { return compactionStrategy; } set { compactionStrategy = value; } }
         public ColumnFamilyCaching Caching { get; set; }
         public ColumnFamilyCompression Compression { get; set; }
+        public double? BloomFilterFpChance { get; set; }
         internal int Id { get; set; }
 
         private void SetDefaults()
@@ -63,6 +64,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 if(compactionStrategy.MaxCompactionThreshold.HasValue)
                     result.Max_compaction_threshold = compactionStrategy.MaxCompactionThreshold.Value;
             }
+
+            if(columnFamily.BloomFilterFpChance.HasValue)
+                result.Bloom_filter_fp_chance = columnFamily.BloomFilterFpChance.Value;
+
             return result;
         }
 
@@ -94,6 +99,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             }
             else
                 result.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(cfDef.Min_compaction_threshold, cfDef.Max_compaction_threshold);
+
+            if(cfDef.__isset.bloom_filter_fp_chance)
+                result.BloomFilterFpChance = cfDef.Bloom_filter_fp_chance;
 
             return result;
         }
