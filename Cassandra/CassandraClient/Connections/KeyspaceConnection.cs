@@ -22,14 +22,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void AddColumnFamily(ColumnFamily columnFamily)
         {
-            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName, columnFamily));
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new AddColumnFamilyCommand(keyspaceName, columnFamily));
             WaitUntilAgreementIsReached();
         }
 
         public void AddColumnFamily(string columnFamilyName)
         {
-            commandExecuter.Execute(new AddColumnFamilyCommand(keyspaceName,
-                                                               new ColumnFamily {Name = columnFamilyName}));
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new AddColumnFamilyCommand(keyspaceName, new ColumnFamily {Name = columnFamilyName}));
             WaitUntilAgreementIsReached();
         }
 
@@ -42,13 +41,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void UpdateColumnFamily(ColumnFamily columnFamily)
         {
-            commandExecuter.Execute(new UpdateColumnFamilyCommand(keyspaceName, columnFamily));
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new UpdateColumnFamilyCommand(keyspaceName, columnFamily));
             WaitUntilAgreementIsReached();
         }
 
         public void RemoveColumnFamily(string columnFamily)
         {
-            commandExecuter.Execute(new DropColumnFamilyCommand(keyspaceName, columnFamily));
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new DropColumnFamilyCommand(keyspaceName, columnFamily));
             WaitUntilAgreementIsReached();
         }
 

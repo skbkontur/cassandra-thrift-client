@@ -3,7 +3,7 @@ using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
 {
-    internal class UpdateColumnFamilyCommand : KeyspaceDependantCommandBase
+    internal class UpdateColumnFamilyCommand : KeyspaceDependantCommandBase, ISchemeUpdateCommand
     {
         public UpdateColumnFamilyCommand(string keyspace, ColumnFamily columnFamilyDefinition)
             : base(keyspace)

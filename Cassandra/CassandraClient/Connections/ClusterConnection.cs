@@ -34,13 +34,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void UpdateKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new UpdateKeyspaceCommand(keyspace));
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new UpdateKeyspaceCommand(keyspace));
             WaitUntilAgreementIsReached();
         }
 
         public void RemoveKeyspace(string keyspace)
         {
-            commandExecuter.Execute(new DropKeyspaceCommand(keyspace));
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new DropKeyspaceCommand(keyspace));
             WaitUntilAgreementIsReached();
         }
 
@@ -54,7 +54,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void AddKeyspace(Keyspace keyspace)
         {
             var addKeyspaceCommand = new AddKeyspaceCommand(keyspace);
-            commandExecuter.Execute(addKeyspaceCommand);
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(addKeyspaceCommand);
             logger.InfoFormat("Keyspace adding result: {0}", addKeyspaceCommand.Output);
             WaitUntilAgreementIsReached();
         }
