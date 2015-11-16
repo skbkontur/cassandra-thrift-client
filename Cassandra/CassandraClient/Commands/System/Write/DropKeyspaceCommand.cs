@@ -1,8 +1,9 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
 {
-    internal class DropKeyspaceCommand : CommandBase
+    internal class DropKeyspaceCommand : CommandBase, ISchemeUpdateCommand
     {
         public DropKeyspaceCommand(string keyspace)
         {

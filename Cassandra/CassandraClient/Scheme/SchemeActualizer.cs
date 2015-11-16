@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using log4net;
@@ -7,6 +8,7 @@ using log4net;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Scheme
 {
@@ -21,14 +23,38 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
 
         public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas)
         {
-            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            logger.Info("Start apply scheme...");
-            eventListener.ActualizationStarted();
             if(keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
-                logger.Info("Found 0 keyspaces in scheme, stop applying scheme");
+                logger.Info("Found 0 keyspaces in scheme, skip applying scheme");
                 return;
             }
+            var sw = Stopwatch.StartNew();
+            var timeout = TimeSpan.FromMinutes(5);
+            do
+            {
+                try
+                {
+                    DoActualizeKeyspaces(keyspaceShemas);
+                    return;
+                }
+                catch(CassandraClientIOException e)
+                {
+                    logger.Warn("CassandraClientIOException (e.g. socket timeout) occured during scheme actualization", e);
+                }
+                catch(CassandraClientTimedOutException e)
+                {
+                    logger.Warn("CassandraClientTimedOutException occured during scheme actualization", e);
+                }
+            } while(sw.Elapsed < timeout);
+            throw new InvalidOperationException(string.Format("Failed to actualize cassandra scheme in {0}", timeout));
+        }
+
+        private void DoActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas)
+        {
+            logger.Info("Start apply scheme...");
+            eventListener.ActualizationStarted();
+            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
+            clusterConnection.WaitUntilSchemeAgreementIsReached(TimeSpan.FromMinutes(1));
             logger.InfoFormat("Found {0} keyspaces in scheme", keyspaceShemas.Length);
             var keyspaces = clusterConnection.RetrieveKeyspaces().ToDictionary(keyspace => keyspace.Name, StringComparer.OrdinalIgnoreCase);
             eventListener.SchemaRetrieved(keyspaces.Values.ToArray());
@@ -57,6 +83,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     eventListener.KeyspaceAdded(keyspace);
                 }
             }
+            clusterConnection.WaitUntilSchemeAgreementIsReached(TimeSpan.FromMinutes(1));
             eventListener.ActualizationCompleted();
         }
 
@@ -90,9 +117,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
         }
 
         private readonly ICassandraCluster cassandraCluster;
+        private readonly ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer;
         private readonly ICassandraActualizerEventListener eventListener;
 
         private readonly ILog logger = LogManager.GetLogger(typeof(SchemeActualizer));
-        private readonly ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer;
     }
 }

@@ -62,7 +62,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null)
         {
-            new SchemeActualizer(this, eventListener ?? EmptyCassandraActualizerEventListener.Instance).ActualizeKeyspaces(keyspaces);
+            new SchemeActualizer(this, eventListener).ActualizeKeyspaces(keyspaces);
         }
 
         public void Dispose()

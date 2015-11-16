@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -34,14 +35,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void UpdateKeyspace(Keyspace keyspace)
         {
-            commandExecuter.Execute(new UpdateKeyspaceCommand(keyspace));
-            WaitUntilAgreementIsReached();
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new UpdateKeyspaceCommand(keyspace));
         }
 
         public void RemoveKeyspace(string keyspace)
         {
-            commandExecuter.Execute(new DropKeyspaceCommand(keyspace));
-            WaitUntilAgreementIsReached();
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(new DropKeyspaceCommand(keyspace));
         }
 
         public string DescribeVersion()
@@ -54,33 +53,30 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void AddKeyspace(Keyspace keyspace)
         {
             var addKeyspaceCommand = new AddKeyspaceCommand(keyspace);
-            commandExecuter.Execute(addKeyspaceCommand);
+            commandExecuter.ExecuteSchemeUpdateCommandOnce(addKeyspaceCommand);
             logger.InfoFormat("Keyspace adding result: {0}", addKeyspaceCommand.Output);
-            WaitUntilAgreementIsReached();
         }
 
-        private void WaitUntilAgreementIsReached()
+        public void WaitUntilSchemeAgreementIsReached(TimeSpan timeout)
         {
-            while(true)
+            var sw = Stopwatch.StartNew();
+            do
             {
-                logger.Info("Start checking schema agreement.");
                 var schemaAgreementCommand = new SchemaAgreementCommand();
                 commandExecuter.Execute(schemaAgreementCommand);
-
                 if(schemaAgreementCommand.Output.Count == 1)
-                    break;
-
+                    return;
                 LogVersions(schemaAgreementCommand.Output);
-                logger.Info("Finish checking schema agreement.");
-            }
+            } while (sw.Elapsed < timeout);
+            throw new InvalidOperationException(string.Format("WaitUntilSchemeAgreementIsReached didn't complete in {0}", timeout));
         }
 
         private void LogVersions(IDictionary<string, List<string>> versions)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("Agreement doesnt reach.");
-            foreach(var agreeds in versions)
-                stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", agreeds.Key, string.Join(",", agreeds.Value)));
+            stringBuilder.AppendLine("Cassandra scheme is not synchronized:");
+            foreach(var kvp in versions)
+                stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", kvp.Key, string.Join(",", kvp.Value)));
             logger.Info(stringBuilder.ToString());
         }
 

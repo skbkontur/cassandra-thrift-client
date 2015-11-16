@@ -25,6 +25,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             this.settings = settings;
         }
 
+        public void Execute(ICommand command)
+        {
+            Execute(attempt => command);
+        }
+
         public void Execute(Func<int, ICommand> createCommand)
         {
             var stopwatch = Stopwatch.StartNew();
@@ -37,35 +42,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     IThriftConnection connectionInPool = null;
                     try
                     {
-                        connectionInPool = pool.Acquire(command.CommandContext.KeyspaceName);
-                        connectionInPool.ExecuteCommand(command);
-                        pool.Good(connectionInPool);
-                        pool.Release(connectionInPool);
+                        ExecuteCommandInPool(pool, command, out connectionInPool);
                         return;
                     }
                     catch(Exception e)
                     {
-                        var message = string.Format("An error occurred while executing cassandra command '{0}'", command.Name);
-
-                        var exception = CassandraExceptionTransformer.Transform(e, message);
-
-                        if(connectionInPool != null)
-                            logger.Warn(string.Format("Attempt {0} on {1} failed.", i, connectionInPool), exception);
-                        else
-                            logger.Warn(string.Format("Attempt {0} to all nodes failed.", i), exception);
-
-                        if(connectionInPool != null)
-                        {
-                            if(exception.ReduceReplicaLive)
-                                pool.Bad(connectionInPool);
-                            else
-                                pool.Good(connectionInPool);
-
-                            if(exception.IsCorruptConnection)
-                                pool.Remove(connectionInPool);
-                            else
-                                pool.Release(connectionInPool);
-                        }
+                        var exception = HandleCommandExecutionException(e, pool, command, connectionInPool, i);
                         if(!exception.UseAttempts)
                             throw exception;
                         command = createCommand(i + 1);
@@ -82,9 +64,48 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        public void Execute(ICommand command)
+        public void ExecuteSchemeUpdateCommandOnce(ISchemeUpdateCommand command)
         {
-            Execute(attempt => command);
+            IThriftConnection connectionInPool = null;
+            try
+            {
+                ExecuteCommandInPool(fierceCommandsConnectionPool, command, out connectionInPool);
+            }
+            catch(Exception e)
+            {
+                throw HandleCommandExecutionException(e, fierceCommandsConnectionPool, command, connectionInPool, 0);
+            }
+        }
+
+        private static void ExecuteCommandInPool(IThriftConnectionReplicaSetPool pool, ICommand command, out IThriftConnection connectionInPool)
+        {
+            connectionInPool = pool.Acquire(command.CommandContext.KeyspaceName);
+            connectionInPool.ExecuteCommand(command);
+            pool.Good(connectionInPool);
+            pool.Release(connectionInPool);
+        }
+
+        private CassandraClientException HandleCommandExecutionException(Exception e, IThriftConnectionReplicaSetPool pool, ICommand command, IThriftConnection connectionInPool, int attempt)
+        {
+            var message = string.Format("An error occurred while executing cassandra command '{0}'", command.Name);
+            var exception = CassandraExceptionTransformer.Transform(e, message);
+            if(connectionInPool != null)
+                logger.Warn(string.Format("Attempt {0} on {1} failed.", attempt, connectionInPool), exception);
+            else
+                logger.Warn(string.Format("Attempt {0} to all nodes failed.", attempt), exception);
+            if(connectionInPool != null)
+            {
+                if(exception.ReduceReplicaLive)
+                    pool.Bad(connectionInPool);
+                else
+                    pool.Good(connectionInPool);
+
+                if(exception.IsCorruptConnection)
+                    pool.Remove(connectionInPool);
+                else
+                    pool.Release(connectionInPool);
+            }
+            return exception;
         }
 
         public void Dispose()
