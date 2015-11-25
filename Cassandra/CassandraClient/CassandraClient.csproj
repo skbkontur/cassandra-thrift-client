@@ -54,6 +54,7 @@
     <Compile Include="Abstractions\CompactionStrategy.cs" />
     <Compile Include="Abstractions\CompactionStrategyOptions.cs" />
     <Compile Include="Abstractions\CompactionStrategyType.cs" />
+    <Compile Include="Abstractions\ColumnComparatorType.cs" />
     <Compile Include="Abstractions\CompressionAlgorithms.cs" />
     <Compile Include="Abstractions\CompressionOptions.cs" />
     <Compile Include="Abstractions\ISchemeUpdateCommand.cs" />

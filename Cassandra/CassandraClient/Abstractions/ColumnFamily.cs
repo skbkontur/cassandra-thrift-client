@@ -7,6 +7,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class ColumnFamily
     {
+        private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
+
         public ColumnFamily()
         {
             SetDefaults();
@@ -20,14 +22,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public ColumnFamilyCaching Caching { get; set; }
         public ColumnFamilyCompression Compression { get; set; }
         public double? BloomFilterFpChance { get; set; }
+        public ColumnComparatorType ComparatorType { get; set; }
         internal int Id { get; set; }
 
         private void SetDefaults()
         {
             Caching = ColumnFamilyCaching.KeysOnly;
+            ComparatorType = new ColumnComparatorType(DataType.UTF8Type);
         }
-
-        private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
     }
 
     internal static class ColumnFamilyExtensions
@@ -42,7 +44,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Name = columnFamily.Name,
                     Keyspace = keyspace,
                     Column_type = "Standard",
-                    Comparator_type = DataType.UTF8Type.ToStringValue(),
+                    Comparator_type = columnFamily.ComparatorType.ToString(),
                     Caching = columnFamily.ToCassandraCachingValue()
                 };
             if(columnFamily.Compression != null)
@@ -78,7 +80,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             var result = new ColumnFamily
                 {
                     Name = cfDef.Name,
-                    Id = cfDef.Id
+                    Id = cfDef.Id,
+                    ComparatorType = new ColumnComparatorType(cfDef.Comparator_type)
                 };
             if(cfDef.__isset.gc_grace_seconds)
                 result.GCGraceSeconds = cfDef.Gc_grace_seconds;

@@ -42,6 +42,9 @@
         DecimalType,
 
         [StringValue("org.apache.cassandra.db.marshal.CounterColumnType")]
-        CounterColumnType
+        CounterColumnType,
+
+        [StringValue("org.apache.cassandra.db.marshal.CompositeType")]
+        CompositeType
     }
 }
