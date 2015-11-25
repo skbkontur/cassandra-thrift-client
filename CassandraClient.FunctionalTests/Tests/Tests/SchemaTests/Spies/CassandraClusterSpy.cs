@@ -4,6 +4,7 @@ using System.Linq;
 
 using GroboContainer.Infection;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
@@ -40,6 +41,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
             return innerCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+        }
+
+        public IColumnFamilyConnectionImplementation<TColumn> GetColumnFamilyConnectionImplementation<TColumn>(string keySpaceName, string columnFamilyName) where TColumn : class, IColumn, new()
+        {
+            return innerCluster.GetColumnFamilyConnectionImplementation<TColumn>(keySpaceName, columnFamilyName);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()

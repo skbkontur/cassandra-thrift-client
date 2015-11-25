@@ -4,6 +4,7 @@ using System.Net;
 
 using log4net;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
@@ -35,14 +36,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
-            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName,
-                                                                                                columnFamilyName,
-                                                                                                clusterSettings,
-                                                                                                commandExecuter,
-                                                                                                clusterSettings.ReadConsistencyLevel,
-                                                                                                clusterSettings.WriteConsistencyLevel);
+            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation<Column>(keySpaceName,
+                                                                                                        columnFamilyName,
+                                                                                                        clusterSettings,
+                                                                                                        commandExecuter,
+                                                                                                        clusterSettings.ReadConsistencyLevel,
+                                                                                                        clusterSettings.WriteConsistencyLevel);
             var enumerableFactory = new EnumerableFactory();
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation, enumerableFactory);
+        }
+
+        public IColumnFamilyConnectionImplementation<TColumn> GetColumnFamilyConnectionImplementation<TColumn>(string keySpaceName, string columnFamilyName) where TColumn : class, IColumn, new()
+        {
+            return new ColumnFamilyConnectionImplementation<TColumn>(keySpaceName,
+                                                                     columnFamilyName,
+                                                                     clusterSettings,
+                                                                     commandExecuter,
+                                                                     clusterSettings.ReadConsistencyLevel,
+                                                                     clusterSettings.WriteConsistencyLevel);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
@@ -85,7 +96,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateFierceConnectionPool(ICassandraClusterSettings settings)
         {
             var result = ReplicaSetPool.Create<IThriftConnection, string, IPEndPoint>(
-                new [] {settings.EndpointForFierceCommands},
+                new[] {settings.EndpointForFierceCommands},
                 (key, replicaKey) => CreateFiercePool(settings, replicaKey, key),
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
@@ -115,10 +126,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return result;
         }
 
-        private readonly ILog logger = LogManager.GetLogger(typeof(CassandraCluster));
         private readonly ICassandraClusterSettings clusterSettings;
         private readonly ICommandExecuter commandExecuter;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceCommandsConnectionPool;
+        private readonly ILog logger = LogManager.GetLogger(typeof(CassandraCluster));
     }
 }

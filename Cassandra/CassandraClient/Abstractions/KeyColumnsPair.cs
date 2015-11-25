@@ -3,21 +3,28 @@ using System.Collections.Generic;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
-    public class KeyColumnsPair<TKey>
+    public class KeyColumnsPair<TKey, TColumn>
     {
-        public KeyColumnsPair(TKey key, IEnumerable<Column> column)
+        public KeyColumnsPair(TKey key, IEnumerable<TColumn> column)
         {
             Key = key;
             Columns = column;
         }
 
-        public KeyColumnsPair<TNewKey> ConvertKey<TNewKey>(Func<TKey, TNewKey> keyConverter)
-        {
-            return new KeyColumnsPair<TNewKey>(keyConverter(Key), Columns);
-        }
-
         public TKey Key { get; set; }
+        public IEnumerable<TColumn> Columns { get; set; }
 
-        public IEnumerable<Column> Columns { get; set; }
+        public KeyColumnsPair<TNewKey, TColumn> ConvertKey<TNewKey>(Func<TKey, TNewKey> keyConverter)
+        {
+            return new KeyColumnsPair<TNewKey, TColumn>(keyConverter(Key), Columns);
+        }
+    }
+
+    public class KeyColumnsPair<TKey> : KeyColumnsPair<TKey, Column>
+    {
+        public KeyColumnsPair(TKey key, IEnumerable<Column> column)
+            : base(key, column)
+        {
+        }
     }
 }

@@ -9,7 +9,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     internal class ColumnFamilyConnection : IColumnFamilyConnection
     {
-        public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation, IEnumerableFactory enumerableFactory)
+        public ColumnFamilyConnection(IColumnFamilyConnectionImplementation<Column> implementation, IEnumerableFactory enumerableFactory)
         {
             this.implementation = implementation;
             this.enumerableFactory = enumerableFactory;
@@ -244,14 +244,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new string[0];
-            var result = implementation.GetRowsWhere(StringExtensions.StringToBytes(exclusiveStartKey), count + 1, conditions, columns.Select(StringExtensions.StringToBytes).ToList()).Select(StringExtensions.BytesToString).ToArray();
+            var result = implementation.GetRowsWhere(StringExtensions.StringToBytes(exclusiveStartKey), count + 1, conditions.Select(IndexExpressionExtensions.ToGeneralIndesExpression), columns.Select(StringExtensions.StringToBytes).ToList()).Select(StringExtensions.BytesToString).ToArray();
             if(result.Length == 0) return result;
             if(result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
             if(result.Length > count) result = result.Take(count).ToArray();
             return result;
         }
 
-        private readonly IColumnFamilyConnectionImplementation implementation;
         private readonly IEnumerableFactory enumerableFactory;
+        private readonly IColumnFamilyConnectionImplementation<Column> implementation;
     }
 }

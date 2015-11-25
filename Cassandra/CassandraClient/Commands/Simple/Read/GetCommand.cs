@@ -1,14 +1,18 @@
 ﻿using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
-using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
-using ColumnExtensions = SKBKontur.Cassandra.CassandraClient.Abstractions.ColumnExtensions;
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetCommand<T> : KeyspaceColumnFamilyDependantCommandBase where T : class, IColumn, new()
     {
+        private readonly byte[] columnName;
+        private readonly ConsistencyLevel consistencyLevel;
+        private readonly byte[] rowKey;
+
         public GetCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, byte[] columnName)
             : base(keyspace, columnFamily)
         {
@@ -16,6 +20,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.consistencyLevel = consistencyLevel;
             this.columnName = columnName;
         }
+
+        public T Output { get; private set; }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -30,13 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
                 //ничего не делаем
             }
 
-            Output = columnOrSupercolumn != null ? ColumnExtensions.FromCassandraColumn(columnOrSupercolumn.Column) : null;
+            Output = columnOrSupercolumn != null ? columnOrSupercolumn.Column.FromCassandraColumn<T>() : null;
         }
-
-        public Column Output { get; private set; }
-
-        private readonly byte[] rowKey;
-        private readonly ConsistencyLevel consistencyLevel;
-        private readonly byte[] columnName;
     }
 }

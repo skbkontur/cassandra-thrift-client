@@ -5,32 +5,32 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public interface IColumnFamilyConnectionImplementation
+    public interface IColumnFamilyConnectionImplementation<T>
     {
         bool IsRowExist(byte[] key);
         int GetCount(byte[] key);
         Dictionary<byte[], int> GetCounts(IEnumerable<byte[]> key);
         void DeleteRow(byte[] key, long? timestamp);
-        void AddColumn(byte[] key, Column column);
+        void AddColumn(byte[] key, T column);
 
-        void AddColumn(Func<int, KeyColumnPair<byte[]>> createKeyColumnPair);
-        void AddBatch(Func<int, KeyColumnsPair<byte[]>> createKeyColumnsPair);
+        void AddColumn(Func<int, KeyColumnPair<byte[], T>> createKeyColumnPair);
+        void AddBatch(Func<int, KeyColumnsPair<byte[], T>> createKeyColumnsPair);
 
-        List<KeyValuePair<byte[], Column[]>> GetRegion(IEnumerable<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow);
+        List<KeyValuePair<byte[], T[]>> GetRegion(IEnumerable<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow);
 
-        Column GetColumn(byte[] key, byte[] columnName);
-        bool TryGetColumn(byte[] key, byte[] columnName, out Column result);
+        T GetColumn(byte[] key, byte[] columnName);
+        bool TryGetColumn(byte[] key, byte[] columnName, out T result);
         void DeleteBatch(byte[] key, IEnumerable<byte[]> columnNames, long? timestamp = null);
         void BatchDelete(IEnumerable<KeyValuePair<byte[], IEnumerable<byte[]>>> data, long? timestamp = null);
-        void AddBatch(byte[] key, IEnumerable<Column> columns);
-        void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<Column>>> data);
-        List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count);
-        List<KeyValuePair<byte[], Column[]>> GetRows(IEnumerable<byte[]> keys, List<byte[]> columnNames);
-        List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, IndexExpression[] conditions, List<byte[]> columns);
+        void AddBatch(byte[] key, IEnumerable<T> columns);
+        void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<T>>> data);
+        List<KeyValuePair<byte[], T[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count);
+        List<KeyValuePair<byte[], T[]>> GetRows(IEnumerable<byte[]> keys, List<byte[]> columnNames);
+        List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, IEnumerable<GeneralIndexExpression> conditions, List<byte[]> columns);
         void Truncate();
-        Column[] GetRow(byte[] key, byte[] startColumnName, int count, bool reversed);
-        Column[] GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed);
-        Column[] GetColumns(byte[] key, List<byte[]> columnNames);
+        T[] GetRow(byte[] key, byte[] startColumnName, int count, bool reversed);
+        T[] GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed);
+        T[] GetColumns(byte[] key, List<byte[]> columnNames);
         List<byte[]> GetKeys(byte[] startKey, int count);
 
         ICassandraConnectionParameters GetConnectionParameters();
