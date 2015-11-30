@@ -4,7 +4,6 @@ using System.Linq;
 
 using GroboContainer.Infection;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
@@ -20,6 +19,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
         {
             innerCluster = cassandraClusterFactory();
         }
+
+        public int UpdateColumnFamilyInvokeCount { get { return keyspaceConnectionSpies.Sum(x => x.UpdateColumnFamilyInvokeCount); } }
 
         public void Dispose()
         {
@@ -43,9 +44,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             return innerCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
         }
 
-        public IColumnFamilyConnectionImplementation<TColumn> GetColumnFamilyConnectionImplementation<TColumn>(string keySpaceName, string columnFamilyName) where TColumn : class, IColumn, new()
+        public IColumnFamilyConnectionImplementation GetColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
         {
-            return innerCluster.GetColumnFamilyConnectionImplementation<TColumn>(keySpaceName, columnFamilyName);
+            return innerCluster.GetColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
@@ -58,10 +59,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             innerCluster.ActualizeKeyspaces(keyspaces, eventListener);
         }
 
-        public int UpdateColumnFamilyInvokeCount { get { return keyspaceConnectionSpies.Sum(x => x.UpdateColumnFamilyInvokeCount); } }
-
-        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
-
         private readonly ICassandraCluster innerCluster;
+        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
     }
 }

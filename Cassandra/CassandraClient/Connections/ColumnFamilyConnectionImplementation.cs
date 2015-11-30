@@ -17,7 +17,7 @@ using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    internal class ColumnFamilyConnectionImplementation<T> : IColumnFamilyConnectionImplementation<T> where T : class, IColumn, new()
+    internal class ColumnFamilyConnectionImplementation : IColumnFamilyConnectionImplementation
     {
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,
@@ -60,18 +60,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(new DeleteRowCommand(keyspaceName, columnFamilyName, key, writeConsistencyLevel, timestamp));
         }
 
-        public void AddColumn(byte[] key, T column)
+        public void AddColumn(byte[] key, RawColumn column)
         {
-            var command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[], T>(key, column));
+            var command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[], RawColumn>(key, column));
             ExecuteCommand(command);
         }
 
-        public void AddColumn(Func<int, KeyColumnPair<byte[], T>> createKeyColumnPair)
+        public void AddColumn(Func<int, KeyColumnPair<byte[], RawColumn>> createKeyColumnPair)
         {
             ExecuteCommand(attempt => CreateInsertCommand(attempt, createKeyColumnPair));
         }
 
-        public List<KeyValuePair<byte[], T[]>> GetRegion(IEnumerable<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow)
+        public List<KeyValuePair<byte[], IEnumerable<RawColumn>>> GetRegion(IEnumerable<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow)
         {
             var slicePredicate = new SlicePredicate(new SliceRange
                 {
@@ -80,23 +80,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     EndColumn = finishColumnName,
                     Reversed = false
                 });
-            var command = new MultiGetSliceCommand<T>(keyspaceName, columnFamilyName, readConsistencyLevel, keys.ToList(), slicePredicate);
+            var command = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keys.ToList(), slicePredicate);
             ExecuteCommand(command);
-            return command.Output.Select(item => new KeyValuePair<byte[], T[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return command.Output.Select(item => new KeyValuePair<byte[], IEnumerable<RawColumn>>(item.Key, item.Value)).Where(pair => pair.Value.Any()).ToList();
         }
 
-        public T GetColumn(byte[] key, byte[] columnName)
+        public RawColumn GetColumn(byte[] key, byte[] columnName)
         {
-            T result;
+            RawColumn result;
             if(!TryGetColumn(key, columnName, out result))
                 throw new ColumnIsNotFoundException(columnFamilyName, key, columnName);
             return result;
         }
 
-        public bool TryGetColumn(byte[] key, byte[] columnName, out T result)
+        public bool TryGetColumn(byte[] key, byte[] columnName, out RawColumn result)
         {
             result = null;
-            var getCommand = new GetCommand<T>(keyspaceName, columnFamilyName, key, readConsistencyLevel, columnName);
+            var getCommand = new GetCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, columnName);
             ExecuteCommand(getCommand);
             if(getCommand.Output == null)
                 return false;
@@ -104,13 +104,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return true;
         }
 
-        public void AddBatch(byte[] key, IEnumerable<T> columns)
+        public void AddBatch(byte[] key, IEnumerable<RawColumn> columns)
         {
             var mutationsList = ToMutationsList(columns, cassandraClusterSettings.AllowNullTimestamp);
             ExecuteMutations(key, mutationsList);
         }
 
-        public void AddBatch(Func<int, KeyColumnsPair<byte[], T>> createKeyColumnsPair)
+        public void AddBatch(Func<int, KeyColumnsPair<byte[], RawColumn>> createKeyColumnsPair)
         {
             ExecuteMutations(attempt =>
                 {
@@ -134,12 +134,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(key, mutationsList);
         }
 
-        public T[] GetRow(byte[] key, byte[] startColumnName, int count, bool reversed)
+        public IEnumerable<RawColumn> GetRow(byte[] key, byte[] startColumnName, int count, bool reversed)
         {
             return GetRow(key, startColumnName, null, count, reversed);
         }
 
-        public T[] GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed)
+        public IEnumerable<RawColumn> GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed)
         {
             var aquilesSlicePredicate = new SlicePredicate(new SliceRange
                 {
@@ -148,17 +148,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     EndColumn = endColumnName,
                     Reversed = reversed
                 });
-            var getSliceCommand = new GetSliceCommand<T>(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
+            var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
             ExecuteCommand(getSliceCommand);
-            return getSliceCommand.Output.ToArray();
+            return getSliceCommand.Output;
         }
 
-        public T[] GetColumns(byte[] key, List<byte[]> columnNames)
+        public IEnumerable<RawColumn> GetColumns(byte[] key, List<byte[]> columnNames)
         {
             var slicePredicate = new SlicePredicate(columnNames);
-            var getSliceCommand = new GetSliceCommand<T>(keyspaceName, columnFamilyName, key, readConsistencyLevel, slicePredicate);
+            var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, slicePredicate);
             ExecuteCommand(getSliceCommand);
-            return getSliceCommand.Output.ToArray();
+            return getSliceCommand.Output;
         }
 
         public List<byte[]> GetKeys(byte[] startKey, int count)
@@ -176,26 +176,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return connectionParameters;
         }
 
-        public List<KeyValuePair<byte[], T[]>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
+        public List<KeyValuePair<byte[], IEnumerable<RawColumn>>> GetRows(IEnumerable<byte[]> keys, byte[] startColumnName, int count)
         {
-            var multiGetSliceCommand = new MultiGetSliceCommand<T>(keyspaceName, columnFamilyName, readConsistencyLevel,
-                                                                   keys.ToList(),
-                                                                   new SlicePredicate(new SliceRange
-                                                                       {
-                                                                           Count = count,
-                                                                           StartColumn = startColumnName
-                                                                       }));
+            var multiGetSliceCommand = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel,
+                                                                keys.ToList(),
+                                                                new SlicePredicate(new SliceRange
+                                                                    {
+                                                                        Count = count,
+                                                                        StartColumn = startColumnName
+                                                                    }));
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], T[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], IEnumerable<RawColumn>>(item.Key, item.Value)).Where(pair => pair.Value.Any()).ToList();
         }
 
-        public List<KeyValuePair<byte[], T[]>> GetRows(IEnumerable<byte[]> keys, List<byte[]> columnNames)
+        public List<KeyValuePair<byte[], IEnumerable<RawColumn>>> GetRows(IEnumerable<byte[]> keys, List<byte[]> columnNames)
         {
-            var multiGetSliceCommand = new MultiGetSliceCommand<T>(keyspaceName, columnFamilyName, readConsistencyLevel,
-                                                                   keys.ToList(),
-                                                                   new SlicePredicate(columnNames));
+            var multiGetSliceCommand = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel,
+                                                                keys.ToList(),
+                                                                new SlicePredicate(columnNames));
             ExecuteCommand(multiGetSliceCommand);
-            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], T[]>(item.Key, item.Value.ToArray())).Where(pair => pair.Value.Length > 0).ToList();
+            return multiGetSliceCommand.Output.Select(item => new KeyValuePair<byte[], IEnumerable<RawColumn>>(item.Key, item.Value)).Where(pair => pair.Value.Any()).ToList();
         }
 
         public void Truncate()
@@ -219,7 +219,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return gisc.Output;
         }
 
-        public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<T>>> data)
+        public void BatchInsert(IEnumerable<KeyValuePair<byte[], IEnumerable<RawColumn>>> data)
         {
             var mutationsList = data.Select(row => new KeyValuePair<byte[], List<IMutation>>(row.Key, ToMutationsList(row.Value, cassandraClusterSettings.AllowNullTimestamp))).ToList();
             ExecuteMutations(mutationsList);
@@ -240,27 +240,27 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[], T>> createKeyColumnPair)
+        private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[], RawColumn>> createKeyColumnPair)
         {
             var keyColumnPair = createKeyColumnPair(attempt);
             CheckColumnHasTimestampValue(keyColumnPair.Column);
-            return new InsertCommand<T>(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
+            return new InsertCommand(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
         }
 
-        private void CheckColumnHasTimestampValue(T column)
+        private void CheckColumnHasTimestampValue(RawColumn column)
         {
             if(!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
-                throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Description));
+                throw new ArgumentException("Timestamp should be filled.");
         }
 
-        private static List<IMutation> ToMutationsList(IEnumerable<T> columns, bool allowNullTimestamp)
+        private static List<IMutation> ToMutationsList(IEnumerable<RawColumn> columns, bool allowNullTimestamp)
         {
             var result = new List<IMutation>();
             foreach(var column in columns)
             {
                 if(!allowNullTimestamp && !column.Timestamp.HasValue)
-                    throw new ArgumentException(string.Format("Timestamp should be filled. Column: '{0}'", column.Description));
-                result.Add(new SetMutation<T>
+                    throw new ArgumentException(string.Format("Timestamp should be filled."));
+                result.Add(new SetMutation
                     {
                         Column = column
                     });

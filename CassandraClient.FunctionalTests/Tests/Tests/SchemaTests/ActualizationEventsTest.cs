@@ -8,6 +8,7 @@ using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
 {

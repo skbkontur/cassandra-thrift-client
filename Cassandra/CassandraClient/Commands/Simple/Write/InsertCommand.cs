@@ -5,13 +5,13 @@ using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
-    internal class InsertCommand<T> : KeyspaceColumnFamilyDependantCommandBase where T : IColumn
+    internal class InsertCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        private readonly T column;
+        private readonly RawColumn column;
         private readonly ConsistencyLevel consistencyLevel;
         private readonly byte[] rowKey;
 
-        public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, T column)
+        public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, RawColumn column)
             : base(keyspace, columnFamily)
         {
             this.rowKey = rowKey;

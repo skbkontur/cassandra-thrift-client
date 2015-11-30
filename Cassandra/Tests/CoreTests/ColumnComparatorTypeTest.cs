@@ -65,16 +65,5 @@ namespace Cassandra.Tests.CoreTests
             Assert.That(comparatorType.Types, Is.EqualTo(subTypes));
             Assert.That(comparatorType.ToString(), Is.EqualTo(string.Format("{0}({1})", DataType.CompositeType.ToStringValue(), string.Join(",", subTypes.Select(x => x.ToStringValue())))));
         }
-
-        [Test]
-        public void TestEquals()
-        {
-            var comparatorType1 = new ColumnComparatorType(new[] {DataType.DoubleType, DataType.FloatType});
-            var comparatorType2 = new ColumnComparatorType(new[] {DataType.DoubleType, DataType.FloatType});
-            var comparatorType3 = new ColumnComparatorType(new[] {DataType.FloatType, DataType.DoubleType});
-            Assert.That(comparatorType1.Equals(comparatorType2), Is.True);
-            Assert.That(comparatorType1.Equals(comparatorType3), Is.False);
-            Assert.That(comparatorType2.Equals(comparatorType3), Is.False);
-        }
     }
 }

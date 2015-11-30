@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -14,9 +15,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public TKey Key { get; set; }
         public IEnumerable<TColumn> Columns { get; set; }
 
-        public KeyColumnsPair<TNewKey, TColumn> ConvertKey<TNewKey>(Func<TKey, TNewKey> keyConverter)
+        public KeyColumnsPair<TNewKey, TNewColumn> Convert<TNewKey, TNewColumn>(Func<TKey, TNewKey> keyConverter, Func<TColumn, TNewColumn> columnConverter)
         {
-            return new KeyColumnsPair<TNewKey, TColumn>(keyConverter(Key), Columns);
+            return new KeyColumnsPair<TNewKey, TNewColumn>(keyConverter(Key), Columns.Select(columnConverter));
         }
     }
 

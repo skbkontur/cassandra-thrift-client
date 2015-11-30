@@ -13,9 +13,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public TKey Key { get; set; }
         public TColumn Column { get; set; }
 
-        public KeyColumnPair<TNewKey, TColumn> ConvertKey<TNewKey>(Func<TKey, TNewKey> keyConverter)
+        public KeyColumnPair<TNewKey, TNewColumn> Convert<TNewKey, TNewColumn>(Func<TKey, TNewKey> keyConverter, Func<TColumn, TNewColumn> columnConverter)
         {
-            return new KeyColumnPair<TNewKey, TColumn>(keyConverter(Key), Column);
+            return new KeyColumnPair<TNewKey, TNewColumn>(keyConverter(Key), columnConverter(Column));
         }
     }
 

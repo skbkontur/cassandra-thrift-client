@@ -12,7 +12,7 @@ using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetSliceCommand<T> : KeyspaceColumnFamilyDependantCommandBase where T : class, IColumn, new()
+    internal class GetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
         private readonly ConsistencyLevel consistencyLevel;
         private readonly SlicePredicate predicate;
@@ -26,7 +26,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.predicate = predicate;
         }
 
-        public List<T> Output { get; private set; }
+        public List<RawColumn> Output { get; private set; }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -38,7 +38,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         private void BuildOut(IEnumerable<ColumnOrSuperColumn> output)
         {
-            Output = output.Select(x => x.Column).Select(x => x.FromCassandraColumn<T>()).ToList();
+            Output = output.Select(x => x.Column).Select(x => x.FromCassandraColumn()).ToList();
         }
     }
 }

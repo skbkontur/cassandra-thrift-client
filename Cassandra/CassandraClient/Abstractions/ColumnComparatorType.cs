@@ -58,27 +58,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public bool IsComposite { get; private set; }
         public DataType[] Types { get; private set; }
 
-        protected bool Equals(ColumnComparatorType other)
-        {
-            return IsComposite.Equals(other.IsComposite) && Types.SequenceEqual(other.Types);
-        }
-
-        public override bool Equals(object obj)
-        {
-            if(ReferenceEquals(null, obj)) return false;
-            if(ReferenceEquals(this, obj)) return true;
-            if(obj.GetType() != this.GetType()) return false;
-            return Equals((ColumnComparatorType)obj);
-        }
-
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                return (IsComposite.GetHashCode() * 397) ^ (Types != null ? Types.Select(x => x.GetHashCode()).Aggregate((x, y) => x ^ y) : 0);
-            }
-        }
-
         public override string ToString()
         {
             return IsComposite ? string.Format("{0}({1})", DataType.CompositeType.ToStringValue(), string.Join(",", Types.Select(x => x.ToStringValue()))) : Types.First().ToStringValue();

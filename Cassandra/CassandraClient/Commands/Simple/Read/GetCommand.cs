@@ -7,7 +7,7 @@ using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetCommand<T> : KeyspaceColumnFamilyDependantCommandBase where T : class, IColumn, new()
+    internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase
     {
         private readonly byte[] columnName;
         private readonly ConsistencyLevel consistencyLevel;
@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.columnName = columnName;
         }
 
-        public T Output { get; private set; }
+        public RawColumn Output { get; private set; }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -36,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
                 //ничего не делаем
             }
 
-            Output = columnOrSupercolumn != null ? columnOrSupercolumn.Column.FromCassandraColumn<T>() : null;
+            Output = columnOrSupercolumn != null ? columnOrSupercolumn.Column.FromCassandraColumn() : null;
         }
     }
 }

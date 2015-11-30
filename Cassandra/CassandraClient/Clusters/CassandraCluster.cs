@@ -4,7 +4,6 @@ using System.Net;
 
 using log4net;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
@@ -36,24 +35,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
-            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation<Column>(keySpaceName,
-                                                                                                        columnFamilyName,
-                                                                                                        clusterSettings,
-                                                                                                        commandExecuter,
-                                                                                                        clusterSettings.ReadConsistencyLevel,
-                                                                                                        clusterSettings.WriteConsistencyLevel);
+            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName,
+                                                                                                columnFamilyName,
+                                                                                                clusterSettings,
+                                                                                                commandExecuter,
+                                                                                                clusterSettings.ReadConsistencyLevel,
+                                                                                                clusterSettings.WriteConsistencyLevel);
             var enumerableFactory = new EnumerableFactory();
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation, enumerableFactory);
-        }
-
-        public IColumnFamilyConnectionImplementation<TColumn> GetColumnFamilyConnectionImplementation<TColumn>(string keySpaceName, string columnFamilyName) where TColumn : class, IColumn, new()
-        {
-            return new ColumnFamilyConnectionImplementation<TColumn>(keySpaceName,
-                                                                     columnFamilyName,
-                                                                     clusterSettings,
-                                                                     commandExecuter,
-                                                                     clusterSettings.ReadConsistencyLevel,
-                                                                     clusterSettings.WriteConsistencyLevel);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
@@ -79,6 +68,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         public void Dispose()
         {
             commandExecuter.Dispose();
+        }
+
+        public IColumnFamilyConnectionImplementation GetColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
+        {
+            return new ColumnFamilyConnectionImplementation(keySpaceName,
+                                                            columnFamilyName,
+                                                            clusterSettings,
+                                                            commandExecuter,
+                                                            clusterSettings.ReadConsistencyLevel,
+                                                            clusterSettings.WriteConsistencyLevel);
         }
 
         private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)

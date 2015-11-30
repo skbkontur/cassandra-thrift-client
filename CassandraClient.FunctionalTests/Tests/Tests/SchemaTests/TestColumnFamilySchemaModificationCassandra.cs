@@ -7,6 +7,7 @@ using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
 {

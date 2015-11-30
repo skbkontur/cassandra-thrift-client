@@ -2,9 +2,9 @@ using Apache.Cassandra;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 {
-    internal class SetMutation<T> : IMutation where T : IColumn
+    internal class SetMutation : IMutation
     {
-        public T Column { get; set; }
+        public RawColumn Column { get; set; }
 
         public Mutation ToCassandraMutation()
         {
