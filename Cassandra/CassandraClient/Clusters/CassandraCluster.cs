@@ -41,8 +41,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                                                                                                 commandExecuter,
                                                                                                 clusterSettings.ReadConsistencyLevel,
                                                                                                 clusterSettings.WriteConsistencyLevel);
-            var enumerableFactory = new EnumerableFactory();
-            return new ColumnFamilyConnection(columnFamilyConnectionImplementation, enumerableFactory);
+            return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()

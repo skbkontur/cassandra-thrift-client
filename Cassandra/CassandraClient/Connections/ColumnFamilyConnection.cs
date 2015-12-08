@@ -9,10 +9,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     internal class ColumnFamilyConnection : IColumnFamilyConnection
     {
-        public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation, IEnumerableFactory enumerableFactory)
+        public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation)
         {
             this.implementation = implementation;
-            this.enumerableFactory = enumerableFactory;
+            enumerableFactory = new EnumerableFactory(implementation);
         }
 
         public bool IsRowExist(string key)
@@ -121,9 +121,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new Column[0];
-            var rawColumns = implementation.GetRow(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(exclusiveStartColumnName),
-                                                   count + 1, reversed);
-            return GetColumnsFromRawColumns(rawColumns, exclusiveStartColumnName, count);
+            return implementation.GetRow(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(exclusiveStartColumnName), count + 1, reversed)
+                                 .Select(ColumnExtensions.ToColumn)
+                                 .Where(x => x.Name != exclusiveStartColumnName)
+                                 .Take(count)
+                                 .ToArray();
         }
 
         public Column[] GetColumns(string key, string startColumnName, string endColumnName, int count, bool reversed = false)
@@ -145,28 +147,29 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
         {
-            return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetColumns);
+            return enumerableFactory.GetColumnsEnumerator(StringExtensions.StringToBytes(key), batchSize).Select(ColumnExtensions.ToColumn);
         }
 
         public IEnumerable<Column> GetRow(string key, string exclusiveStartColumnName, int batchSize = 1000)
         {
-            return enumerableFactory.GetColumnsEnumerator(key, batchSize, GetColumns, exclusiveStartColumnName);
+            return enumerableFactory.GetColumnsEnumerator(StringExtensions.StringToBytes(key), batchSize, StringExtensions.StringToBytes(exclusiveStartColumnName))
+                                    .Select(ColumnExtensions.ToColumn);
         }
 
         public string[] GetKeys(string exclusiveStartKey, int count)
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new string[0];
-            var result = implementation.GetKeys(StringExtensions.StringToBytes(exclusiveStartKey), count + 1).Select(StringExtensions.BytesToString).ToArray();
-            if(result.Length == 0) return result;
-            if(result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
-            if(result.Length > count) result = result.Take(count).ToArray();
-            return result;
+            return implementation.GetKeys(StringExtensions.StringToBytes(exclusiveStartKey), count + 1)
+                                 .Select(StringExtensions.BytesToString)
+                                 .Where(key => key != exclusiveStartKey)
+                                 .Take(count)
+                                 .ToArray();
         }
 
         public IEnumerable<string> GetKeys(int batchSize = 1000)
         {
-            return enumerableFactory.GetRowsEnumerator(batchSize, GetKeys);
+            return enumerableFactory.GetRowsEnumerator(batchSize).Select(StringExtensions.BytesToString);
         }
 
         public int GetCount(string key)
@@ -188,10 +191,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         [Obsolete("Это устаревший метод. Надо пользоваться методом GetRowsExclusive")]
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)
         {
-            return
-                implementation.GetRows(keys.Select(StringExtensions.StringToBytes), StringExtensions.StringToBytes(startColumnName), count)
-                              .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn).ToArray()))
-                              .ToList();
+            return implementation.GetRows(keys.Select(StringExtensions.StringToBytes), StringExtensions.StringToBytes(startColumnName), count)
+                                 .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn).ToArray()))
+                                 .ToList();
         }
 
         public List<KeyValuePair<string, Column[]>> GetRegion(IEnumerable<string> keys, string startColumnName, string finishColumnName, int limitPerRow)
@@ -204,10 +206,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public List<KeyValuePair<string, Column[]>> GetRowsExclusive(IEnumerable<string> keys, string exclusiveStartColumnName, int count)
         {
-            var rows = implementation.GetRows(keys.Select(StringExtensions.StringToBytes), StringExtensions.StringToBytes(exclusiveStartColumnName), count + 1);
-            return rows.Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key),
-                                                                         GetColumnsFromRawColumns(row.Value, exclusiveStartColumnName, count)))
-                       .ToList();
+            if(count == int.MaxValue) count--;
+            if(count <= 0) return keys.Select(row => new KeyValuePair<string, Column[]>(row, new Column[0])).ToList();
+
+            return implementation.GetRows(keys.Select(StringExtensions.StringToBytes), StringExtensions.StringToBytes(exclusiveStartColumnName), count + 1)
+                                 .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn)
+                                                                                                                               .Where(column => column.Name != exclusiveStartColumnName)
+                                                                                                                               .Take(count)
+                                                                                                                               .ToArray()))
+                                 .ToList();
         }
 
         public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string[] columnNames)
@@ -230,36 +237,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new string[0];
-            var result = implementation.GetRowsWhere(StringExtensions.StringToBytes(exclusiveStartKey), count + 1, conditions.Select(IndexExpressionExtensions.ToGeneralIndesExpression), columns.Select(StringExtensions.StringToBytes).ToList()).Select(StringExtensions.BytesToString).ToArray();
-            if(result.Length == 0) return result;
-            if(result[0] == exclusiveStartKey) result = result.Skip(1).ToArray();
-            if(result.Length > count) result = result.Take(count).ToArray();
-            return result;
-        }
 
-        private static Column[] GetColumnsFromRawColumns(IEnumerable<RawColumn> rawColumns, string exclusiveStartColumnName, int count)
-        {
-            if(rawColumns == null)
-                return new Column[0];
-
-            var result = new List<Column>();
-            var isFirst = true;
-            var currentCount = 0;
-            foreach(var rawColumm in rawColumns)
-            {
-                if(currentCount == count)
-                    break;
-
-                if(isFirst && StringExtensions.BytesToString(rawColumm.Name) == exclusiveStartColumnName)
-                {
-                    isFirst = false;
-                    continue;
-                }
-
-                result.Add(rawColumm.ToColumn());
-                currentCount++;
-            }
-            return result.ToArray();
+            return implementation.GetRowsWhere(StringExtensions.StringToBytes(exclusiveStartKey),
+                                               count + 1,
+                                               conditions.Select(IndexExpressionExtensions.ToGeneralIndesExpression),
+                                               columns.Select(StringExtensions.StringToBytes).ToList())
+                                 .Select(StringExtensions.BytesToString)
+                                 .Where(key => key != exclusiveStartKey)
+                                 .Take(count)
+                                 .ToArray();
         }
 
         private readonly IEnumerableFactory enumerableFactory;
