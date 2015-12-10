@@ -44,9 +44,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             return innerCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
         }
 
-        public IColumnFamilyConnectionImplementation GetColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
+        public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
         {
-            return innerCluster.GetColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
+            return innerCluster.RetrieveColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()

@@ -69,7 +69,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             commandExecuter.Dispose();
         }
 
-        public IColumnFamilyConnectionImplementation GetColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
+        public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
         {
             return new ColumnFamilyConnectionImplementation(keySpaceName,
                                                             columnFamilyName,

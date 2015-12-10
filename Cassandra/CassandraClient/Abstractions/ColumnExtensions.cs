@@ -24,12 +24,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             if(cassandraColumn == null)
                 return null;
-            var result = new RawColumn();
+            var result = new RawColumn
+                {
+                    Name = cassandraColumn.Name,
+                    Timestamp = cassandraColumn.Timestamp,
+                    Value = cassandraColumn.Value
+                };
             if(cassandraColumn.__isset.ttl)
                 result.TTL = cassandraColumn.Ttl;
-            result.Name = cassandraColumn.Name;
-            result.Timestamp = cassandraColumn.Timestamp;
-            result.Value = cassandraColumn.Value;
             return result;
         }
 
@@ -37,28 +39,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             if(column == null)
                 return null;
-            var result = new RawColumn
+            return new RawColumn
                 {
                     Name = StringExtensions.StringToBytes(column.Name),
                     Value = column.Value,
-                    Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks
+                    Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks,
+                    TTL = column.TTL
                 };
-            if(column.TTL.HasValue)
-                result.TTL = column.TTL.Value;
-            return result;
         }
 
         public static Column ToColumn(this RawColumn rawColumn)
         {
             if(rawColumn == null)
                 return null;
-            var result = new Column();
-            if(rawColumn.TTL.HasValue)
-                result.TTL = rawColumn.TTL;
-            result.Name = StringExtensions.BytesToString(rawColumn.Name);
-            result.Timestamp = rawColumn.Timestamp;
-            result.Value = rawColumn.Value;
-            return result;
+            return new Column
+                {
+                    Name = StringExtensions.BytesToString(rawColumn.Name),
+                    Timestamp = rawColumn.Timestamp,
+                    Value = rawColumn.Value,
+                    TTL = rawColumn.TTL
+                };
         }
     }
 }
