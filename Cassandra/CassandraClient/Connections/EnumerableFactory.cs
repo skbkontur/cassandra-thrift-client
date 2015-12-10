@@ -43,6 +43,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             public void Dispose()
             {
+                if (objectsEnumerator != null)
+                    objectsEnumerator.Dispose();
             }
 
             public bool MoveNext()
