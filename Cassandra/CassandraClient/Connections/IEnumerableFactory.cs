@@ -6,7 +6,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     public interface IEnumerableFactory
     {
-        IEnumerable<byte[]> GetRowsEnumerator(int batchSize, byte[] initialStartKey = null);
-        IEnumerable<RawColumn> GetColumnsEnumerator(byte[] key, int batchSize, byte[] initialStartKey = null);
+        IEnumerable<byte[]> GetRowsEnumerator(int batchSize, byte[] exclusiveInitialStartKey = null);
+        IEnumerable<RawColumn> GetColumnsEnumerator(byte[] key, int batchSize, byte[] exclusiveInitialStartKey = null);
     }
 }

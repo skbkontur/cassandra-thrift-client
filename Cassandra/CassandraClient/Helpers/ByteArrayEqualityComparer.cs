@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
             return obj.Aggregate(0, (current, b) => current + (current * 197 + b));
         }
 
-        public static ByteArrayEqualityComparer SimpleComparer { get { return simpleComparer ?? (simpleComparer = new ByteArrayEqualityComparer()); } }
+        public static ByteArrayEqualityComparer Instance { get { return simpleComparer ?? (simpleComparer = new ByteArrayEqualityComparer()); } }
 
         [ThreadStatic]
         private static ByteArrayEqualityComparer simpleComparer;

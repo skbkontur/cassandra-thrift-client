@@ -14,20 +14,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.implementation = implementation;
         }
 
-        public IEnumerable<byte[]> GetRowsEnumerator(int batchSize, byte[] initialStartKey = null)
+        public IEnumerable<byte[]> GetRowsEnumerator(int batchSize, byte[] exclusiveInitialStartKey = null)
         {
             return new ObjectsEnumerable<byte[]>(
-                exclusiveStartKey => implementation.GetKeys(exclusiveStartKey, batchSize),
+                startKey => implementation.GetKeys(startKey, batchSize),
                 x => x,
-                initialStartKey);
+                exclusiveInitialStartKey);
         }
 
-        public IEnumerable<RawColumn> GetColumnsEnumerator(byte[] key, int batchSize, byte[] initialStartKey = null)
+        public IEnumerable<RawColumn> GetColumnsEnumerator(byte[] key, int batchSize, byte[] exclusiveInitialStartKey = null)
         {
             return new ObjectsEnumerable<RawColumn>(
                 startColumnName => implementation.GetRow(key, startColumnName, batchSize, false),
                 col => col.Name,
-                initialStartKey);
+                exclusiveInitialStartKey);
         }
 
         private class ObjectsEnumerator<T> : IEnumerator<T>
@@ -54,7 +54,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     objectsEnumerator = getObjs(exclusiveStartKey).GetEnumerator();
                     if(!objectsEnumerator.MoveNext())
                         return false;
-                    if(ByteArrayEqualityComparer.SimpleComparer.Equals(getKey(objectsEnumerator.Current), exclusiveStartKey) && !objectsEnumerator.MoveNext())
+                    if(ByteArrayEqualityComparer.Instance.Equals(getKey(objectsEnumerator.Current), exclusiveStartKey) && !objectsEnumerator.MoveNext())
                         return false;
                 }
 

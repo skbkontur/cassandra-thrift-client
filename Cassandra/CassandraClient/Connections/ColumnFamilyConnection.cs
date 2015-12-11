@@ -102,7 +102,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data)
         {
-            var keyToColumns = new Dictionary<byte[], List<RawColumn>>(new ByteArrayEqualityComparer());
+            var keyToColumns = new Dictionary<byte[], List<RawColumn>>(ByteArrayEqualityComparer.Instance);
             foreach(var item in data)
             {
                 List<RawColumn> rawColumns;
@@ -152,13 +152,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
         {
-            return enumerableFactory.GetColumnsEnumerator(StringExtensions.StringToBytes(key), batchSize).Select(ColumnExtensions.ToColumn);
+            var rawKey = StringExtensions.StringToBytes(key);
+            return enumerableFactory.GetColumnsEnumerator(rawKey, batchSize).Select(ColumnExtensions.ToColumn);
         }
 
         public IEnumerable<Column> GetRow(string key, string exclusiveStartColumnName, int batchSize = 1000)
         {
-            return enumerableFactory.GetColumnsEnumerator(StringExtensions.StringToBytes(key), batchSize, StringExtensions.StringToBytes(exclusiveStartColumnName))
-                                    .Select(ColumnExtensions.ToColumn);
+            var rawKey = StringExtensions.StringToBytes(key);
+            var rawExclusiveStartColumnName = StringExtensions.StringToBytes(exclusiveStartColumnName);
+            return enumerableFactory.GetColumnsEnumerator(rawKey, batchSize, rawExclusiveStartColumnName).Select(ColumnExtensions.ToColumn);
         }
 
         public string[] GetKeys(string exclusiveStartKey, int count)

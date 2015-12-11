@@ -36,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public bool IsRowExist(byte[] key)
         {
             var keys = GetKeys(key, 1);
-            return keys.Count == 1 && ByteArrayEqualityComparer.SimpleComparer.Equals(keys[0], key);
+            return keys.Count == 1 && ByteArrayEqualityComparer.Instance.Equals(keys[0], key);
         }
 
         public int GetCount(byte[] key)
