@@ -9,10 +9,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
     internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        private readonly byte[] columnName;
-        private readonly ConsistencyLevel consistencyLevel;
-        private readonly byte[] rowKey;
-
         public GetCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, byte[] columnName)
             : base(keyspace, columnFamily)
         {
@@ -20,8 +16,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.consistencyLevel = consistencyLevel;
             this.columnName = columnName;
         }
-
-        public RawColumn Output { get; private set; }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -38,5 +32,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
             Output = columnOrSupercolumn != null ? columnOrSupercolumn.Column.FromCassandraColumn() : null;
         }
+
+        public RawColumn Output { get; private set; }
+
+        private readonly byte[] rowKey;
+        private readonly ConsistencyLevel consistencyLevel;
+        private readonly byte[] columnName;
     }
 }

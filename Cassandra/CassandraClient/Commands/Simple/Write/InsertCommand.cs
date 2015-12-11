@@ -7,10 +7,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
     internal class InsertCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        private readonly RawColumn column;
-        private readonly ConsistencyLevel consistencyLevel;
-        private readonly byte[] rowKey;
-
         public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, RawColumn column)
             : base(keyspace, columnFamily)
         {
@@ -23,5 +19,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
         {
             cassandraClient.insert(rowKey, BuildColumnParent(), column.ToCassandraColumn(), consistencyLevel);
         }
+
+        private readonly byte[] rowKey;
+        private readonly ConsistencyLevel consistencyLevel;
+        private readonly RawColumn column;
     }
 }

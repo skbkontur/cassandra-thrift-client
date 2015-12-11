@@ -14,10 +14,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
     internal class MultiGetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        private readonly ConsistencyLevel consistencyLevel;
-        private readonly List<byte[]> keys;
-        private readonly SlicePredicate predicate;
-
         public MultiGetSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, List<byte[]> keys, SlicePredicate predicate)
             : base(keyspace, columnFamily)
         {
@@ -26,13 +22,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.predicate = predicate;
         }
 
-        public Dictionary<byte[], List<RawColumn>> Output { get; private set; }
-
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             var output = cassandraClient.multiget_slice(keys, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
             BuildOut(output);
         }
+
+        public Dictionary<byte[], List<RawColumn>> Output { get; private set; }
 
         private void BuildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {
@@ -44,5 +40,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
                 Output.Add(outputKeyValuePair.Key, columnOrSuperColumnList);
             }
         }
+
+        private readonly ConsistencyLevel consistencyLevel;
+        private readonly List<byte[]> keys;
+        private readonly SlicePredicate predicate;
     }
 }

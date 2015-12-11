@@ -4,8 +4,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 {
     internal class SetMutation : IMutation
     {
-        public RawColumn Column { get; set; }
-
         public Mutation ToCassandraMutation()
         {
             return new Mutation
@@ -16,5 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
                         }
                 };
         }
+
+        public RawColumn Column { get; set; }
     }
 }
