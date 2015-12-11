@@ -240,7 +240,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             return implementation.GetRowsWhere(StringExtensions.StringToBytes(exclusiveStartKey),
                                                count + 1,
-                                               conditions.Select(IndexExpressionExtensions.ToGeneralIndesExpression),
+                                               conditions.Select(IndexExpressionExtensions.ToRawIndesExpression),
                                                columns.Select(StringExtensions.StringToBytes).ToList())
                                  .Select(StringExtensions.BytesToString)
                                  .Where(key => key != exclusiveStartKey)

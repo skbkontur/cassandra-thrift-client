@@ -204,13 +204,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(truncateCommand);
         }
 
-        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, IEnumerable<GeneralIndexExpression> conditions, List<byte[]> columns)
+        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, IEnumerable<RawIndexExpression> conditions, List<byte[]> columns)
         {
             var predicate = new SlicePredicate(columns);
             var indexClause = new IndexClause
                 {
                     Count = maximalCount,
-                    Expressions = (conditions ?? new GeneralIndexExpression[0]).ToList(),
+                    Expressions = (conditions ?? new RawIndexExpression[0]).ToList(),
                     StartKey = startKey ?? new byte[0]
                 };
             var gisc = new GetIndexedSlicesCommand(keyspaceName, columnFamilyName, readConsistencyLevel, predicate, indexClause);
@@ -259,7 +259,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             foreach(var column in columns)
             {
                 if(!allowNullTimestamp && !column.Timestamp.HasValue)
-                    throw new ArgumentException(string.Format("Timestamp should be filled."));
+                    throw new ArgumentException("Timestamp should be filled.");
                 result.Add(new SetMutation
                     {
                         Column = column

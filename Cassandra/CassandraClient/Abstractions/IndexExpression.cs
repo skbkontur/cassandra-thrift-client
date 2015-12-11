@@ -2,7 +2,7 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
-    public class GeneralIndexExpression
+    public class RawIndexExpression
     {
         public byte[] ColumnName { get; set; }
         public IndexOperator IndexOperator { get; set; }
@@ -18,9 +18,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
     internal static class IndexExpressionExtensions
     {
-        public static GeneralIndexExpression ToGeneralIndesExpression(this IndexExpression indexExpression)
+        public static RawIndexExpression ToRawIndesExpression(this IndexExpression indexExpression)
         {
-            return new GeneralIndexExpression
+            return new RawIndexExpression
                 {
                     ColumnName = StringExtensions.StringToBytes(indexExpression.ColumnName),
                     IndexOperator = indexExpression.IndexOperator,
@@ -28,13 +28,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 };
         }
 
-        public static Apache.Cassandra.IndexExpression ToCassandraIndexExpression(this GeneralIndexExpression generalIndexExpression)
+        public static Apache.Cassandra.IndexExpression ToCassandraIndexExpression(this RawIndexExpression rawIndexExpression)
         {
             return new Apache.Cassandra.IndexExpression
                 {
-                    Column_name = generalIndexExpression.ColumnName,
-                    Value = generalIndexExpression.Value,
-                    Op = generalIndexExpression.IndexOperator.ToCassandraIndexOperator()
+                    Column_name = rawIndexExpression.ColumnName,
+                    Value = rawIndexExpression.Value,
+                    Op = rawIndexExpression.IndexOperator.ToCassandraIndexOperator()
                 };
         }
     }

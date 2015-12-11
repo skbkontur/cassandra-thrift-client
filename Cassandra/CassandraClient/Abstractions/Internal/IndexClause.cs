@@ -5,7 +5,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 {
     internal class IndexClause
     {
-        public List<GeneralIndexExpression> Expressions { get; set; }
+        public List<RawIndexExpression> Expressions { get; set; }
         public byte[] StartKey { get; set; }
         public int? Count { get; set; }
     }
@@ -17,7 +17,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
             if(indexClause == null)
                 return null;
             var result = new Apache.Cassandra.IndexClause();
-            var expressions = indexClause.Expressions ?? new List<GeneralIndexExpression>();
+            var expressions = indexClause.Expressions ?? new List<RawIndexExpression>();
             result.Expressions = expressions.Select(expression => expression.ToCassandraIndexExpression()).ToList();
             if(indexClause.Count.HasValue)
                 result.Count = indexClause.Count.Value;
