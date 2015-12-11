@@ -35,13 +35,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
-            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName,
-                                                                                                columnFamilyName,
-                                                                                                clusterSettings,
-                                                                                                commandExecuter,
-                                                                                                clusterSettings.ReadConsistencyLevel,
-                                                                                                clusterSettings.WriteConsistencyLevel);
+            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, clusterSettings, commandExecuter);
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
+        }
+
+        public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
+        {
+            return new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, clusterSettings, commandExecuter);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
@@ -67,16 +67,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         public void Dispose()
         {
             commandExecuter.Dispose();
-        }
-
-        public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
-        {
-            return new ColumnFamilyConnectionImplementation(keySpaceName,
-                                                            columnFamilyName,
-                                                            clusterSettings,
-                                                            commandExecuter,
-                                                            clusterSettings.ReadConsistencyLevel,
-                                                            clusterSettings.WriteConsistencyLevel);
         }
 
         private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
