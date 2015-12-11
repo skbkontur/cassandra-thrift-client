@@ -43,8 +43,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 {
                     Name = StringExtensions.StringToBytes(column.Name),
                     Value = column.Value,
-                    Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks,
-                    TTL = column.TTL
+                    Timestamp = column.Timestamp,
+                    TTL = column.TTL,
                 };
         }
 
@@ -57,7 +57,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Name = StringExtensions.BytesToString(rawColumn.Name),
                     Timestamp = rawColumn.Timestamp,
                     Value = rawColumn.Value,
-                    TTL = rawColumn.TTL
+                    TTL = rawColumn.TTL,
                 };
         }
     }
