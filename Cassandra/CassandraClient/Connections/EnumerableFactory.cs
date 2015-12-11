@@ -1,95 +1,93 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
-    public class EnumerableFactory : IEnumerableFactory
+    internal class EnumerableFactory : IEnumerableFactory
     {
-        public EnumerableFactory(IColumnFamilyConnectionImplementation implementation)
+        public EnumerableFactory(IColumnFamilyConnection cfConnection)
         {
-            this.implementation = implementation;
+            this.cfConnection = cfConnection;
         }
 
-        public IEnumerable<byte[]> GetRowsEnumerator(int batchSize, byte[] exclusiveInitialStartKey = null)
+        public IEnumerable<string> GetRowKeysEnumerator(int batchSize)
         {
-            return new ObjectsEnumerable<byte[]>(
-                startKey => implementation.GetKeys(startKey, batchSize),
+            return new ObjectsEnumerable<string>(
+                exclusiveStartKey => cfConnection.GetKeys(exclusiveStartKey, count: batchSize),
                 x => x,
-                exclusiveInitialStartKey);
+                initialExclusiveStartKey: null);
         }
 
-        public IEnumerable<RawColumn> GetColumnsEnumerator(byte[] key, int batchSize, byte[] exclusiveInitialStartKey = null)
+        public IEnumerable<Column> GetColumnsEnumerator(string key, int batchSize, string initialExclusiveStartColumnName)
         {
-            return new ObjectsEnumerable<RawColumn>(
-                startColumnName => implementation.GetRow(key, startColumnName, batchSize, false),
+            return new ObjectsEnumerable<Column>(
+                exclusiveStartColumnName => cfConnection.GetColumns(key, exclusiveStartColumnName, count: batchSize, reversed: false),
                 col => col.Name,
-                exclusiveInitialStartKey);
+                initialExclusiveStartColumnName);
         }
+
+        private readonly IColumnFamilyConnection cfConnection;
 
         private class ObjectsEnumerator<T> : IEnumerator<T>
         {
-            public ObjectsEnumerator(Func<byte[], IEnumerable<T>> getObjs, Func<T, byte[]> getKey, byte[] initialStartKey)
+            public ObjectsEnumerator(Func<string, T[]> getObjs, Func<T, string> getKey, string initialExclusiveStartKey)
             {
                 this.getObjs = getObjs;
                 this.getKey = getKey;
-                this.initialStartKey = initialStartKey;
-                exclusiveStartKey = initialStartKey;
-                Reset();
+                this.initialExclusiveStartKey = initialExclusiveStartKey;
+                exclusiveStartKey = initialExclusiveStartKey;
             }
 
             public void Dispose()
             {
-                if (objectsEnumerator != null)
-                    objectsEnumerator.Dispose();
             }
 
             public bool MoveNext()
             {
-                if(objectsEnumerator == null || !objectsEnumerator.MoveNext())
+                if (++index >= bulk.Length)
                 {
-                    objectsEnumerator = getObjs(exclusiveStartKey).GetEnumerator();
-                    if(!objectsEnumerator.MoveNext())
-                        return false;
-                    if(ByteArrayEqualityComparer.Instance.Equals(getKey(objectsEnumerator.Current), exclusiveStartKey) && !objectsEnumerator.MoveNext())
-                        return false;
+                    index = 0;
+                    bulk = getObjs(exclusiveStartKey);
+                    if (bulk.Length == 0) return false;
+                    exclusiveStartKey = getKey(bulk.Last());
                 }
-
-                exclusiveStartKey = getKey(objectsEnumerator.Current);
                 return true;
             }
 
             public void Reset()
             {
-                exclusiveStartKey = initialStartKey;
-                objectsEnumerator = null;
+                exclusiveStartKey = initialExclusiveStartKey;
+                index = -1;
+                bulk = new T[0];
             }
 
-            public T Current { get { return objectsEnumerator.Current; } }
-            object IEnumerator.Current { get { return Current; } }
+            public T Current { get { return bulk[index]; } }
 
-            private IEnumerator<T> objectsEnumerator; 
-            private byte[] exclusiveStartKey;
-            private readonly Func<T, byte[]> getKey;
-            private readonly Func<byte[], IEnumerable<T>> getObjs;
-            private readonly byte[] initialStartKey;
+            object IEnumerator.Current { get { return Current; } }
+            private readonly Func<string, T[]> getObjs;
+            private readonly Func<T, string> getKey;
+            private readonly string initialExclusiveStartKey;
+            private string exclusiveStartKey;
+            private int index = -1;
+            private T[] bulk = new T[0];
         }
 
         private class ObjectsEnumerable<T> : IEnumerable<T>
         {
-            public ObjectsEnumerable(Func<byte[], IEnumerable<T>> getObjs, Func<T, byte[]> getKey, byte[] initialStartKey)
+            public ObjectsEnumerable(Func<string, T[]> getObjs, Func<T, string> getKey, string initialExclusiveStartKey)
             {
                 this.getObjs = getObjs;
                 this.getKey = getKey;
-                this.initialStartKey = initialStartKey;
+                this.initialExclusiveStartKey = initialExclusiveStartKey;
             }
 
             public IEnumerator<T> GetEnumerator()
             {
-                return new ObjectsEnumerator<T>(getObjs, getKey, initialStartKey);
+                return new ObjectsEnumerator<T>(getObjs, getKey, initialExclusiveStartKey);
             }
 
             IEnumerator IEnumerable.GetEnumerator()
@@ -97,11 +95,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 return GetEnumerator();
             }
 
-            private readonly Func<T, byte[]> getKey;
-            private readonly Func<byte[], IEnumerable<T>> getObjs;
-            private readonly byte[] initialStartKey;
+            private readonly Func<string, T[]> getObjs;
+            private readonly Func<T, string> getKey;
+            private readonly string initialExclusiveStartKey;
         }
-
-        private readonly IColumnFamilyConnectionImplementation implementation;
     }
 }

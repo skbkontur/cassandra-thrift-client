@@ -12,7 +12,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public ColumnFamilyConnection(IColumnFamilyConnectionImplementation implementation)
         {
             this.implementation = implementation;
-            enumerableFactory = new EnumerableFactory(implementation);
+            enumerableFactory = new EnumerableFactory(this);
         }
 
         public bool IsRowExist(string key)
@@ -117,12 +117,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             implementation.BatchInsert(keyToColumns.ToList());
         }
 
-        public Column[] GetColumns(string key, string exclusiveStartColumnName, int count)
-        {
-            return GetColumns(key, exclusiveStartColumnName, count, false);
-        }
-
-        public Column[] GetColumns(string key, string exclusiveStartColumnName, int count, bool reversed)
+        public Column[] GetColumns(string key, string exclusiveStartColumnName, int count, bool reversed = false)
         {
             if(count == int.MaxValue) count--;
             if(count <= 0) return new Column[0];
@@ -152,15 +147,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
         {
-            var rawKey = StringExtensions.StringToBytes(key);
-            return enumerableFactory.GetColumnsEnumerator(rawKey, batchSize).Select(ColumnExtensions.ToColumn);
+            return enumerableFactory.GetColumnsEnumerator(key, batchSize, initialExclusiveStartColumnName: null);
         }
 
         public IEnumerable<Column> GetRow(string key, string exclusiveStartColumnName, int batchSize = 1000)
         {
-            var rawKey = StringExtensions.StringToBytes(key);
-            var rawExclusiveStartColumnName = StringExtensions.StringToBytes(exclusiveStartColumnName);
-            return enumerableFactory.GetColumnsEnumerator(rawKey, batchSize, rawExclusiveStartColumnName).Select(ColumnExtensions.ToColumn);
+            return enumerableFactory.GetColumnsEnumerator(key, batchSize, exclusiveStartColumnName);
         }
 
         public string[] GetKeys(string exclusiveStartKey, int count)
@@ -176,7 +168,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public IEnumerable<string> GetKeys(int batchSize = 1000)
         {
-            return enumerableFactory.GetRowsEnumerator(batchSize).Select(StringExtensions.BytesToString);
+            return enumerableFactory.GetRowKeysEnumerator(batchSize);
         }
 
         public int GetCount(string key)
