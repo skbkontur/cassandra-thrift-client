@@ -1,9 +1,9 @@
 ﻿using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
-using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
-using ColumnExtensions = SKBKontur.Cassandra.CassandraClient.Abstractions.ColumnExtensions;
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
@@ -30,10 +30,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
                 //ничего не делаем
             }
 
-            Output = columnOrSupercolumn != null ? ColumnExtensions.FromCassandraColumn(columnOrSupercolumn.Column) : null;
+            Output = columnOrSupercolumn != null ? columnOrSupercolumn.Column.FromCassandraColumn() : null;
         }
 
-        public Column Output { get; private set; }
+        public RawColumn Output { get; private set; }
 
         private readonly byte[] rowKey;
         private readonly ConsistencyLevel consistencyLevel;

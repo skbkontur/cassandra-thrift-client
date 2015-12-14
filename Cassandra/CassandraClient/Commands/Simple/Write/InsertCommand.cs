@@ -1,14 +1,13 @@
 ﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
-using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
     internal class InsertCommand : KeyspaceColumnFamilyDependantCommandBase
     {
-        public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, Column column)
+        public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, RawColumn column)
             : base(keyspace, columnFamily)
         {
             this.rowKey = rowKey;
@@ -18,11 +17,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
-            cassandraClient.insert(rowKey, BuildColumnParent(), ColumnExtensions.ToCassandraColumn(column), consistencyLevel);
+            cassandraClient.insert(rowKey, BuildColumnParent(), column.ToCassandraColumn(), consistencyLevel);
         }
 
         private readonly byte[] rowKey;
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly Column column;
+        private readonly RawColumn column;
     }
 }

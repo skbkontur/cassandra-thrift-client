@@ -20,6 +20,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             innerCluster = cassandraClusterFactory();
         }
 
+        public int UpdateColumnFamilyInvokeCount { get { return keyspaceConnectionSpies.Sum(x => x.UpdateColumnFamilyInvokeCount); } }
+
         public void Dispose()
         {
             innerCluster.Dispose();
@@ -42,6 +44,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             return innerCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
         }
 
+        public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
+        {
+            return innerCluster.RetrieveColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
+        }
+
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
         {
             return innerCluster.GetKnowledges();
@@ -52,10 +59,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             innerCluster.ActualizeKeyspaces(keyspaces, eventListener);
         }
 
-        public int UpdateColumnFamilyInvokeCount { get { return keyspaceConnectionSpies.Sum(x => x.UpdateColumnFamilyInvokeCount); } }
-
-        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
-
         private readonly ICassandraCluster innerCluster;
+        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
     }
 }

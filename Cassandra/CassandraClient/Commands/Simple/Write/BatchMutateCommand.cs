@@ -26,7 +26,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 
         private Dictionary<byte[], Dictionary<string, List<Mutation>>> TranslateMutations()
         {
-            var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(ByteArrayEqualityComparer.SimpleComparer);
+            var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(ByteArrayEqualityComparer.Instance);
             foreach(var mutationsPerColumnFamily in mutations)
             {
                 foreach(var mutationsPerRow in mutationsPerColumnFamily.Value)

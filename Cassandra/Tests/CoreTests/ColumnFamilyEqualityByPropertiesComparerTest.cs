@@ -11,6 +11,8 @@ namespace Cassandra.Tests.CoreTests
     [TestFixture]
     public class ColumnFamilyEqualityByPropertiesComparerTest
     {
+        private ColumnFamilyEqualityByPropertiesComparer comparer;
+
         [SetUp]
         public void SetUp()
         {
@@ -252,19 +254,24 @@ namespace Cassandra.Tests.CoreTests
         public void TestCompareByBloomFilterFpChanceProperty()
         {
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = 0.1 }, new ColumnFamily { Name = "123", BloomFilterFpChance = 0.1 })
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", BloomFilterFpChance = 0.1}, new ColumnFamily {Name = "123", BloomFilterFpChance = 0.1})
                 );
             Assert.That(
-                comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = 0.1 }, new ColumnFamily { Name = "123", BloomFilterFpChance = 0.2 })
+                comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", BloomFilterFpChance = 0.1}, new ColumnFamily {Name = "123", BloomFilterFpChance = 0.2})
                 );
             Assert.That(
-                !comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = null }, new ColumnFamily { Name = "123", BloomFilterFpChance = 0.2 })
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", BloomFilterFpChance = null}, new ColumnFamily {Name = "123", BloomFilterFpChance = 0.2})
                 );
             Assert.That(
-                comparer.NeedUpdateColumnFamily(new ColumnFamily { Name = "123", BloomFilterFpChance = 0.2 }, new ColumnFamily { Name = "123", BloomFilterFpChance = null })
+                comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", BloomFilterFpChance = 0.2}, new ColumnFamily {Name = "123", BloomFilterFpChance = null})
                 );
         }
 
-        private ColumnFamilyEqualityByPropertiesComparer comparer;
+        [Test]
+        [ExpectedException(typeof(InvalidOperationException))]
+        public void TestTryCompareColumnFamiliesWithDifferentComparatorTypes()
+        {
+            comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", ComparatorType = new ColumnComparatorType(DataType.Int32Type)}, new ColumnFamily {Name = "123", ComparatorType = new ColumnComparatorType(DataType.BytesType)});
+        }
     }
 }

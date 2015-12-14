@@ -15,6 +15,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
                 };
         }
 
-        public Column Column { get; set; }
+        public RawColumn Column { get; set; }
     }
 }

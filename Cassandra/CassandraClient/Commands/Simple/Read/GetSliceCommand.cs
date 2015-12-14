@@ -7,7 +7,6 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
-using Column = SKBKontur.Cassandra.CassandraClient.Abstractions.Column;
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
@@ -31,11 +30,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             BuildOut(output);
         }
 
-        public List<Column> Output { get; private set; }
+        public List<RawColumn> Output { get; private set; }
 
         private void BuildOut(IEnumerable<ColumnOrSuperColumn> output)
         {
-            Output = output.Select(x => x.Column).Select(ColumnExtensions.FromCassandraColumn).ToList();
+            Output = output.Select(x => x.Column).Select(x => x.FromCassandraColumn()).ToList();
         }
 
         private readonly byte[] rowKey;
