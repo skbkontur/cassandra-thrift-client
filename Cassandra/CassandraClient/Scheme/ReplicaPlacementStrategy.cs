@@ -4,6 +4,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
 {
     public enum ReplicaPlacementStrategy
     {
+        [StringValue("org.apache.cassandra.locator.LocalStrategy")]
+        Local,
+
         [StringValue("org.apache.cassandra.locator.SimpleStrategy")]
         Simple,
 

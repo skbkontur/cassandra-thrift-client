@@ -44,8 +44,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                                                     Indexes = indexes
                                                 }
                                         },
-                                    ReplicationFactor = 1,
-                                    ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple
+                                    ReplicationStrategy = SimpleReplicationStrategy.Create(1)
                                 }
                         }
                 });

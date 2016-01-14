@@ -66,8 +66,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 var keyspace = new Keyspace
                     {
                         Name = keyspaceScheme.Name,
-                        ReplicaPlacementStrategy = keyspaceScheme.Configuration.ReplicaPlacementStrategy.ToStringValue(),
-                        ReplicationFactor = keyspaceScheme.Configuration.ReplicationFactor
+                        ReplicationStrategy = keyspaceScheme.Configuration.ReplicationStrategy,
                     };
                 if(keyspaces.ContainsKey(keyspaceScheme.Name))
                 {

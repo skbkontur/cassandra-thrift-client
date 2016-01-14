@@ -21,8 +21,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                             Name = KeyspaceName,
                             Configuration = new KeyspaceConfiguration
                                 {
-                                    ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
-                                    ReplicationFactor = 1,
+                                    ReplicationStrategy = SimpleReplicationStrategy.Create(1),
                                     ColumnFamilies = new[]
                                         {
                                             new ColumnFamily
