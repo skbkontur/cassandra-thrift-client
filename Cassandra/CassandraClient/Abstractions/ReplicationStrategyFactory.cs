@@ -17,9 +17,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 throw new InvalidOperationException("Strategy options can't be null");
             }
 
-            if (strategyName == ReplicaPlacementStrategy.Local.ToStringValue())
-                return LocalReplicationStrategy.Create();
-
             if (strategyName == ReplicaPlacementStrategy.Simple.ToStringValue())
             {
                 if (!strategyOptions.ContainsKey(SimpleReplicationStrategy.ReplicationFactorKey))

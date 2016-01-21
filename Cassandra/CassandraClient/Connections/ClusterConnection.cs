@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Text;
 
 using log4net;
@@ -28,9 +27,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             commandExecuter.Execute(retrieveKeyspacesCommand);
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
-            return retrieveKeyspacesCommand.Keyspaces
-                                           .Where(keyspace => !IsSystemKeyspace(keyspace.Name))
-                                           .ToList();
+            return retrieveKeyspacesCommand.Keyspaces;
         }
 
         public void UpdateKeyspace(Keyspace keyspace)
@@ -79,13 +76,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", kvp.Key, string.Join(",", kvp.Value)));
             logger.Info(stringBuilder.ToString());
         }
-
-        private bool IsSystemKeyspace(string keyspaceName)
-        {
-            return systemKeyspaceNames.Any(s => s.Equals(keyspaceName, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private readonly string[] systemKeyspaceNames = new[] {"system", "system_auth", "system_traces"};
 
         private readonly ICommandExecuter commandExecuter;
 

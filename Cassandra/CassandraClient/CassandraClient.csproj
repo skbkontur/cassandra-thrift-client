@@ -63,7 +63,6 @@
     <Compile Include="Abstractions\IReplicationStrategyFactory.cs" />
     <Compile Include="Abstractions\ISchemeUpdateCommand.cs" />
     <Compile Include="Abstractions\KeyColumnsPair.cs" />
-    <Compile Include="Abstractions\LocalReplicationStrategy.cs" />
     <Compile Include="Abstractions\NetworkTopologyReplicationStrategy.cs" />
     <Compile Include="Abstractions\RawColumn.cs" />
     <Compile Include="Abstractions\ReplicationStrategyFactory.cs" />
