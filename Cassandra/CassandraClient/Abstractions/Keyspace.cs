@@ -14,7 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
     internal static class KeyspaceExtensions
     {
-        private static readonly IReplicationStrategyFactory replicationStrategyFactory = new ReplicationStrategyFactory();
+        private static readonly IReplicationStrategyFactory replicationStrategyFactory = ReplicationStrategyFactory.FactoryInstance;
 
         public static KsDef ToCassandraKsDef(this Keyspace keyspace)
         {

@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
         }
 
-        public string Name { get { return ReplicaPlacementStrategy.NetworkTopology.ToStringValue(); }}
+        public string Name { get { return ReplicaPlacementStrategy.NetworkTopology.ToStringValue(); } }
 
         public Dictionary<string, string> StrategyOptions
         {

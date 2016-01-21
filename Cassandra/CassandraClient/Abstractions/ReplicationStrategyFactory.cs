@@ -6,8 +6,10 @@ using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
-    public class ReplicationStrategyFactory : IReplicationStrategyFactory
+    internal class ReplicationStrategyFactory : IReplicationStrategyFactory
     {
+        public static readonly ReplicationStrategyFactory FactoryInstance = new ReplicationStrategyFactory();
+
         public IReplicationStrategy Create(string strategyName, Dictionary<string, string> strategyOptions)
         {
             if (strategyOptions == null)
@@ -15,10 +17,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 throw new InvalidOperationException("Strategy options can't be null");
             }
 
-            if(strategyName == ReplicaPlacementStrategy.Local.ToStringValue())
-            {
+            if (strategyName == ReplicaPlacementStrategy.Local.ToStringValue())
                 return LocalReplicationStrategy.Create();
-            }
 
             if (strategyName == ReplicaPlacementStrategy.Simple.ToStringValue())
             {
@@ -30,11 +30,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
             if (strategyName == ReplicaPlacementStrategy.NetworkTopology.ToStringValue())
             {
-                var dataCenterReplicationFactors = strategyOptions.Select(x => new DataCenterReplicationFactor {DataCenterName = x.Key, ReplicationFactor = int.Parse(x.Value)}).ToArray();
+                var dataCenterReplicationFactors = strategyOptions.Select(x => new DataCenterReplicationFactor(x.Key, int.Parse(x.Value))).ToArray();
                 return NetworkTopologyReplicationStrategy.Create(dataCenterReplicationFactors);
             }
 
-            throw new NotImplementedException(string.Format("Strategy {0} is not implemented", strategyName));
+            throw new InvalidOperationException(string.Format("Strategy {0} is not implemented", strategyName));
         }
     }
 }

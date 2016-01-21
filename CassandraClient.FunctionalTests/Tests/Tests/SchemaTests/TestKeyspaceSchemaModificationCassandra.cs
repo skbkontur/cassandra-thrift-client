@@ -90,8 +90,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                     Name = keyspaceName,
                     ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]
                         {
-                            new DataCenterReplicationFactor {DataCenterName = "dc1", ReplicationFactor = 3},
-                            new DataCenterReplicationFactor {DataCenterName = "dc2", ReplicationFactor = 5},
+                            new DataCenterReplicationFactor("dc1", 3),
+                            new DataCenterReplicationFactor("dc2", 5),
                         })
                 };
             clusterConnection.AddKeyspace(createdKeyspace);
@@ -112,15 +112,15 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                     Name = keyspaceName,
                     ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]
                         {
-                            new DataCenterReplicationFactor {DataCenterName = "dc1", ReplicationFactor = 3},
-                            new DataCenterReplicationFactor {DataCenterName = "dc2", ReplicationFactor = 5},
+                            new DataCenterReplicationFactor("dc1", 3),
+                            new DataCenterReplicationFactor("dc2", 5),
                         })
                 };
             clusterConnection.AddKeyspace(createdKeyspace);
 
             createdKeyspace.ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]
                 {
-                    new DataCenterReplicationFactor {DataCenterName = "dc3", ReplicationFactor = 7},
+                    new DataCenterReplicationFactor("dc3", 7),
                 });
             clusterConnection.UpdateKeyspace(createdKeyspace);
 

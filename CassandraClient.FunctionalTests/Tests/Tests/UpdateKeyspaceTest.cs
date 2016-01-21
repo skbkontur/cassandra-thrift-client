@@ -58,7 +58,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             cassandraCluster.RetrieveClusterConnection().UpdateKeyspace(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor { DataCenterName = "dc1", ReplicationFactor = 3}, })
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor("dc1", 3)})
                 });
 
             var keyspace = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Single(keyspace1 => keyspace1.Name == keyspaceName);
@@ -66,7 +66,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor { DataCenterName = "dc1", ReplicationFactor = 3}, }),
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor("dc1", 3), }),
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
                             {"1", new ColumnFamily {Name = "1"}},
