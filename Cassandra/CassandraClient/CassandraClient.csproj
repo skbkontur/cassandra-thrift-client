@@ -58,9 +58,15 @@
     <Compile Include="Abstractions\ColumnComparatorType.cs" />
     <Compile Include="Abstractions\CompressionAlgorithms.cs" />
     <Compile Include="Abstractions\CompressionOptions.cs" />
+    <Compile Include="Abstractions\DataCenterReplicationFactor.cs" />
+    <Compile Include="Abstractions\IReplicationStrategy.cs" />
+    <Compile Include="Abstractions\IReplicationStrategyFactory.cs" />
     <Compile Include="Abstractions\ISchemeUpdateCommand.cs" />
     <Compile Include="Abstractions\KeyColumnsPair.cs" />
+    <Compile Include="Abstractions\NetworkTopologyReplicationStrategy.cs" />
     <Compile Include="Abstractions\RawColumn.cs" />
+    <Compile Include="Abstractions\ReplicationStrategyFactory.cs" />
+    <Compile Include="Abstractions\SimpleReplicationStrategy.cs" />
     <Compile Include="Abstractions\StringValueAttribute.cs" />
     <Compile Include="Abstractions\ToStringValueEnumExtensions.cs" />
     <Compile Include="Abstractions\Column.cs" />

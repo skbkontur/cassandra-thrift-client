@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -22,8 +23,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Name = keyspaceName,
                     Configuration = new KeyspaceConfiguration
                         {
-                            ReplicationFactor = 1,
-                            ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
+                            ReplicationStrategy = SimpleReplicationStrategy.Create(1),
                             ColumnFamilies = new[]
                                 {
                                     new ColumnFamily
@@ -46,8 +46,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                    ReplicationFactor = 1,
+                    ReplicationStrategy = SimpleReplicationStrategy.Create(1),
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
                             {"1", new ColumnFamily {Name = "1"}},
@@ -59,19 +58,15 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             cassandraCluster.RetrieveClusterConnection().UpdateKeyspace(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.NetworkTopologyStrategy",
-                    ReplicationFactor = 3
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor("dc1", 3)})
                 });
 
             var keyspace = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Single(keyspace1 => keyspace1.Name == keyspaceName);
 
-            //The replication factor is zero, because for NetworkTopologyStrategy this setting does not work and should be adjusted 
-            //per datacenter
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.NetworkTopologyStrategy",
-                    ReplicationFactor = 0,
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor("dc1", 3), }),
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
                             {"1", new ColumnFamily {Name = "1"}},
@@ -84,8 +79,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         private static void AssertKeyspacesEquals(Keyspace expected, Keyspace actual)
         {
             Assert.AreEqual(expected.Name, actual.Name);
-            Assert.AreEqual(expected.ReplicaPlacementStrategy, actual.ReplicaPlacementStrategy);
-            Assert.AreEqual(expected.ReplicationFactor, actual.ReplicationFactor);
+            Assert.AreEqual(expected.ReplicationStrategy.Name, actual.ReplicationStrategy.Name);
+            Assert.AreEqual(expected.ReplicationStrategy.StrategyOptions, actual.ReplicationStrategy.StrategyOptions);
 
             if(expected.ColumnFamilies == null)
                 Assert.IsNull(actual.ColumnFamilies);
@@ -106,8 +101,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Name = keyspaceName,
                     Configuration = new KeyspaceConfiguration
                         {
-                            ReplicationFactor = 1,
-                            ReplicaPlacementStrategy = ReplicaPlacementStrategy.Simple,
+                            ReplicationStrategy = SimpleReplicationStrategy.Create(1),
                             ColumnFamilies = new[]{new ColumnFamily{Name = columnFamilyName}}
                         }
                 };

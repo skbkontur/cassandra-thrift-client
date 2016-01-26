@@ -25,8 +25,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var createdKeyspace = new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicaPlacementStrategy = "org.apache.cassandra.locator.SimpleStrategy",
-                    ReplicationFactor = 1
+                    ReplicationStrategy = SimpleReplicationStrategy.Create(1)
                 };
             clusterConnection.AddKeyspace(createdKeyspace);
 
