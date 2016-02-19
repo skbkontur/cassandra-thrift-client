@@ -14,7 +14,7 @@ namespace Cassandra.Tests.HelpersTests
         public void TestConvert()
         {
             Assert.AreEqual(Enum.GetNames(typeof(ConsistencyLevel)).Length, 6);
-            Assert.AreEqual(Enum.GetNames(typeof(ApacheConsistencyLevel)).Length, 8);
+            Assert.AreEqual(Enum.GetNames(typeof(ApacheConsistencyLevel)).Length, 11);
             DoTest(ConsistencyLevel.ALL, ApacheConsistencyLevel.ALL);
             DoTest(ConsistencyLevel.ANY, ApacheConsistencyLevel.ANY);
             DoTest(ConsistencyLevel.EACH_QUORUM, ApacheConsistencyLevel.EACH_QUORUM);
