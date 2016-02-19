@@ -266,6 +266,23 @@ namespace Cassandra.Tests.CoreTests
                 comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", BloomFilterFpChance = 0.2}, new ColumnFamily {Name = "123", BloomFilterFpChance = null})
                 );
         }
+        
+        [Test]
+        public void TestCompareByDefaultTtlProperty()
+        {
+            Assert.That(
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", DefaultTtl = 1}, new ColumnFamily {Name = "123", DefaultTtl = 1})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", DefaultTtl = 1}, new ColumnFamily {Name = "123", DefaultTtl = 2})
+                );
+            Assert.That(
+                !comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", DefaultTtl = null}, new ColumnFamily {Name = "123", DefaultTtl = 2})
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", DefaultTtl = 2}, new ColumnFamily {Name = "123", DefaultTtl = null})
+                );
+        }
 
         [Test]
         [ExpectedException(typeof(InvalidOperationException))]
