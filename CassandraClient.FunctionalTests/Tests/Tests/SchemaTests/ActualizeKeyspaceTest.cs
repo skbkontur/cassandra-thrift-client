@@ -164,7 +164,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             actualize.ActualizeKeyspaces(new[] {scheme});
 
             actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
-            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Snappy));
+            Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.LZ4));
         }
         
         [Test]
