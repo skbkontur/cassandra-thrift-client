@@ -23,6 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public ColumnFamilyCompression Compression { get; set; }
         public double? BloomFilterFpChance { get; set; }
         public ColumnComparatorType ComparatorType { get; set; }
+        public int? DefaultTtl { get; set; }
         internal int Id { get; set; }
 
         private void SetDefaults()
@@ -70,6 +71,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             if(columnFamily.BloomFilterFpChance.HasValue)
                 result.Bloom_filter_fp_chance = columnFamily.BloomFilterFpChance.Value;
 
+            if(columnFamily.DefaultTtl.HasValue)
+                result.Default_time_to_live = columnFamily.DefaultTtl.Value;
+
             return result;
         }
 
@@ -105,6 +109,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
             if(cfDef.__isset.bloom_filter_fp_chance)
                 result.BloomFilterFpChance = cfDef.Bloom_filter_fp_chance;
+
+            if(cfDef.__isset.default_time_to_live)
+                result.DefaultTtl = cfDef.Default_time_to_live;
 
             return result;
         }

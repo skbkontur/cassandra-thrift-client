@@ -21,6 +21,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestBase : TestBase
     {
+        protected ICassandraCluster cassandraCluster;
+        protected IColumnFamilyConnection columnFamilyConnection;
+        private static bool keyspacesDeleted;
+        protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
+        protected string KeyspaceName { get; private set; }
+
         public override void SetUp()
         {
             base.SetUp();
@@ -29,6 +35,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             var container = new Container(new ContainerConfiguration(assemblies));
             cassandraCluster = container.Get<ICassandraCluster>();
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
+            columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
             ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
             ClearKeyspacesOnce();
             cassandraCluster.ActualizeKeyspaces(new[]
@@ -44,17 +51,17 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                                             new ColumnFamily
                                                 {
                                                     Name = Constants.ColumnFamilyName
+                                                },
+                                            new ColumnFamily
+                                                {
+                                                    Name = Constants.DefaultTtlColumnFamilyName,
+                                                    DefaultTtl = 1
                                                 }
                                         }
                                 }
                         }
                 });
         }
-
-        protected string KeyspaceName { get; private set; }
-
-        protected ICassandraCluster cassandraCluster;
-        protected IColumnFamilyConnection columnFamilyConnection;
 
         private void ClearKeyspacesOnce()
         {
@@ -69,12 +76,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected static Column ToColumn(string columnName, string columnValue, long? timestamp = null, int? ttl = null)
         {
             return new Column
-            {
-                Name = columnName,
-                Value = ToBytes(columnValue),
-                Timestamp = timestamp,
-                TTL = ttl
-            };
+                {
+                    Name = columnName,
+                    Value = ToBytes(columnValue),
+                    Timestamp = timestamp,
+                    TTL = ttl
+                };
         }
 
         protected static byte[] ToBytes(string str)
@@ -87,29 +94,29 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             return Encoding.UTF8.GetString(bytes);
         }
 
-        protected void Check(string key, string columnName, string columnValue, long? timestamp = null, int? ttl = null)
+        protected void Check(string key, string columnName, string columnValue, long? timestamp = null, int? ttl = null, IColumnFamilyConnection cfc = null)
         {
+            var connection = cfc ?? columnFamilyConnection;
             Column tryGetResult;
-            Assert.IsTrue(columnFamilyConnection.TryGetColumn(key, columnName, out tryGetResult));
-            Column result = columnFamilyConnection.GetColumn(key, columnName);
+            Assert.IsTrue(connection.TryGetColumn(key, columnName, out tryGetResult));
+            Column result = connection.GetColumn(key, columnName);
             tryGetResult.AssertEqualsTo(result);
             Assert.AreEqual(columnName, result.Name);
             Assert.AreEqual(columnValue, ToString(result.Value));
-            if (timestamp == null)
+            if(timestamp == null)
                 Assert.IsNotNull(result.Timestamp);
             else
                 Assert.AreEqual(timestamp, result.Timestamp);
             Assert.AreEqual(ttl, result.TTL);
         }
 
-        protected void CheckNotFound(string key, string columnName)
+        protected void CheckNotFound(string key, string columnName, IColumnFamilyConnection cfc = null)
         {
+            var connection = cfc ?? columnFamilyConnection;
             RunMethodWithException<ColumnIsNotFoundException>(
-                () => columnFamilyConnection.GetColumn(key, columnName));
+                () => connection.GetColumn(key, columnName));
             Column column;
-            Assert.IsFalse(columnFamilyConnection.TryGetColumn(key, columnName, out column));
+            Assert.IsFalse(connection.TryGetColumn(key, columnName, out column));
         }
-
-        private static bool keyspacesDeleted;
     }
 }

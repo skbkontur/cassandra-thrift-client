@@ -22,7 +22,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                      (columnFamilyWithNewProperties.Indexes == null || CompareIndexes(columnFamilyWithNewProperties.Indexes, columnFamilyFromTarget.Indexes)) &&
                      (columnFamilyWithNewProperties.CompactionStrategy == null || CompareCompactionStrategy(columnFamilyWithNewProperties.CompactionStrategy, columnFamilyFromTarget.CompactionStrategy)) &&
                      (columnFamilyWithNewProperties.Compression == null || CompareCompression(columnFamilyWithNewProperties.Compression, columnFamilyFromTarget.Compression)) &&
-                     (columnFamilyWithNewProperties.BloomFilterFpChance == null || columnFamilyWithNewProperties.BloomFilterFpChance.Equals(columnFamilyFromTarget.BloomFilterFpChance))
+                     (columnFamilyWithNewProperties.BloomFilterFpChance == null || columnFamilyWithNewProperties.BloomFilterFpChance.Equals(columnFamilyFromTarget.BloomFilterFpChance)) &&
+                     (columnFamilyWithNewProperties.DefaultTtl == null || columnFamilyWithNewProperties.DefaultTtl.Equals(columnFamilyFromTarget.DefaultTtl))
                  );
         }
 

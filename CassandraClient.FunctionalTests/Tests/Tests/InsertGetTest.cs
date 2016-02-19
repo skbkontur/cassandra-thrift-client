@@ -125,6 +125,34 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Thread.Sleep(10000);
             CheckNotFound("row", "columnName");
         }
+        
+        [Test]
+        public void TestDefaultTimeToLive()
+        {
+            columnFamilyConnectionDefaultTtl.AddColumn("row", new Column
+                {
+                    Name = "columnName",
+                    Value = Encoding.UTF8.GetBytes("columnValue")
+                });
+            Thread.Sleep(10000);
+            CheckNotFound("row", "columnName", columnFamilyConnectionDefaultTtl);
+        }
+        
+        [Test]
+        public void TestTimeToLiveIsMoreImportantThanDefaultTimeToLive()
+        {
+            columnFamilyConnectionDefaultTtl.AddColumn("row", new Column
+                {
+                    Name = "columnName",
+                    Value = Encoding.UTF8.GetBytes("columnValue"),
+                    TTL = 30,
+                    Timestamp = 10
+                });
+            Thread.Sleep(10000);
+            Check("row", "columnName", "columnValue", ttl: 30, cfc: columnFamilyConnectionDefaultTtl);
+            Thread.Sleep(45000);
+            CheckNotFound("row", "columnName", columnFamilyConnectionDefaultTtl);
+        }
 
         [Test]
         public void TestTimeToLiveNotDependsOnTimestamp()

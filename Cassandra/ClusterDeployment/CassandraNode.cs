@@ -126,7 +126,6 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     {"RpcPort", RpcPort.ToString()},
                     {"CqlPort", CqlPort.ToString()},
                     {"DataBaseDirectory", DataBaseDirectory},
-                    {"DeployDirectory", DeployDirectory},
                     {"ListenAddress", ListenAddress},
                     {"RpsAddress", RpsAddress},
                     {"SeedAddresses", string.Join(",", SeedAddresses)},

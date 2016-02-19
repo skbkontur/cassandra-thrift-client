@@ -34,8 +34,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.1210">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.1210.dll</HintPath>
+    <Reference Include="Apache.Cassandra.209">
+      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.209.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
@@ -43,8 +43,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="Thrift, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
@@ -185,8 +184,8 @@
     <PostBuildEvent>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)\..\Assemblies"
 copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"
 
-copy "$(TargetDir)Apache.Cassandra.1210.dll" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Apache.Cassandra.1210.pdb" "$(SolutionDir)\..\Assemblies"
+copy "$(TargetDir)Apache.Cassandra.209.dll" "$(SolutionDir)\..\Assemblies"
+copy "$(TargetDir)Apache.Cassandra.209.pdb" "$(SolutionDir)\..\Assemblies"
 copy "$(TargetDir)Thrift.dll" "$(SolutionDir)\..\Assemblies"
 copy "$(TargetDir)Thrift.pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
   </PropertyGroup>

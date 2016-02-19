@@ -16,7 +16,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public static void SetUp()
         {
-            Node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"1.2"))
+            Node = new CassandraNode(Path.Combine(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory), @"2.0"))
             {
                 Name = "node_at_9360",
                 JmxPort = 7399,
@@ -24,7 +24,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                 RpcPort = 9360,
                 CqlPort = 9343,
                 DataBaseDirectory = @"../data/",
-                DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra1.2"),
+                DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\Cassandra2.0"),
                 ListenAddress = "127.0.0.1",
                 RpsAddress = "0.0.0.0",
                 SeedAddresses = new[] { "127.0.0.1" },
