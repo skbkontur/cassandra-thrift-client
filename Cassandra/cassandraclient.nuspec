@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>CassandraClient</id>
-    <version>1.6.7</version>
+    <version>1.7.1</version>
     <title>SKB Kontur Cassandra Client</title>
     <projectUrl>https://git.skbkontur.ru/cassandra/cassandraclient</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
@@ -13,7 +13,7 @@
 <files>
   <file src="CassandraClient\bin\Release\log4net.dll" target="lib\net40\" /> 
   <file src="CassandraClient\bin\Release\Thrift.dll" target="lib\net40\" /> 
-  <file src="CassandraClient\bin\Release\Apache.Cassandra.1210.dll" target="lib\net40\" /> 
+  <file src="CassandraClient\bin\Release\Apache.Cassandra.209.dll" target="lib\net40\" /> 
   <file src="CassandraClient\bin\Release\Cassandra.CassandraClient.dll" target="lib\net40\" />  
 </files>
 </package>
