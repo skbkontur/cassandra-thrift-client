@@ -47,7 +47,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                         }
                 };
             Assert.That(cassandraActualizerEventListener.KeyspaceAddedInvokeCount, Is.EqualTo(0));
-            actualizer.ActualizeKeyspaces(new[] {scheme});
+            actualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
             Assert.That(cassandraActualizerEventListener.KeyspaceAddedInvokeCount, Is.EqualTo(1));
             Assert.That(cassandraActualizerEventListener.ColumnFamilyAddedInvokeCount, Is.EqualTo(0));
             Assert.That(cassandraActualizerEventListener.ColumnFamilyUpdatedInvokeCount, Is.EqualTo(0));
@@ -70,9 +70,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                 }
                         }
                 };
-            actualizer.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             scheme.Configuration.ColumnFamilies[0].Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024});
-            actualizer.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cassandraActualizerEventListener.ColumnFamilyUpdatedInvokeCount, Is.EqualTo(1));
         }
 
@@ -93,7 +93,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                 }
                         }
                 };
-            actualizer.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             scheme.Configuration.ColumnFamilies = scheme.Configuration.ColumnFamilies.Concat(new[]
                 {
                     new ColumnFamily
@@ -101,9 +101,14 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                             Name = "CF2"
                         }
                 }).ToArray();
-            actualizer.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cassandraActualizerEventListener.ColumnFamilyUpdatedInvokeCount, Is.EqualTo(0));
             Assert.That(cassandraActualizerEventListener.ColumnFamilyAddedInvokeCount, Is.EqualTo(1));
+        }
+
+        private void ActualizeKeyspaces(KeyspaceScheme scheme)
+        {
+            actualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
         }
 
         private CassandraCluster cluster;

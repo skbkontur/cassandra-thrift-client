@@ -54,9 +54,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
             return innerCluster.GetKnowledges();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
         {
-            innerCluster.ActualizeKeyspaces(keyspaces, eventListener);
+            innerCluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
 
         private readonly ICassandraCluster innerCluster;

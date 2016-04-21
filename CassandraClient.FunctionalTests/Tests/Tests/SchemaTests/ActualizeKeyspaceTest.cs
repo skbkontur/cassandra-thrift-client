@@ -44,9 +44,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                 }
                         }
                 };
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
         }
 
@@ -67,10 +67,10 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                 }
                         }
                 };
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
             scheme.Configuration.ColumnFamilies[0].Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024});
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(1));
         }
 
@@ -91,46 +91,46 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                 }
                         }
                 };
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(4, 32);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(3, 32);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(1));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(3, 31);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(2));
 
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(2));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10});
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(3));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11});
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(4));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11}, 4, 32);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(4));
 
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11}, 3, 32);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(5));
             
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11}, 3, 31);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(6));
             
             scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11}, 3, 31);
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(6));
         }
 
@@ -154,14 +154,14 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                                 }
                         }
                 };
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
 
             var actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
             Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.Deflate));
 
             scheme.Configuration.ColumnFamilies[0].Compression = null;
             scheme.Configuration.ColumnFamilies[0].Caching = ColumnFamilyCaching.All;
-            actualize.ActualizeKeyspaces(new[] {scheme});
+            ActualizeKeyspaces(scheme);
 
             actualScheme = cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace();
             Assert.That(actualScheme.ColumnFamilies["CF1"].Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.LZ4));
@@ -212,6 +212,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             originalColumnFamily.Caching = ColumnFamilyCaching.All;
             cluster.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.All));
+        }
+
+        private void ActualizeKeyspaces(KeyspaceScheme scheme)
+        {
+            actualize.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
         }
 
         private CassandraClusterSpy cluster;
