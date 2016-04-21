@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
         {
             if(keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             {
                 try
                 {
-                    DoActualizeKeyspaces(keyspaceShemas);
+                    DoActualizeKeyspaces(keyspaceShemas, changeExistingKeyspaceMetadata);
                     return;
                 }
                 catch(CassandraClientIOException e)
@@ -49,7 +49,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             throw new InvalidOperationException(string.Format("Failed to actualize cassandra scheme in {0}", timeout));
         }
 
-        private void DoActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas)
+        private void DoActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
         {
             logger.Info("Start apply scheme...");
             eventListener.ActualizationStarted();
@@ -70,8 +70,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     };
                 if(keyspaces.ContainsKey(keyspaceScheme.Name))
                 {
-                    logger.InfoFormat("Keyspace {0} already exists in the database, so run update keyspace command", keyspaceScheme.Name);
-                    clusterConnection.UpdateKeyspace(keyspace);
+                    if(changeExistingKeyspaceMetadata)
+                    {
+                        logger.InfoFormat("Keyspace {0} already exists in the database, so run update keyspace command", keyspaceScheme.Name);
+                        clusterConnection.UpdateKeyspace(keyspace);
+                    }
+                    else
+                        logger.InfoFormat("Keyspace {0} already exists in the database, changeExistingKeyspaceMetadata is set to False, so do not run update keyspace command", keyspaceScheme.Name);
                     ActualizeColumnFamilies(keyspaceScheme.Name, keyspaceScheme.Configuration.ColumnFamilies);
                 }
                 else

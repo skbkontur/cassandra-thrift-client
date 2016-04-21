@@ -59,9 +59,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return result;
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
         {
-            new SchemeActualizer(this, eventListener).ActualizeKeyspaces(keyspaces);
+            new SchemeActualizer(this, eventListener).ActualizeKeyspaces(keyspaces, changeExistingKeyspaceMetadata);
         }
 
         public void Dispose()
