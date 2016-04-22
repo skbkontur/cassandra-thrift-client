@@ -138,6 +138,11 @@ namespace Cassandra.Tests.CoreTests
                 );
             Assert.That(
                 comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily { Name = "name", Compression = ColumnFamilyCompression.Snappy(new CompressionOptions { ChunkLengthInKb = 2, CrcCheckChance = 1.0 }) },
+                    new ColumnFamily { Name = "name", Compression = ColumnFamilyCompression.LZ4(new CompressionOptions { ChunkLengthInKb = 2, CrcCheckChance = 2.0 }) })
+                );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
                     new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.None()},
                     new ColumnFamily {Name = "name", Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 2.0})})
                 );
