@@ -26,6 +26,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             return new ColumnFamilyCompression(CompressionAlgorithms.Deflate, options);
         }
 
+        public static ColumnFamilyCompression LZ4(CompressionOptions options)
+        {
+            return new ColumnFamilyCompression(CompressionAlgorithms.LZ4, options);
+        }
+
         public bool IsEnabled { get { return !string.IsNullOrWhiteSpace(Algorithm); } }
 
         public string Algorithm { get; set; }
