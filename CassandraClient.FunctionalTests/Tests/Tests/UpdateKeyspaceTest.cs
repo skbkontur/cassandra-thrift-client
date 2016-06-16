@@ -8,44 +8,49 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
-using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class UpdateKeyspaceTest : CassandraFunctionalTestBase
     {
-        [Test]
-        public void TestUpdateKeyspace()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestUpdateKeyspace(bool durableWrites)
         {
             var keyspaceName = Guid.NewGuid().ToString("N");
-            cassandraCluster.ActualizeKeyspaces(new[]{new KeyspaceScheme
+            cassandraCluster.ActualizeKeyspaces(new[]
                 {
-                    Name = keyspaceName,
-                    Configuration = new KeyspaceConfiguration
+                    new KeyspaceScheme
                         {
-                            ReplicationStrategy = SimpleReplicationStrategy.Create(1),
-                            ColumnFamilies = new[]
+                            Name = keyspaceName,
+                            Configuration = new KeyspaceConfiguration
                                 {
-                                    new ColumnFamily
+                                    DurableWrites = durableWrites,
+                                    ReplicationStrategy = SimpleReplicationStrategy.Create(1),
+                                    ColumnFamilies = new[]
                                         {
-                                            Name = "1"
-                                        },
-                                    new ColumnFamily
-                                        {
-                                            Name = "2"
-                                        }, 
-                                    new ColumnFamily
-                                        {
-                                            Name = "3"
-                                        }, 
+                                            new ColumnFamily
+                                                {
+                                                    Name = "1"
+                                                },
+                                            new ColumnFamily
+                                                {
+                                                    Name = "2"
+                                                },
+                                            new ColumnFamily
+                                                {
+                                                    Name = "3"
+                                                },
+                                        }
                                 }
                         }
-                }});
+                });
 
             var keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = keyspaceName,
+                    DurableWrites = durableWrites,
                     ReplicationStrategy = SimpleReplicationStrategy.Create(1),
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
@@ -58,7 +63,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             cassandraCluster.RetrieveClusterConnection().UpdateKeyspace(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor("dc1", 3)})
+                    DurableWrites = durableWrites,
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[] {new DataCenterReplicationFactor("dc1", 3)})
                 });
 
             var keyspace = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray().Single(keyspace1 => keyspace1.Name == keyspaceName);
@@ -66,7 +72,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             AssertKeyspacesEquals(new Keyspace
                 {
                     Name = keyspaceName,
-                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]{new DataCenterReplicationFactor("dc1", 3), }),
+                    DurableWrites = durableWrites,
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[] {new DataCenterReplicationFactor("dc1", 3),}),
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
                             {"1", new ColumnFamily {Name = "1"}},
@@ -79,6 +86,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         private static void AssertKeyspacesEquals(Keyspace expected, Keyspace actual)
         {
             Assert.AreEqual(expected.Name, actual.Name);
+            Assert.AreEqual(expected.DurableWrites, actual.DurableWrites);
             Assert.AreEqual(expected.ReplicationStrategy.Name, actual.ReplicationStrategy.Name);
             Assert.AreEqual(expected.ReplicationStrategy.StrategyOptions, actual.ReplicationStrategy.StrategyOptions);
 
@@ -102,19 +110,18 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Configuration = new KeyspaceConfiguration
                         {
                             ReplicationStrategy = SimpleReplicationStrategy.Create(1),
-                            ColumnFamilies = new[]{new ColumnFamily{Name = columnFamilyName}}
+                            ColumnFamilies = new[] {new ColumnFamily {Name = columnFamilyName}}
                         }
                 };
-            cassandraCluster.ActualizeKeyspaces(new[]{keyspaceScheme});
+            cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});
             var actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
             Assert.IsNull(actualColumnFamily.BloomFilterFpChance);
 
             keyspaceScheme.Configuration.ColumnFamilies.First().BloomFilterFpChance = 0.01;
-            cassandraCluster.ActualizeKeyspaces(new[]{keyspaceScheme});
+            cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});
 
             actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
             Assert.AreEqual(0.01, actualColumnFamily.BloomFilterFpChance);
-
         }
     }
 }

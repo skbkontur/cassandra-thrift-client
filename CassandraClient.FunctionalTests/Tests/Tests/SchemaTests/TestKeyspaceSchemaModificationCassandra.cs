@@ -27,8 +27,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             cluster.Dispose();
         }
 
-        [Test]
-        public void TestAddKeyspace()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void TestAddKeyspace(bool durableWrites)
         {
             var clusterConnection = cluster.RetrieveClusterConnection();
 
@@ -36,6 +37,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var createdKeyspace = new Keyspace
                 {
                     Name = keyspaceName,
+                    DurableWrites = durableWrites,
                     ReplicationStrategy = SimpleReplicationStrategy.Create(1)
                 };
             clusterConnection.AddKeyspace(createdKeyspace);
@@ -132,6 +134,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         private void AssertKeyspacePropertiesEquals(Keyspace createdKeyspace, Keyspace actualKeyspace)
         {
             Assert.That(actualKeyspace.Name, Is.EqualTo(createdKeyspace.Name));
+            Assert.That(actualKeyspace.DurableWrites, Is.EqualTo(createdKeyspace.DurableWrites));
             Assert.AreEqual(createdKeyspace.ReplicationStrategy.Name, actualKeyspace.ReplicationStrategy.Name);
             Assert.AreEqual(createdKeyspace.ReplicationStrategy.StrategyOptions, actualKeyspace.ReplicationStrategy.StrategyOptions);
         }
