@@ -7,9 +7,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class Keyspace
     {
-        public Dictionary<string, ColumnFamily> ColumnFamilies { get; set; }
+        public Keyspace()
+        {
+            DurableWrites = true;
+        }
+
         public string Name { get; set; }
+        public bool DurableWrites { get; set; }
         public IReplicationStrategy ReplicationStrategy { get; set; }
+        public Dictionary<string, ColumnFamily> ColumnFamilies { get; set; }
     }
 
     internal static class KeyspaceExtensions
@@ -20,15 +26,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             if(keyspace == null)
                 return null;
-            var columnFamilies = (keyspace.ColumnFamilies ?? new Dictionary<string, ColumnFamily>())
-                .Values.Select(family => family.ToCassandraCfDef(keyspace.Name)).ToList();
-
             return new KsDef
                 {
                     Name = keyspace.Name,
+                    Durable_writes = keyspace.DurableWrites,
                     Strategy_class = keyspace.ReplicationStrategy.Name,
                     Strategy_options = keyspace.ReplicationStrategy.StrategyOptions,
-                    Cf_defs = columnFamilies
+                    Cf_defs = (keyspace.ColumnFamilies ?? new Dictionary<string, ColumnFamily>()).Values.Select(family => family.ToCassandraCfDef(keyspace.Name)).ToList(),
                 };
         }
 
@@ -36,12 +40,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             if(ksDef == null)
                 return null;
-            var columnFamilies = (ksDef.Cf_defs ?? new List<CfDef>()).ToDictionary(def => def.Name, def => def.FromCassandraCfDef());
             var keyspace = new Keyspace
                 {
                     Name = ksDef.Name,
+                    DurableWrites = ksDef.Durable_writes,
                     ReplicationStrategy = replicationStrategyFactory.Create(ksDef.Strategy_class, ksDef.Strategy_options),
-                    ColumnFamilies = columnFamilies,
+                    ColumnFamilies = (ksDef.Cf_defs ?? new List<CfDef>()).ToDictionary(def => def.Name, def => def.FromCassandraCfDef()),
                 };
             return keyspace;
         }

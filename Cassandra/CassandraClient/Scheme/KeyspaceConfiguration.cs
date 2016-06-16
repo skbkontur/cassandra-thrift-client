@@ -4,11 +4,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
 {
     public class KeyspaceConfiguration
     {
+        public KeyspaceConfiguration()
+        {
+            DurableWrites = true;
+        }
+
+        public bool DurableWrites { get; set; }
         public IReplicationStrategy ReplicationStrategy { get { return replicationStrategy ?? defaultReplicationStrategy; } set { replicationStrategy = value; } }
         public ColumnFamily[] ColumnFamilies { get { return columnFamilies ?? new ColumnFamily[0]; } set { columnFamilies = value; } }
 
-        private ColumnFamily[] columnFamilies = new ColumnFamily[0];
-        private IReplicationStrategy replicationStrategy = defaultReplicationStrategy;
+        private ColumnFamily[] columnFamilies;
+        private IReplicationStrategy replicationStrategy;
         private static readonly SimpleReplicationStrategy defaultReplicationStrategy = SimpleReplicationStrategy.Create(1);
     }
 }
