@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using System.Threading;
 
@@ -168,6 +169,28 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             Check("row", "columnName", "columnValue", 0, 30);
             Thread.Sleep(45000);
             CheckNotFound("row", "columnName");
+        }
+
+        [Test]
+        public void TestTimeToLiveIsProlongedWhenColumnIsUpdated()
+        {
+            const int ttl = 2;
+            var rowKey = Guid.NewGuid().ToString();
+            for(long timestamp = 0; timestamp < 10; timestamp++)
+            {
+                var columnValue = timestamp.ToString();
+                columnFamilyConnection.AddColumn(rowKey, new Column
+                    {
+                        Name = "columnName",
+                        Value = Encoding.UTF8.GetBytes(columnValue),
+                        Timestamp = timestamp,
+                        TTL = ttl,
+                    });
+                Thread.Sleep(TimeSpan.FromSeconds(ttl / 2.0));
+                Check(rowKey, "columnName", columnValue, timestamp, ttl);
+            }
+            Thread.Sleep(TimeSpan.FromSeconds(ttl + 1));
+            CheckNotFound(rowKey, "columnName");
         }
     }
 }
