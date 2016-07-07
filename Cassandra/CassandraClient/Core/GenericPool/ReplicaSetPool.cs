@@ -301,7 +301,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         private const double aliveHealth = 1.0;
-        private const double deadHealth = 0.01;
+        private const double deadHealth = 0.001;
         private const double aliveRate = 1.5;
         private const double dieRate = 0.7;
     }
