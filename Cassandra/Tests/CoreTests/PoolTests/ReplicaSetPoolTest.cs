@@ -190,49 +190,6 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         }
 
         [Test]
-        public void TestAliveAfterDead()
-        {
-            const int itemCount = 100;
-            const int attemptCount = 40;
-
-            using(var pool = CreateReplicaSetPool(2))
-            {
-                var itemKey = new ItemKey("key1");
-                Enumerable.Range(0, 100).ToList().ForEach(x => pool.BadReplica(new ReplicaKey("replica2"))); // Health: 0.01
-
-                var acquiredItems = Enumerable
-                    .Range(0, itemCount)
-                    .Select(n => pool.Acquire(itemKey))
-                    .ToList();
-
-                var acquiredItemCount = acquiredItems
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
-
-                Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(0.95 * itemCount, itemCount));
-                int count;
-                Assert.That(acquiredItemCount.TryGetValue(new ReplicaKey("replica2"), out count) ? count : 0, Is.InRange(0.00 * itemCount, 0.05 * itemCount));
-
-                acquiredItems.ForEach(pool.Release);
-
-                var reacquiredItems = Enumerable
-                    .Range(0, attemptCount)
-                    .SelectMany(n =>
-                        {
-                            var items = Enumerable.Range(0, itemCount).Select(i => pool.Acquire(itemKey)).ToList();
-                            items.ForEach(pool.Good);
-                            items.ForEach(pool.Release);
-                            return items;
-                        })
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
-
-                Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(0.53 * itemCount * attemptCount, 0.60 * itemCount * attemptCount));
-                Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(0.40 * itemCount * attemptCount, 0.47 * itemCount * attemptCount));
-            }
-        }
-
-        [Test]
         public void TestAcquireOnlyLiveItemsWithDeadNode()
         {
             using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(
@@ -473,6 +430,130 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             }
         }
 
+        [Test]
+        public void TestOneDeadReplicaDoCreateConnectionsWhenAcquire()
+        {
+            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            {
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(5, 10));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(5, 10));
+
+                poolManager.MakeDeadReplica(0);
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+
+                poolManager.ResetCounters();
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(0, 1));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(0, 10));
+                Assert.That(poolManager.GetAcquiredCount(0), Is.EqualTo(0));
+                Assert.That(poolManager.GetAcquiredCount(1), Is.EqualTo(1000 * 10));
+            }
+        }
+
+        [Test]
+        public void TestOneDeadReplicaTryCreateConnections()
+        {
+            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            {
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(5, 10));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(5, 10));
+
+                poolManager.MakeDeadReplica(0);
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+
+                poolManager.ResetCounters();
+                SimulateLoad(poolManager, threads : 10, operations : 1000, interval : TimeSpan.FromSeconds(10));
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(10, 20));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(0, 10));
+                Assert.That(poolManager.GetAcquiredCount(0), Is.EqualTo(0));
+                Assert.That(poolManager.GetAcquiredCount(1), Is.EqualTo(1000 * 10));
+            }
+        }
+        [Test]
+        public void TestOneReplicaAliveAfterDead()
+        {
+            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            {
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(5, 10));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(5, 10));
+
+                poolManager.MakeDeadReplica(0);
+                SimulateLoad(poolManager, threads : 10, operations : 1000, interval : TimeSpan.FromSeconds(10));
+
+                poolManager.MakeLiveReplica(0);
+                poolManager.ResetCounters();
+                SimulateLoad(poolManager, threads : 10, operations : 1000, interval : TimeSpan.FromSeconds(20));
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(7, 17));
+                Assert.That(poolManager.GetAcquiredCount(0), Is.InRange(1000 * 3, 1000 * 7));
+                Assert.That(poolManager.GetAcquiredCount(1), Is.InRange(1000 * 3, 1000 * 7));
+            }
+        }
+        
+        [Test]
+        public void TestAllReplicaDeadCauseSynchronousConnect()
+        {
+            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            {
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+
+                poolManager.MakeDeadReplica(0);
+                poolManager.MakeDeadReplica(1);
+                poolManager.ResetCounters();
+                Assert.Throws<AllItemsIsDeadExceptions>(() => poolManager.Acquire());
+                Assert.Throws<AllItemsIsDeadExceptions>(() => poolManager.Acquire());
+                Assert.Throws<AllItemsIsDeadExceptions>(() => poolManager.Acquire());
+                Assert.Throws<AllItemsIsDeadExceptions>(() => poolManager.Acquire());
+
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(4, 4 * 2));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(4, 4 * 2));
+            }
+        }
+        
+        [Test]
+        public void TestAliveAfterAllReplicaDead()
+        {
+            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            {
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+
+                poolManager.MakeDeadReplica(0);
+                poolManager.MakeDeadReplica(1);
+                poolManager.ResetCounters();
+                for(var i = 0; i < 1000; i++)
+                    Assert.Throws<AllItemsIsDeadExceptions>(() => poolManager.Acquire());
+                
+                poolManager.MakeLiveReplica(0);
+                poolManager.MakeLiveReplica(1);
+                poolManager.ResetCounters();
+                SimulateLoad(poolManager, threads : 10, operations : 1000);
+                Assert.That(poolManager.GetCreateCount(0), Is.InRange(7, 17));
+                Assert.That(poolManager.GetCreateCount(1), Is.InRange(7, 17));
+                Assert.That(poolManager.GetAcquiredCount(0), Is.InRange(1000 * 3, 1000 * 7));
+                Assert.That(poolManager.GetAcquiredCount(1), Is.InRange(1000 * 3, 1000 * 7));
+            }
+        }
+        
+
+        private void SimulateLoad(ReplicaSetPoolManager poolManager, int threads, int operations, TimeSpan? interval = null)
+        {
+            var operationsInterval = interval == null ? (TimeSpan?)null : TimeSpan.FromTicks(interval.Value.Ticks / operations);
+            for(var i = 0; i < operations; i++)
+            {
+                var acquiredItems = Enumerable.Range(0, threads).Select(x => poolManager.Acquire()).ToArray();
+                if(operationsInterval != null)
+                    Thread.Sleep(operationsInterval.Value);
+                foreach(var acquiredItem in acquiredItems)
+                {
+                    poolManager.Good(acquiredItem);
+                    poolManager.Release(acquiredItem);
+                }
+                    
+            }
+        }
+
         private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
         {
             var replicas = Enumerable
@@ -489,7 +570,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, PoolSettings.CreateDefault(), null);
         }
 
         private class ItemKey : IEquatable<ItemKey>
@@ -551,22 +632,146 @@ namespace Cassandra.Tests.CoreTests.PoolTests
 
         private class Item : IDisposable, IPoolKeyContainer<ItemKey, ReplicaKey>, ILiveness
         {
-            public Item(ItemKey key, ReplicaKey replicaKey)
+            public Item(ItemKey key, ReplicaKey replicaKey, Func<ReplicaKey, bool> isAliveFunc = null)
             {
+                this.isAliveFunc = isAliveFunc;
                 PoolKey = key;
                 ReplicaKey = replicaKey;
-                IsAlive = true;
+                isAlive = isAliveFunc == null || isAliveFunc(ReplicaKey);
             }
+
+            public bool Disposed { get; private set; }
 
             public void Dispose()
             {
                 Disposed = true;
             }
 
-            public bool IsAlive { get; set; }
+            public bool IsAlive
+            {
+                get
+                {
+                    if(isAliveFunc != null)
+                        return isAliveFunc(ReplicaKey);
+                    return isAlive;
+                }
+                set
+                {
+                    if(isAliveFunc != null)
+                        throw new Exception("Cannot set IsAlive flag if isAliveFunc provided");
+                    isAlive = value;
+                }
+            }
+
             public ItemKey PoolKey { get; private set; }
             public ReplicaKey ReplicaKey { get; private set; }
-            public bool Disposed { get; private set; }
+            private readonly Func<ReplicaKey, bool> isAliveFunc;
+
+            private bool isAlive;
+        }
+
+        private class ReplicaSetPoolManager : IDisposable
+        {
+            public ReplicaSetPoolManager(int count, PoolSettings poolSettings)
+            {
+                replicaInfos = Enumerable.Range(0, count).ToDictionary(x => x, x => new ReplicaInfo
+                    {
+                        Key = new ReplicaKey("replica" + x),
+                        IsDead = false
+                    });
+                replicaSetPool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(
+                    replicaInfos.Values.Select(x => x.Key).ToArray(),
+                    (x, z) => new Pool<Item>(y => CreateReplicaConnection(z, x)),
+                    poolSettings);
+            }
+
+            private Item CreateReplicaConnection(ReplicaKey replicaKey, ItemKey itemKey)
+            {
+                var replicaNumber = Int32.Parse(replicaKey.Name.Replace("replica", ""));
+                replicaInfos[replicaNumber].IncrementCreationCount();
+                if(replicaInfos[replicaNumber].IsDead)
+                    throw new Exception(String.Format("Replica {0} is dead", replicaNumber));
+                return new Item(itemKey, replicaKey, i => !replicaInfos[replicaNumber].IsDead);
+            }
+
+            public Item Acquire()
+            {
+                var result = replicaSetPool.Acquire(new ItemKey("key"));
+                var replicaNumber = Int32.Parse(result.ReplicaKey.Name.Replace("replica", ""));
+                replicaInfos[replicaNumber].IncrementAcquiredCount();
+                return result;
+            }
+            
+            public void Release(Item item)
+            {
+                replicaSetPool.Release(item);
+            }
+
+            public void Dispose()
+            {
+                replicaSetPool.Dispose();
+            }
+
+            public void MakeDeadReplica(int replicaNumber)
+            {
+                replicaInfos[replicaNumber].IsDead = true;
+            }
+
+            public void Good(Item item)
+            {
+                replicaSetPool.Good(item);
+            }
+
+            public object GetCreateCount(int replicaNumber)
+            {
+                return replicaInfos[replicaNumber].CreationCount;
+            }
+
+            public object GetAcquiredCount(int replicaNumber)
+            {
+                return replicaInfos[replicaNumber].AcquiredCount;
+            }
+
+            public void ResetCounters()
+            {
+                foreach(var value in replicaInfos.Values)
+                    value.ResetCreationCount();
+            }
+
+            public void MakeLiveReplica(int replicaNumber)
+            {
+                replicaInfos[replicaNumber].IsDead = false;
+            }
+
+            private readonly ReplicaSetPool<Item, ItemKey, ReplicaKey> replicaSetPool;
+            private readonly Dictionary<int, ReplicaInfo> replicaInfos;
+
+            private class ReplicaInfo
+            {
+                public ReplicaKey Key { get; set; }
+                public bool IsDead { get; set; }
+                public int CreationCount { get { return creationCount; } }
+                public int AcquiredCount { get { return acquiredCount; } }
+
+                public void IncrementCreationCount()
+                {
+                    Interlocked.Increment(ref creationCount);
+                }
+
+                public void ResetCreationCount()
+                {
+                    Interlocked.Exchange(ref creationCount, 0);
+                    Interlocked.Exchange(ref acquiredCount, 0);
+                }
+
+                private int creationCount;
+                private int acquiredCount;
+
+                public void IncrementAcquiredCount()
+                {
+                    Interlocked.Increment(ref acquiredCount);                    
+                }
+            }
         }
     }
 }

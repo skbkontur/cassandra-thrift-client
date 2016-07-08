@@ -124,6 +124,7 @@
     <Compile Include="Core\GenericPool\IPoolKeyContainer.cs" />
     <Compile Include="Core\GenericPool\Exceptions\ItemInPoolCollisionException.cs" />
     <Compile Include="Core\GenericPool\IPoolSet.cs" />
+    <Compile Include="Core\GenericPool\PoolSettings.cs" />
     <Compile Include="Core\GenericPool\ReplicaSetPool.cs" />
     <Compile Include="Core\GenericPool\Utils\ObjectReferenceEqualityComparer.cs" />
     <Compile Include="Core\GenericPool\Pool.cs" />

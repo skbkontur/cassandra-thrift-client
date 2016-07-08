@@ -21,6 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               IEqualityComparer<TItemKey> itemKeyComparer,
                               Func<TItem, TReplicaKey> getReplicaKeyByItem,
                               Func<TItem, TItemKey> getItemKeyByItem,
+                              PoolSettings poolSettings,
                               TimeSpan? itemIdleTimeout = null)
         {
             if(replicas.Count == 0)
@@ -35,11 +36,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 replicaHealths[idx] = new ReplicaHealth<TReplicaKey>(replica, aliveHealth);
             }
             this.poolFactory = poolFactory;
+            this.replicaKeyComparer = replicaKeyComparer;
             this.getReplicaKeyByItem = getReplicaKeyByItem;
             this.getItemKeyByItem = getItemKeyByItem;
+            this.poolSettings = poolSettings;
+            
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
-
+            checkDeadItemsThread = new Thread(CheckDeadItemsThread)
+                {
+                    Name = string.Format("CheckDeadConnectionsForThread {0}", string.Join(", ", replicas)),
+                    IsBackground = true
+                };
+            checkDeadItemsThread.Start();
             disposeEvent = new ManualResetEvent(false);
+
             if(itemIdleTimeout != null)
             {
                 logger.InfoFormat("Item idle timeout: {0}", itemIdleTimeout.Value);
@@ -51,9 +61,95 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             }
         }
 
+        private void CheckDeadItemsThread()
+        {
+            var deadReplicaPingInfos = new Dictionary<TReplicaKey, DeadReplicaInfo>(replicaKeyComparer);
+            while(true)
+            {
+                try
+                {
+                    var deadReplicaKeys = GetDeadReplicaKeys();
+                    foreach(var deadReplicaKey in deadReplicaKeys)
+                    {
+                        if(NeedPingDeadReplica(deadReplicaKey, deadReplicaPingInfos))
+                        {
+                            var deadReplicaPools = GetAllPoolsWithReplicaKey(deadReplicaKey);
+                            foreach(var deadReplicaPool in deadReplicaPools)
+                            {
+                                try
+                                {
+                                    TItem connection;
+                                    if(TryAcquireNew(deadReplicaPool.Value, out connection))
+                                    {
+                                        deadReplicaPingInfos.Remove(deadReplicaKey);
+                                        GoodReplica(deadReplicaKey);
+                                        deadReplicaPool.Value.Release(connection);
+                                    }
+                                    else
+                                    {
+                                        UnsuccessfulReplicaPing(deadReplicaPingInfos, deadReplicaKey);
+                                    }
+                                }
+                                catch(Exception exception)
+                                {
+                                    UnsuccessfulReplicaPing(deadReplicaPingInfos, deadReplicaKey);
+                                    logger.Warn(string.Format("Error while ping dead replica: Cannot acquire new connection for replica [{0}]", deadReplicaKey), exception);
+                                }
+                                if(disposeEvent.WaitOne(0))
+                                    return;
+                            }
+                        }
+                    }
+                    if(disposeEvent.WaitOne(poolSettings.CheckIntervalIncreaseBasis))
+                        return;
+                }
+                catch(Exception exception)
+                {
+                    logger.Error("Unexpected error while ping dead replicas.", exception);
+                }
+            }
+        }
+
+        private void UnsuccessfulReplicaPing(Dictionary<TReplicaKey, DeadReplicaInfo> deadReplicaPingInfos, TReplicaKey deadReplicaKey)
+        {
+            deadReplicaPingInfos[deadReplicaKey].Attempts++;
+            deadReplicaPingInfos[deadReplicaKey].LastPingDateTime = DateTime.UtcNow;
+            BadReplica(deadReplicaKey);
+        }
+
+        private TReplicaKey[] GetDeadReplicaKeys()
+        {
+            return replicaHealths.Where(x => !IsAliveReplica(x.ReplicaKey, x.Value)).Select(x => x.ReplicaKey).ToArray();
+        }
+
+        private bool NeedPingDeadReplica(TReplicaKey deadReplica, Dictionary<TReplicaKey, DeadReplicaInfo> replicaPingInfos)
+        {
+            if(!replicaPingInfos.ContainsKey(deadReplica))
+            {
+                replicaPingInfos[deadReplica] = new DeadReplicaInfo
+                    {
+                        Attempts = 0,
+                        LastPingDateTime = DateTime.MinValue
+                    };
+                return true;
+            }
+            var deadReplicaInfo = replicaPingInfos[deadReplica];
+            var nextInterval = TimeSpan.FromMilliseconds(Math.Min(
+                poolSettings.MaxCheckInterval.TotalMilliseconds,
+                (long)Math.Round(poolSettings.CheckIntervalIncreaseBasis.TotalMilliseconds * Math.Pow(2, Math.Min(20, deadReplicaInfo.Attempts)))));
+            return (DateTime.UtcNow - deadReplicaInfo.LastPingDateTime) >= nextInterval;
+        }
+
+        private KeyValuePair<PoolKey, Pool<TItem>>[] GetAllPoolsWithReplicaKey(TReplicaKey deadReplica)
+        {
+            return pools.ToList().Where(x => replicaKeyComparer.Equals(x.Key.ReplicaKey, deadReplica)).ToArray();
+        }
+
         public void Dispose()
         {
             disposeEvent.Set();
+            if(!checkDeadItemsThread.Join(TimeSpan.FromSeconds(2)))
+                logger.WarnFormat("Cannot await stopping check dead items thread. Skip waiting");
             if(unusedItemsCollectorThread != null)
             {
                 if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
@@ -71,6 +167,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             var totalReplicaHealth = replicaHealths.Select(x => x.Value).Sum();
 
             var existingAcquired = replicaHealths
+                .Where(x => IsAliveReplica(x.ReplicaKey, x.Value))
                 .ShuffleByHealth(x => x.Value, x => new {Health = x.Value, x.ReplicaKey})
                 .Any(poolInfo =>
                      TryAcquireExistsOrNew(
@@ -108,6 +205,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             return result;
         }
 
+        private bool IsAliveReplica(TReplicaKey replicaKey, double health)
+        {
+            return health > (poolSettings.DeadHealth + 0.00001);
+        }
+
         public void Release(TItem item)
         {
             GetPool(getItemKeyByItem(item), getReplicaKeyByItem(item), false).Release(item);
@@ -135,23 +237,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     FreeConnectionCount = x.Value.FreeItemCount,
                     BusyConnectionCount = x.Value.BusyItemCount
                 });
-        }
-
-        public class PoolKey
-        {
-            public PoolKey(TItemKey itemKey, TReplicaKey replicaKey)
-            {
-                ItemKey = itemKey;
-                ReplicaKey = replicaKey;
-            }
-
-            public override string ToString()
-            {
-                return string.Format("PoolKey[Key: {0}, ReplicaKey: {1}]", ItemKey, ReplicaKey);
-            }
-
-            public TItemKey ItemKey { get; private set; }
-            public TReplicaKey ReplicaKey { get; private set; }
         }
 
         internal void BadReplica(TReplicaKey replicaKey)
@@ -261,15 +346,46 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             }
         }
 
+        private const double aliveHealth = 1.0;
+        private const double deadHealth = 0.01;
+        private const double aliveRate = 1.5;
+        private const double dieRate = 0.7;
+
         private readonly Dictionary<TReplicaKey, int> replicaIndicies;
         private readonly ReplicaHealth<TReplicaKey>[] replicaHealths;
         private readonly Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory;
+        private readonly IEqualityComparer<TReplicaKey> replicaKeyComparer;
         private readonly Func<TItem, TReplicaKey> getReplicaKeyByItem;
         private readonly Func<TItem, TItemKey> getItemKeyByItem;
+        private readonly PoolSettings poolSettings;
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
         private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<,,>));
         private readonly Thread unusedItemsCollectorThread;
         private readonly ManualResetEvent disposeEvent;
+        private readonly Thread checkDeadItemsThread;
+
+        public class PoolKey
+        {
+            public PoolKey(TItemKey itemKey, TReplicaKey replicaKey)
+            {
+                ItemKey = itemKey;
+                ReplicaKey = replicaKey;
+            }
+
+            public override string ToString()
+            {
+                return string.Format("PoolKey[Key: {0}, ReplicaKey: {1}]", ItemKey, ReplicaKey);
+            }
+
+            public TItemKey ItemKey { get; private set; }
+            public TReplicaKey ReplicaKey { get; private set; }
+        }
+
+        private class DeadReplicaInfo
+        {
+            public int Attempts { get; set; }
+            public DateTime LastPingDateTime { get; set; }
+        }
 
         private class PoolKeyEqualityComparer : IEqualityComparer<PoolKey>
         {
@@ -299,21 +415,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             private readonly IEqualityComparer<TReplicaKey> replicaKeyComparer;
             private readonly IEqualityComparer<TItemKey> itemKeyComparer;
         }
-
-        private const double aliveHealth = 1.0;
-        private const double deadHealth = 0.001;
-        private const double aliveRate = 1.5;
-        private const double dieRate = 0.7;
     }
 
     internal static class ReplicaSetPool
     {
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, PoolSettings poolSettings)
+            where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
+            where TItemKey : IEquatable<TItemKey>
+            where TReplicaKey : IEquatable<TReplicaKey>
+        {
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, null);
+        }
+
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, null, null);
         }
 
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
@@ -321,19 +440,20 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
             Func<TItem, TReplicaKey> getReplicaKeyByItem,
             Func<TItem, TItemKey> getItemKeyByItem,
-            TimeSpan? unusedItemsIdleTimeout)
+            TimeSpan? unusedItemsIdleTimeout,
+            PoolSettings poolSettings)
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, unusedItemsIdleTimeout);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, poolSettings, unusedItemsIdleTimeout);
         }
 
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, TimeSpan unusedItemsIdleTimeout)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, PoolSettings poolSettings, TimeSpan unusedItemsIdleTimeout)
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, unusedItemsIdleTimeout);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, unusedItemsIdleTimeout);
         }
     }
 }
