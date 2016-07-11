@@ -42,13 +42,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             this.poolSettings = poolSettings;
             
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
+            disposeEvent = new ManualResetEvent(false);
             checkDeadItemsThread = new Thread(CheckDeadItemsThread)
                 {
                     Name = string.Format("CheckDeadConnectionsForThread {0}", string.Join(", ", replicas)),
                     IsBackground = true
                 };
             checkDeadItemsThread.Start();
-            disposeEvent = new ManualResetEvent(false);
 
             if(itemIdleTimeout != null)
             {
