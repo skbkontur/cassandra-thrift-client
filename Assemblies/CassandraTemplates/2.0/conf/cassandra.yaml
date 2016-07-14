@@ -132,12 +132,12 @@ partitioner: org.apache.cassandra.dht.Murmur3Partitioner
 # the configured compaction strategy.
 # If not set, the default directory is $CASSANDRA_HOME/data/data.
 # data_file_directories:
-#     - {{DataBaseDirectory}}/db/data
+#     - ../db/data
 
 # commit log.  when running on magnetic HDD, this should be a
 # separate spindle than the data directories.
 # If not set, the default directory is $CASSANDRA_HOME/data/commitlog.
-# commitlog_directory: {{DataBaseDirectory}}/db/commitlog
+# commitlog_directory: ../db/commitlog
 
 # policy for data disk failures:
 # die: shut down gossip and client transports and kill the JVM for any fs errors or
@@ -249,7 +249,7 @@ counter_cache_save_period: 7200
 
 # saved caches
 # If not set, the default directory is $CASSANDRA_HOME/data/saved_caches.
-# saved_caches_directory: {{DataBaseDirectory}}/db/saved_caches
+# saved_caches_directory: ../db/saved_caches
 
 # commitlog_sync may be either "periodic" or "batch." 
 # 
@@ -479,7 +479,7 @@ start_rpc: true
 # you can specify which should be chosen using rpc_interface_prefer_ipv6. If false the first ipv4
 # address will be used. If true the first ipv6 address will be used. Defaults to false preferring
 # ipv4. If there is only one address it will be selected regardless of ipv4/ipv6.
-rpc_address: {{RpsAddress}}
+rpc_address: {{RpcAddress}}
 # rpc_interface: eth1
 # rpc_interface_prefer_ipv6: false
 

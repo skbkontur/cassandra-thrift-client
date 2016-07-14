@@ -70,9 +70,10 @@ set JAVA_OPTS=-ea^
  -XX:+UseCMSInitiatingOccupancyOnly^
  -Dlogback.configurationFile=logback.xml^
  -Djava.library.path="%CASSANDRA_HOME%\lib\sigar-bin"^
- -Dcassandra.jmx.local.port=7299
+ -Dcassandra.jmx.local.port={{JmxPort}}^
+ -Dinternalflag={{NodeInternalName}}
 REM **** JMX REMOTE ACCESS SETTINGS SEE: https://wiki.apache.org/cassandra/JmxSecurity ***
-REM -Dcom.sun.management.jmxremote.port=7299^
+REM -Dcom.sun.management.jmxremote.port={{JmxPort}}^
 REM -Dcom.sun.management.jmxremote.ssl=false^
 REM -Dcom.sun.management.jmxremote.authenticate=true^
 REM -Dcom.sun.management.jmxremote.password.file=C:\jmxremote.password
@@ -117,7 +118,7 @@ if EXIST "%CASSANDRA_HOME%\lib\jsr223\scala\scala-compiler.jar" (
 REM Include the build\classes\main directory so it works in development
 set CASSANDRA_CLASSPATH=%CLASSPATH%;"%CASSANDRA_HOME%\build\classes\main";"%CASSANDRA_HOME%\build\classes\thrift"
 set CASSANDRA_PARAMS=-Dcassandra -Dcassandra-foreground=yes
-set CASSANDRA_PARAMS=%CASSANDRA_PARAMS% -Dcassandra.logdir="{{DataBaseDirectory}}\log"
+set CASSANDRA_PARAMS=%CASSANDRA_PARAMS% -Dcassandra.logdir="%CASSANDRA_HOME%\logs"
 set CASSANDRA_PARAMS=%CASSANDRA_PARAMS% -Dcassandra.storagedir="%CASSANDRA_HOME%\data"
 
 if /i "%ARG%" == "INSTALL" goto doInstallOperation

@@ -110,18 +110,22 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                     Configuration = new KeyspaceConfiguration
                         {
                             ReplicationStrategy = SimpleReplicationStrategy.Create(1),
-                            ColumnFamilies = new[] {new ColumnFamily {Name = columnFamilyName}}
+                            ColumnFamilies = new[] {new ColumnFamily
+                                {
+                                    Name = columnFamilyName,
+                                    BloomFilterFpChance = null,
+                                }},
                         }
                 };
             cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});
             var actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
-            Assert.IsNull(actualColumnFamily.BloomFilterFpChance);
+            Assert.AreEqual(0.01d, actualColumnFamily.BloomFilterFpChance);
 
-            keyspaceScheme.Configuration.ColumnFamilies.First().BloomFilterFpChance = 0.01;
+            keyspaceScheme.Configuration.ColumnFamilies.First().BloomFilterFpChance = 0.02;
             cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});
 
             actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
-            Assert.AreEqual(0.01, actualColumnFamily.BloomFilterFpChance);
+            Assert.AreEqual(0.02d, actualColumnFamily.BloomFilterFpChance);
         }
     }
 }
