@@ -27,7 +27,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                     ListenAddress = "127.0.0.1",
                     RpcAddress = "127.0.0.1",
                     SeedAddresses = new[] {"127.0.0.1"},
-                    InitialToken = string.Empty,
                     ClusterName = "test_cluster",
                 };
             Node.Restart();

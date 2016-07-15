@@ -50,14 +50,13 @@ namespace SKBKontur.Cassandra.ClusterDeployment
         public string ListenAddress { get; set; }
         public string RpcAddress { get; set; }
         public string[] SeedAddresses { get; set; }
-        public string InitialToken { get; set; }
         public string ClusterName { get; set; }
         public int CqlPort { get; set; }
 
         public override string ToString()
         {
-            return string.Format("TemplateDirectory: {0}, Name: {1}, JmxPort: {2}, GossipPort: {3}, RpcPort: {4}, DeployDirectory: {5}, ListenAddress: {6}, RpcAddress: {7}, InitialToken: {8}, ClusterName: {9}, CqlPort: {10}",
-                                 templateDirectory, Name, JmxPort, GossipPort, RpcPort, DeployDirectory, ListenAddress, RpcAddress, InitialToken, ClusterName, CqlPort);
+            return string.Format("TemplateDirectory: {0}, Name: {1}, JmxPort: {2}, GossipPort: {3}, RpcPort: {4}, DeployDirectory: {5}, ListenAddress: {6}, RpcAddress: {7}, ClusterName: {8}, CqlPort: {9}",
+                                 templateDirectory, Name, JmxPort, GossipPort, RpcPort, DeployDirectory, ListenAddress, RpcAddress, ClusterName, CqlPort);
         }
 
         private void WaitForStart()
@@ -135,7 +134,6 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     {"ListenAddress", ListenAddress},
                     {"RpcAddress", RpcAddress},
                     {"SeedAddresses", string.Join(",", SeedAddresses)},
-                    {"InitialToken", InitialToken},
                     {"ClusterName", ClusterName}
                 });
         }
