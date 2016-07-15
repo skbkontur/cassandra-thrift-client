@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net;
 
 using NUnit.Framework;
 
@@ -18,7 +17,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraCluster(StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback));
+            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings());
             cassandraActualizerEventListener = new CassandraActualizerEventListener();
             actualizer = new SchemeActualizer(cluster, cassandraActualizerEventListener);
         }

@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
@@ -17,8 +15,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            node = StartSingleCassandraSetUp.Node;
-            cluster = new CassandraCluster(node.CreateSettings(IPAddress.Loopback));
+            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings());
 
             var clusterConnection = cluster.RetrieveClusterConnection();
             var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
@@ -194,7 +191,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                 Assert.That(columnFamily.Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
         }
 
-        private CassandraNode node;
         private CassandraCluster cluster;
         private IKeyspaceConnection keyspaceConnection;
     }

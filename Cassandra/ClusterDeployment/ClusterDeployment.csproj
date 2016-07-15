@@ -30,9 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GroboContainer">
-      <HintPath>..\..\Assemblies\GroboContainer.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
     </Reference>
@@ -43,7 +40,7 @@
   <ItemGroup>
     <Compile Include="CassandraNode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SettingExtensions.cs" />
+    <Compile Include="CassandraNodeExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CassandraClient\CassandraClient.csproj">

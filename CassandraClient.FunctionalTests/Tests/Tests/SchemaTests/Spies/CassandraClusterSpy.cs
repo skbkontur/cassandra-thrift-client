@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using GroboContainer.Infection;
-
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
@@ -12,9 +10,11 @@ using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
 {
-    [IgnoredImplementation]
     public class CassandraClusterSpy : ICassandraCluster
     {
+        private readonly ICassandraCluster innerCluster;
+        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
+
         public CassandraClusterSpy(Func<ICassandraCluster> cassandraClusterFactory)
         {
             innerCluster = cassandraClusterFactory();
@@ -58,8 +58,5 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
         {
             innerCluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
-
-        private readonly ICassandraCluster innerCluster;
-        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
     }
 }

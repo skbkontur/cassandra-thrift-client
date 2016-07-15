@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Net;
 
 using NUnit.Framework;
 
@@ -17,8 +16,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            node = StartSingleCassandraSetUp.Node;
-            cluster = new CassandraCluster(node.CreateSettings(IPAddress.Loopback));
+            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings());
         }
 
         [TearDown]
@@ -139,7 +137,6 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.AreEqual(createdKeyspace.ReplicationStrategy.StrategyOptions, actualKeyspace.ReplicationStrategy.StrategyOptions);
         }
 
-        private CassandraNode node;
         private CassandraCluster cluster;
     }
 }

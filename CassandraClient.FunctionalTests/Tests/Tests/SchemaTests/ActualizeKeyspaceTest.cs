@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-using NUnit.Framework;
+﻿using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
@@ -17,7 +15,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraClusterSpy(() => new CassandraCluster(StartSingleCassandraSetUp.Node.CreateSettings(IPAddress.Loopback)));
+            cluster = new CassandraClusterSpy(() => new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings()));
             actualize = new SchemeActualizer(cluster, null);
         }
 
