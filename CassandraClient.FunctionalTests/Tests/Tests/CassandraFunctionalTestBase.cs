@@ -1,12 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 
 using Cassandra.Tests;
-
-using GroboContainer.Core;
-using GroboContainer.Impl;
 
 using NUnit.Framework;
 
@@ -15,25 +10,22 @@ using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Cassandra.FunctionalTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestBase : TestBase
     {
-        protected ICassandraCluster cassandraCluster;
-        protected IColumnFamilyConnection columnFamilyConnection;
-        private static bool keyspacesDeleted;
-        protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
-        protected string KeyspaceName { get; private set; }
-
         public override void SetUp()
         {
             base.SetUp();
-            KeyspaceName = "TestKeyspace_" + Guid.NewGuid().ToString("N");
-            var assemblies = new List<Assembly>(AssembliesLoader.Load()) {Assembly.GetExecutingAssembly()};
-            var container = new Container(new ContainerConfiguration(assemblies));
-            cassandraCluster = container.Get<ICassandraCluster>();
+            KeyspaceName = string.Format("TestKeyspace_{0}", Guid.NewGuid().ToString("N"));
+            var cassandraClusterSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
+            cassandraClusterSettings.AllowNullTimestamp = true;
+            cassandraClusterSettings.ReadConsistencyLevel = ConsistencyLevel.ALL;
+            cassandraClusterSettings.WriteConsistencyLevel = ConsistencyLevel.ALL;
+            cassandraCluster = new CassandraCluster(cassandraClusterSettings);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
             ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
@@ -62,6 +54,12 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                         }
                 });
         }
+
+        protected ICassandraCluster cassandraCluster;
+        protected IColumnFamilyConnection columnFamilyConnection;
+        private static bool keyspacesDeleted;
+        protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
+        protected string KeyspaceName { get; private set; }
 
         private void ClearKeyspacesOnce()
         {

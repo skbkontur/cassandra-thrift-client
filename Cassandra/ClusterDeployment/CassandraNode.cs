@@ -46,19 +46,24 @@ namespace SKBKontur.Cassandra.ClusterDeployment
         public int JmxPort { get; set; }
         public int GossipPort { get; set; }
         public int RpcPort { get; set; }
-        public string DataBaseDirectory { get; set; }
         public string DeployDirectory { get; set; }
         public string ListenAddress { get; set; }
-        public string RpsAddress { get; set; }
+        public string RpcAddress { get; set; }
         public string[] SeedAddresses { get; set; }
-        public string InitialToken { get; set; }
         public string ClusterName { get; set; }
         public int CqlPort { get; set; }
 
+        public override string ToString()
+        {
+            return string.Format("TemplateDirectory: {0}, Name: {1}, JmxPort: {2}, GossipPort: {3}, RpcPort: {4}, DeployDirectory: {5}, ListenAddress: {6}, RpcAddress: {7}, ClusterName: {8}, CqlPort: {9}",
+                                 templateDirectory, Name, JmxPort, GossipPort, RpcPort, DeployDirectory, ListenAddress, RpcAddress, ClusterName, CqlPort);
+        }
+
         private void WaitForStart()
         {
-            var logFileName = Path.Combine(DeployDirectory, @"bin", DataBaseDirectory, @"log\system.log");
-            while(true)
+            var sw = Stopwatch.StartNew();
+            var logFileName = Path.Combine(DeployDirectory, @"logs\system.log");
+            while(sw.Elapsed < TimeSpan.FromSeconds(30))
             {
                 if(File.Exists(logFileName))
                 {
@@ -75,6 +80,7 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                 }
                 Thread.Sleep(500);
             }
+            throw new InvalidOperationException(string.Format("Failed to start cassandra node: {0}", this));
         }
 
         private void Start()
@@ -82,6 +88,7 @@ namespace SKBKontur.Cassandra.ClusterDeployment
             var proc = new Process();
             proc.StartInfo.FileName = Path.Combine(DeployDirectory, @"bin\cassandra.bat");
             proc.StartInfo.WorkingDirectory = Path.Combine(DeployDirectory, @"bin");
+            proc.StartInfo.Arguments = "LEGACY";
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.UseShellExecute = true;
@@ -109,7 +116,6 @@ namespace SKBKontur.Cassandra.ClusterDeployment
             var filesToPatch = new[]
                 {
                     @"conf\cassandra.yaml",
-                    @"conf\log4j-server.properties",
                     @"bin\cassandra.bat"
                 };
             foreach(var file in filesToPatch)
@@ -125,11 +131,9 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     {"GossipPort", GossipPort.ToString()},
                     {"RpcPort", RpcPort.ToString()},
                     {"CqlPort", CqlPort.ToString()},
-                    {"DataBaseDirectory", DataBaseDirectory},
                     {"ListenAddress", ListenAddress},
-                    {"RpsAddress", RpsAddress},
+                    {"RpcAddress", RpcAddress},
                     {"SeedAddresses", string.Join(",", SeedAddresses)},
-                    {"InitialToken", InitialToken},
                     {"ClusterName", ClusterName}
                 });
         }

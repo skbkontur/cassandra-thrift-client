@@ -38,6 +38,7 @@ namespace SKBKontur.Cassandra.CassandraDeploymentManager
             var proc = new Process();
             proc.StartInfo.FileName = Path.Combine(pathToCassandra, @"bin\cassandra.bat");
             proc.StartInfo.WorkingDirectory = Path.Combine(pathToCassandra, @"bin");
+            proc.StartInfo.Arguments = "LEGACY";
             proc.StartInfo.WindowStyle = ProcessWindowStyle.Normal;
             proc.StartInfo.CreateNoWindow = true;
             proc.StartInfo.UseShellExecute = true;
