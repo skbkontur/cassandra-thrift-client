@@ -95,7 +95,7 @@ namespace SKBKontur.Cassandra.ClusterDeployment
             proc.Start();
         }
 
-        private void Deploy()
+        public void Deploy()
         {
             if(Directory.Exists(DeployDirectory))
             {
