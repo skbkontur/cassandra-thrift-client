@@ -23,6 +23,7 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     Timeout = (int)TimeSpan.FromSeconds(6).TotalMilliseconds,
                     FierceTimeout = (int)TimeSpan.FromSeconds(10).TotalMilliseconds,
                     ConnectionIdleTimeout = TimeSpan.FromSeconds(30),
+                    EnableMetrics = false,
                 };
         }
 
@@ -38,6 +39,7 @@ namespace SKBKontur.Cassandra.ClusterDeployment
             public int Timeout { get; set; }
             public int FierceTimeout { get; set; }
             public TimeSpan? ConnectionIdleTimeout { get; set; }
+            public bool EnableMetrics { get; set; }
         }
     }
 }

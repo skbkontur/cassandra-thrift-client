@@ -119,6 +119,7 @@
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Connections\CassandraConnectionParameters.cs" />
+    <Compile Include="Core\CommandExecutorFactory.cs" />
     <Compile Include="Core\GenericPool\Exceptions\AllItemsIsDeadExceptions.cs" />
     <Compile Include="Core\GenericPool\Exceptions\EmptyPoolException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\IdleTimeoutToSmallException.cs" />

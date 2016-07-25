@@ -17,5 +17,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         int Timeout { get; }
         int FierceTimeout { get; }
         TimeSpan? ConnectionIdleTimeout { get; }
+        bool EnableMetrics { get; }
     }
 }

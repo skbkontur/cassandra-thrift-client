@@ -20,7 +20,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
             dataCommandsConnectionPool = CreateDataConnectionPool(settings);
             fierceCommandsConnectionPool = CreateFierceConnectionPool(settings);
-            commandExecuter = new CommandExecuter(dataCommandsConnectionPool, fierceCommandsConnectionPool, settings);
+            commandExecuter = CommandExecutorFactory.Create(dataCommandsConnectionPool, fierceCommandsConnectionPool, settings);
             clusterSettings = settings;
         }
 
