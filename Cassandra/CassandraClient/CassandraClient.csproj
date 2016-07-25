@@ -41,6 +41,9 @@
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Metrics">
+      <HintPath>..\..\Assemblies\Metrics.Net\Metrics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Thrift">
@@ -58,9 +61,11 @@
     <Compile Include="Abstractions\CompressionAlgorithms.cs" />
     <Compile Include="Abstractions\CompressionOptions.cs" />
     <Compile Include="Abstractions\DataCenterReplicationFactor.cs" />
+    <Compile Include="Abstractions\IMultiPartitionsQuery.cs" />
     <Compile Include="Abstractions\IReplicationStrategy.cs" />
     <Compile Include="Abstractions\IReplicationStrategyFactory.cs" />
     <Compile Include="Abstractions\ISchemeUpdateCommand.cs" />
+    <Compile Include="Abstractions\ISinglePartitionQuery.cs" />
     <Compile Include="Abstractions\KeyColumnsPair.cs" />
     <Compile Include="Abstractions\NetworkTopologyReplicationStrategy.cs" />
     <Compile Include="Abstractions\RawColumn.cs" />
@@ -129,6 +134,8 @@
     <Compile Include="Core\GenericPool\Utils\ObjectReferenceEqualityComparer.cs" />
     <Compile Include="Core\GenericPool\Pool.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
+    <Compile Include="Core\Metrics\CommandExecutorMetrics.cs" />
+    <Compile Include="Core\Metrics\CommandExecutorWithMetrics.cs" />
     <Compile Include="Core\ThriftConnectionInPoolWrapper.cs" />
     <Compile Include="Exceptions\CassandraClientSchemaDisagreementExceptionException.cs" />
     <Compile Include="Helpers\ItemHealthExtensions.cs" />

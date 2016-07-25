@@ -7,7 +7,7 @@ using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery 
     {
         public GetCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, byte[] columnName)
             : base(keyspace, columnFamily)

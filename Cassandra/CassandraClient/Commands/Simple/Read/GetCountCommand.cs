@@ -1,14 +1,14 @@
-﻿using Apache.Cassandra;
-
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 using SliceRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SliceRange;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery
     {
         public GetCountCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, SlicePredicate predicate = null)
             : base(keyspace, columnFamily)

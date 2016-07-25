@@ -12,7 +12,7 @@ using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetSliceCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery
     {
         public GetSliceCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, SlicePredicate predicate)
             : base(keyspace, columnFamily)

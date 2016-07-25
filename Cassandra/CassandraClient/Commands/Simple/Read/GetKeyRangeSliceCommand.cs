@@ -3,15 +3,17 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using KeyRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.KeyRange;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetKeyRangeSliceCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetKeyRangeSliceCommand : KeyspaceColumnFamilyDependantCommandBase, IMultiPartitionsQuery
     {
         public GetKeyRangeSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, KeyRange keyRange, SlicePredicate predicate)
             : base(keyspace, columnFamily)
@@ -20,6 +22,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.keyRange = keyRange;
             this.predicate = predicate;
         }
+
+        public int QueriedPartitions { get { return keyRange.Count; } }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -38,7 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         private readonly ConsistencyLevel consistencyLevel;
-        private readonly KeyRange keyRange;
+        public readonly KeyRange keyRange;
         private readonly SlicePredicate predicate;
     }
 }

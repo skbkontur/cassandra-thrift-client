@@ -5,7 +5,7 @@ using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
-    internal class InsertCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class InsertCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery
     {
         public InsertCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, RawColumn column)
             : base(keyspace, columnFamily)

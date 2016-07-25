@@ -1,11 +1,14 @@
 ﻿using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 using SKBKontur.Cassandra.CassandraClient.Core;
 
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
+
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
-    internal class DeleteRowCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class DeleteRowCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery
     {
         public DeleteRowCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, long? timestamp)
             : base(keyspace, columnFamily)

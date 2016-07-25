@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 
-using Apache.Cassandra;
-
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 using SliceRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SliceRange;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class MultiGetCountCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class MultiGetCountCommand : KeyspaceColumnFamilyDependantCommandBase, IMultiPartitionsQuery
     {
         public MultiGetCountCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, List<byte[]> keys, SlicePredicate predicate)
             : base(keyspace, columnFamily)
@@ -19,6 +19,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.keys = keys;
             this.predicate = predicate ?? new SlicePredicate(new SliceRange {Count = int.MaxValue});
         }
+
+        public int QueriedPartitions { get { return keys.Count; } }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
