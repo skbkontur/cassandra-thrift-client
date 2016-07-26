@@ -1,5 +1,6 @@
 ﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
@@ -14,6 +15,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
             this.consistencyLevel = consistencyLevel;
             this.column = column;
         }
+
+        public string PartitionKey { get { return StringExtensions.BytesToString(rowKey); } }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {

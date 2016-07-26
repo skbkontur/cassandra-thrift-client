@@ -6,6 +6,7 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
@@ -21,6 +22,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.consistencyLevel = consistencyLevel;
             this.predicate = predicate;
         }
+
+        public string PartitionKey { get { return StringExtensions.BytesToString(rowKey); } }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {

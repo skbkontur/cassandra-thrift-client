@@ -2,5 +2,6 @@
 {
     internal interface ISinglePartitionQuery
     {
+        string PartitionKey { get; }
     }
 }

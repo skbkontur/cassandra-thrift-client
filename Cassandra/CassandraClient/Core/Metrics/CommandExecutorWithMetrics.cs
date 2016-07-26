@@ -28,27 +28,31 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
             var command = createCommand(0);
             var metrics = GetMetrics(command);
             RecordQueriedPartitions(metrics, command);
-            using(metrics.Total.NewContext())
+            var queriedPartitionKey = TryGetQueriedPartitionKey(command);
+            using (metrics.Total.NewContext(queriedPartitionKey))
             {
-                var totalAttempts = 0;
                 try
                 {
+                    var totalAttempts = 0;
                     commandExecutor.Execute(attempt =>
                         {
                             totalAttempts++;
                             return attempt == 0 ? command : createCommand(attempt);
                         });
+                    metrics.Attempts.Update(totalAttempts, queriedPartitionKey);
                 }
                 catch(Exception)
                 {
                     metrics.Errors.Mark();
                     throw;
                 }
-                finally
-                {
-                    metrics.Attempts.Update(totalAttempts);
-                }
             }
+        }
+
+        private string TryGetQueriedPartitionKey(ICommand command)
+        {
+            var singlePartitionQuery = command as ISinglePartitionQuery;
+            return singlePartitionQuery == null ? null : singlePartitionQuery.PartitionKey;
         }
 
         private void RecordQueriedPartitions(CommandExecutorMetrics metrics, ICommand command)
