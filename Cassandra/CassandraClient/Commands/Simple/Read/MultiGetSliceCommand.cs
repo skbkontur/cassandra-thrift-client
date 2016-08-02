@@ -12,7 +12,7 @@ using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class MultiGetSliceCommand : KeyspaceColumnFamilyDependantCommandBase, IMultiPartitionsQuery
+    internal class MultiGetSliceCommand : KeyspaceColumnFamilyDependantCommandBase
     {
         public MultiGetSliceCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, List<byte[]> keys, SlicePredicate predicate)
             : base(keyspace, columnFamily)
@@ -22,8 +22,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.predicate = predicate;
         }
 
-        public int QueriedPartitions { get { return keys.Count; } }
-
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
             var output = cassandraClient.multiget_slice(keys, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
@@ -31,6 +29,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         public Dictionary<byte[], List<RawColumn>> Output { get; private set; }
+        public override int QueriedPartitionsCount { get { return Output.Count; } }
 
         private void BuildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {

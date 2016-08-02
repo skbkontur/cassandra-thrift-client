@@ -7,41 +7,41 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     internal class KeyspaceConnection : IKeyspaceConnection
     {
-        public KeyspaceConnection(ICommandExecuter commandExecuter,
+        public KeyspaceConnection(ICommandExecutor<IFierceCommand> commandExecutor,
                                   string keyspaceName)
         {
-            this.commandExecuter = commandExecuter;
+            this.commandExecutor = commandExecutor;
             this.keyspaceName = keyspaceName;
         }
 
         public void AddColumnFamily(ColumnFamily columnFamily)
         {
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(new AddColumnFamilyCommand(keyspaceName, columnFamily));
+            commandExecutor.Execute(new AddColumnFamilyCommand(keyspaceName, columnFamily));
         }
 
         public void AddColumnFamily(string columnFamilyName)
         {
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(new AddColumnFamilyCommand(keyspaceName, new ColumnFamily {Name = columnFamilyName}));
+            commandExecutor.Execute(new AddColumnFamilyCommand(keyspaceName, new ColumnFamily {Name = columnFamilyName}));
         }
 
         public Keyspace DescribeKeyspace()
         {
             var describeKeyspaceCommand = new DescribeKeyspaceCommand(keyspaceName);
-            commandExecuter.Execute(describeKeyspaceCommand);
+            commandExecutor.Execute(describeKeyspaceCommand);
             return describeKeyspaceCommand.KeyspaceInformation;
         }
 
         public void UpdateColumnFamily(ColumnFamily columnFamily)
         {
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(new UpdateColumnFamilyCommand(keyspaceName, columnFamily));
+            commandExecutor.Execute(new UpdateColumnFamilyCommand(keyspaceName, columnFamily));
         }
 
         public void RemoveColumnFamily(string columnFamily)
         {
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(new DropColumnFamilyCommand(keyspaceName, columnFamily));
+            commandExecutor.Execute(new DropColumnFamilyCommand(keyspaceName, columnFamily));
         }
 
-        private readonly ICommandExecuter commandExecuter;
+        private readonly ICommandExecutor<IFierceCommand> commandExecutor;
         private readonly string keyspaceName;
     }
 }

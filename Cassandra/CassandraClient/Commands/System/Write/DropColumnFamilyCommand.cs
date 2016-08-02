@@ -3,7 +3,7 @@ using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
 {
-    internal class DropColumnFamilyCommand : KeyspaceColumnFamilyDependantCommandBase, ISchemeUpdateCommand
+    internal class DropColumnFamilyCommand : KeyspaceColumnFamilyDependantCommandBase, IFierceCommand
     {
         public DropColumnFamilyCommand(string keyspace, string columnFamily)
             : base(keyspace, columnFamily)
@@ -16,6 +16,5 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
         }
 
         public string Output { get; private set; }
-        public override bool IsFierce { get { return true; } }
     }
 }

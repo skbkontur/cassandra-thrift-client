@@ -5,6 +5,7 @@ using System.Net;
 
 using log4net;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core;
@@ -20,29 +21,30 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
             dataCommandsConnectionPool = CreateDataConnectionPool(settings);
             fierceCommandsConnectionPool = CreateFierceConnectionPool(settings);
-            commandExecuter = CommandExecutorFactory.Create(dataCommandsConnectionPool, fierceCommandsConnectionPool, settings);
+            commandExecutor = new CommandExecutor(dataCommandsConnectionPool, settings);
+            fierceCommandExecutor = new FierceCommandExecutor(fierceCommandsConnectionPool, settings);
             clusterSettings = settings;
         }
 
         public IClusterConnection RetrieveClusterConnection()
         {
-            return new ClusterConnection(commandExecuter);
+            return new ClusterConnection(fierceCommandExecutor);
         }
 
         public IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName)
         {
-            return new KeyspaceConnection(commandExecuter, keyspaceName);
+            return new KeyspaceConnection(fierceCommandExecutor, keyspaceName);
         }
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
-            var columnFamilyConnectionImplementation = new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, clusterSettings, commandExecuter);
+            var columnFamilyConnectionImplementation = RetrieveColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
         }
 
         public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
         {
-            return new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, clusterSettings, commandExecuter);
+            return new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, clusterSettings, commandExecutor, fierceCommandExecutor);
         }
 
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
@@ -67,7 +69,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public void Dispose()
         {
-            commandExecuter.Dispose();
+            commandExecutor.Dispose();
+            fierceCommandExecutor.Dispose();
         }
 
         private ReplicaSetPool<IThriftConnection, string, IPEndPoint> CreateDataConnectionPool(ICassandraClusterSettings settings)
@@ -118,7 +121,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         }
 
         private readonly ICassandraClusterSettings clusterSettings;
-        private readonly ICommandExecuter commandExecuter;
+        private readonly ICommandExecutor<ICommand> commandExecutor;
+        private readonly ICommandExecutor<IFierceCommand> fierceCommandExecutor;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceCommandsConnectionPool;
         private readonly ILog logger = LogManager.GetLogger(typeof(CassandraCluster));

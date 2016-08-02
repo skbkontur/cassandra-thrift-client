@@ -22,12 +22,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,
                                                     ICassandraClusterSettings cassandraClusterSettings,
-                                                    ICommandExecuter commandExecuter)
+                                                    ICommandExecutor<ICommand> commandExecutor,
+                                                    ICommandExecutor<IFierceCommand> fierceCommandExecutor)
         {
             this.keyspaceName = keyspaceName;
             this.columnFamilyName = columnFamilyName;
             this.cassandraClusterSettings = cassandraClusterSettings;
-            this.commandExecuter = commandExecuter;
+            this.commandExecutor = commandExecutor;
+            this.fierceCommandExecutor = fierceCommandExecutor;
             readConsistencyLevel = cassandraClusterSettings.ReadConsistencyLevel.ToThriftConsistencyLevel();
             writeConsistencyLevel = cassandraClusterSettings.WriteConsistencyLevel.ToThriftConsistencyLevel();
             connectionParameters = new CassandraConnectionParameters(cassandraClusterSettings);
@@ -199,7 +201,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void Truncate()
         {
             var truncateCommand = new TruncateColumnFamilyCommand(keyspaceName, columnFamilyName);
-            ExecuteCommand(truncateCommand);
+            ExecuteFierceCommand(truncateCommand);
         }
 
         public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, List<RawIndexExpression> conditions, List<byte[]> columns)
@@ -316,20 +318,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteCommand(batchMutateCommand);
         }
 
+        private void ExecuteFierceCommand(IFierceCommand command)
+        {
+            fierceCommandExecutor.Execute(command);
+        }
+
         private void ExecuteCommand(ICommand commandBase)
         {
-            commandExecuter.Execute(commandBase);
+            commandExecutor.Execute(commandBase);
         }
 
         private void ExecuteCommand(Func<int, ICommand> createCommand)
         {
-            commandExecuter.Execute(createCommand);
+            commandExecutor.Execute(createCommand);
         }
 
         private readonly string keyspaceName;
         private readonly string columnFamilyName;
         private readonly ICassandraClusterSettings cassandraClusterSettings;
-        private readonly ICommandExecuter commandExecuter;
+        private readonly ICommandExecutor<ICommand> commandExecutor;
+        private readonly ICommandExecutor<IFierceCommand> fierceCommandExecutor;
         private readonly ICassandraConnectionParameters connectionParameters;
         private readonly ApacheConsistencyLevel readConsistencyLevel;
         private readonly ApacheConsistencyLevel writeConsistencyLevel;

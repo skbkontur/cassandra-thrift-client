@@ -61,10 +61,9 @@
     <Compile Include="Abstractions\CompressionAlgorithms.cs" />
     <Compile Include="Abstractions\CompressionOptions.cs" />
     <Compile Include="Abstractions\DataCenterReplicationFactor.cs" />
-    <Compile Include="Abstractions\IMultiPartitionsQuery.cs" />
+    <Compile Include="Abstractions\IFierceCommand.cs" />
     <Compile Include="Abstractions\IReplicationStrategy.cs" />
     <Compile Include="Abstractions\IReplicationStrategyFactory.cs" />
-    <Compile Include="Abstractions\ISchemeUpdateCommand.cs" />
     <Compile Include="Abstractions\ISinglePartitionQuery.cs" />
     <Compile Include="Abstractions\KeyColumnsPair.cs" />
     <Compile Include="Abstractions\NetworkTopologyReplicationStrategy.cs" />
@@ -119,7 +118,9 @@
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Connections\CassandraConnectionParameters.cs" />
-    <Compile Include="Core\CommandExecutorFactory.cs" />
+    <Compile Include="Core\CommandExecutor.cs" />
+    <Compile Include="Core\CommandExecutorBase.cs" />
+    <Compile Include="Core\FierceCommandExecutor.cs" />
     <Compile Include="Core\GenericPool\Exceptions\AllItemsIsDeadExceptions.cs" />
     <Compile Include="Core\GenericPool\Exceptions\EmptyPoolException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\IdleTimeoutToSmallException.cs" />
@@ -134,9 +135,10 @@
     <Compile Include="Core\GenericPool\ReplicaSetPool.cs" />
     <Compile Include="Core\GenericPool\Utils\ObjectReferenceEqualityComparer.cs" />
     <Compile Include="Core\GenericPool\Pool.cs" />
+    <Compile Include="Core\ICommandExecutor.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
     <Compile Include="Core\Metrics\CommandExecutorMetrics.cs" />
-    <Compile Include="Core\Metrics\CommandExecutorWithMetrics.cs" />
+    <Compile Include="Core\Metrics\CommandExecutorMetricsExtensions.cs" />
     <Compile Include="Core\ThriftConnectionInPoolWrapper.cs" />
     <Compile Include="Exceptions\CassandraClientSchemaDisagreementExceptionException.cs" />
     <Compile Include="Helpers\ItemHealthExtensions.cs" />
@@ -158,7 +160,6 @@
     <Compile Include="Connections\IKeyspaceConnection.cs" />
     <Compile Include="Connections\KeyspaceConnection.cs" />
     <Compile Include="Connections\EnumerableFactory.cs" />
-    <Compile Include="Core\CommandExecuter.cs" />
     <Compile Include="Core\DateTimeService.cs" />
     <Compile Include="Exceptions\DeadConnectionException.cs" />
     <Compile Include="Core\ReplicaHealth.cs" />
@@ -167,7 +168,6 @@
     <Compile Include="Exceptions\CassandraAttemptsException.cs" />
     <Compile Include="Exceptions\FailedReleaseException.cs" />
     <Compile Include="Exceptions\GuidCollisionException.cs" />
-    <Compile Include="Core\ICommandExecuter.cs" />
     <Compile Include="Core\ThriftConnection.cs" />
     <Compile Include="Exceptions\CassandraClientApplicationException.cs" />
     <Compile Include="Exceptions\CassandraClientAuthenticationException.cs" />

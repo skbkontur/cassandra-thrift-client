@@ -6,7 +6,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Base
     {
         public abstract void Execute(Apache.Cassandra.Cassandra.Client client);
         public string Name { get { return GetType().Name; } }
-        public virtual bool IsFierce { get { return false; } }
         public virtual CommandContext CommandContext { get { return new CommandContext(); } }
+        public virtual int QueriedPartitionsCount { get { return 1; } }
     }
 }
