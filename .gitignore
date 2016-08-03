@@ -8,3 +8,4 @@ _ReSharper.*
 /Assemblies/Cassandra.CassandraClient.*
 /Assemblies/Cassandra.ClusterDeployment.*
 /Assemblies/Cassandra.Tests.*
+/Assemblies/Metrics.*
