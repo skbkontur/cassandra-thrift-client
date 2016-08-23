@@ -3,15 +3,17 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using IndexClause = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.IndexClause;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetIndexedSlicesCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetIndexedSlicesCommand : KeyspaceColumnFamilyDependantCommandBase, ISimpleCommand
     {
         public GetIndexedSlicesCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, SlicePredicate predicate, IndexClause indexClause)
             : base(keyspace, columnFamily)
@@ -29,7 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         public List<byte[]> Output { private set; get; }
-        public override int QueriedPartitionsCount { get { return Output.Count; } }
+        public int QueriedPartitionsCount { get { return Output.Count; } }
 
         private void BuildOutput(IEnumerable<KeySlice> result)
         {

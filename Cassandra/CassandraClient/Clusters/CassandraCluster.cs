@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         {
             dataCommandsConnectionPool = CreateDataConnectionPool(settings);
             fierceCommandsConnectionPool = CreateFierceConnectionPool(settings);
-            commandExecutor = new CommandExecutor(dataCommandsConnectionPool, settings);
+            commandExecutor = new SimpleCommandExecutor(dataCommandsConnectionPool, settings);
             fierceCommandExecutor = new FierceCommandExecutor(fierceCommandsConnectionPool, settings);
             clusterSettings = settings;
         }
@@ -121,7 +121,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         }
 
         private readonly ICassandraClusterSettings clusterSettings;
-        private readonly ICommandExecutor<ICommand> commandExecutor;
+        private readonly ICommandExecutor<ISimpleCommand> commandExecutor;
         private readonly ICommandExecutor<IFierceCommand> fierceCommandExecutor;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceCommandsConnectionPool;

@@ -1,4 +1,6 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+﻿using JetBrains.Annotations;
+
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
@@ -9,7 +11,7 @@ using SliceRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.Sli
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery
+    internal class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery, ISimpleCommand
     {
         public GetCountCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, SlicePredicate predicate = null)
             : base(keyspace, columnFamily)
@@ -19,7 +21,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.predicate = predicate ?? new SlicePredicate(new SliceRange {Count = int.MaxValue});
         }
 
+        [NotNull]
         public string PartitionKey { get { return StringExtensions.BytesToString(rowKey); } }
+        public int QueriedPartitionsCount { get { return 1; } }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {

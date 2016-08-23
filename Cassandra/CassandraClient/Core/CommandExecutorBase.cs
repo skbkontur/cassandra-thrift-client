@@ -1,5 +1,7 @@
 ﻿using System;
 
+using JetBrains.Annotations;
+
 using log4net;
 
 using Metrics;
@@ -17,22 +19,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     internal abstract class CommandExecutorBase<TCommand> : ICommandExecutor<TCommand>
         where TCommand : ICommand
     {
-        protected CommandExecutorBase(IThriftConnectionReplicaSetPool connectionPool,
-                                      ICassandraClusterSettings settings)
+        protected CommandExecutorBase([NotNull] IThriftConnectionReplicaSetPool connectionPool,
+                                      [NotNull] ICassandraClusterSettings settings)
         {
             this.connectionPool = connectionPool;
             this.settings = settings;
             logger = LogManager.GetLogger(GetType());
         }
 
-        public abstract void Execute(TCommand command);
-        public abstract void Execute(Func<int, TCommand> createCommand);
+        public abstract void Execute([NotNull] TCommand command);
+        public abstract void Execute([NotNull] Func<int, TCommand> createCommand);
 
+        [NotNull]
         protected virtual MetricsContext CreateMetricsContext()
         {
             return Metric.Context("CassandraClient");
         }
 
+        [CanBeNull]
         protected CommandExecutorMetrics GetMetrics(ICommand command)
         {
             return settings.EnableMetrics
@@ -40,7 +44,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                        : null;
         }
 
-        protected void TryExecuteCommandInPool(TCommand command, CommandExecutorMetrics metrics = null)
+        protected void TryExecuteCommandInPool([NotNull] TCommand command, [CanBeNull] CommandExecutorMetrics metrics = null)
         {
             IThriftConnection connectionInPool = null;
             try
@@ -58,7 +62,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        private CassandraClientException HandleCommandExecutionException(Exception e, ICommand command, IThriftConnection connectionInPool, int attempt)
+        [NotNull]
+        private CassandraClientException HandleCommandExecutionException([NotNull] Exception e, [NotNull] ICommand command, [CanBeNull] IThriftConnection connectionInPool, int attempt)
         {
             var message = string.Format("An error occurred while executing cassandra command '{0}'", command.Name);
             var exception = CassandraExceptionTransformer.Transform(e, message);

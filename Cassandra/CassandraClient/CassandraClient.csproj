@@ -37,6 +37,9 @@
     <Reference Include="Apache.Cassandra.209">
       <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.209.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
+    </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -64,6 +67,7 @@
     <Compile Include="Abstractions\IFierceCommand.cs" />
     <Compile Include="Abstractions\IReplicationStrategy.cs" />
     <Compile Include="Abstractions\IReplicationStrategyFactory.cs" />
+    <Compile Include="Abstractions\ISimpleCommand.cs" />
     <Compile Include="Abstractions\ISinglePartitionQuery.cs" />
     <Compile Include="Abstractions\KeyColumnsPair.cs" />
     <Compile Include="Abstractions\NetworkTopologyReplicationStrategy.cs" />
@@ -118,7 +122,7 @@
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Connections\CassandraConnectionParameters.cs" />
-    <Compile Include="Core\CommandExecutor.cs" />
+    <Compile Include="Core\SimpleCommandExecutor.cs" />
     <Compile Include="Core\CommandExecutorBase.cs" />
     <Compile Include="Core\FierceCommandExecutor.cs" />
     <Compile Include="Core\GenericPool\Exceptions\AllItemsIsDeadExceptions.cs" />

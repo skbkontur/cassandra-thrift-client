@@ -27,8 +27,8 @@ namespace Cassandra.Tests.CoreTests
             dataConnectionPool = GetMock<IPoolSet<IThriftConnection, string>>();
             cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
             cassandraClusterSettings.Expect(x => x.EnableMetrics).Return(false).Repeat.Any();
-            executor = new CommandExecutor(dataConnectionPool, cassandraClusterSettings);
-            command = GetMock<ICommand>();
+            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings);
+            command = GetMock<ISimpleCommand>();
             command.Expect(x => x.Name).Return("commandName").Repeat.Any();
             command.Expect(command1 => command1.CommandContext).Return(new CommandContext {KeyspaceName = "keyspace"}).Repeat.Any();
         }
@@ -215,8 +215,8 @@ namespace Cassandra.Tests.CoreTests
         }
 
         private ICassandraClusterSettings cassandraClusterSettings;
-        private ICommand command;
+        private ISimpleCommand command;
         private IPoolSet<IThriftConnection, string> dataConnectionPool;
-        private ICommandExecutor<ICommand> executor;
+        private ICommandExecutor<ISimpleCommand> executor;
     }
 }

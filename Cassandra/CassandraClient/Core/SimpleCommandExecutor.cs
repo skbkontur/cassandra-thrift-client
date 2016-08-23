@@ -1,5 +1,7 @@
 ﻿using System;
 
+using JetBrains.Annotations;
+
 using Metrics;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -10,24 +12,25 @@ using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
-    internal class CommandExecutor : CommandExecutorBase<ICommand>
+    internal class SimpleCommandExecutor : CommandExecutorBase<ISimpleCommand>
     {
-        public CommandExecutor(IPoolSet<IThriftConnection, string> connectionPool, ICassandraClusterSettings settings)
+        public SimpleCommandExecutor([NotNull] IPoolSet<IThriftConnection, string> connectionPool, [NotNull] ICassandraClusterSettings settings)
             : base(connectionPool, settings)
         {
         }
 
+        [NotNull]
         protected override MetricsContext CreateMetricsContext()
         {
             return base.CreateMetricsContext().Context("Simple");
         }
 
-        public override void Execute(ICommand command)
+        public override void Execute([NotNull] ISimpleCommand command)
         {
             Execute(attempt => command);
         }
 
-        public override void Execute(Func<int, ICommand> createCommand)
+        public override void Execute([NotNull] Func<int, ISimpleCommand> createCommand)
         {
             var command = createCommand(0);
             var metrics = GetMetrics(command);

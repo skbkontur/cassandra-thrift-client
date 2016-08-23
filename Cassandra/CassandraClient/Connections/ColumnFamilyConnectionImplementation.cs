@@ -22,7 +22,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public ColumnFamilyConnectionImplementation(string keyspaceName,
                                                     string columnFamilyName,
                                                     ICassandraClusterSettings cassandraClusterSettings,
-                                                    ICommandExecutor<ICommand> commandExecutor,
+                                                    ICommandExecutor<ISimpleCommand> commandExecutor,
                                                     ICommandExecutor<IFierceCommand> fierceCommandExecutor)
         {
             this.keyspaceName = keyspaceName;
@@ -240,7 +240,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             ExecuteMutations(mutationsList);
         }
 
-        private KeyspaceColumnFamilyDependantCommandBase CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[], RawColumn>> createKeyColumnPair)
+        private ISimpleCommand CreateInsertCommand(int attempt, Func<int, KeyColumnPair<byte[], RawColumn>> createKeyColumnPair)
         {
             var keyColumnPair = createKeyColumnPair(attempt);
             CheckColumnHasTimestampValue(keyColumnPair.Column);
@@ -323,12 +323,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             fierceCommandExecutor.Execute(command);
         }
 
-        private void ExecuteCommand(ICommand commandBase)
+        private void ExecuteCommand(ISimpleCommand commandBase)
         {
             commandExecutor.Execute(commandBase);
         }
 
-        private void ExecuteCommand(Func<int, ICommand> createCommand)
+        private void ExecuteCommand(Func<int, ISimpleCommand> createCommand)
         {
             commandExecutor.Execute(createCommand);
         }
@@ -336,7 +336,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private readonly string keyspaceName;
         private readonly string columnFamilyName;
         private readonly ICassandraClusterSettings cassandraClusterSettings;
-        private readonly ICommandExecutor<ICommand> commandExecutor;
+        private readonly ICommandExecutor<ISimpleCommand> commandExecutor;
         private readonly ICommandExecutor<IFierceCommand> fierceCommandExecutor;
         private readonly ICassandraConnectionParameters connectionParameters;
         private readonly ApacheConsistencyLevel readConsistencyLevel;
