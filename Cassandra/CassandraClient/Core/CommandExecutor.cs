@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Diagnostics;
 
 using Metrics;
 
@@ -31,8 +29,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public override void Execute(Func<int, ICommand> createCommand)
         {
-            var stopwatch = Stopwatch.StartNew();
-
             var command = createCommand(0);
             var metrics = GetMetrics(command);
             try
@@ -64,14 +60,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 metrics.Record(m => m.Errors.Mark());
                 throw;
             }
-            finally
-            {
-                var timeStatisticsTitle = string.Format("Cassandra.{0}{1}", command.Name, command.CommandContext);
-                var timeStatistics = timeStatisticsDictionary.GetOrAdd(timeStatisticsTitle, x => new TimeStatistics(timeStatisticsTitle));
-                timeStatistics.AddTime(stopwatch.ElapsedMilliseconds);
-            }
         }
-
-        private readonly ConcurrentDictionary<string, TimeStatistics> timeStatisticsDictionary = new ConcurrentDictionary<string, TimeStatistics>();
     }
 }
