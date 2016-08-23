@@ -7,7 +7,6 @@ using Metrics;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
@@ -32,19 +31,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public override void Execute([NotNull] Func<int, ISimpleCommand> createCommand)
         {
-            var command = createCommand(0);
-            var metrics = GetMetrics(command);
-            try
-            {
-                using(metrics.CreateTimerContext(m => m.Total))
+            RecordTimeAndErrors(createCommand(0), (command, metrics) =>
                 {
                     for(var attempt = 1; attempt <= settings.Attempts; ++attempt)
                     {
                         try
                         {
                             TryExecuteCommandInPool(command, metrics);
-                            metrics.Record(m => m.QueriedPartitions.Mark(command.QueriedPartitionsCount));
-                            metrics.UpdateHistogram(m => m.Attempts, attempt);
+                            metrics.RecordQueriedPartitions(command);
+                            metrics.RecordAttempts(attempt);
                             return;
                         }
                         catch(CassandraClientException exception)
@@ -56,13 +51,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                             command = createCommand(attempt);
                         }
                     }
-                }
-            }
-            catch
-            {
-                metrics.Record(m => m.Errors.Mark());
-                throw;
-            }
+                });
         }
     }
 }

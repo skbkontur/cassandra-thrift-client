@@ -1,40 +1,37 @@
-﻿using Metrics;
+﻿using System;
+
+using JetBrains.Annotations;
+
+using Metrics;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
-    internal class CommandExecutorMetrics
+    internal class CommandExecutorMetrics : ICommandExecutorMetrics
     {
-        public CommandExecutorMetrics(MetricsContext metricsContext, ICommand command)
+        public CommandExecutorMetrics([NotNull] MetricsContext metricsContext, [NotNull] ICommand command)
         {
             var context = GetMetricsContext(metricsContext, command);
-            CommandInfo = GetCommandInfo(command);
+            commandInfo = GetCommandInfo(command);
 
-            Total = context.Timer("Total", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            AcquirePoolConnection = context.Timer("AcquirePoolConnection", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            ThriftQuery = context.Timer("ThriftQuery", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            Attempts = context.Histogram("Attempts", Unit.Items, SamplingType.FavourRecent);
-            Errors = context.Meter("Errors", Unit.Requests, TimeUnit.Minutes);
-            QueriedPartitions = context.Meter("QueriedPartitions", Unit.Items, TimeUnit.Minutes);
+            total = context.Timer("Total", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
+            acquirePoolConnection = context.Timer("AcquirePoolConnection", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
+            thriftQuery = context.Timer("ThriftQuery", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
+            attempts = context.Histogram("Attempts", Unit.Items, SamplingType.FavourRecent);
+            errors = context.Meter("Errors", Unit.Requests, TimeUnit.Minutes);
+            queriedPartitions = context.Meter("QueriedPartitions", Unit.Items, TimeUnit.Minutes);
         }
 
-        public Timer Total { get; private set; }
-        public Timer AcquirePoolConnection { get; private set; }
-        public Timer ThriftQuery { get; private set; }
-        public Histogram Attempts { get; private set; }
-        public Meter Errors { get; private set; }
-        public Meter QueriedPartitions { get; private set; }
-
-        public string CommandInfo { get; private set; }
-
-        private string GetCommandInfo(ICommand command)
+        [CanBeNull]
+        private string GetCommandInfo([NotNull] ICommand command)
         {
             var singlePartitionQuery = command as ISinglePartitionQuery;
             return singlePartitionQuery == null ? null : singlePartitionQuery.PartitionKey;
         }
 
-        private static MetricsContext GetMetricsContext(MetricsContext metricsContext, ICommand command)
+        [NotNull]
+        private static MetricsContext GetMetricsContext([NotNull] MetricsContext metricsContext, [NotNull] ICommand command)
         {
             var commandContext = command.CommandContext;
             if(!string.IsNullOrEmpty(commandContext.KeyspaceName))
@@ -43,5 +40,37 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
                 metricsContext = metricsContext.Context(commandContext.ColumnFamilyName);
             return metricsContext.Context(command.Name);
         }
+
+        [NotNull]
+        public IDisposable TotalTimeContext { get { return total.NewContext(commandInfo); } }
+
+        [NotNull]
+        public IDisposable AcquirePoolConnectionContext { get { return acquirePoolConnection.NewContext(commandInfo); } }
+
+        [NotNull]
+        public IDisposable ThriftQueryContext { get { return thriftQuery.NewContext(commandInfo); } }
+
+        public void RecordAttempts(long attemptsCount)
+        {
+            attempts.Update(attemptsCount, commandInfo);
+        }
+
+        public void RecordError()
+        {
+            errors.Mark();
+        }
+
+        public void RecordQueriedPartitions(ISimpleCommand command)
+        {
+            queriedPartitions.Mark(command.QueriedPartitionsCount);
+        }
+
+        private readonly Timer total;
+        private readonly Timer acquirePoolConnection;
+        private readonly Timer thriftQuery;
+        private readonly Histogram attempts;
+        private readonly Meter errors;
+        private readonly Meter queriedPartitions;
+        private readonly string commandInfo;
     }
 }

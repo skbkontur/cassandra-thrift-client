@@ -7,7 +7,6 @@ using Metrics;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
@@ -26,19 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public override void Execute([NotNull] IFierceCommand command)
         {
-            var metrics = GetMetrics(command);
-            using(metrics.CreateTimerContext(m => m.Total))
-            {
-                try
-                {
-                    TryExecuteCommandInPool(command, metrics);
-                }
-                catch
-                {
-                    metrics.Record(m => m.Errors.Mark());
-                    throw;
-                }
-            }
+            RecordTimeAndErrors(command, TryExecuteCommandInPool);
         }
 
         public override void Execute([NotNull] Func<int, IFierceCommand> createCommand)
