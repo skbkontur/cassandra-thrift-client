@@ -5,6 +5,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     internal interface ISinglePartitionQuery
     {
         [NotNull]
-        string PartitionKey { get; }
+        byte[] PartitionKey { get; }
     }
 }

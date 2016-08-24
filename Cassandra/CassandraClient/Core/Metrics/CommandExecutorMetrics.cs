@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Metrics;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
@@ -27,7 +28,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         private string GetCommandInfo([NotNull] ICommand command)
         {
             var singlePartitionQuery = command as ISinglePartitionQuery;
-            return singlePartitionQuery == null ? null : singlePartitionQuery.PartitionKey;
+            if(singlePartitionQuery == null) return null;
+            try
+            {
+                return StringExtensions.BytesToString(singlePartitionQuery.PartitionKey);
+            }
+            catch
+            {
+                return BitConverter.ToString(singlePartitionQuery.PartitionKey);
+            }
         }
 
         [NotNull]
