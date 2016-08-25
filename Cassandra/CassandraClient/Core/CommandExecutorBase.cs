@@ -36,12 +36,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             return Metric.Context("CassandraClient");
         }
 
-        protected void RecordTimeAndErrors([NotNull] TCommand command, [NotNull] Action<TCommand, ICommandExecutorMetrics> action)
+        protected void RecordTimeAndErrors([NotNull] TCommand command, [NotNull] Action<TCommand, ICommandMetrics> action)
         {
             var metrics = settings.EnableMetrics
-                              ? new CommandExecutorMetrics(CreateMetricsContext(), command)
-                              : CommandExecutorMetricsStub.Instance;
-            using(metrics.TotalTimeContext)
+                              ? new CommandMetrics(CreateMetricsContext(), command)
+                              : CommandMetricsStub.Instance;
+            using(metrics.NewTotalContext())
             {
                 try
                 {
@@ -55,14 +55,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandExecutorMetrics metrics)
+        protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandMetrics metrics)
         {
             IThriftConnection connectionInPool = null;
             try
             {
-                using(metrics.AcquirePoolConnectionContext)
+                using(metrics.NewAcquireConnectionFromPoolContext())
                     connectionInPool = connectionPool.Acquire(command.CommandContext.KeyspaceName);
-                using(metrics.ThriftQueryContext)
+                using(metrics.NewThriftQueryContext())
                     connectionInPool.ExecuteCommand(command);
                 connectionPool.Good(connectionInPool);
                 connectionPool.Release(connectionInPool);

@@ -6,16 +6,16 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
-    internal interface ICommandExecutorMetrics
+    internal interface ICommandMetrics
     {
         [NotNull]
-        IDisposable TotalTimeContext { get; }
+        IDisposable NewTotalContext();
 
         [NotNull]
-        IDisposable AcquirePoolConnectionContext { get; }
+        IDisposable NewAcquireConnectionFromPoolContext();
 
         [NotNull]
-        IDisposable ThriftQueryContext { get; }
+        IDisposable NewThriftQueryContext();
 
         void RecordAttempts(long attemptsCount);
         void RecordError();

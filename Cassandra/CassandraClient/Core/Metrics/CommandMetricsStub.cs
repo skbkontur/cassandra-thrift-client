@@ -6,20 +6,29 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
-    internal sealed class CommandExecutorMetricsStub : ICommandExecutorMetrics
+    internal sealed class CommandMetricsStub : ICommandMetrics
     {
-        private CommandExecutorMetricsStub()
+        private CommandMetricsStub()
         {
         }
 
         [NotNull]
-        public IDisposable TotalTimeContext { get { return DisposableStub.StubInstance; } }
+        public IDisposable NewTotalContext()
+        {
+            return DisposableStub.StubInstance;
+        }
 
         [NotNull]
-        public IDisposable AcquirePoolConnectionContext { get { return DisposableStub.StubInstance; } }
+        public IDisposable NewAcquireConnectionFromPoolContext()
+        {
+            return DisposableStub.StubInstance;
+        }
 
         [NotNull]
-        public IDisposable ThriftQueryContext { get { return DisposableStub.StubInstance; } }
+        public IDisposable NewThriftQueryContext()
+        {
+            return DisposableStub.StubInstance;
+        }
 
         public void RecordAttempts(long attemptsCount)
         {
@@ -33,7 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         {
         }
 
-        public static readonly ICommandExecutorMetrics Instance = new CommandExecutorMetricsStub();
+        public static readonly ICommandMetrics Instance = new CommandMetricsStub();
 
         private sealed class DisposableStub : IDisposable
         {

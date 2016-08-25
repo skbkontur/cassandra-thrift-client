@@ -122,9 +122,9 @@
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Connections\CassandraConnectionParameters.cs" />
-    <Compile Include="Core\Metrics\CommandExecutorMetrics.cs" />
-    <Compile Include="Core\Metrics\CommandExecutorMetricsStub.cs" />
-    <Compile Include="Core\Metrics\ICommandExecutorMetrics.cs" />
+    <Compile Include="Core\Metrics\CommandMetrics.cs" />
+    <Compile Include="Core\Metrics\CommandMetricsStub.cs" />
+    <Compile Include="Core\Metrics\ICommandMetrics.cs" />
     <Compile Include="Core\SimpleCommandExecutor.cs" />
     <Compile Include="Core\CommandExecutorBase.cs" />
     <Compile Include="Core\FierceCommandExecutor.cs" />

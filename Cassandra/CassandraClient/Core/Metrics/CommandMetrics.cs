@@ -9,23 +9,23 @@ using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
-    internal class CommandExecutorMetrics : ICommandExecutorMetrics
+    internal class CommandMetrics : ICommandMetrics
     {
-        public CommandExecutorMetrics([NotNull] MetricsContext metricsContext, [NotNull] ICommand command)
+        public CommandMetrics([NotNull] MetricsContext metricsContext, [NotNull] ICommand command)
         {
             var context = GetMetricsContext(metricsContext, command);
-            commandInfo = GetCommandInfo(command);
+            singlePartitionKey = FormatSinglePartitionKey(command);
 
             total = context.Timer("Total", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
             acquirePoolConnection = context.Timer("AcquirePoolConnection", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
             thriftQuery = context.Timer("ThriftQuery", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
             attempts = context.Histogram("Attempts", Unit.Items, SamplingType.FavourRecent);
-            errors = context.Meter("Errors", Unit.Requests, TimeUnit.Minutes);
+            errors = context.Meter("Errors", Unit.Items, TimeUnit.Minutes);
             queriedPartitions = context.Meter("QueriedPartitions", Unit.Items, TimeUnit.Minutes);
         }
 
         [CanBeNull]
-        private string GetCommandInfo([NotNull] ICommand command)
+        private string FormatSinglePartitionKey([NotNull] ICommand command)
         {
             var singlePartitionQuery = command as ISinglePartitionQuery;
             if(singlePartitionQuery == null) return null;
@@ -51,17 +51,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         }
 
         [NotNull]
-        public IDisposable TotalTimeContext { get { return total.NewContext(commandInfo); } }
+        public IDisposable NewTotalContext()
+        {
+            return total.NewContext(singlePartitionKey);
+        }
 
         [NotNull]
-        public IDisposable AcquirePoolConnectionContext { get { return acquirePoolConnection.NewContext(commandInfo); } }
+        public IDisposable NewAcquireConnectionFromPoolContext()
+        {
+            return acquirePoolConnection.NewContext(singlePartitionKey);
+        }
 
         [NotNull]
-        public IDisposable ThriftQueryContext { get { return thriftQuery.NewContext(commandInfo); } }
+        public IDisposable NewThriftQueryContext()
+        {
+            return thriftQuery.NewContext(singlePartitionKey);
+        }
 
         public void RecordAttempts(long attemptsCount)
         {
-            attempts.Update(attemptsCount, commandInfo);
+            attempts.Update(attemptsCount, singlePartitionKey);
         }
 
         public void RecordError()
@@ -80,6 +89,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         private readonly Histogram attempts;
         private readonly Meter errors;
         private readonly Meter queriedPartitions;
-        private readonly string commandInfo;
+        private readonly string singlePartitionKey;
     }
 }
