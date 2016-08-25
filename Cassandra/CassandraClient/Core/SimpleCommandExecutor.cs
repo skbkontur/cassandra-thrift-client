@@ -2,11 +2,10 @@
 
 using JetBrains.Annotations;
 
-using Metrics;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
+using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
@@ -18,12 +17,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
         }
 
-        [NotNull]
-        protected override MetricsContext CreateMetricsContext()
-        {
-            return base.CreateMetricsContext().Context("Simple");
-        }
-
         public override void Execute([NotNull] ISimpleCommand command)
         {
             Execute(attempt => command);
@@ -31,7 +24,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public override void Execute([NotNull] Func<int, ISimpleCommand> createCommand)
         {
-            RecordTimeAndErrors(createCommand(0), (command, metrics) =>
+            var command = createCommand(0);
+            var metrics = CommandMetricsFactory.Create(settings, command);
+            using(metrics.NewTotalContext())
+            {
+                try
                 {
                     for(var attempt = 1; attempt <= settings.Attempts; ++attempt)
                     {
@@ -52,7 +49,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                             command = createCommand(attempt);
                         }
                     }
-                });
+                }
+                catch(Exception e)
+                {
+                    metrics.RecordError(e);
+                    throw;
+                }
+            }
         }
     }
 }

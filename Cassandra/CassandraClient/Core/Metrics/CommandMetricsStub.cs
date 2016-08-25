@@ -6,7 +6,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
-    internal sealed class CommandMetricsStub : ICommandMetrics
+    internal sealed class CommandMetricsStub : IRetryableCommandMetrics
     {
         private CommandMetricsStub()
         {
@@ -30,11 +30,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
             return DisposableStub.StubInstance;
         }
 
-        public void RecordRetriedCommand()
+        public void RecordError(Exception error)
         {
         }
 
-        public void RecordError(Exception error)
+        public void RecordRetriedCommand()
         {
         }
 
@@ -42,7 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         {
         }
 
-        public static readonly ICommandMetrics Instance = new CommandMetricsStub();
+        public static readonly CommandMetricsStub Instance = new CommandMetricsStub();
 
         private sealed class DisposableStub : IDisposable
         {

@@ -2,8 +2,6 @@
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-
 namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
 {
     internal interface ICommandMetrics
@@ -17,8 +15,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         [NotNull]
         IDisposable NewThriftQueryContext();
 
-        void RecordRetriedCommand();
         void RecordError(Exception error);
-        void RecordQueriedPartitions(ISimpleCommand command);
     }
 }

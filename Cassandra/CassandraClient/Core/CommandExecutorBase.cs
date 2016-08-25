@@ -30,31 +30,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         public abstract void Execute([NotNull] TCommand command);
         public abstract void Execute([NotNull] Func<int, TCommand> createCommand);
 
-        [NotNull]
-        protected virtual MetricsContext CreateMetricsContext()
-        {
-            return Metric.Context("CassandraClient");
-        }
-
-        protected void RecordTimeAndErrors([NotNull] TCommand command, [NotNull] Action<TCommand, ICommandMetrics> action)
-        {
-            var metrics = settings.EnableMetrics
-                              ? new CommandMetrics(CreateMetricsContext(), command)
-                              : CommandMetricsStub.Instance;
-            using(metrics.NewTotalContext())
-            {
-                try
-                {
-                    action(command, metrics);
-                }
-                catch(Exception e)
-                {
-                    metrics.RecordError(e);
-                    throw;
-                }
-            }
-        }
-
         protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandMetrics metrics)
         {
             IThriftConnection connectionInPool = null;

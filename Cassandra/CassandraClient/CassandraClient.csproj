@@ -123,6 +123,9 @@
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Connections\CassandraConnectionParameters.cs" />
     <Compile Include="Core\Metrics\CommandMetrics.cs" />
+    <Compile Include="Core\Metrics\IRetryableCommandMetrics.cs" />
+    <Compile Include="Core\Metrics\RetryableCommandMetrics.cs" />
+    <Compile Include="Core\Metrics\CommandMetricsFactory.cs" />
     <Compile Include="Core\Metrics\CommandMetricsStub.cs" />
     <Compile Include="Core\Metrics\ICommandMetrics.cs" />
     <Compile Include="Core\SimpleCommandExecutor.cs" />

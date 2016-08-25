@@ -2,11 +2,10 @@
 
 using JetBrains.Annotations;
 
-using Metrics;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
+using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
@@ -17,15 +16,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
         }
 
-        [NotNull]
-        protected override MetricsContext CreateMetricsContext()
-        {
-            return base.CreateMetricsContext().Context("Fierce");
-        }
-
         public override void Execute([NotNull] IFierceCommand command)
         {
-            RecordTimeAndErrors(command, TryExecuteCommandInPool);
+            var metrics = CommandMetricsFactory.Create(settings, command);
+            using(metrics.NewTotalContext())
+            {
+                try
+                {
+                    TryExecuteCommandInPool(command, metrics);
+                }
+                catch(Exception e)
+                {
+                    metrics.RecordError(e);
+                    throw;
+                }
+            }
         }
 
         public override void Execute([NotNull] Func<int, IFierceCommand> createCommand)
