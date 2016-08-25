@@ -41,7 +41,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         private readonly ConsistencyLevel consistencyLevel;
-        public readonly KeyRange keyRange;
+        private readonly KeyRange keyRange;
         private readonly SlicePredicate predicate;
     }
 }
