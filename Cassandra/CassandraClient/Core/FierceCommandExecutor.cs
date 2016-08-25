@@ -23,7 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             {
                 try
                 {
-                    TryExecuteCommandInPool(command, metrics);
+                    TryExecuteCommandInPool(command, metrics, 0);
                 }
                 catch(Exception e)
                 {

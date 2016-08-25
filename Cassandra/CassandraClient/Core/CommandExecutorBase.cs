@@ -4,8 +4,6 @@ using JetBrains.Annotations;
 
 using log4net;
 
-using Metrics;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
@@ -30,7 +28,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         public abstract void Execute([NotNull] TCommand command);
         public abstract void Execute([NotNull] Func<int, TCommand> createCommand);
 
-        protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandMetrics metrics)
+        protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandMetrics metrics, int attempt)
         {
             IThriftConnection connectionInPool = null;
             try
@@ -44,7 +42,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
             catch(Exception e)
             {
-                throw HandleCommandExecutionException(e, command, connectionInPool, 0);
+                throw HandleCommandExecutionException(e, command, connectionInPool, attempt);
             }
         }
 

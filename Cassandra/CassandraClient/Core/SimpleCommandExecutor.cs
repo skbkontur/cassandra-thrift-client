@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     {
                         try
                         {
-                            TryExecuteCommandInPool(command, metrics);
+                            TryExecuteCommandInPool(command, metrics, attempt-1);
                             metrics.RecordQueriedPartitions(command);
                             return;
                         }
