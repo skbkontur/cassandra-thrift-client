@@ -17,9 +17,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
             singlePartitionKey = FormatSinglePartitionKey(command);
 
             total = context.Timer("Total", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            acquirePoolConnection = context.Timer("AcquirePoolConnection", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
+            acquireConnectionFromPool = context.Timer("AcquireConnectionFromPool", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
             thriftQuery = context.Timer("ThriftQuery", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            attempts = context.Histogram("Attempts", Unit.Items, SamplingType.FavourRecent);
+            retriedCommands = context.Meter("RetriedCommands", Unit.Items, TimeUnit.Minutes);
             errors = context.Meter("Errors", Unit.Items, TimeUnit.Minutes);
             queriedPartitions = context.Meter("QueriedPartitions", Unit.Items, TimeUnit.Minutes);
         }
@@ -59,7 +59,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         [NotNull]
         public IDisposable NewAcquireConnectionFromPoolContext()
         {
-            return acquirePoolConnection.NewContext(singlePartitionKey);
+            return acquireConnectionFromPool.NewContext(singlePartitionKey);
         }
 
         [NotNull]
@@ -68,14 +68,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
             return thriftQuery.NewContext(singlePartitionKey);
         }
 
-        public void RecordAttempts(long attemptsCount)
+        public void RecordRetriedCommand()
         {
-            attempts.Update(attemptsCount, singlePartitionKey);
+            retriedCommands.Mark();
         }
 
-        public void RecordError()
+        public void RecordError(Exception error)
         {
-            errors.Mark();
+            errors.Mark(error.GetType().Name);
         }
 
         public void RecordQueriedPartitions(ISimpleCommand command)
@@ -84,9 +84,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         }
 
         private readonly Timer total;
-        private readonly Timer acquirePoolConnection;
+        private readonly Timer acquireConnectionFromPool;
         private readonly Timer thriftQuery;
-        private readonly Histogram attempts;
+        private readonly Meter retriedCommands;
         private readonly Meter errors;
         private readonly Meter queriedPartitions;
         private readonly string singlePartitionKey;

@@ -39,13 +39,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         {
                             TryExecuteCommandInPool(command, metrics);
                             metrics.RecordQueriedPartitions(command);
-                            metrics.RecordAttempts(attempt);
                             return;
                         }
                         catch(CassandraClientException exception)
                         {
                             if(!exception.UseAttempts)
                                 throw;
+                            if(attempt == 1)
+                                metrics.RecordRetriedCommand();
                             if(attempt == settings.Attempts)
                                 throw new CassandraAttemptsException(settings.Attempts, exception);
                             command = createCommand(attempt);

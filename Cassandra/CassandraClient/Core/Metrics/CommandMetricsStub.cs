@@ -30,11 +30,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
             return DisposableStub.StubInstance;
         }
 
-        public void RecordAttempts(long attemptsCount)
+        public void RecordRetriedCommand()
         {
         }
 
-        public void RecordError()
+        public void RecordError(Exception error)
         {
         }
 

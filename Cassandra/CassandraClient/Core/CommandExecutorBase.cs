@@ -47,9 +47,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 {
                     action(command, metrics);
                 }
-                catch
+                catch(Exception e)
                 {
-                    metrics.RecordError();
+                    metrics.RecordError(e);
                     throw;
                 }
             }

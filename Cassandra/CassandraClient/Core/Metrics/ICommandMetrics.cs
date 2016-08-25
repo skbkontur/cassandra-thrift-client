@@ -17,8 +17,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         [NotNull]
         IDisposable NewThriftQueryContext();
 
-        void RecordAttempts(long attemptsCount);
-        void RecordError();
+        void RecordRetriedCommand();
+        void RecordError(Exception error);
         void RecordQueriedPartitions(ISimpleCommand command);
     }
 }
