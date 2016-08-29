@@ -30,36 +30,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandMetrics metrics, int attempt)
         {
-            IThriftConnection connectionInPool = null;
+            IThriftConnection connectionInPool;
+            using(metrics.NewAcquireConnectionFromPoolContext())
+                connectionInPool = connectionPool.Acquire(command.CommandContext.KeyspaceName);
             try
             {
-                using(metrics.NewAcquireConnectionFromPoolContext())
-                    connectionInPool = connectionPool.Acquire(command.CommandContext.KeyspaceName);
-                try
-                {
-                    using(metrics.NewThriftQueryContext())
-                        connectionInPool.ExecuteCommand(command);
-                }
-                catch(Exception e)
-                {
-                    throw HandleCommandExecutionException(e, command, connectionInPool, attempt);
-                }
-                connectionPool.Good(connectionInPool);
-                connectionPool.Release(connectionInPool);
+                using(metrics.NewThriftQueryContext())
+                    connectionInPool.ExecuteCommand(command);
             }
-            catch(CassandraClientException)
+            catch(Exception e)
             {
-                throw;
+                throw HandleCommandExecutionException(e, command, connectionInPool, attempt);
             }
-            catch
-            {
-                if(connectionInPool != null)
-                {
-                    connectionPool.Bad(connectionInPool);
-                    connectionPool.Remove(connectionInPool);
-                }
-                throw;
-            }
+            connectionPool.Good(connectionInPool);
+            connectionPool.Release(connectionInPool);
+
         }
 
         [NotNull]

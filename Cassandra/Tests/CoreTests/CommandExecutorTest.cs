@@ -135,27 +135,6 @@ namespace Cassandra.Tests.CoreTests
         }
 
         [Test]
-        public void TestRemoveConnectionIfPoolThrowExceptionInGoodMethod()
-        {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2).Repeat.Any();
-
-            var thriftConnection = GetMock<IThriftConnection>();
-            dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
-            dataConnectionPool.Expect(pool => pool.Good(thriftConnection)).Throw(new Exception("xxx"));
-            thriftConnection.Expect(connection => connection.ExecuteCommand(command));
-            dataConnectionPool.Expect(pool => pool.Remove(thriftConnection));
-            dataConnectionPool.Expect(pool => pool.Bad(thriftConnection));
-
-            var goodThriftConnection = GetMock<IThriftConnection>();
-            dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(goodThriftConnection);
-            goodThriftConnection.Expect(connection => connection.ExecuteCommand(command));
-            dataConnectionPool.Expect(pool => pool.Release(goodThriftConnection));
-            dataConnectionPool.Expect(pool => pool.Good(goodThriftConnection));
-
-            executor.Execute(command);
-        }
-
-        [Test]
         public void AttemptsExceptionTest()
         {
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1).Repeat.Any();
