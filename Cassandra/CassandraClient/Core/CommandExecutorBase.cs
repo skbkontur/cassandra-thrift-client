@@ -35,14 +35,30 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             {
                 using(metrics.NewAcquireConnectionFromPoolContext())
                     connectionInPool = connectionPool.Acquire(command.CommandContext.KeyspaceName);
-                using(metrics.NewThriftQueryContext())
-                    connectionInPool.ExecuteCommand(command);
+                try
+                {
+                    using(metrics.NewThriftQueryContext())
+                        connectionInPool.ExecuteCommand(command);
+                }
+                catch(Exception e)
+                {
+                    throw HandleCommandExecutionException(e, command, connectionInPool, attempt);
+                }
                 connectionPool.Good(connectionInPool);
                 connectionPool.Release(connectionInPool);
             }
-            catch(Exception e)
+            catch(CassandraClientException)
             {
-                throw HandleCommandExecutionException(e, command, connectionInPool, attempt);
+                throw;
+            }
+            catch
+            {
+                if(connectionInPool != null)
+                {
+                    connectionPool.Bad(connectionInPool);
+                    connectionPool.Remove(connectionInPool);
+                }
+                throw;
             }
         }
 

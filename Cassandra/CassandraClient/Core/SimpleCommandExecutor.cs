@@ -38,9 +38,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                             metrics.RecordQueriedPartitions(command);
                             return;
                         }
-                        catch(CassandraClientException exception)
+                        catch(Exception exception)
                         {
-                            if(!exception.UseAttempts)
+                            var cassandraClientException = exception as CassandraClientException;
+                            if(cassandraClientException != null && !cassandraClientException.UseAttempts)
                                 throw;
                             if(attempt == 1)
                                 metrics.RecordRetriedCommand();
