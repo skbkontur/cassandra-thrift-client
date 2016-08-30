@@ -52,11 +52,12 @@ namespace SKBKontur.Cassandra.ClusterDeployment
         public string[] SeedAddresses { get; set; }
         public string ClusterName { get; set; }
         public int CqlPort { get; set; }
+        public string HeapSize { get; set; }
 
         public override string ToString()
         {
-            return string.Format("TemplateDirectory: {0}, Name: {1}, JmxPort: {2}, GossipPort: {3}, RpcPort: {4}, DeployDirectory: {5}, ListenAddress: {6}, RpcAddress: {7}, ClusterName: {8}, CqlPort: {9}",
-                                 templateDirectory, Name, JmxPort, GossipPort, RpcPort, DeployDirectory, ListenAddress, RpcAddress, ClusterName, CqlPort);
+            return string.Format("TemplateDirectory: {0}, Name: {1}, JmxPort: {2}, GossipPort: {3}, RpcPort: {4}, DeployDirectory: {5}, ListenAddress: {6}, RpcAddress: {7}, ClusterName: {8}, CqlPort: {9}, HeapSize: {10}",
+                                 templateDirectory, Name, JmxPort, GossipPort, RpcPort, DeployDirectory, ListenAddress, RpcAddress, ClusterName, CqlPort, HeapSize);
         }
 
         private void WaitForStart()
@@ -134,7 +135,8 @@ namespace SKBKontur.Cassandra.ClusterDeployment
                     {"ListenAddress", ListenAddress},
                     {"RpcAddress", RpcAddress},
                     {"SeedAddresses", string.Join(",", SeedAddresses)},
-                    {"ClusterName", ClusterName}
+                    {"ClusterName", ClusterName},
+                    {"HeapSize", HeapSize}
                 });
         }
 

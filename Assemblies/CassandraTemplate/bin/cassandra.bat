@@ -28,6 +28,7 @@ pushd %~dp0..
 if NOT DEFINED CASSANDRA_HOME set CASSANDRA_HOME=%CD%
 popd
 
+goto runLegacy
 if /i "%ARG%" == "LEGACY" goto runLegacy
 REM -----------------------------------------------------------------------------
 REM See if we have access to run unsigned powershell scripts
@@ -58,8 +59,8 @@ REM ----------------------------------------------------------------------------
 REM JVM Opts we'll use in legacy run or installation
 set JAVA_OPTS=-ea^
  -javaagent:"%CASSANDRA_HOME%\lib\jamm-0.3.0.jar"^
- -Xms1G^
- -Xmx1G^
+ -Xms{{HeapSize}}^
+ -Xmx{{HeapSize}}^
  -XX:+HeapDumpOnOutOfMemoryError^
  -XX:+UseParNewGC^
  -XX:+UseConcMarkSweepGC^
@@ -72,6 +73,12 @@ set JAVA_OPTS=-ea^
  -Djava.library.path="%CASSANDRA_HOME%\lib\sigar-bin"^
  -Dcassandra.jmx.local.port={{JmxPort}}^
  -Dinternalflag={{NodeInternalName}}
+ -Dcom.sun.management.jmxremote.port={{JmxPort}}^
+ -Dcom.sun.management.jmxremote.ssl=false^
+ -Dcom.sun.management.jmxremote.authenticate=false^
+ -XX:+UnlockCommercialFeatures^
+ -XX:+FlightRecorder
+
 REM **** JMX REMOTE ACCESS SETTINGS SEE: https://wiki.apache.org/cassandra/JmxSecurity ***
 REM -Dcom.sun.management.jmxremote.port={{JmxPort}}^
 REM -Dcom.sun.management.jmxremote.ssl=false^
