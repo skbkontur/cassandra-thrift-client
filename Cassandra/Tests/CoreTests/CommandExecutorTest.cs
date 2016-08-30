@@ -25,25 +25,23 @@ namespace Cassandra.Tests.CoreTests
         {
             base.SetUp();
             dataConnectionPool = GetMock<IPoolSet<IThriftConnection, string>>();
-            cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
-            cassandraClusterSettings.Expect(x => x.EnableMetrics).Return(false).Repeat.Any();
-            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings);
             command = GetMock<ISimpleCommand>();
             command.Expect(x => x.Name).Return("commandName").Repeat.Any();
             command.Expect(command1 => command1.CommandContext).Return(new CommandContext {KeyspaceName = "keyspace"}).Repeat.Any();
         }
 
-        [Test]
-        public void ZeroAttemptsTest()
+        private void SetUpExecutor(int attempts)
         {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(0);
-            executor.Execute(command);
+            cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
+            cassandraClusterSettings.Expect(x => x.EnableMetrics).Return(false).Repeat.Any();
+            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(attempts).Repeat.Any();
+            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings);
         }
 
         [Test]
         public void ExecuteOkTest()
         {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2);
+            SetUpExecutor(attempts : 1);
 
             var thriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
@@ -57,7 +55,7 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void RetryableExceptionTest()
         {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2).Repeat.Any();
+            SetUpExecutor(attempts : 2);
 
             var thriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
@@ -77,13 +75,13 @@ namespace Cassandra.Tests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithCorruptConnectionAndBadReplica(
             [Values(
-                typeof(TimedOutException),
-                typeof(TProtocolException),
-                typeof(TApplicationException),
-                typeof(TTransportException),
-                typeof(IOException),
-                typeof(Exception)
-                )] Type commandExecutionException)
+                 typeof(TimedOutException),
+                 typeof(TProtocolException),
+                 typeof(TApplicationException),
+                 typeof(TTransportException),
+                 typeof(IOException),
+                 typeof(Exception)
+             )] Type commandExecutionException)
         {
             InternalTestReleaseConnectionOnException((Exception)Activator.CreateInstance(commandExecutionException), true, true);
         }
@@ -91,9 +89,9 @@ namespace Cassandra.Tests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithCorrectConnectionAndGoodReplica(
             [Values(
-                typeof(NotFoundException),
-                typeof(UnavailableException)
-                )] Type commandExecutionException)
+                 typeof(NotFoundException),
+                 typeof(UnavailableException)
+             )] Type commandExecutionException)
         {
             InternalTestReleaseConnectionOnException((Exception)Activator.CreateInstance(commandExecutionException), false, false);
         }
@@ -101,18 +99,18 @@ namespace Cassandra.Tests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithNoTransformationToAttemptsException(
             [Values(
-                typeof(InvalidRequestException),
-                typeof(AuthenticationException),
-                typeof(AuthorizationException),
-                typeof(SchemaDisagreementException)
-                )] Type commandExecutionException,
+                 typeof(InvalidRequestException),
+                 typeof(AuthenticationException),
+                 typeof(AuthorizationException),
+                 typeof(SchemaDisagreementException)
+             )] Type commandExecutionException,
             [Values(
-                typeof(CassandraClientInvalidRequestException),
-                typeof(CassandraClientAuthenticationException),
-                typeof(CassandraClientAuthorizationException),
-                typeof(CassandraClientSchemaDisagreementException)
-                )] Type excpectedExceptionType
-            )
+                 typeof(CassandraClientInvalidRequestException),
+                 typeof(CassandraClientAuthenticationException),
+                 typeof(CassandraClientAuthorizationException),
+                 typeof(CassandraClientSchemaDisagreementException)
+             )] Type excpectedExceptionType
+        )
         {
             InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), excpectedExceptionType);
         }
@@ -120,16 +118,16 @@ namespace Cassandra.Tests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithTransformationToAttemptsException(
             [Values(
-                typeof(NotFoundException),
-                typeof(UnavailableException),
-                typeof(TimedOutException),
-                typeof(TProtocolException),
-                typeof(TApplicationException),
-                typeof(TTransportException),
-                typeof(IOException),
-                typeof(Exception)
-                )] Type commandExecutionException
-            )
+                 typeof(NotFoundException),
+                 typeof(UnavailableException),
+                 typeof(TimedOutException),
+                 typeof(TProtocolException),
+                 typeof(TApplicationException),
+                 typeof(TTransportException),
+                 typeof(IOException),
+                 typeof(Exception)
+             )] Type commandExecutionException
+        )
         {
             InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), typeof(CassandraAttemptsException));
         }
@@ -137,7 +135,7 @@ namespace Cassandra.Tests.CoreTests
         [Test]
         public void AttemptsExceptionTest()
         {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(1).Repeat.Any();
+            SetUpExecutor(attempts : 1);
 
             var thriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
@@ -150,7 +148,7 @@ namespace Cassandra.Tests.CoreTests
 
         private void InternalTestReleaseConnectionOnException(Exception commandExecutionException, bool reduceReplicaLive, bool removeConnection)
         {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2).Repeat.Any();
+            SetUpExecutor(attempts : 2);
 
             var thriftConnection = GetMock<IThriftConnection>();
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
@@ -177,7 +175,7 @@ namespace Cassandra.Tests.CoreTests
 
         private void InternalTestExceptionTransformation(Exception commandExecutionException, Type expectedException)
         {
-            cassandraClusterSettings.Expect(settings => settings.Attempts).Return(2).Repeat.Any();
+            SetUpExecutor(attempts : 2);
 
             var thriftConnection = GetMock<IThriftConnection>();
 

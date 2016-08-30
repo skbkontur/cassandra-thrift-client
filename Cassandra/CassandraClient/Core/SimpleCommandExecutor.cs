@@ -17,6 +17,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         public SimpleCommandExecutor([NotNull] IPoolSet<IThriftConnection, string> connectionPool, [NotNull] ICassandraClusterSettings settings)
             : base(connectionPool, settings)
         {
+            if(settings.Attempts <= 0)
+                throw new InvalidOperationException(string.Format("settings.Attempts <= 0 for: {0}", settings));
         }
 
         public override sealed void Execute([NotNull] Func<int, ISimpleCommand> createCommand)

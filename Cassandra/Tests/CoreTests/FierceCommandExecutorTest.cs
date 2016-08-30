@@ -49,7 +49,7 @@ namespace Cassandra.Tests.CoreTests
             fierceConnectionPool.Expect(pool => pool.Remove(thriftConnection));
             fierceConnectionPool.Expect(pool => pool.Bad(thriftConnection));
 
-            RunMethodWithException<CassandraClientTimedOutException>(() => executor.Execute(command), "An error occurred while executing cassandra command 'commandName'");
+            RunMethodWithException<CassandraClientTimedOutException>(() => executor.Execute(command), "Failed to execute cassandra command commandName in pool");
         }
 
         private ICassandraClusterSettings cassandraClusterSettings;
