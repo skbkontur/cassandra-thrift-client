@@ -23,7 +23,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         void BatchInsert(List<KeyValuePair<byte[], List<RawColumn>>> data);
         List<KeyValuePair<byte[], List<RawColumn>>> GetRows(List<byte[]> keys, byte[] startColumnName, int count);
         List<KeyValuePair<byte[], List<RawColumn>>> GetRows(List<byte[]> keys, List<byte[]> columnNames);
-        List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, List<RawIndexExpression> conditions, List<byte[]> columns);
         void Truncate();
         List<RawColumn> GetRow(byte[] key, byte[] startColumnName, int count, bool reversed);
         List<RawColumn> GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed);

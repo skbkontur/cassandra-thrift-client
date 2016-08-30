@@ -43,31 +43,31 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public int GetCount(byte[] key)
         {
             var getCountCommand = new GetCountCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel);
-            ExecuteCommand(getCountCommand);
+            commandExecutor.Execute(getCountCommand);
             return getCountCommand.Count;
         }
 
         public Dictionary<byte[], int> GetCounts(List<byte[]> key)
         {
             var getCountCommand = new MultiGetCountCommand(keyspaceName, columnFamilyName, readConsistencyLevel, key, null);
-            ExecuteCommand(getCountCommand);
+            commandExecutor.Execute(getCountCommand);
             return getCountCommand.Output;
         }
 
         public void DeleteRow(byte[] key, long? timestamp)
         {
-            ExecuteCommand(new DeleteRowCommand(keyspaceName, columnFamilyName, key, writeConsistencyLevel, timestamp));
+            commandExecutor.Execute(new DeleteRowCommand(keyspaceName, columnFamilyName, key, writeConsistencyLevel, timestamp));
         }
 
         public void AddColumn(byte[] key, RawColumn column)
         {
             var command = CreateInsertCommand(0, attempt => new KeyColumnPair<byte[], RawColumn>(key, column));
-            ExecuteCommand(command);
+            commandExecutor.Execute(command);
         }
 
         public void AddColumn(Func<int, KeyColumnPair<byte[], RawColumn>> createKeyColumnPair)
         {
-            ExecuteCommand(attempt => CreateInsertCommand(attempt, createKeyColumnPair));
+            commandExecutor.Execute(attempt => CreateInsertCommand(attempt, createKeyColumnPair));
         }
 
         public List<KeyValuePair<byte[], List<RawColumn>>> GetRegion(List<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow)
@@ -80,7 +80,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                             Reversed = false
                                                         });
             var command = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keys, slicePredicate);
-            ExecuteCommand(command);
+            commandExecutor.Execute(command);
             return command.Output.Where(pair => pair.Value.Any()).ToList();
         }
 
@@ -96,7 +96,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             result = null;
             var getCommand = new GetCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, columnName);
-            ExecuteCommand(getCommand);
+            commandExecutor.Execute(getCommand);
             if(getCommand.Output == null)
                 return false;
             result = getCommand.Output;
@@ -148,7 +148,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                                    Reversed = reversed
                                                                });
             var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
-            ExecuteCommand(getSliceCommand);
+            commandExecutor.Execute(getSliceCommand);
             return getSliceCommand.Output;
         }
 
@@ -156,7 +156,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var slicePredicate = new SlicePredicate(columnNames);
             var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, slicePredicate);
-            ExecuteCommand(getSliceCommand);
+            commandExecutor.Execute(getSliceCommand);
             return getSliceCommand.Output;
         }
 
@@ -166,7 +166,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var aquilesSlicePredicate = new SlicePredicate(new List<byte[]>());
             var getKeyRangeSliceCommand = new GetKeyRangeSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keyRange, aquilesSlicePredicate);
 
-            ExecuteCommand(getKeyRangeSliceCommand);
+            commandExecutor.Execute(getKeyRangeSliceCommand);
             return getKeyRangeSliceCommand.Output;
         }
 
@@ -184,7 +184,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                                                            Count = count,
                                                                                            StartColumn = startColumnName
                                                                                        }));
-            ExecuteCommand(multiGetSliceCommand);
+            commandExecutor.Execute(multiGetSliceCommand);
             return multiGetSliceCommand.Output.Where(pair => pair.Value.Any()).ToList();
         }
 
@@ -193,29 +193,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var multiGetSliceCommand = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel,
                                                                 keys,
                                                                 new SlicePredicate(columnNames));
-            ExecuteCommand(multiGetSliceCommand);
+            commandExecutor.Execute(multiGetSliceCommand);
             return multiGetSliceCommand.Output.Where(pair => pair.Value.Any()).ToList();
         }
 
         public void Truncate()
         {
             var truncateCommand = new TruncateColumnFamilyCommand(keyspaceName, columnFamilyName);
-            ExecuteFierceCommand(truncateCommand);
-        }
-
-        public List<byte[]> GetRowsWhere(byte[] startKey, int maximalCount, List<RawIndexExpression> conditions, List<byte[]> columns)
-        {
-            var predicate = new SlicePredicate(columns);
-            var indexClause = new IndexClause
-                {
-                    Count = maximalCount,
-                    Expressions = conditions ?? new List<RawIndexExpression>(),
-                    StartKey = startKey ?? new byte[0]
-                };
-            var gisc = new GetIndexedSlicesCommand(keyspaceName, columnFamilyName, readConsistencyLevel, predicate, indexClause);
-
-            ExecuteCommand(gisc);
-            return gisc.Output;
+            fierceCommandExecutor.Execute(truncateCommand);
         }
 
         public void BatchInsert(List<KeyValuePair<byte[], List<RawColumn>>> data)
@@ -281,12 +266,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             var batchMutateCommand = new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);
 
-            ExecuteCommand(batchMutateCommand);
+            commandExecutor.Execute(batchMutateCommand);
         }
 
         private void ExecuteMutations(Func<int, KeyValuePair<byte[], List<IMutation>>> createKeyMutationsListPair)
         {
-            ExecuteCommand(attempt =>
+            commandExecutor.Execute(attempt =>
                                {
                                    var keyMutationsListPair = createKeyMutationsListPair(attempt);
 
@@ -314,22 +299,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
             var batchMutateCommand = new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);
 
-            ExecuteCommand(batchMutateCommand);
-        }
-
-        private void ExecuteFierceCommand(IFierceCommand command)
-        {
-            fierceCommandExecutor.Execute(command);
-        }
-
-        private void ExecuteCommand(ISimpleCommand commandBase)
-        {
-            commandExecutor.Execute(commandBase);
-        }
-
-        private void ExecuteCommand(Func<int, ISimpleCommand> createCommand)
-        {
-            commandExecutor.Execute(createCommand);
+            commandExecutor.Execute(batchMutateCommand);
         }
 
         private readonly string keyspaceName;

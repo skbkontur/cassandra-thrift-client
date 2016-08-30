@@ -23,15 +23,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data);
         void BatchDelete(IEnumerable<KeyValuePair<string, IEnumerable<string>>> data, long? timestamp = null);
 
-        [Obsolete("Это устаревший метод. Надо пользоваться методом GetRowsExclusive")]
-        List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count);
-
         List<KeyValuePair<string, Column[]>> GetRegion(IEnumerable<string> keys, string startColumnName, string finishColumnName, int limitPerRow);
 
         List<KeyValuePair<string, Column[]>> GetRowsExclusive(IEnumerable<string> keys, string exclusiveStartColumnName, int count);
         List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string[] columnNames);
-        string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns);
-        string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value);
         void Truncate();
         Column[] GetColumns(string key, string exclusiveStartColumnName, int count, bool reversed = false);
         Column[] GetColumns(string key, string startColumnName, string endColumnName, int count, bool reversed = false);

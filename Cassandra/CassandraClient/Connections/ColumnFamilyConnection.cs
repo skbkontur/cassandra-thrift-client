@@ -188,16 +188,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return implementation.GetConnectionParameters();
         }
 
-        [Obsolete("Это устаревший метод. Надо пользоваться методом GetRowsExclusive")]
-        public List<KeyValuePair<string, Column[]>> GetRows(IEnumerable<string> keys, string startColumnName, int count)
-        {
-            var rawKeys = keys.Select(StringExtensions.StringToBytes).ToList();
-            var rawStartColumnName = StringExtensions.StringToBytes(startColumnName);
-            return implementation.GetRows(rawKeys, rawStartColumnName, count)
-                                 .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn).ToArray()))
-                                 .ToList();
-        }
-
         public List<KeyValuePair<string, Column[]>> GetRegion(IEnumerable<string> keys, string startColumnName, string finishColumnName, int limitPerRow)
         {
             var rawKeys = keys.Select(StringExtensions.StringToBytes).ToList();
@@ -232,29 +222,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return rows.Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn).ToArray())).ToList();
         }
 
-        public string[] GetRowsWithColumnValue(int maximalCount, string key, byte[] value)
-        {
-            return GetRowsWhere(null, maximalCount, new[] {new IndexExpression {ColumnName = key, IndexOperator = IndexOperator.EQ, Value = value}}, new[] {key});
-        }
-
         public void Truncate()
         {
             implementation.Truncate();
-        }
-
-        public string[] GetRowsWhere(string exclusiveStartKey, int count, IndexExpression[] conditions, string[] columns)
-        {
-            if(count == int.MaxValue) count--;
-            if(count <= 0) return new string[0];
-
-            var rawKey = StringExtensions.StringToBytes(exclusiveStartKey);
-            var rawIndexExpressions = conditions.Select(IndexExpressionExtensions.ToRawIndesExpression).ToList();
-            var rawColumnNames = columns.Select(StringExtensions.StringToBytes).ToList();
-            return implementation.GetRowsWhere(rawKey, count + 1, rawIndexExpressions, rawColumnNames)
-                                 .Select(StringExtensions.BytesToString)
-                                 .Where(key => key != exclusiveStartKey)
-                                 .Take(count)
-                                 .ToArray();
         }
 
         private readonly IEnumerableFactory enumerableFactory;

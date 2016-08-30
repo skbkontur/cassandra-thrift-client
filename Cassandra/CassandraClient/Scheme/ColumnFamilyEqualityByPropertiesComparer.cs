@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -19,7 +18,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                      (columnFamilyWithNewProperties.Caching.Equals(columnFamilyFromTarget.Caching)) &&
                      (columnFamilyWithNewProperties.ReadRepairChance == null || columnFamilyWithNewProperties.ReadRepairChance.Equals(columnFamilyFromTarget.ReadRepairChance)) &&
                      (columnFamilyWithNewProperties.GCGraceSeconds == null || columnFamilyWithNewProperties.GCGraceSeconds.Equals(columnFamilyFromTarget.GCGraceSeconds)) &&
-                     (columnFamilyWithNewProperties.Indexes == null || CompareIndexes(columnFamilyWithNewProperties.Indexes, columnFamilyFromTarget.Indexes)) &&
                      (columnFamilyWithNewProperties.CompactionStrategy == null || CompareCompactionStrategy(columnFamilyWithNewProperties.CompactionStrategy, columnFamilyFromTarget.CompactionStrategy)) &&
                      (columnFamilyWithNewProperties.Compression == null || CompareCompression(columnFamilyWithNewProperties.Compression, columnFamilyFromTarget.Compression)) &&
                      (columnFamilyWithNewProperties.BloomFilterFpChance == null || columnFamilyWithNewProperties.BloomFilterFpChance.Equals(columnFamilyFromTarget.BloomFilterFpChance)) &&
@@ -71,26 +69,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     );
             }
             return false;
-        }
-
-        private static bool CompareIndexes(IEnumerable<IndexDefinition> leftIndices, IEnumerable<IndexDefinition> rightIndices)
-        {
-            if(leftIndices == null && rightIndices == null)
-                return true;
-            if(leftIndices != null && rightIndices == null)
-                return false;
-            if(leftIndices == null)
-                return false;
-
-            var sortedLeftIndices = leftIndices.OrderBy(x => x.Name).ToArray();
-            var sortedRightIndices = rightIndices.OrderBy(x => x.Name).ToArray();
-            if(sortedLeftIndices.Length != sortedRightIndices.Length)
-                return false;
-            return sortedLeftIndices
-                .Zip(
-                    sortedRightIndices,
-                    (x, y) => x.Name == y.Name && x.ValidationClass == y.ValidationClass)
-                .All(x => x);
         }
     }
 }

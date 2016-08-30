@@ -81,12 +81,8 @@
     <Compile Include="Abstractions\CommandContext.cs" />
     <Compile Include="Abstractions\ConsistencyLevel.cs" />
     <Compile Include="Abstractions\ICommand.cs" />
-    <Compile Include="Abstractions\IndexDefinition.cs" />
-    <Compile Include="Abstractions\IndexExpression.cs" />
-    <Compile Include="Abstractions\IndexOperator.cs" />
     <Compile Include="Abstractions\Internal\DeletionMutation.cs" />
     <Compile Include="Abstractions\Internal\IMutation.cs" />
-    <Compile Include="Abstractions\Internal\IndexClause.cs" />
     <Compile Include="Abstractions\Internal\KeyRange.cs" />
     <Compile Include="Abstractions\Internal\SetMutation.cs" />
     <Compile Include="Abstractions\Internal\SlicePredicate.cs" />
@@ -104,7 +100,6 @@
     <Compile Include="Commands\System\Read\DescribeKeySpaceCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetCountCommand.cs" />
-    <Compile Include="Commands\Simple\Read\GetIndexedSlicesCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetKeyRangeSliceCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetSliceCommand.cs" />
     <Compile Include="Commands\Simple\Write\InsertCommand.cs" />
