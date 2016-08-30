@@ -2,8 +2,6 @@
 
 using JetBrains.Annotations;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
@@ -17,22 +15,31 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
     internal abstract class CommandExecutorBase<TCommand> : ICommandExecutor<TCommand>
         where TCommand : ICommand
     {
-        protected CommandExecutorBase([NotNull] IThriftConnectionReplicaSetPool connectionPool,
-                                      [NotNull] ICassandraClusterSettings settings)
+        protected CommandExecutorBase([NotNull] IThriftConnectionReplicaSetPool connectionPool, [NotNull] ICassandraClusterSettings settings)
         {
             this.connectionPool = connectionPool;
             this.settings = settings;
-            logger = LogManager.GetLogger(GetType());
         }
 
-        public abstract void Execute([NotNull] TCommand command);
+        public void Execute([NotNull] TCommand command)
+        {
+            Execute(attempt => command);
+        }
+
         public abstract void Execute([NotNull] Func<int, TCommand> createCommand);
 
-        protected void TryExecuteCommandInPool([NotNull] TCommand command, [NotNull] ICommandMetrics metrics, int attempt)
+        protected void ExecuteCommand([NotNull] TCommand command, [NotNull] ICommandMetrics metrics)
         {
             IThriftConnection connectionInPool;
             using(metrics.NewAcquireConnectionFromPoolContext())
                 connectionInPool = connectionPool.Acquire(command.CommandContext.KeyspaceName);
+            ExecuteCommandInPool(connectionInPool, command, metrics);
+            connectionPool.Good(connectionInPool);
+            connectionPool.Release(connectionInPool);
+        }
+
+        private void ExecuteCommandInPool([NotNull] IThriftConnection connectionInPool, [NotNull] TCommand command, [NotNull] ICommandMetrics metrics)
+        {
             try
             {
                 using(metrics.NewThriftQueryContext())
@@ -40,35 +47,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
             catch(Exception e)
             {
-                throw HandleCommandExecutionException(e, command, connectionInPool, attempt);
-            }
-            connectionPool.Good(connectionInPool);
-            connectionPool.Release(connectionInPool);
-
-        }
-
-        [NotNull]
-        private CassandraClientException HandleCommandExecutionException([NotNull] Exception e, [NotNull] ICommand command, [CanBeNull] IThriftConnection connectionInPool, int attempt)
-        {
-            var message = string.Format("An error occurred while executing cassandra command '{0}'", command.Name);
-            var exception = CassandraExceptionTransformer.Transform(e, message);
-            if(connectionInPool != null)
-                logger.Warn(string.Format("Attempt {0} on {1} failed.", attempt, connectionInPool), exception);
-            else
-                logger.Warn(string.Format("Attempt {0} to all nodes failed.", attempt), exception);
-            if(connectionInPool != null)
-            {
+                var exception = CassandraExceptionTransformer.Transform(e, string.Format("Failed to execute cassandra command {0} in pool {1}", command.Name, connectionInPool));
                 if(exception.ReduceReplicaLive)
                     connectionPool.Bad(connectionInPool);
                 else
                     connectionPool.Good(connectionInPool);
-
                 if(exception.IsCorruptConnection)
                     connectionPool.Remove(connectionInPool);
                 else
                     connectionPool.Release(connectionInPool);
+                throw exception;
             }
-            return exception;
         }
 
         public virtual void Dispose()
@@ -86,11 +75,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        protected readonly ICassandraClusterSettings settings;
-
         private volatile bool disposed;
         private readonly object disposeLock = new object();
-        private readonly ILog logger;
         private readonly IThriftConnectionReplicaSetPool connectionPool;
+        protected readonly ICassandraClusterSettings settings;
     }
 }

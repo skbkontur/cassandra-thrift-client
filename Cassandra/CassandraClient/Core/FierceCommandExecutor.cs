@@ -16,14 +16,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
         }
 
-        public override void Execute([NotNull] IFierceCommand command)
+        public override sealed void Execute([NotNull] Func<int, IFierceCommand> createCommand)
         {
-            var metrics = CommandMetricsFactory.Create(settings, command);
+            var command = createCommand(0);
+            var metrics = command.GetMetrics(settings);
             using(metrics.NewTotalContext())
             {
                 try
                 {
-                    TryExecuteCommandInPool(command, metrics, 0);
+                    ExecuteCommand(command, metrics);
                 }
                 catch(Exception e)
                 {
@@ -31,11 +32,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     throw;
                 }
             }
-        }
-
-        public override void Execute([NotNull] Func<int, IFierceCommand> createCommand)
-        {
-            Execute(createCommand(0));
         }
     }
 }

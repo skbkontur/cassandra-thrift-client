@@ -13,30 +13,27 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
     internal static class CommandMetricsFactory
     {
         [NotNull]
-        public static ICommandMetrics Create([NotNull] ICassandraClusterSettings settings, [NotNull] IFierceCommand command)
+        public static IFierceCommandMetrics GetMetrics([NotNull] this IFierceCommand command, [NotNull] ICassandraClusterSettings settings)
         {
-            if(!settings.EnableMetrics)
-                return CommandMetricsStub.Instance;
-
-            var metricsContext = GetMetricsContext(command, globalContext.Context("Fierce"));
-            return new CommandMetrics(metricsContext);
+            return !settings.EnableMetrics
+                       ? (IFierceCommandMetrics)NoOpMetrics.Instance
+                       : new FierceCommandMetrics(GetMetricsContext(command, "Fierce"));
         }
 
         [NotNull]
-        public static IRetryableCommandMetrics Create([NotNull] ICassandraClusterSettings settings, [NotNull] ISimpleCommand command)
+        public static ISimpleCommandMetrics GetMetrics([NotNull] this ISimpleCommand command, [NotNull] ICassandraClusterSettings settings)
         {
-            if(!settings.EnableMetrics)
-                return CommandMetricsStub.Instance;
-
-            var metricsContext = GetMetricsContext(command, globalContext.Context("Simple"));
-            return new RetryableCommandMetrics(metricsContext, FormatSinglePartitionKey(command));
+            return !settings.EnableMetrics
+                       ? (ISimpleCommandMetrics)NoOpMetrics.Instance
+                       : new SimpleCommandMetrics(GetMetricsContext(command, "Simple"), FormatSinglePartitionKey(command));
         }
 
         [CanBeNull]
         private static string FormatSinglePartitionKey([NotNull] ICommand command)
         {
             var singlePartitionQuery = command as ISinglePartitionQuery;
-            if(singlePartitionQuery == null) return null;
+            if(singlePartitionQuery == null)
+                return null;
             try
             {
                 return StringExtensions.BytesToString(singlePartitionQuery.PartitionKey);
@@ -48,16 +45,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         }
 
         [NotNull]
-        private static MetricsContext GetMetricsContext([NotNull] ICommand command, MetricsContext metricsContext)
+        private static MetricsContext GetMetricsContext([NotNull] ICommand command, [NotNull] string commandCategory)
         {
-            var commandContext = command.CommandContext;
-            if(!string.IsNullOrEmpty(commandContext.KeyspaceName))
-                metricsContext = metricsContext.Context(commandContext.KeyspaceName);
-            if(!string.IsNullOrEmpty(commandContext.ColumnFamilyName))
-                metricsContext = metricsContext.Context(commandContext.ColumnFamilyName);
+            var metricsContext = Metric.Context("CassandraClient").Context(commandCategory);
+            if(!string.IsNullOrEmpty(command.CommandContext.KeyspaceName))
+                metricsContext = metricsContext.Context(command.CommandContext.KeyspaceName);
+            if(!string.IsNullOrEmpty(command.CommandContext.ColumnFamilyName))
+                metricsContext = metricsContext.Context(command.CommandContext.ColumnFamilyName);
             return metricsContext.Context(command.Name);
         }
-
-        private static readonly MetricsContext globalContext = Metric.Context("CassandraClient");
     }
 }

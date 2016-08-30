@@ -2,6 +2,8 @@
 
 using JetBrains.Annotations;
 
+using log4net;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
@@ -17,45 +19,37 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
         }
 
-        public override void Execute([NotNull] ISimpleCommand command)
+        public override sealed void Execute([NotNull] Func<int, ISimpleCommand> createCommand)
         {
-            Execute(attempt => command);
-        }
-
-        public override void Execute([NotNull] Func<int, ISimpleCommand> createCommand)
-        {
-            var command = createCommand(0);
-            var metrics = CommandMetricsFactory.Create(settings, command);
+            var attempt = 0;
+            var command = createCommand(attempt);
+            var metrics = command.GetMetrics(settings);
             using(metrics.NewTotalContext())
             {
-                try
+                while(true)
                 {
-                    for(var attempt = 1; attempt <= settings.Attempts; ++attempt)
+                    try
                     {
-                        try
-                        {
-                            TryExecuteCommandInPool(command, metrics, attempt-1);
-                            metrics.RecordQueriedPartitions(command);
-                            return;
-                        }
-                        catch(CassandraClientException exception)
-                        {
-                            if(!exception.UseAttempts)
-                                throw;
-                            if(attempt == 1)
-                                metrics.RecordRetriedCommand();
-                            if(attempt == settings.Attempts)
-                                throw new CassandraAttemptsException(settings.Attempts, exception);
-                            command = createCommand(attempt);
-                        }
+                        ExecuteCommand(command, metrics);
+                        metrics.RecordQueriedPartitions(command);
+                        break;
                     }
-                }
-                catch(Exception e)
-                {
-                    metrics.RecordError(e);
-                    throw;
+                    catch(CassandraClientException exception)
+                    {
+                        metrics.RecordError(exception);
+                        logger.Warn(string.Format("Attempt {0} failed", attempt), exception);
+                        if(!exception.UseAttempts)
+                            throw;
+                        if(attempt == 0)
+                            metrics.RecordRetry();
+                        if(++attempt == settings.Attempts)
+                            throw new CassandraAttemptsException(settings.Attempts, exception);
+                        command = createCommand(attempt);
+                    }
                 }
             }
         }
+
+        private readonly ILog logger = LogManager.GetLogger(typeof(SimpleCommandExecutor));
     }
 }

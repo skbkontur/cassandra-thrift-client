@@ -107,7 +107,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             {
                 List<RawColumn> rawColumns;
                 var rawKey = StringExtensions.StringToBytes(item.Key);
-                if (!keyToColumns.TryGetValue(rawKey, out rawColumns))
+                if(!keyToColumns.TryGetValue(rawKey, out rawColumns))
                 {
                     rawColumns = new List<RawColumn>();
                     keyToColumns.Add(rawKey, rawColumns);
@@ -147,7 +147,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public IEnumerable<Column> GetRow(string key, int batchSize = 1000)
         {
-            return enumerableFactory.GetColumnsEnumerator(key, batchSize, initialExclusiveStartColumnName: null);
+            return enumerableFactory.GetColumnsEnumerator(key, batchSize, initialExclusiveStartColumnName : null);
         }
 
         public IEnumerable<Column> GetRow(string key, string exclusiveStartColumnName, int batchSize = 1000)

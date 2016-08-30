@@ -15,6 +15,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         [NotNull]
         IDisposable NewThriftQueryContext();
 
-        void RecordError(Exception error);
+        void RecordError([NotNull] Exception error);
     }
 }

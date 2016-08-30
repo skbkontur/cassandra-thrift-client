@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -81,8 +80,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
                 settings.ConnectionIdleTimeout,
-                PoolSettings.CreateDefault()
-                );
+                PoolSettings.CreateDefault());
             return replicaSetPool;
         }
 
@@ -94,8 +92,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
                 settings.ConnectionIdleTimeout,
-                PoolSettings.CreateDefault()
-                );
+                PoolSettings.CreateDefault());
             return result;
         }
 
