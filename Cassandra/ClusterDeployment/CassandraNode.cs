@@ -12,9 +12,20 @@ namespace SKBKontur.Cassandra.ClusterDeployment
 {
     public class CassandraNode
     {
-        public CassandraNode(string templateDirectory)
+        public CassandraNode(string templateDirectory, string deployDirectory)
         {
             this.templateDirectory = templateDirectory;
+            Name = "node_at_9360";
+            JmxPort = 7399;
+            GossipPort = 7400;
+            RpcPort = 9360;
+            CqlPort = 9343;
+            DeployDirectory = deployDirectory;
+            ListenAddress = "127.0.0.1";
+            RpcAddress = "127.0.0.1";
+            SeedAddresses = new[] {"127.0.0.1"};
+            ClusterName = "test_cluster";
+            HeapSize = "1G";
         }
 
         public void Restart()
