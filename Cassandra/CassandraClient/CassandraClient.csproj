@@ -35,7 +35,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Apache.Cassandra.209">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.209.dll</HintPath>
+      <HintPath>..\..\Assemblies\Apache.Cassandra.209.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations">
       <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
@@ -45,12 +45,12 @@
       <SpecificVersion>False</SpecificVersion>
     </Reference>
     <Reference Include="Metrics">
-      <HintPath>..\..\Assemblies\Metrics.Net\Metrics.dll</HintPath>
+      <HintPath>..\..\Assemblies\Metrics.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Thrift">
-      <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
+      <HintPath>..\..\Assemblies\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -198,14 +198,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"
-
-copy "$(TargetDir)Apache.Cassandra.209.dll" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Apache.Cassandra.209.pdb" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Thrift.dll" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Thrift.pdb" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Metrics.dll" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Metrics.pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
