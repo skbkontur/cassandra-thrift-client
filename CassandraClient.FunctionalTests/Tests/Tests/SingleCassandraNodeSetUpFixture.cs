@@ -17,19 +17,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [SetUp]
         public static void SetUp()
         {
-            Node = new CassandraNode(FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory))
-                {
-                    Name = "node_at_9360",
-                    JmxPort = 7399,
-                    GossipPort = 7400,
-                    RpcPort = 9360,
-                    CqlPort = 9343,
-                    DeployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"),
-                    ListenAddress = "127.0.0.1",
-                    RpcAddress = "127.0.0.1",
-                    SeedAddresses = new[] {"127.0.0.1"},
-                    ClusterName = "test_cluster",
-                };
+            Node = new CassandraNode(
+                FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory),
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
             Node.Restart();
         }
 
