@@ -1,8 +1,9 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
 {
-    internal class TruncateColumnFamilyCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class TruncateColumnFamilyCommand : KeyspaceColumnFamilyDependantCommandBase, IFierceCommand
     {
         public TruncateColumnFamilyCommand(string keyspace, string columnFamily)
             : base(keyspace, columnFamily)
@@ -13,7 +14,5 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
         {
             cassandraClient.truncate(columnFamily);
         }
-
-        public override bool IsFierce { get { return true; } }
     }
 }

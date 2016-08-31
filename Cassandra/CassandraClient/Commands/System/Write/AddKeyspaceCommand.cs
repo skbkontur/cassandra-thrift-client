@@ -3,7 +3,7 @@ using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
 {
-    internal class AddKeyspaceCommand : CommandBase, ISchemeUpdateCommand
+    internal class AddKeyspaceCommand : CommandBase, IFierceCommand
     {
         public AddKeyspaceCommand(Keyspace keyspaceDefinition)
         {
@@ -16,7 +16,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
         }
 
         public string Output { get; private set; }
-        public override bool IsFierce { get { return true; } }
         private readonly Keyspace keyspaceDefinition;
     }
 }

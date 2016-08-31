@@ -3,8 +3,6 @@
 *.suo
 *.user
 _ReSharper.*
-/Assemblies/Apache.Cassandra.209.*
-/Assemblies/Thrift.*
 /Assemblies/Cassandra.CassandraClient.*
 /Assemblies/Cassandra.ClusterDeployment.*
 /Assemblies/Cassandra.Tests.*

@@ -3,7 +3,7 @@ using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
 {
-    internal class DescribeKeyspaceCommand : KeyspaceDependantCommandBase
+    internal class DescribeKeyspaceCommand : KeyspaceDependantCommandBase, IFierceCommand
     {
         public DescribeKeyspaceCommand(string keyspace)
             : base(keyspace)
@@ -16,7 +16,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
             KeyspaceInformation = keyspaceDescription.FromCassandraKsDef();
         }
 
-        public override bool IsFierce { get { return true; } }
         public Keyspace KeyspaceInformation { get; private set; }
     }
 }

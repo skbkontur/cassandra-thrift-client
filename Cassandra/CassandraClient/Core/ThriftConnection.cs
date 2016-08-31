@@ -23,7 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             var address = ipEndPoint.Address.ToString();
             var port = ipEndPoint.Port;
             var tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
-            socket = tsocket.TcpClient.Client;
+            var socket = tsocket.TcpClient.Client;
             socket.NoDelay = true;
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
             var transport = new TFramedTransport(tsocket);
@@ -127,7 +127,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private readonly string keyspaceName;
         private readonly IPEndPoint ipEndPoint;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
-        private readonly Socket socket;
         private readonly ILog logger = LogManager.GetLogger(typeof(ThriftConnection));
         private readonly object lockObject;
         private bool isDisposed;

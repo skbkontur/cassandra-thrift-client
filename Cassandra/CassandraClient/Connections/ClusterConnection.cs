@@ -16,15 +16,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     internal class ClusterConnection : IClusterConnection
     {
-        public ClusterConnection(ICommandExecuter commandExecuter)
+        public ClusterConnection(ICommandExecutor<IFierceCommand> commandExecutor)
         {
-            this.commandExecuter = commandExecuter;
+            this.commandExecutor = commandExecutor;
         }
 
         public IList<Keyspace> RetrieveKeyspaces()
         {
             var retrieveKeyspacesCommand = new RetrieveKeyspacesCommand();
-            commandExecuter.Execute(retrieveKeyspacesCommand);
+            commandExecutor.Execute(retrieveKeyspacesCommand);
             if(retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
             return retrieveKeyspacesCommand.Keyspaces;
@@ -32,25 +32,25 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void UpdateKeyspace(Keyspace keyspace)
         {
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(new UpdateKeyspaceCommand(keyspace));
+            commandExecutor.Execute(new UpdateKeyspaceCommand(keyspace));
         }
 
         public void RemoveKeyspace(string keyspace)
         {
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(new DropKeyspaceCommand(keyspace));
+            commandExecutor.Execute(new DropKeyspaceCommand(keyspace));
         }
 
         public string DescribeVersion()
         {
             var describeVersionCommand = new DescribeVersionCommand();
-            commandExecuter.Execute(describeVersionCommand);
+            commandExecutor.Execute(describeVersionCommand);
             return describeVersionCommand.Version;
         }
 
         public void AddKeyspace(Keyspace keyspace)
         {
             var addKeyspaceCommand = new AddKeyspaceCommand(keyspace);
-            commandExecuter.ExecuteSchemeUpdateCommandOnce(addKeyspaceCommand);
+            commandExecutor.Execute(addKeyspaceCommand);
             logger.InfoFormat("Keyspace adding result: {0}", addKeyspaceCommand.Output);
         }
 
@@ -60,7 +60,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             do
             {
                 var schemaAgreementCommand = new SchemaAgreementCommand();
-                commandExecuter.Execute(schemaAgreementCommand);
+                commandExecutor.Execute(schemaAgreementCommand);
                 if(schemaAgreementCommand.Output.Count == 1)
                     return;
                 LogVersions(schemaAgreementCommand.Output);
@@ -77,7 +77,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             logger.Info(stringBuilder.ToString());
         }
 
-        private readonly ICommandExecuter commandExecuter;
+        private readonly ICommandExecutor<IFierceCommand> commandExecutor;
 
         private readonly ILog logger = LogManager.GetLogger(typeof(ClusterConnection));
     }

@@ -3,13 +3,16 @@ using System.Linq;
 
 using Apache.Cassandra;
 
+using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
+using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
+
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 {
-    internal class BatchMutateCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class BatchMutateCommand : KeyspaceColumnFamilyDependantCommandBase, ISimpleCommand
     {
         public BatchMutateCommand(string keyspace, string columnFamily, ConsistencyLevel consistencyLevel, Dictionary<string, Dictionary<byte[], List<IMutation>>> mutations)
             : base(keyspace, columnFamily)
@@ -41,6 +44,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
             }
             return result;
         }
+
+        public int QueriedPartitionsCount { get { return mutations.Sum(columnFamilyMutations => columnFamilyMutations.Value.Count); } }
 
         private readonly ConsistencyLevel consistencyLevel;
         private readonly Dictionary<string, Dictionary<byte[], List<IMutation>>> mutations;

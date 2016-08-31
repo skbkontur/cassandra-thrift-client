@@ -1,5 +1,7 @@
 ﻿using Apache.Cassandra;
 
+using JetBrains.Annotations;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
@@ -7,7 +9,7 @@ using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
-    internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase
+    internal class GetCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery, ISimpleCommand
     {
         public GetCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, byte[] columnName)
             : base(keyspace, columnFamily)
@@ -16,6 +18,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.consistencyLevel = consistencyLevel;
             this.columnName = columnName;
         }
+
+        [NotNull]
+        public byte[] PartitionKey { get { return rowKey; } }
+
+        public int QueriedPartitionsCount { get { return 1; } }
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {

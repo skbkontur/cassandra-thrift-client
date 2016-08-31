@@ -1,14 +1,9 @@
-using System.Collections.Generic;
-using System.Linq;
-
 using Apache.Cassandra;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class ColumnFamily
     {
-        private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
-
         public ColumnFamily()
         {
             SetDefaults();
@@ -16,7 +11,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public string Name { get; set; }
         public int? GCGraceSeconds { get; set; }
-        public List<IndexDefinition> Indexes { get; set; }
         public double? ReadRepairChance { get; set; }
         public CompactionStrategy CompactionStrategy { get { return compactionStrategy; } set { compactionStrategy = value; } }
         public ColumnFamilyCaching Caching { get; set; }
@@ -31,6 +25,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             Caching = ColumnFamilyCaching.KeysOnly;
             ComparatorType = new ColumnComparatorType(DataType.UTF8Type);
         }
+
+        private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
     }
 
     internal static class ColumnFamilyExtensions
@@ -52,8 +48,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 result.Compression_options = columnFamily.Compression.ToCassandraCompressionDef();
             if(columnFamily.GCGraceSeconds.HasValue)
                 result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
-            if(columnFamily.Indexes != null)
-                result.Column_metadata = new List<ColumnDef>(columnFamily.Indexes.Select(definition => definition.ToCassandraColumnDef()));
             if(columnFamily.ReadRepairChance != null)
                 result.Read_repair_chance = columnFamily.ReadRepairChance.Value;
 
@@ -93,8 +87,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 result.Caching = cfDef.Caching.ToColumnFamilyCaching();
             if(cfDef.__isset.read_repair_chance)
                 result.ReadRepairChance = cfDef.Read_repair_chance;
-            if(cfDef.Column_metadata != null)
-                result.Indexes = new List<IndexDefinition>(cfDef.Column_metadata.Select(def => def.FromCassandraColumnDef()));
             if(cfDef.Compression_options != null)
                 result.Compression = cfDef.Compression_options.FromCassandraCompressionOptions();
 

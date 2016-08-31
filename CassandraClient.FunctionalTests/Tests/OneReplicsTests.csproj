@@ -82,7 +82,6 @@
     <Compile Include="Tests\SingleCassandraNodeSetUpFixture.cs" />
     <Compile Include="Tests\SchemaTests\TestKeyspaceSchemaModificationCassandra.cs" />
     <Compile Include="Tests\SchemaTests\Utils\TestSchemaUtils.cs" />
-    <Compile Include="Tests\SecondaryIndexTest.cs" />
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
     <Compile Include="Tests\UpdateKeyspaceTest.cs" />

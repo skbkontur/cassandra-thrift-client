@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
 {
-    internal class RetrieveKeyspacesCommand : CommandBase
+    internal class RetrieveKeyspacesCommand : CommandBase, IFierceCommand
     {
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -17,7 +17,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
             Keyspaces = BuildKeyspaces(keySpaces);
         }
 
-        public override bool IsFierce { get { return true; } }
         public List<Keyspace> Keyspaces { get; private set; }
 
         private static List<Keyspace> BuildKeyspaces(IEnumerable<KsDef> keySpaces)

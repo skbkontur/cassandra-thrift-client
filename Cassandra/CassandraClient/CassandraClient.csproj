@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
     <AssemblyName>Cassandra.CassandraClient</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -35,16 +35,22 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Apache.Cassandra.209">
-      <HintPath>..\..\Assemblies\Cassandra\Apache.Cassandra.209.dll</HintPath>
+      <HintPath>..\..\Assemblies\Apache.Cassandra.209.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations">
+      <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="log4net">
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
     </Reference>
+    <Reference Include="Metrics">
+      <HintPath>..\..\Assemblies\Metrics.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Thrift">
-      <HintPath>..\..\Assemblies\Cassandra\Thrift.dll</HintPath>
+      <HintPath>..\..\Assemblies\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -58,9 +64,11 @@
     <Compile Include="Abstractions\CompressionAlgorithms.cs" />
     <Compile Include="Abstractions\CompressionOptions.cs" />
     <Compile Include="Abstractions\DataCenterReplicationFactor.cs" />
+    <Compile Include="Abstractions\IFierceCommand.cs" />
     <Compile Include="Abstractions\IReplicationStrategy.cs" />
     <Compile Include="Abstractions\IReplicationStrategyFactory.cs" />
-    <Compile Include="Abstractions\ISchemeUpdateCommand.cs" />
+    <Compile Include="Abstractions\ISimpleCommand.cs" />
+    <Compile Include="Abstractions\ISinglePartitionQuery.cs" />
     <Compile Include="Abstractions\KeyColumnsPair.cs" />
     <Compile Include="Abstractions\NetworkTopologyReplicationStrategy.cs" />
     <Compile Include="Abstractions\RawColumn.cs" />
@@ -73,12 +81,8 @@
     <Compile Include="Abstractions\CommandContext.cs" />
     <Compile Include="Abstractions\ConsistencyLevel.cs" />
     <Compile Include="Abstractions\ICommand.cs" />
-    <Compile Include="Abstractions\IndexDefinition.cs" />
-    <Compile Include="Abstractions\IndexExpression.cs" />
-    <Compile Include="Abstractions\IndexOperator.cs" />
     <Compile Include="Abstractions\Internal\DeletionMutation.cs" />
     <Compile Include="Abstractions\Internal\IMutation.cs" />
-    <Compile Include="Abstractions\Internal\IndexClause.cs" />
     <Compile Include="Abstractions\Internal\KeyRange.cs" />
     <Compile Include="Abstractions\Internal\SetMutation.cs" />
     <Compile Include="Abstractions\Internal\SlicePredicate.cs" />
@@ -96,7 +100,6 @@
     <Compile Include="Commands\System\Read\DescribeKeySpaceCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetCountCommand.cs" />
-    <Compile Include="Commands\Simple\Read\GetIndexedSlicesCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetKeyRangeSliceCommand.cs" />
     <Compile Include="Commands\Simple\Read\GetSliceCommand.cs" />
     <Compile Include="Commands\Simple\Write\InsertCommand.cs" />
@@ -114,6 +117,18 @@
     <Compile Include="Commands\System\Write\TruncateColumnFamilyCommand.cs" />
     <Compile Include="Abstractions\KeyColumnPair.cs" />
     <Compile Include="Connections\CassandraConnectionParameters.cs" />
+    <Compile Include="Core\Metrics\CommandMetricsBase.cs" />
+    <Compile Include="Core\Metrics\FierceCommandMetrics.cs" />
+    <Compile Include="Core\Metrics\IFierceCommandMetrics.cs" />
+    <Compile Include="Core\Metrics\ISimpleCommandMetrics.cs" />
+    <Compile Include="Core\Metrics\NoOpContext.cs" />
+    <Compile Include="Core\Metrics\SimpleCommandMetrics.cs" />
+    <Compile Include="Core\Metrics\CommandMetricsFactory.cs" />
+    <Compile Include="Core\Metrics\NoOpMetrics.cs" />
+    <Compile Include="Core\Metrics\ICommandMetrics.cs" />
+    <Compile Include="Core\SimpleCommandExecutor.cs" />
+    <Compile Include="Core\CommandExecutorBase.cs" />
+    <Compile Include="Core\FierceCommandExecutor.cs" />
     <Compile Include="Core\GenericPool\Exceptions\AllItemsIsDeadExceptions.cs" />
     <Compile Include="Core\GenericPool\Exceptions\EmptyPoolException.cs" />
     <Compile Include="Core\GenericPool\Exceptions\IdleTimeoutToSmallException.cs" />
@@ -128,6 +143,7 @@
     <Compile Include="Core\GenericPool\ReplicaSetPool.cs" />
     <Compile Include="Core\GenericPool\Utils\ObjectReferenceEqualityComparer.cs" />
     <Compile Include="Core\GenericPool\Pool.cs" />
+    <Compile Include="Core\ICommandExecutor.cs" />
     <Compile Include="Core\IThriftConnection.cs" />
     <Compile Include="Core\ThriftConnectionInPoolWrapper.cs" />
     <Compile Include="Exceptions\CassandraClientSchemaDisagreementExceptionException.cs" />
@@ -150,7 +166,6 @@
     <Compile Include="Connections\IKeyspaceConnection.cs" />
     <Compile Include="Connections\KeyspaceConnection.cs" />
     <Compile Include="Connections\EnumerableFactory.cs" />
-    <Compile Include="Core\CommandExecuter.cs" />
     <Compile Include="Core\DateTimeService.cs" />
     <Compile Include="Exceptions\DeadConnectionException.cs" />
     <Compile Include="Core\ReplicaHealth.cs" />
@@ -159,7 +174,6 @@
     <Compile Include="Exceptions\CassandraAttemptsException.cs" />
     <Compile Include="Exceptions\FailedReleaseException.cs" />
     <Compile Include="Exceptions\GuidCollisionException.cs" />
-    <Compile Include="Core\ICommandExecuter.cs" />
     <Compile Include="Core\ThriftConnection.cs" />
     <Compile Include="Exceptions\CassandraClientApplicationException.cs" />
     <Compile Include="Exceptions\CassandraClientAuthenticationException.cs" />
@@ -177,18 +191,12 @@
     <Compile Include="Helpers\StringExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheme\ReplicaPlacementStrategy.cs" />
-    <Compile Include="TimeStatistics.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"
-
-copy "$(TargetDir)Apache.Cassandra.209.dll" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Apache.Cassandra.209.pdb" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Thrift.dll" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)Thrift.pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
