@@ -11,9 +11,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         protected CommandMetricsBase([NotNull] MetricsContext context, [CanBeNull] string singlePartitionKey)
         {
             this.singlePartitionKey = singlePartitionKey;
-            total = context.Timer("Total", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            acquireConnectionFromPool = context.Timer("AcquireConnectionFromPool", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
-            thriftQuery = context.Timer("ThriftQuery", Unit.Requests, SamplingType.FavourRecent, TimeUnit.Minutes);
+            total = context.Timer("Total", Unit.Requests, SamplingType.ExponentiallyDecaying, TimeUnit.Minutes);
+            acquireConnectionFromPool = context.Timer("AcquireConnectionFromPool", Unit.Requests, SamplingType.ExponentiallyDecaying, TimeUnit.Minutes);
+            thriftQuery = context.Timer("ThriftQuery", Unit.Requests, SamplingType.ExponentiallyDecaying, TimeUnit.Minutes);
             errors = context.Meter("Errors", Unit.Items, TimeUnit.Minutes);
         }
 
