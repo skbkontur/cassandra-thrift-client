@@ -3,6 +3,8 @@
 *.suo
 *.user
 _ReSharper.*
+ilmerge.log
+/Assemblies/merged
 /Assemblies/Cassandra.CassandraClient.*
 /Assemblies/Cassandra.ClusterDeployment.*
 /Assemblies/Cassandra.Tests.*
