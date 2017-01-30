@@ -1839,6 +1839,18 @@
             <param name="extension">Action to apply extra configuration.</param>
             <returns>The result of calling the extension.</returns>
         </member>
+        <member name="M:Metrics.MetricsConfig.WithConfigExtension``1(System.Func{Metrics.MetricsContext,System.Func{Metrics.HealthStatus},``0},System.Func{``0})">
+            <summary>
+            This method is used for customizing the metrics configuration.
+            The <paramref name="extension"/> will be called with the current MetricsContext and HealthStatus provider.
+            </summary>
+            <remarks>
+            In general you don't need to call this method directly.
+            </remarks>
+            <param name="extension">Action to apply extra configuration.</param>
+            <param name="defaultValueProvider">Default value provider for T, which will be used when metrics are disabled.</param>
+            <returns>The result of calling the extension.</returns>
+        </member>
         <member name="M:Metrics.MetricsConfig.WithDefaultSamplingType(Metrics.SamplingType)">
             <summary>
             Configure the default sampling type to use for histograms.
@@ -1850,18 +1862,24 @@
             <summary>
             Register all pre-defined performance counters as Gauge metrics.
             This includes System Counters, CLR Global Counters and CLR App Counters.
+            Note: The Performance Counters API can hang and cause other potential issues.
+            If you're experiencing any issues, consider not using this configuration method.
             </summary>
         </member>
         <member name="M:Metrics.PerformanceCountersConfigExtensions.WithSystemCounters(Metrics.MetricsConfig,System.String)">
             <summary>
             Register all pre-defined system performance counters as Gauge metrics.
             This includes: Available RAM, CPU Usage, Disk Writes/sec, Disk Reads/sec
+            Note: The Performance Counters API can hang and cause other potential issues.
+            If you're experiencing any issues, consider not using this configuration method.
             </summary>
         </member>
         <member name="M:Metrics.PerformanceCountersConfigExtensions.WithAppCounters(Metrics.MetricsConfig,System.String)">
             <summary>
             Register application level, CLR related performance counters as Gauge metrics.
             This includes: Mb in all heaps, time in GC, exceptions per sec, Threads etc.
+            Note: The Performance Counters API can hang and cause other potential issues.
+            If you're experiencing any issues, consider not using this configuration method.
             </summary>
         </member>
         <member name="F:Metrics.SamplingType.Default">
@@ -1888,7 +1906,7 @@
             It does so by using a forward-decaying priority reservoir with an exponential weighting towards newer data. 
             Unlike the uniform reservoir, an exponentially decaying reservoir represents recent data, allowing you to know very quickly if the distribution 
             of the data has changed.
-            More information about <a href="http://metrics.codahale.com/manual/core/#man-core-histograms">Exponentially Decaying Reservoir</a>
+            More information about <a href="http://metrics.dropwizard.io/3.1.0/manual/core/#histograms">Exponentially Decaying Reservoir</a>
             </remarks>
         </member>
         <member name="F:Metrics.SamplingType.LongTerm">
@@ -1900,14 +1918,14 @@
             It will return a median value, for example, which is the median of all the values the histogram has ever been updated with.
             Use a uniform histogram when you’re interested in long-term measurements. 
             Don’t use one where you’d want to know if the distribution of the underlying data stream has changed recently.
-            More information about <a href="http://metrics.codahale.com/manual/core/#man-core-histograms">Exponentially Decaying Reservoir</a>
+            More information about <a href="http://metrics.dropwizard.io/3.1.0/manual/core/#histograms">Exponentially Decaying Reservoir</a>
             </remarks>
         </member>
         <member name="F:Metrics.SamplingType.SlidingWindow">
             <summary>
             Sampling will done with a Sliding Window Reservoir.
             A histogram with a sliding window reservoir produces quantiles which are representative of the past N measurements.
-            More information about <a href="http://metrics.codahale.com/manual/core/#man-core-histograms">Exponentially Decaying Reservoir</a>
+            More information about <a href="http://metrics.dropwizard.io/3.1.0/manual/core/#histograms">Exponentially Decaying Reservoir</a>
             </summary>
         </member>
         <member name="T:Metrics.Metric">
@@ -2296,7 +2314,7 @@
             
              @return A distinct copy of this histogram.
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.copyCorrectedForCoordinatedOmission(System.Int64)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.copyCorrectedForCoordinatedOmission(System.Int64)" -->
         <member name="M:HdrHistogram.AbstractHistogram.copyInto(HdrHistogram.AbstractHistogram)">
              Copy this histogram into the target histogram, overwriting it's contents.
             
@@ -2311,9 +2329,9 @@
                                                        auto-generated value records as appropriate if value is larger
                                                        than expectedIntervalBetweenValueSamples
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.add(HdrHistogram.AbstractHistogram)" -->
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.subtract(HdrHistogram.AbstractHistogram)" -->
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.addWhileCorrectingForCoordinatedOmission(HdrHistogram.AbstractHistogram,System.Int64)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.add(HdrHistogram.AbstractHistogram)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.subtract(HdrHistogram.AbstractHistogram)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.addWhileCorrectingForCoordinatedOmission(HdrHistogram.AbstractHistogram,System.Int64)" -->
         <member name="M:HdrHistogram.AbstractHistogram.shiftValuesLeft(System.Int32)">
              Shift recorded values to the left (the equivalent of a &lt;&lt; shift operation on all recorded values). The
              configured integer value range limits and value precision setting will remain unchanged.
@@ -2325,7 +2343,7 @@
             
              @param numberOfBinaryOrdersOfMagnitude The number of binary orders of magnitude to shift by
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.shiftValuesRight(System.Int32)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.shiftValuesRight(System.Int32)" -->
         <member name="M:HdrHistogram.AbstractHistogram.Equals(HdrHistogram.AbstractHistogram)">
             <summary>
             Determine if this histogram is equivalent to another.
@@ -2452,10 +2470,10 @@
             
              @return the standard deviation (in value units) of the histogram data
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getValueAtPercentile(System.Double)" -->
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getPercentileAtOrBelowValue(System.Int64)" -->
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getCountBetweenValues(System.Int64,System.Int64)" -->
-        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getCountAtValue(System.Int64)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getValueAtPercentile(System.Double)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getPercentileAtOrBelowValue(System.Int64)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getCountBetweenValues(System.Int64,System.Int64)" -->
+        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getCountAtValue(System.Int64)" -->
         <member name="T:HdrHistogram.AbstractHistogramBase">
             <summary>
             This non-public AbstractHistogramBase super-class separation is meant to bunch "cold" fields
@@ -2491,7 +2509,7 @@
             
              @return the {@link HistogramIterationValue} associated with the next element in the iteration.
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "T:HdrHistogram.ConcurrentHistogram" -->
+        <!-- Badly formed XML comment ignored for member "T:HdrHistogram.ConcurrentHistogram" -->
         <member name="M:HdrHistogram.ConcurrentHistogram.#ctor(System.Int32)">
              Construct an auto-resizing ConcurrentHistogram with a lowest discernible value of 1 and an auto-adjusting
              highestTrackableValue. Can auto-resize up to track values up to (Long.MAX_VALUE / 2).
@@ -2589,7 +2607,7 @@
             </summary>
             <param name="source">The source histogram to duplicate/</param>
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "T:HdrHistogram.HistogramIterationValue" -->
+        <!-- Badly formed XML comment ignored for member "T:HdrHistogram.HistogramIterationValue" -->
         <member name="M:HdrHistogram.Iterable`1.iterator">
              Returns an iterator over a set of elements of type T.
             
@@ -2694,7 +2712,7 @@
             Reset any value counts accumulated thus far.
             </summary>
         </member>
-        <!-- Проигнорирован некорректный комментарий XML для члена "T:HdrHistogram.SynchronizedHistogram" -->
+        <!-- Badly formed XML comment ignored for member "T:HdrHistogram.SynchronizedHistogram" -->
         <member name="M:HdrHistogram.SynchronizedHistogram.#ctor(System.Int32)">
              Construct an auto-resizing SynchronizedHistogram with a lowest discernible value of 1 and an auto-adjusting
              highestTrackableValue. Can auto-resize up to track values up to (Long.MAX_VALUE / 2).
