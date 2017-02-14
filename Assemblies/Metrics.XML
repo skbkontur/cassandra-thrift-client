@@ -2314,7 +2314,7 @@
             
              @return A distinct copy of this histogram.
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.copyCorrectedForCoordinatedOmission(System.Int64)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.copyCorrectedForCoordinatedOmission(System.Int64)" -->
         <member name="M:HdrHistogram.AbstractHistogram.copyInto(HdrHistogram.AbstractHistogram)">
              Copy this histogram into the target histogram, overwriting it's contents.
             
@@ -2329,9 +2329,9 @@
                                                        auto-generated value records as appropriate if value is larger
                                                        than expectedIntervalBetweenValueSamples
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.add(HdrHistogram.AbstractHistogram)" -->
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.subtract(HdrHistogram.AbstractHistogram)" -->
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.addWhileCorrectingForCoordinatedOmission(HdrHistogram.AbstractHistogram,System.Int64)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.add(HdrHistogram.AbstractHistogram)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.subtract(HdrHistogram.AbstractHistogram)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.addWhileCorrectingForCoordinatedOmission(HdrHistogram.AbstractHistogram,System.Int64)" -->
         <member name="M:HdrHistogram.AbstractHistogram.shiftValuesLeft(System.Int32)">
              Shift recorded values to the left (the equivalent of a &lt;&lt; shift operation on all recorded values). The
              configured integer value range limits and value precision setting will remain unchanged.
@@ -2343,7 +2343,7 @@
             
              @param numberOfBinaryOrdersOfMagnitude The number of binary orders of magnitude to shift by
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.shiftValuesRight(System.Int32)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.shiftValuesRight(System.Int32)" -->
         <member name="M:HdrHistogram.AbstractHistogram.Equals(HdrHistogram.AbstractHistogram)">
             <summary>
             Determine if this histogram is equivalent to another.
@@ -2470,10 +2470,10 @@
             
              @return the standard deviation (in value units) of the histogram data
         </member>
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getValueAtPercentile(System.Double)" -->
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getPercentileAtOrBelowValue(System.Int64)" -->
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getCountBetweenValues(System.Int64,System.Int64)" -->
-        <!-- Badly formed XML comment ignored for member "M:HdrHistogram.AbstractHistogram.getCountAtValue(System.Int64)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getValueAtPercentile(System.Double)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getPercentileAtOrBelowValue(System.Int64)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getCountBetweenValues(System.Int64,System.Int64)" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "M:HdrHistogram.AbstractHistogram.getCountAtValue(System.Int64)" -->
         <member name="T:HdrHistogram.AbstractHistogramBase">
             <summary>
             This non-public AbstractHistogramBase super-class separation is meant to bunch "cold" fields
@@ -2509,7 +2509,7 @@
             
              @return the {@link HistogramIterationValue} associated with the next element in the iteration.
         </member>
-        <!-- Badly formed XML comment ignored for member "T:HdrHistogram.ConcurrentHistogram" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "T:HdrHistogram.ConcurrentHistogram" -->
         <member name="M:HdrHistogram.ConcurrentHistogram.#ctor(System.Int32)">
              Construct an auto-resizing ConcurrentHistogram with a lowest discernible value of 1 and an auto-adjusting
              highestTrackableValue. Can auto-resize up to track values up to (Long.MAX_VALUE / 2).
@@ -2607,7 +2607,7 @@
             </summary>
             <param name="source">The source histogram to duplicate/</param>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:HdrHistogram.HistogramIterationValue" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "T:HdrHistogram.HistogramIterationValue" -->
         <member name="M:HdrHistogram.Iterable`1.iterator">
              Returns an iterator over a set of elements of type T.
             
@@ -2712,7 +2712,7 @@
             Reset any value counts accumulated thus far.
             </summary>
         </member>
-        <!-- Badly formed XML comment ignored for member "T:HdrHistogram.SynchronizedHistogram" -->
+        <!-- Проигнорирован некорректный комментарий XML для члена "T:HdrHistogram.SynchronizedHistogram" -->
         <member name="M:HdrHistogram.SynchronizedHistogram.#ctor(System.Int32)">
              Construct an auto-resizing SynchronizedHistogram with a lowest discernible value of 1 and an auto-adjusting
              highestTrackableValue. Can auto-resize up to track values up to (Long.MAX_VALUE / 2).
