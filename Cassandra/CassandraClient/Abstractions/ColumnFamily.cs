@@ -1,3 +1,5 @@
+using System;
+
 using Apache.Cassandra;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
@@ -12,7 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         public string Name { get; set; }
         public int? GCGraceSeconds { get; set; }
         public double? ReadRepairChance { get; set; }
-        public CompactionStrategy CompactionStrategy { get { return compactionStrategy; } set { compactionStrategy = value; } }
+        public CompactionStrategy CompactionStrategy { get; set; }
         public ColumnFamilyCaching Caching { get; set; }
         public ColumnFamilyCompression Compression { get; set; }
         public double? BloomFilterFpChance { get; set; }
@@ -24,9 +26,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             Caching = ColumnFamilyCaching.KeysOnly;
             ComparatorType = new ColumnComparatorType(DataType.UTF8Type);
+            CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions
+                {
+                    Enabled = true,
+                    MinThreshold = 4,
+                    MaxThreshold = 32,
+                });
         }
-
-        private CompactionStrategy compactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy();
     }
 
     internal static class ColumnFamilyExtensions
@@ -56,10 +62,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             {
                 result.Compaction_strategy = compactionStrategy.CompactionStrategyType.ToStringValue();
                 result.Compaction_strategy_options = compactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();
-                if(compactionStrategy.MinCompactionThreshold.HasValue)
-                    result.Min_compaction_threshold = compactionStrategy.MinCompactionThreshold.Value;
-                if(compactionStrategy.MaxCompactionThreshold.HasValue)
-                    result.Max_compaction_threshold = compactionStrategy.MaxCompactionThreshold.Value;
             }
 
             if(columnFamily.BloomFilterFpChance.HasValue)
@@ -91,13 +93,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 result.Compression = cfDef.Compression_options.FromCassandraCompressionOptions();
 
             var compactionStrategyType = cfDef.Compaction_strategy.FromStringValue<CompactionStrategyType>();
-            if(compactionStrategyType == CompactionStrategyType.Leveled)
+            var options = cfDef.Compaction_strategy_options.FromCassandraCompactionStrategyOptions();
+            switch(compactionStrategyType)
             {
-                var options = cfDef.Compaction_strategy_options.FromCassandraCompactionStrategyOptions();
-                result.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(options, cfDef.Min_compaction_threshold, cfDef.Max_compaction_threshold);
+            case CompactionStrategyType.SizeTiered:
+                result.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(options);
+                break;
+            case CompactionStrategyType.Leveled:
+                result.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(options);
+                break;
+            default:
+                throw new InvalidOperationException(string.Format("Invalid compactionStrategyType: {0}", compactionStrategyType));
             }
-            else
-                result.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(cfDef.Min_compaction_threshold, cfDef.Max_compaction_threshold);
 
             if(cfDef.__isset.bloom_filter_fp_chance)
                 result.BloomFilterFpChance = cfDef.Bloom_filter_fp_chance;

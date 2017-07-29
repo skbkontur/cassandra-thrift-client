@@ -2,30 +2,25 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class CompactionStrategy
     {
-        public static CompactionStrategy LeveledCompactionStrategy(CompactionStrategyOptions options, int? minCompactionThreshold = null, int? maxCompactionThreshold = null)
+        public static CompactionStrategy LeveledCompactionStrategy(CompactionStrategyOptions options)
         {
             return new CompactionStrategy
                 {
-                    CompactionStrategyOptions = options,
                     CompactionStrategyType = CompactionStrategyType.Leveled,
-                    MinCompactionThreshold = minCompactionThreshold,
-                    MaxCompactionThreshold = maxCompactionThreshold
+                    CompactionStrategyOptions = options,
                 };
         }
 
-        public static CompactionStrategy SizeTieredCompactionStrategy(int? minCompactionThreshold = null, int? maxCompactionThreshold = null)
+        public static CompactionStrategy SizeTieredCompactionStrategy(CompactionStrategyOptions options)
         {
             return new CompactionStrategy
                 {
                     CompactionStrategyType = CompactionStrategyType.SizeTiered,
-                    MinCompactionThreshold = minCompactionThreshold,
-                    MaxCompactionThreshold = maxCompactionThreshold
+                    CompactionStrategyOptions = options,
                 };
         }
 
         public CompactionStrategyType CompactionStrategyType { get; private set; }
         public CompactionStrategyOptions CompactionStrategyOptions { get; private set; }
-        public int? MinCompactionThreshold { get; private set; }
-        public int? MaxCompactionThreshold { get; private set; }
     }
 }

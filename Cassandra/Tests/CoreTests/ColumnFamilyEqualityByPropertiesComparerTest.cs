@@ -76,17 +76,33 @@ namespace Cassandra.Tests.CoreTests
             );
             Assert.That(
                 !comparer.NeedUpdateColumnFamily(
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()})
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 4, MaxThreshold = 32})},
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 4, MaxThreshold = 32})})
             );
-            Assert.That(comparer.NeedUpdateColumnFamily(
-                            new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20})},
-                            new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})})
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 4, MaxThreshold = 32})},
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = false, MinThreshold = 4, MaxThreshold = 32})})
+            );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 4, MaxThreshold = 32})},
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 16, MaxThreshold = 32})})
+            );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 4, MaxThreshold = 32})},
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {Enabled = true, MinThreshold = 4, MaxThreshold = 16})})
+            );
+            Assert.That(
+                comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20})},
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10})})
             );
             Assert.That(
                 comparer.NeedUpdateColumnFamily(
                     new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions())},
-                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy()})
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions())})
             );
             Assert.That(
                 comparer.NeedUpdateColumnFamily(

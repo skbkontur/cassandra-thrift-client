@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different comparatorTypes ('{0}' and '{1}')", columnFamilyWithNewProperties.ComparatorType, columnFamilyFromTarget.ComparatorType));
             return
                 !(
-                     (columnFamilyWithNewProperties.Caching.Equals(columnFamilyFromTarget.Caching)) &&
+                     columnFamilyWithNewProperties.Caching.Equals(columnFamilyFromTarget.Caching) &&
                      (columnFamilyWithNewProperties.ReadRepairChance == null || columnFamilyWithNewProperties.ReadRepairChance.Equals(columnFamilyFromTarget.ReadRepairChance)) &&
                      (columnFamilyWithNewProperties.GCGraceSeconds == null || columnFamilyWithNewProperties.GCGraceSeconds.Equals(columnFamilyFromTarget.GCGraceSeconds)) &&
                      (columnFamilyWithNewProperties.CompactionStrategy == null || CompareCompactionStrategy(columnFamilyWithNewProperties.CompactionStrategy, columnFamilyFromTarget.CompactionStrategy)) &&
@@ -30,43 +30,43 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             return left != null && right != null && left.IsComposite.Equals(right.IsComposite) && left.Types.SequenceEqual(right.Types);
         }
 
-        private static bool CompareCompression(ColumnFamilyCompression leftCompression, ColumnFamilyCompression rightCompression)
+        private static bool CompareCompression(ColumnFamilyCompression lhs, ColumnFamilyCompression rhs)
         {
-            if(leftCompression == null && rightCompression == null)
+            if(lhs == null && rhs == null)
                 return true;
-            if((leftCompression != null && rightCompression != null))
-            {
-                return
-                    (
-                        leftCompression.Algorithm == rightCompression.Algorithm &&
-                        (
-                            (leftCompression.Options == null && rightCompression.Options == null) ||
-                            (
-                                (leftCompression.Options != null && rightCompression.Options != null) &&
-                                leftCompression.Options.ChunkLengthInKb == rightCompression.Options.ChunkLengthInKb &&
-                                leftCompression.Options.CrcCheckChance == rightCompression.Options.CrcCheckChance
-                            )
-                        )
-                    );
-            }
-            return CompareCompression(leftCompression ?? ColumnFamilyCompression.Default, rightCompression ?? ColumnFamilyCompression.Default);
+            if(lhs != null && rhs != null)
+                return lhs.Algorithm == rhs.Algorithm && CompareCompressionOptions(lhs.Options, rhs.Options);
+            return CompareCompression(lhs ?? ColumnFamilyCompression.Default, rhs ?? ColumnFamilyCompression.Default);
         }
 
-        private static bool CompareCompactionStrategy(CompactionStrategy compactionStrategy, CompactionStrategy compactionStrategy1)
+        private static bool CompareCompressionOptions(CompressionOptions lhs, CompressionOptions rhs)
         {
-            if((compactionStrategy == null && compactionStrategy1 == null))
+            if(lhs == null && rhs == null)
                 return true;
-            if((compactionStrategy != null && compactionStrategy1 != null))
+            if(lhs != null && rhs != null)
+                return lhs.ChunkLengthInKb == rhs.ChunkLengthInKb && lhs.CrcCheckChance == rhs.CrcCheckChance;
+            return false;
+        }
+
+        private static bool CompareCompactionStrategy(CompactionStrategy lhs, CompactionStrategy rhs)
+        {
+            if(lhs == null && rhs == null)
+                return true;
+            if(lhs != null && rhs != null)
+                return lhs.CompactionStrategyType == rhs.CompactionStrategyType && CompareCompactionStrategyOptions(lhs.CompactionStrategyOptions, rhs.CompactionStrategyOptions);
+            return false;
+        }
+
+        private static bool CompareCompactionStrategyOptions(CompactionStrategyOptions lhs, CompactionStrategyOptions rhs)
+        {
+            if(lhs == null && rhs == null)
+                return true;
+            if(lhs != null && rhs != null)
             {
-                return
-                    (
-                        compactionStrategy.CompactionStrategyType == compactionStrategy1.CompactionStrategyType &&
-                        ((compactionStrategy.CompactionStrategyOptions == null && compactionStrategy1.CompactionStrategyOptions == null) ||
-                         (compactionStrategy.CompactionStrategyOptions != null && compactionStrategy1.CompactionStrategyOptions != null &&
-                          compactionStrategy.CompactionStrategyOptions.SstableSizeInMb == compactionStrategy1.CompactionStrategyOptions.SstableSizeInMb)) &&
-                        (compactionStrategy.MinCompactionThreshold == null || compactionStrategy.MinCompactionThreshold == compactionStrategy1.MinCompactionThreshold) &&
-                        (compactionStrategy.MaxCompactionThreshold == null || compactionStrategy.MaxCompactionThreshold == compactionStrategy1.MaxCompactionThreshold)
-                    );
+                return lhs.Enabled == rhs.Enabled &&
+                       lhs.MinThreshold == rhs.MinThreshold &&
+                       lhs.MaxThreshold == rhs.MaxThreshold &&
+                       lhs.SstableSizeInMb == rhs.SstableSizeInMb;
             }
             return false;
         }
