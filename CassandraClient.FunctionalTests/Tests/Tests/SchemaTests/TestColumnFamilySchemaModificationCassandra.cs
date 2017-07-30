@@ -62,7 +62,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var originalColumnFamily = new ColumnFamily
                 {
                     Name = name,
-                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(sstableSizeInMb : 10),
                     GCGraceSeconds = 123,
                     ReadRepairChance = 0.3
                 };
@@ -87,7 +87,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var originalColumnFamily = new ColumnFamily
                 {
                     Name = name,
-                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(sstableSizeInMb : 10),
                     GCGraceSeconds = 123,
                     ReadRepairChance = 0.3
                 };
@@ -161,14 +161,14 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var originalColumnFamily = new ColumnFamily
                 {
                     Name = name,
-                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(sstableSizeInMb : 10),
                     GCGraceSeconds = 123,
                     ReadRepairChance = 0.3,
                     Caching = ColumnFamilyCaching.All
                 };
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
-            originalColumnFamily.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 20});
+            originalColumnFamily.CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(sstableSizeInMb : 20);
             originalColumnFamily.GCGraceSeconds = 321;
             originalColumnFamily.ReadRepairChance = 0.9;
             originalColumnFamily.Caching = ColumnFamilyCaching.None;
@@ -182,7 +182,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             Assert.That(columnFamily.GCGraceSeconds, Is.EqualTo(originalColumnFamily.GCGraceSeconds));
             Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
 
-            originalColumnFamily.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {MinThreshold = 5, MaxThreshold = 17});
+            originalColumnFamily.CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(minThreshold : 5, maxThreshold : 17);
             keyspaceConnection.UpdateColumnFamily(originalColumnFamily);
 
             columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];

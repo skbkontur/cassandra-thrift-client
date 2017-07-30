@@ -86,30 +86,30 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
 
-            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {MinThreshold = 4, MaxThreshold = 32});
+            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(4, 32);
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(0));
 
-            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {MinThreshold = 3, MaxThreshold = 32});
+            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(3, 32);
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(1));
 
-            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(new CompactionStrategyOptions {MinThreshold = 3, MaxThreshold = 31});
+            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(3, 31);
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(2));
 
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(2));
 
-            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10});
+            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(10);
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(3));
 
-            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11});
+            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(11);
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(4));
 
-            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 11});
+            scheme.Configuration.ColumnFamilies[0].CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(11);
             ActualizeKeyspaces(scheme);
             Assert.That(cluster.UpdateColumnFamilyInvokeCount, Is.EqualTo(4));
         }
@@ -168,7 +168,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var originalColumnFamily = new ColumnFamily
                 {
                     Name = name,
-                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(new CompactionStrategyOptions {SstableSizeInMb = 10}),
+                    CompactionStrategy = CompactionStrategy.LeveledCompactionStrategy(sstableSizeInMb : 10),
                     GCGraceSeconds = 123,
                     ReadRepairChance = 0.3,
                     Caching = ColumnFamilyCaching.All

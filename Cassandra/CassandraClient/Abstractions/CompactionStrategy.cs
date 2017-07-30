@@ -2,22 +2,30 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class CompactionStrategy
     {
-        public static CompactionStrategy LeveledCompactionStrategy(CompactionStrategyOptions options)
+        public CompactionStrategy(CompactionStrategyType compactionStrategyType, CompactionStrategyOptions compactionStrategyOptions)
         {
-            return new CompactionStrategy
-                {
-                    CompactionStrategyType = CompactionStrategyType.Leveled,
-                    CompactionStrategyOptions = options,
-                };
+            CompactionStrategyType = compactionStrategyType;
+            CompactionStrategyOptions = compactionStrategyOptions;
         }
 
-        public static CompactionStrategy SizeTieredCompactionStrategy(CompactionStrategyOptions options)
+        public static CompactionStrategy LeveledCompactionStrategy(int sstableSizeInMb)
         {
-            return new CompactionStrategy
-                {
-                    CompactionStrategyType = CompactionStrategyType.SizeTiered,
-                    CompactionStrategyOptions = options,
-                };
+            return new CompactionStrategy(CompactionStrategyType.Leveled, new CompactionStrategyOptions {Enabled = true, SstableSizeInMb = sstableSizeInMb});
+        }
+
+        public static CompactionStrategy LeveledCompactionStrategyDisabled()
+        {
+            return new CompactionStrategy(CompactionStrategyType.Leveled, new CompactionStrategyOptions {Enabled = false});
+        }
+
+        public static CompactionStrategy SizeTieredCompactionStrategy(int minThreshold, int maxThreshold)
+        {
+            return new CompactionStrategy(CompactionStrategyType.SizeTiered, new CompactionStrategyOptions {Enabled = true, MinThreshold = minThreshold, MaxThreshold = maxThreshold});
+        }
+
+        public static CompactionStrategy SizeTieredCompactionStrategyDisabled()
+        {
+            return new CompactionStrategy(CompactionStrategyType.SizeTiered, new CompactionStrategyOptions {Enabled = false});
         }
 
         public CompactionStrategyType CompactionStrategyType { get; private set; }
