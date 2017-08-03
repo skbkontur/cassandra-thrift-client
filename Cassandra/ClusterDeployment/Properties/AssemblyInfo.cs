@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SKBKontur")]
 [assembly: AssemblyProduct("CassandraClusterDeployment")]
-[assembly: AssemblyCopyright("Copyright © SKBKontur 2014-2016")]
+[assembly: AssemblyCopyright("Copyright © SKBKontur 2014-2017")]
 [assembly: AssemblyTrademark("SKBKontur.Cassandra.ClusterDeployment")]
 [assembly: AssemblyCulture("")]
 
@@ -32,6 +32,6 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.8.0")]
-[assembly: AssemblyFileVersion("1.8.0.0")]
-[assembly: AssemblyInformationalVersion("1.8.0")]
+[assembly: AssemblyVersion("1.9.0")]
+[assembly: AssemblyFileVersion("1.9.0.0")]
+[assembly: AssemblyInformationalVersion("1.9.0")]

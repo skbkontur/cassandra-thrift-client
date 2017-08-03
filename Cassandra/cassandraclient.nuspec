@@ -2,13 +2,13 @@
 <package >
   <metadata>
     <id>CassandraClient</id>
-    <version>1.8.0</version>
+    <version>1.9.0</version>
     <title>SKB Kontur Cassandra Client</title>
     <projectUrl>https://git.skbkontur.ru/cassandra/cassandraclient</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <authors>Alexander Kokovin, Fedor Fominykh, Ivan Burmistrov, Evgeny Tikhonov</authors>
     <description>Awesome cassandra client</description>
-    <copyright>Copyright 2014-2016</copyright>
+    <copyright>Copyright 2014-2017</copyright>
   </metadata>
   <files>
     <file src="CassandraClient\bin\Release\log4net.dll" target="lib\net40\" /> 
