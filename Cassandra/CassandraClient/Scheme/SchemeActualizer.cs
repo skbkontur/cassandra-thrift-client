@@ -103,18 +103,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 logger.InfoFormat("Start actualize column family '{0}' for keyspace '{1}'", columnFamily.Name, keyspaceName);
                 if(existsColumnFamilies.ContainsKey(columnFamily.Name))
                 {
-                    logger.InfoFormat("Column family '{0}' already exists in the keyspace '{1}', so run update column family command",
-                                      columnFamily.Name, keyspaceName);
                     var existsColumnFamily = existsColumnFamilies[columnFamily.Name];
                     columnFamily.Id = existsColumnFamily.Id;
                     if(columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
                     {
+                        logger.InfoFormat("Column family '{0}' already exists in the keyspace '{1}' and needs to be altered, so run UpdateColumnFamily command", columnFamily.Name, keyspaceName);
                         eventListener.ColumnFamilyUpdated(keyspaceName, columnFamily);
                         keyspaceConnection.UpdateColumnFamily(columnFamily);
                     }
                 }
                 else
                 {
+                    logger.InfoFormat("Column family '{0}' does not exist in the keyspace '{1}', so run AddColumnFamily command", columnFamily.Name, keyspaceName);
                     eventListener.ColumnFamilyAdded(keyspaceName, columnFamily);
                     keyspaceConnection.AddColumnFamily(columnFamily);
                 }
