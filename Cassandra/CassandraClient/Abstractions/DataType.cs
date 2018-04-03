@@ -29,6 +29,9 @@
         [StringValue("org.apache.cassandra.db.marshal.DateType")]
         DateType,
 
+        [StringValue("org.apache.cassandra.db.marshal.SimpleDateType")]
+        SimpleDateType,
+
         [StringValue("org.apache.cassandra.db.marshal.BooleanType")]
         BooleanType,
 
