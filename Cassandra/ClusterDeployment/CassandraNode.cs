@@ -6,15 +6,17 @@ using System.Linq;
 using System.Management;
 using System.Threading;
 
-using log4net;
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Cassandra.ClusterDeployment
 {
     public class CassandraNode
     {
-        public CassandraNode(string templateDirectory, string deployDirectory)
+        public CassandraNode(string templateDirectory, string deployDirectory, ILog logger)
         {
             this.templateDirectory = templateDirectory;
+            this.logger = logger;
             Name = "node_at_9360";
             JmxPort = 7399;
             GossipPort = 7400;
@@ -41,13 +43,13 @@ namespace SKBKontur.Cassandra.ClusterDeployment
             foreach(var processId in GetCassandraProcessIds(Name))
             {
                 Process.GetProcessById(processId).Kill();
-                logger.InfoFormat("Kill cassandra process id={0}", processId);
+                logger.Info("Kill cassandra process id={0}", processId);
             }
 
             Console.WriteLine("Start waiting for cassandra process stop.");
             while(GetCassandraProcessIds(Name).Any())
             {
-                logger.InfoFormat("Waiting for cassandra process stop.");
+                logger.Info("Waiting for cassandra process stop.");
                 Thread.Sleep(1000);
             }
         }
@@ -196,7 +198,6 @@ namespace SKBKontur.Cassandra.ClusterDeployment
         }
 
         private readonly string templateDirectory;
-
-        private readonly ILog logger = LogManager.GetLogger(typeof(CassandraNode));
+        private readonly ILog logger;
     }
 }

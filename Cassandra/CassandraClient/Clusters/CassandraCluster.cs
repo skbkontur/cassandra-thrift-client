@@ -2,8 +2,6 @@
 using System.Linq;
 using System.Net;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Connections;
@@ -12,22 +10,26 @@ using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
+
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
     public class CassandraCluster : ICassandraCluster
     {
-        public CassandraCluster(ICassandraClusterSettings settings)
+        public CassandraCluster(ICassandraClusterSettings settings, ILog logger)
         {
+            this.logger = logger;
             dataCommandsConnectionPool = CreateDataConnectionPool(settings);
             fierceCommandsConnectionPool = CreateFierceConnectionPool(settings);
-            commandExecutor = new SimpleCommandExecutor(dataCommandsConnectionPool, settings);
+            commandExecutor = new SimpleCommandExecutor(dataCommandsConnectionPool, settings, logger);
             fierceCommandExecutor = new FierceCommandExecutor(fierceCommandsConnectionPool, settings);
             clusterSettings = settings;
         }
 
         public IClusterConnection RetrieveClusterConnection()
         {
-            return new ClusterConnection(fierceCommandExecutor);
+            return new ClusterConnection(fierceCommandExecutor, logger);
         }
 
         public IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName)
@@ -37,6 +39,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
+            logger.Info("Retrieving for {0} {1}", keySpaceName, columnFamilyName);
             var columnFamilyConnectionImplementation = RetrieveColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
         }
@@ -63,7 +66,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
         {
-            new SchemeActualizer(this, eventListener).ActualizeKeyspaces(keyspaces, changeExistingKeyspaceMetadata);
+            new SchemeActualizer(this, eventListener, logger).ActualizeKeyspaces(keyspaces, changeExistingKeyspaceMetadata);
         }
 
         public void Dispose()
@@ -80,7 +83,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
                 settings.ConnectionIdleTimeout,
-                PoolSettings.CreateDefault());
+                PoolSettings.CreateDefault(),
+                logger);
             return replicaSetPool;
         }
 
@@ -92,36 +96,37 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 c => ((ThriftConnectionInPoolWrapper)c).ReplicaKey,
                 c => ((ThriftConnectionInPoolWrapper)c).KeyspaceName,
                 settings.ConnectionIdleTimeout,
-                PoolSettings.CreateDefault());
+                PoolSettings.CreateDefault(),
+                logger);
             return result;
         }
 
         private Pool<IThriftConnection> GetDataConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.Timeout));
-            logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
+            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.Timeout), logger);
+            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
             return result;
         }
 
         private ThriftConnectionInPoolWrapper CreateThriftConnection(IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
         {
-            var result = new ThriftConnectionInPoolWrapper(timeout, nodeEndpoint, keyspaceName);
-            logger.DebugFormat("Connection {0} was created.", result);
+            var result = new ThriftConnectionInPoolWrapper(timeout, nodeEndpoint, keyspaceName, logger);
+            logger.Debug("Connection {0} was created.", result);
             return result;
         }
 
         private Pool<IThriftConnection> CreateFiercePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.FierceTimeout));
-            logger.DebugFormat("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
+            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.FierceTimeout), logger);
+            logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
             return result;
         }
 
         private readonly ICassandraClusterSettings clusterSettings;
+        private readonly ILog logger;
         private readonly ICommandExecutor<ISimpleCommand> commandExecutor;
         private readonly ICommandExecutor<IFierceCommand> fierceCommandExecutor;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> dataCommandsConnectionPool;
         private readonly ReplicaSetPool<IThriftConnection, string, IPEndPoint> fierceCommandsConnectionPool;
-        private readonly ILog logger = LogManager.GetLogger(typeof(CassandraCluster));
     }
 }

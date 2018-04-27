@@ -2,23 +2,25 @@
 
 using JetBrains.Annotations;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
+
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     internal class SimpleCommandExecutor : CommandExecutorBase<ISimpleCommand>
     {
-        public SimpleCommandExecutor([NotNull] IPoolSet<IThriftConnection, string> connectionPool, [NotNull] ICassandraClusterSettings settings)
+        public SimpleCommandExecutor([NotNull] IPoolSet<IThriftConnection, string> connectionPool, [NotNull] ICassandraClusterSettings settings, ILog logger)
             : base(connectionPool, settings)
         {
             if(settings.Attempts <= 0)
                 throw new InvalidOperationException(string.Format("settings.Attempts <= 0 for: {0}", settings));
+            this.logger = logger;
         }
 
         public override sealed void Execute([NotNull] Func<int, ISimpleCommand> createCommand)
@@ -39,7 +41,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     catch(CassandraClientException exception)
                     {
                         metrics.RecordError(exception);
-                        logger.Warn(string.Format("Attempt {0} failed", attempt), exception);
+                        logger.Warn(exception, "Attempt {0} failed", attempt);
                         if(!exception.UseAttempts)
                             throw;
                         if(attempt == 0)
@@ -52,6 +54,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        private readonly ILog logger = LogManager.GetLogger(typeof(SimpleCommandExecutor));
+        private readonly ILog logger;
     }
 }

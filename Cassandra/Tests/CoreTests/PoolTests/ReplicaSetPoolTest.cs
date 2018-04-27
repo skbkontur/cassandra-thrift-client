@@ -195,8 +195,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
             using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(
                 new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")},
                 (x, r) => r.Name == "replica2" ?
-                              new Pool<Item>(y => new Item(x, r) {IsAlive = false}) :
-                              new Pool<Item>(y => new Item(x, r))))
+                              new Pool<Item>(y => new Item(x, r) {IsAlive = false}, new FakeLog()) :
+                              new Pool<Item>(y => new Item(x, r), new FakeLog())))
             {
                 var itemKey = new ItemKey("key1");
 
@@ -230,8 +230,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                                   {
                                       deadNodeAttemptCount++;
                                       return new Item(x, r) {IsAlive = false};
-                                  }) :
-                              new Pool<Item>(y => new Item(x, r))))
+                                  }, new FakeLog()) :
+                              new Pool<Item>(y => new Item(x, r), new FakeLog())))
             {
                 var itemKey = new ItemKey("key1");
 
@@ -263,8 +263,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                                   {
                                       deadNodeAttemptCount++;
                                       return new Item(x, r) {IsAlive = false};
-                                  }) :
-                              new Pool<Item>(y => new Item(x, r))))
+                                  }, new FakeLog()) :
+                              new Pool<Item>(y => new Item(x, r), new FakeLog())))
             {
                 Enumerable.Range(0, 100).ToList().ForEach(x => pool.BadReplica(new ReplicaKey("replica2"))); // Health: 0.01
 
@@ -296,9 +296,9 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                             {
                                 acquireFromDeadNodeCount++;
                                 return new Item(x, r) {IsAlive = false};
-                            });
+                            }, new FakeLog());
                     }
-                    return new Pool<Item>(y => new Item(x, r));
+                    return new Pool<Item>(y => new Item(x, r), new FakeLog());
                 }))
             {
                 var itemKey = new ItemKey("key1");
@@ -342,7 +342,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false})))
+            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}, new FakeLog())))
             {
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
@@ -357,7 +357,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                     if(z.Name == "replica1")
                         throw new Exception("FakeException");
                     return new Item(x, z);
-                })))
+                }, new FakeLog())))
             {
                 for(var i = 0; i < 1000; i++)
                 {
@@ -370,7 +370,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestTryAcquireConnectionWithExceptionAllPools()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); })))
+            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); }, new FakeLog())))
             {
                 for(var i = 0; i < 1000; i++)
                 {
@@ -394,7 +394,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveUnusedConnection()
         {
-            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z)), PoolSettings.CreateDefault(), TimeSpan.FromMilliseconds(100)))
+            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new FakeLog()), PoolSettings.CreateDefault(), TimeSpan.FromMilliseconds(100), new FakeLog()))
             {
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
@@ -415,7 +415,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveAcquiredConnectionFromPool()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z))))
+            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new FakeLog())))
             {
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
@@ -561,16 +561,19 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 .Select(n => string.Format(nameFormat, n))
                 .Select(x => new ReplicaKey(x))
                 .ToArray();
-            var pool = CreatePool<Item, ItemKey, ReplicaKey>(replicas, (x, z) => new Pool<Item>(y => new Item(x, z)));
+            var pool = CreatePool<Item, ItemKey, ReplicaKey>(replicas, (x, z) => new Pool<Item>(y => new Item(x, z), new FakeLog()));
             return pool;
         }
 
-        private static ReplicaSetPool<TItem, TItemKey, TReplicaKey> CreatePool<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
+        private static ReplicaSetPool<TItem, TItemKey, TReplicaKey> CreatePool<TItem, TItemKey, TReplicaKey>(
+            TReplicaKey[] replicas, 
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory
+            )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, PoolSettings.CreateDefault(), null);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, PoolSettings.CreateDefault(), new FakeLog(), null);
         }
 
         private class ItemKey : IEquatable<ItemKey>
@@ -681,8 +684,8 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                     });
                 replicaSetPool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(
                     replicaInfos.Values.Select(x => x.Key).ToArray(),
-                    (x, z) => new Pool<Item>(y => CreateReplicaConnection(z, x)),
-                    poolSettings);
+                    (x, z) => new Pool<Item>(y => CreateReplicaConnection(z, x), new FakeLog()),
+                    poolSettings, new FakeLog());
             }
 
             private Item CreateReplicaConnection(ReplicaKey replicaKey, ItemKey itemKey)

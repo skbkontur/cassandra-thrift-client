@@ -35,7 +35,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
             cassandraClusterSettings.Expect(x => x.EnableMetrics).Return(false).Repeat.Any();
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(attempts).Repeat.Any();
-            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings);
+            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings, new FakeLog());
         }
 
         [Test]

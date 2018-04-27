@@ -4,6 +4,7 @@ using System.IO;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.ClusterDeployment;
+using SKBKontur.Cassandra.FunctionalTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -19,7 +20,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         {
             Node = new CassandraNode(
                 FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"),
+                new Log4NetWrapper(typeof(SingleCassandraNodeSetUpFixture))
+            );
             Node.Restart();
         }
 

@@ -6,6 +6,7 @@ using SKBKontur.Cassandra.CassandraClient.Scheme;
 using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies;
 using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
+using SKBKontur.Cassandra.FunctionalTests.Utils;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
 {
@@ -15,8 +16,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraClusterSpy(() => new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings()));
-            actualize = new SchemeActualizer(cluster, null);
+            cluster = new CassandraClusterSpy(() => new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), new Log4NetWrapper(typeof(ActualizeKeyspaceTest))));
+            actualize = new SchemeActualizer(cluster, null, new Log4NetWrapper(typeof(ActualizeKeyspaceTest)));
         }
 
         [TearDown]

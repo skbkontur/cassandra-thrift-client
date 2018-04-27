@@ -14,7 +14,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveConnection()
         {
-            using(var pool = new Pool<Item>(x => new Item()))
+            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -45,7 +45,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 {
                     Interlocked.Increment(ref creationCount);
                     return new Item();
-                }))
+                }, new FakeLog()))
             {
                 var items = Enumerable.Range(0, 10000).ToList().Select(x => pool.Acquire()).ToList();
                 items.ForEach(pool.Release);
