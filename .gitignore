@@ -10,3 +10,4 @@ ilmerge.log
 /Assemblies/Cassandra.Tests.*
 /Cassandra*/.idea/*
 /Cassandra*/packages
+/packages/*
