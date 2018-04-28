@@ -39,7 +39,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
 
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
-            logger.Info("Retrieving for {0} {1}", keySpaceName, columnFamilyName);
             var columnFamilyConnectionImplementation = RetrieveColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName);
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
         }
