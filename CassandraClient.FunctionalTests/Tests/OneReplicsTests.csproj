@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Cassandra.FunctionalTests</RootNamespace>
     <AssemblyName>Cassandra.FunctionalTests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -45,6 +45,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.Tests.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="log4net">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\log4net.dll</HintPath>
@@ -55,6 +59,10 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
+    <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -85,9 +93,11 @@
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
     <Compile Include="Tests\UpdateKeyspaceTest.cs" />
+    <Compile Include="Utils\Log4NetLogger.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="Settings\log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

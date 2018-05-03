@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Cassandra.Tests</RootNamespace>
     <AssemblyName>Cassandra.Tests</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -37,6 +37,10 @@
     <Reference Include="Apache.Cassandra.209">
       <HintPath>..\..\Assemblies\Apache.Cassandra.209.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
@@ -51,6 +55,10 @@
     <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Thrift.dll</HintPath>
     </Reference>
+    <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Arg.cs" />
@@ -62,6 +70,7 @@
     <Compile Include="CoreTests\PoolTests\IdleConnectionRemovalFromPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\ReplicaSetPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\PoolTest.cs" />
+    <Compile Include="FakeLog.cs" />
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
     <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />
     <Compile Include="HelpersTests\StringHelpersTest.cs" />
@@ -89,7 +98,9 @@
       <Name>CassandraClient</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy $(TargetDir)$(TargetName).dll $(SolutionDir)..\Assemblies

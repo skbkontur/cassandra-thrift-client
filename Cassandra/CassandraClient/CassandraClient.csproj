@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
     <AssemblyName>Cassandra.CassandraClient</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -37,12 +37,9 @@
     <Reference Include="Apache.Cassandra.209">
       <HintPath>..\..\Assemblies\Apache.Cassandra.209.dll</HintPath>
     </Reference>
-    <Reference Include="JetBrains.Annotations">
-      <HintPath>..\..\Assemblies\JetBrains.Annotations.dll</HintPath>
-    </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Metrics">
       <HintPath>..\..\Assemblies\Metrics.dll</HintPath>
@@ -51,6 +48,10 @@
     <Reference Include="System.Core" />
     <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Thrift.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -192,11 +193,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Scheme\ReplicaPlacementStrategy.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetDir)$(TargetName)$(TargetExt)" "$(SolutionDir)\..\Assemblies"
-copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"</PostBuildEvent>
+copy "$(TargetDir)$(TargetName).pdb" "$(SolutionDir)\..\Assemblies"
+copy "$(TargetDir)\Vostok.Logging.dll" $(SolutionDir)\..\Assemblies"
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

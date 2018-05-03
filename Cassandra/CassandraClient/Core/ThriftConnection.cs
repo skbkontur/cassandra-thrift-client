@@ -2,24 +2,26 @@
 using System.Net;
 using System.Net.Sockets;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using Thrift.Protocol;
 using Thrift.Transport;
 
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
+
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     internal class ThriftConnection : IThriftConnection
     {
-        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ILog logger)
         {
             isDisposed = false;
             isAlive = true;
             this.ipEndPoint = ipEndPoint;
             this.keyspaceName = keyspaceName;
+            this.logger = logger;
             var address = ipEndPoint.Address.ToString();
             var port = ipEndPoint.Port;
             var tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
@@ -48,7 +50,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 if(!isAlive)
                 {
                     var e = new DeadConnectionException();
-                    logger.Error(string.Format("Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime), e);
+                    logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
                     throw e;
                 }
                 command.Execute(cassandraClient);
@@ -79,7 +81,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                 }
                 catch(Exception e)
                 {
-                    logger.Error("Error while ping", e);
+                    logger.Error(e, "Error while ping");
                     isAlive = false;
                     return false;
                 }
@@ -125,9 +127,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private bool isAlive;
 
         private readonly string keyspaceName;
+        private readonly ILog logger;
         private readonly IPEndPoint ipEndPoint;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
-        private readonly ILog logger = LogManager.GetLogger(typeof(ThriftConnection));
         private readonly object lockObject;
         private bool isDisposed;
     }

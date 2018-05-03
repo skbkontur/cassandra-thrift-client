@@ -8,3 +8,6 @@ ilmerge.log
 /Assemblies/Cassandra.CassandraClient.*
 /Assemblies/Cassandra.ClusterDeployment.*
 /Assemblies/Cassandra.Tests.*
+/Cassandra*/.idea/*
+/Cassandra*/packages
+/packages/*

@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.System.Read;
 using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
+
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
 
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
@@ -16,9 +17,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     internal class ClusterConnection : IClusterConnection
     {
-        public ClusterConnection(ICommandExecutor<IFierceCommand> commandExecutor)
+        public ClusterConnection(ICommandExecutor<IFierceCommand> commandExecutor, ILog logger)
         {
             this.commandExecutor = commandExecutor;
+            this.logger = logger;
         }
 
         public IList<Keyspace> RetrieveKeyspaces()
@@ -51,7 +53,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var addKeyspaceCommand = new AddKeyspaceCommand(keyspace);
             commandExecutor.Execute(addKeyspaceCommand);
-            logger.InfoFormat("Keyspace adding result: {0}", addKeyspaceCommand.Output);
+            logger.Info("Keyspace adding result: {0}", addKeyspaceCommand.Output);
         }
 
         public void WaitUntilSchemeAgreementIsReached(TimeSpan timeout)
@@ -78,7 +80,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         }
 
         private readonly ICommandExecutor<IFierceCommand> commandExecutor;
-
-        private readonly ILog logger = LogManager.GetLogger(typeof(ClusterConnection));
+        private readonly ILog logger;
     }
 }

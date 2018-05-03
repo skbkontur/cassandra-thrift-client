@@ -3,13 +3,15 @@ using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
+using Vostok.Logging;
+
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
     internal class ThriftConnectionInPoolWrapper : IThriftConnection
     {
-        public ThriftConnectionInPoolWrapper(int timeout, IPEndPoint ipEndPoint, string keyspaceName)
+        public ThriftConnectionInPoolWrapper(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ILog logger)
         {
-            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName);
+            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName, logger);
             ReplicaKey = ipEndPoint;
             KeyspaceName = keyspaceName;
         }

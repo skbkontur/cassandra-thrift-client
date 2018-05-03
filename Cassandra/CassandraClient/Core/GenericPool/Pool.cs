@@ -5,18 +5,20 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
+
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
     internal class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
     {
-        public Pool(Func<Pool<T>, T> itemFactory)
+        public Pool(Func<Pool<T>, T> itemFactory, ILog logger)
         {
             this.itemFactory = itemFactory;
+            this.logger = logger;
         }
 
         public void Dispose()
@@ -93,7 +95,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 finally
                 {
                     if(timer.ElapsedMilliseconds > 1)
-                        logger.WarnFormat("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
+                        logger.Warn("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
                 }
             }
             finally
@@ -140,8 +142,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private int busyItemCount;
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
-        private readonly ILog logger = LogManager.GetLogger(typeof(Pool<T>));
         private readonly Func<Pool<T>, T> itemFactory;
+        private readonly ILog logger;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
         private readonly ConcurrentDictionary<T, object> busyItems = new ConcurrentDictionary<T, object>(ObjectReferenceEqualityComparer<T>.Default);
 

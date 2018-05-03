@@ -4,11 +4,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-using log4net;
-
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
+
+using Vostok.Logging;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
@@ -22,11 +23,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               Func<TItem, TReplicaKey> getReplicaKeyByItem,
                               Func<TItem, TItemKey> getItemKeyByItem,
                               PoolSettings poolSettings,
+                              ILog logger,
                               TimeSpan? itemIdleTimeout = null)
         {
+            this.logger = logger;
             if(replicas.Count == 0)
                 throw new EmptyPoolException("Cannot create empty ReplicaSetPool");
-            logger.InfoFormat("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
+            logger.Info("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
             replicaIndicies = new Dictionary<TReplicaKey, int>(replicaKeyComparer);
             replicaHealths = new ReplicaHealth<TReplicaKey>[replicas.Count];
             for(var idx = 0; idx < replicas.Count; idx++)
@@ -40,7 +43,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             this.getReplicaKeyByItem = getReplicaKeyByItem;
             this.getItemKeyByItem = getItemKeyByItem;
             this.poolSettings = poolSettings;
-            
+
             pools = new ConcurrentDictionary<PoolKey, Pool<TItem>>(new PoolKeyEqualityComparer(replicaKeyComparer, itemKeyComparer));
             disposeEvent = new ManualResetEvent(false);
             checkDeadItemsThread = new Thread(CheckDeadItemsThread)
@@ -52,7 +55,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             if(itemIdleTimeout != null)
             {
-                logger.InfoFormat("Item idle timeout: {0}", itemIdleTimeout.Value);
+                logger.Info("Item idle timeout: {0}", itemIdleTimeout.Value);
                 unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value))
                     {
                         IsBackground = true
@@ -93,7 +96,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                                 catch(Exception exception)
                                 {
                                     UnsuccessfulReplicaPing(deadReplicaPingInfos, deadReplicaKey);
-                                    logger.Warn(string.Format("Error while ping dead replica: Cannot acquire new connection for replica [{0}]", deadReplicaKey), exception);
+                                    logger.Warn(exception, "Error while ping dead replica: Cannot acquire new connection for replica [{0}]", deadReplicaKey);
                                 }
                                 if(disposeEvent.WaitOne(0))
                                     return;
@@ -105,7 +108,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 }
                 catch(Exception exception)
                 {
-                    logger.Error("Unexpected error while ping dead replicas.", exception);
+                    logger.Error(exception, "Unexpected error while ping dead replicas.");
                 }
             }
         }
@@ -149,11 +152,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         {
             disposeEvent.Set();
             if(!checkDeadItemsThread.Join(TimeSpan.FromSeconds(2)))
-                logger.WarnFormat("Cannot await stopping check dead items thread. Skip waiting");
+                logger.Warn("Cannot await stopping check dead items thread. Skip waiting");
             if(unusedItemsCollectorThread != null)
             {
                 if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
-                    logger.WarnFormat("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
+                    logger.Warn("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
             }
             pools.Values.ToList().ForEach(p => p.Dispose());
             disposeEvent.Dispose();
@@ -191,7 +194,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     }
                     catch(Exception e)
                     {
-                        logger.Warn(string.Format("Cannot acquire new connection for replica [{0}]", replicaKey), e);
+                        logger.Warn(e, "Cannot acquire new connection for replica [{0}]", replicaKey);
                         BadReplica(replicaKey);
                         exceptions.Add(e);
                     }
@@ -282,7 +285,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 }
                 catch(Exception e)
                 {
-                    logger.Warn(string.Format("Cannot acquire new connection for replica [{0}]", poolKey.ReplicaKey), e);
+                    logger.Warn(e, "Cannot acquire new connection for replica [{0}]", poolKey.ReplicaKey);
                     BadReplica(poolKey.ReplicaKey);
                     return false;
                 }
@@ -306,8 +309,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                         totals.Add(pool.Key, unusedItemCount);
                 }
                 if(totals.Count > 0)
-                    logger.InfoFormat("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
-                logger.InfoFormat("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => string.Format("  {0}: Free: {1}, Busy: {2}", x.Key, x.Value.FreeItemCount, x.Value.BusyItemCount))));
+                    logger.Info("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
+                logger.Info("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => string.Format("  {0}: Free: {1}, Busy: {2}", x.Key, x.Value.FreeItemCount, x.Value.BusyItemCount))));
             }
         }
 
@@ -358,8 +361,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private readonly Func<TItem, TReplicaKey> getReplicaKeyByItem;
         private readonly Func<TItem, TItemKey> getItemKeyByItem;
         private readonly PoolSettings poolSettings;
+        private readonly ILog logger;
         private readonly ConcurrentDictionary<PoolKey, Pool<TItem>> pools;
-        private readonly ILog logger = LogManager.GetLogger(typeof(ReplicaSetPool<,,>));
         private readonly Thread unusedItemsCollectorThread;
         private readonly ManualResetEvent disposeEvent;
         private readonly Thread checkDeadItemsThread;
@@ -419,20 +422,29 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
     internal static class ReplicaSetPool
     {
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, PoolSettings poolSettings)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
+            TReplicaKey[] replicas, 
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, 
+            PoolSettings poolSettings,
+            ILog logger
+            )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, null);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, logger, null);
         }
 
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
+            TReplicaKey[] replicas, 
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
+            ILog logger
+            )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, null, null);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, null, logger, null);
         }
 
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
@@ -441,19 +453,27 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             Func<TItem, TReplicaKey> getReplicaKeyByItem,
             Func<TItem, TItemKey> getItemKeyByItem,
             TimeSpan? unusedItemsIdleTimeout,
-            PoolSettings poolSettings)
+            PoolSettings poolSettings,
+            ILog logger
+            )
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, poolSettings, unusedItemsIdleTimeout);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, getReplicaKeyByItem, getItemKeyByItem, poolSettings, logger, unusedItemsIdleTimeout);
         }
 
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(TReplicaKey[] replicas, Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, PoolSettings poolSettings, TimeSpan unusedItemsIdleTimeout)
+        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
+            TReplicaKey[] replicas, 
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, 
+            PoolSettings poolSettings, 
+            TimeSpan unusedItemsIdleTimeout,
+            ILog logger
+            )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
         {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, unusedItemsIdleTimeout);
+            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, logger, unusedItemsIdleTimeout);
         }
     }
 }
