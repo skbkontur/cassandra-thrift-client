@@ -11,7 +11,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
     [SetUpFixture]
     public class SingleCassandraNodeSetUpFixture
     {
-        private const string cassandraTemplates = @"Assemblies\CassandraTemplate";
+        private const string cassandraTemplates = @"cassandra-local\cassandra\v2.2.x\";
 
         internal static CassandraNode Node { get; private set; }
 
