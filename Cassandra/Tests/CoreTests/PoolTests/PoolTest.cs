@@ -7,6 +7,8 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 
+using Vostok.Logging.Logs;
+
 namespace Cassandra.Tests.CoreTests.PoolTests
 {
     [TestFixture]
@@ -22,7 +24,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 {
                     factoryInvokeCount++;
                     return lastFactoryResult = new Item();
-                }, new FakeLog()))
+                }, new SilentLog()))
             {
                 var item = pool.Acquire();
                 Assert.That(item, Is.EqualTo(lastFactoryResult));
@@ -33,7 +35,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void DisposeAndReleaseDeadItemsThroughAcquire()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
@@ -47,7 +49,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void DisposeAndReleaseDeadItemsThroughAcquireExists()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
@@ -67,7 +69,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 {
                     factoryInvokeCount++;
                     return new Item();
-                }, new FakeLog()))
+                }, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -81,7 +83,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TryReleaseItemTwice()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -94,7 +96,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         {
             Item item1;
             Item item2;
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 item1 = pool.Acquire();
                 item2 = pool.Acquire();
@@ -109,7 +111,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNew()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
@@ -121,7 +123,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestAcquireExists()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
@@ -136,7 +138,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveItemFromPool()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -153,7 +155,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestTryRemoveReleasedItemFromPool()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -166,7 +168,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestTryRemoveItemDoesNotBelongInPool()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -177,7 +179,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void MultiThreadTest()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var threads = Enumerable
                     .Range(0, 100)

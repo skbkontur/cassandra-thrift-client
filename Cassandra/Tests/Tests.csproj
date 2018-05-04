@@ -70,7 +70,6 @@
     <Compile Include="CoreTests\PoolTests\IdleConnectionRemovalFromPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\ReplicaSetPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\PoolTest.cs" />
-    <Compile Include="FakeLog.cs" />
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
     <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />
     <Compile Include="HelpersTests\StringHelpersTest.cs" />

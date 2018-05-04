@@ -6,6 +6,8 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 
+using Vostok.Logging.Logs;
+
 namespace Cassandra.Tests.CoreTests.PoolTests
 {
     [TestFixture]
@@ -14,7 +16,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         [Test]
         public void TestRemoveConnection()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new FakeLog()))
+            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -45,7 +47,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 {
                     Interlocked.Increment(ref creationCount);
                     return new Item();
-                }, new FakeLog()))
+                }, new SilentLog()))
             {
                 var items = Enumerable.Range(0, 10000).ToList().Select(x => pool.Acquire()).ToList();
                 items.ForEach(pool.Release);
