@@ -4,7 +4,6 @@ using System.Xml;
 namespace SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer
 {
     public static class TypeWriterExtensions
-
     {
         public static void Write(this ITypeWriter typeWriter, Type type, object value, XmlWriter writer)
         {

@@ -16,7 +16,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), new Log4NetWrapper(typeof(TestKeyspaceSchemaModificationCassandra)));
+            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance);
         }
 
         [TearDown]

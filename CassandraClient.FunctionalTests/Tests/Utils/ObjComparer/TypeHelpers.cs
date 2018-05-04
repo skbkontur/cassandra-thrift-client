@@ -5,9 +5,9 @@ using System.Reflection;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer
 {
-    public class TypeHelpers
+    public static class TypeHelpers
     {
-        public static List<FieldInfo> GetTypeInstanceFields(Type type)
+        private static List<FieldInfo> GetTypeInstanceFields(Type type)
         {
             const BindingFlags fieldFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetField | BindingFlags.Instance | BindingFlags.Static;
 

@@ -42,10 +42,6 @@
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="log4net">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\log4net.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
     </Reference>
@@ -77,6 +73,7 @@
     <Compile Include="Tests\GetRowsTest.cs" />
     <Compile Include="Tests\GetRowTest.cs" />
     <Compile Include="Tests\IsRowExistTest.cs" />
+    <Compile Include="Utils\Logger.cs" />
     <Compile Include="Tests\MultiThreadStressTest.cs" />
     <Compile Include="Tests\ReadWriteTest.cs" />
     <Compile Include="Tests\SchemaTests\ActualizeKeyspaceTest.cs" />
@@ -91,7 +88,6 @@
     <Compile Include="Tests\StressTest.cs" />
     <Compile Include="Tests\UpdateKeyspaceTest.cs" />
     <Compile Include="Utils\LocalCassandraNodeExtensions.cs" />
-    <Compile Include="Utils\Log4NetLogger.cs" />
     <Compile Include="Utils\ObjComparer\CompareInterfaceAs.cs" />
     <Compile Include="Utils\ObjComparer\CompareTypeAs.cs" />
     <Compile Include="Utils\ObjComparer\INodeProcessor.cs" />
@@ -105,13 +101,9 @@
     <Compile Include="Utils\ObjComparer\TypeHelpers.cs" />
     <Compile Include="Utils\ObjComparer\TypeWriterExtensions.cs" />
     <Compile Include="Utils\ObjComparer\XmlHelpers.cs" />
-    <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="Settings\log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

@@ -24,10 +24,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             cassandraClusterSettings.AllowNullTimestamp = true;
             cassandraClusterSettings.ReadConsistencyLevel = ConsistencyLevel.ALL;
             cassandraClusterSettings.WriteConsistencyLevel = ConsistencyLevel.ALL;
-            cassandraCluster = new CassandraCluster(cassandraClusterSettings, new Log4NetWrapper(typeof(CassandraFunctionalTestBase)));
+            cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
-            ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
             ClearKeyspacesOnce();
             cassandraCluster.ActualizeKeyspaces(new[]
                 {

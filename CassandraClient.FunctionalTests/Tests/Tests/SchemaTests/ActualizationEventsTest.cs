@@ -17,9 +17,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), new Log4NetWrapper(typeof(ActualizationEventsTest)));
+            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance);
             cassandraActualizerEventListener = new CassandraActualizerEventListener();
-            actualizer = new SchemeActualizer(cluster, cassandraActualizerEventListener, new Log4NetWrapper(typeof(ActualizationEventsTest)));
+            actualizer = new SchemeActualizer(cluster, cassandraActualizerEventListener, Logger.Instance);
         }
 
         [TearDown]
