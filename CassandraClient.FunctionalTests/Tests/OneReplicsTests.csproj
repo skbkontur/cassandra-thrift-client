@@ -38,10 +38,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Assemblies\Cassandra.Tests.dll</HintPath>
-    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
@@ -96,6 +92,19 @@
     <Compile Include="Tests\UpdateKeyspaceTest.cs" />
     <Compile Include="Utils\LocalCassandraNodeExtensions.cs" />
     <Compile Include="Utils\Log4NetLogger.cs" />
+    <Compile Include="Utils\ObjComparer\CompareInterfaceAs.cs" />
+    <Compile Include="Utils\ObjComparer\CompareTypeAs.cs" />
+    <Compile Include="Utils\ObjComparer\INodeProcessor.cs" />
+    <Compile Include="Utils\ObjComparer\ITypeWriter.cs" />
+    <Compile Include="Utils\ObjComparer\NodeProcessor.cs" />
+    <Compile Include="Utils\ObjComparer\NullableTypeWriter.cs" />
+    <Compile Include="Utils\ObjComparer\NullWriter.cs" />
+    <Compile Include="Utils\ObjComparer\ObjectComparer.cs" />
+    <Compile Include="Utils\ObjComparer\ObjectWriter.cs" />
+    <Compile Include="Utils\ObjComparer\SimpleTypeWriter.cs" />
+    <Compile Include="Utils\ObjComparer\TypeHelpers.cs" />
+    <Compile Include="Utils\ObjComparer\TypeWriterExtensions.cs" />
+    <Compile Include="Utils\ObjComparer\XmlHelpers.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
   <ItemGroup>

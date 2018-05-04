@@ -22,43 +22,6 @@ namespace Cassandra.Tests
             MockRepository.VerifyAll();
         }
 
-        public static T GetStub<T>()
-        {
-            var mock = MockRepository.Stub<T>();
-            mock.Replay();
-            return mock;
-        }
-
-        public static void AssertEqualsFull<T>(T expected, T actual)
-        {
-            Assert.AreEqual(expected, actual, "actual:\n{0}\nexpected:\n{1}", actual, expected);
-        }
-
-        public static void RunMethodWithException<TE>(Action method) where TE : Exception
-        {
-            RunMethodWithException(method, (Action<TE>)null);
-        }
-
-        public static void RunMethodWithException<TE>(Action method, Action<TE> exceptionCheckDelegate)
-            where TE : Exception
-        {
-            if(typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
-                Assert.Fail("использование типа {0} запрещено", typeof(TE));
-            try
-            {
-                method();
-            }
-            catch(TE e)
-            {
-                if(e is ThreadAbortException)
-                    Thread.ResetAbort();
-                if(exceptionCheckDelegate != null)
-                    exceptionCheckDelegate(e);
-                return;
-            }
-            Assert.Fail("Method didn't thrown expected exception " + typeof(TE));
-        }
-
         public static MockRepository MockRepository { get; private set; }
 
         protected static T GetMock<T>()
@@ -75,32 +38,23 @@ namespace Cassandra.Tests
             RunMethodWithException<TE>(method, e => StringAssert.Contains(expectedMessageSubstring, e.Message));
         }
 
-        protected static void VerifyAll()
+        private static void RunMethodWithException<TE>(Action method, Action<TE> exceptionCheckDelegate)
+            where TE : Exception
         {
-            MockRepository.VerifyAll();
-            MockRepository.BackToRecordAll(BackToRecordOptions.None);
-            MockRepository.ReplayAll();
-        }
-
-        protected static IDisposable Ordered()
-        {
-            return new MockeryOrdered();
-        }
-
-        private class MockeryOrdered : IDisposable
-        {
-            public MockeryOrdered()
+            if(typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
+                Assert.Fail("использование типа {0} запрещено", typeof(TE));
+            try
             {
-                ordered = MockRepository.Ordered();
+                method();
             }
-
-            public void Dispose()
+            catch(TE e)
             {
-                ordered.Dispose();
-                MockRepository.ReplayAll();
+                if(e is ThreadAbortException)
+                    Thread.ResetAbort();
+                exceptionCheckDelegate?.Invoke(e);
+                return;
             }
-
-            private readonly IDisposable ordered;
+            Assert.Fail("Method didn't thrown expected exception " + typeof(TE));
         }
     }
 }

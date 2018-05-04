@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Cassandra.Tests;
-
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {

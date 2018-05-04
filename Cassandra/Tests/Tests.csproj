@@ -61,7 +61,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Arg.cs" />
     <Compile Include="CoreTests\ColumnComparatorTypeTest.cs" />
     <Compile Include="CoreTests\ColumnFamilyEqualityByPropertiesComparerTest.cs" />
     <Compile Include="CoreTests\CommandExecutorTest.cs" />
@@ -73,23 +72,9 @@
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
     <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />
     <Compile Include="HelpersTests\StringHelpersTest.cs" />
-    <Compile Include="CoreTestHelpers.cs" />
-    <Compile Include="ObjComparer\CompareInterfaceAs.cs" />
-    <Compile Include="ObjComparer\CompareTypeAs.cs" />
-    <Compile Include="ObjComparer\INodeProcessor.cs" />
-    <Compile Include="ObjComparer\ITypeWriter.cs" />
-    <Compile Include="ObjComparer\NodeProcessor.cs" />
-    <Compile Include="ObjComparer\NullableTypeWriter.cs" />
-    <Compile Include="ObjComparer\NullWriter.cs" />
-    <Compile Include="ObjComparer\ObjectWriter.cs" />
-    <Compile Include="ObjComparer\SimpleTypeWriter.cs" />
-    <Compile Include="ObjComparer\TypeHelpers.cs" />
-    <Compile Include="ObjComparer\TypeWriterExtensions.cs" />
-    <Compile Include="ObjectComparer.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToStringValueEnumExtensionsTest.cs" />
-    <Compile Include="XmlHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CassandraClient\CassandraClient.csproj">
