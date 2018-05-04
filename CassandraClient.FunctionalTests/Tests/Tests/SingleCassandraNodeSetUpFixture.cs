@@ -3,8 +3,7 @@ using System.IO;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.ClusterDeployment;
-using SKBKontur.Cassandra.FunctionalTests.Utils;
+using SkbKontur.Cassandra.Local;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -13,16 +12,14 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
     {
         private const string cassandraTemplates = @"cassandra-local\cassandra\v2.2.x\";
 
-        internal static CassandraNode Node { get; private set; }
+        internal static LocalCassandraNode Node { get; private set; }
 
         [SetUp]
         public static void SetUp()
         {
-            Node = new CassandraNode(
+            Node = new LocalCassandraNode(
                 FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"),
-                new Log4NetWrapper(typeof(SingleCassandraNodeSetUpFixture))
-            );
+                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
             Node.Restart();
         }
 

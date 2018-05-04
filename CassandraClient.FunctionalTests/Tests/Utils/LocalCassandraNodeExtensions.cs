@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Net;
 
+using SkbKontur.Cassandra.Local;
+
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Cassandra.ClusterDeployment
+namespace SKBKontur.Cassandra.FunctionalTests.Utils
 {
-    public static class CassandraNodeExtensions
+    public static class LocalCassandraNodeExtensions
     {
-        public static CassandraSingleNodeClusterSettings CreateSettings(this CassandraNode node)
+        public static CassandraSingleNodeClusterSettings CreateSettings(this LocalCassandraNode node)
         {
             var thriftEndpoint = new IPEndPoint(IPAddress.Parse(node.RpcAddress), node.RpcPort);
             return new CassandraSingleNodeClusterSettings

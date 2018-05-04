@@ -38,9 +38,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.CassandraClient.dll</HintPath>
     </Reference>
-    <Reference Include="Cassandra.ClusterDeployment">
-      <HintPath>..\..\Assemblies\Cassandra.ClusterDeployment.dll</HintPath>
-    </Reference>
     <Reference Include="Cassandra.Tests, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Assemblies\Cassandra.Tests.dll</HintPath>
@@ -56,8 +53,12 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
     </Reference>
+    <Reference Include="SkbKontur.Cassandra.Local, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkbKontur.Cassandra.Local.1.0.1\lib\net471\SkbKontur.Cassandra.Local.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml" />
     <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
@@ -93,6 +94,7 @@
     <Compile Include="Tests\InsertGetTest.cs" />
     <Compile Include="Tests\StressTest.cs" />
     <Compile Include="Tests\UpdateKeyspaceTest.cs" />
+    <Compile Include="Utils\LocalCassandraNodeExtensions.cs" />
     <Compile Include="Utils\Log4NetLogger.cs" />
     <Compile Include="Utils\ServiceUtils.cs" />
   </ItemGroup>
