@@ -14,9 +14,6 @@
 @REM  See the License for the specific language governing permissions and
 @REM  limitations under the License.
 
-FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtime Environment" /v CurrentVersion') DO set CurVer=%%B
-FOR /F "skip=2 tokens=2*" %%A IN ('REG QUERY "HKLM\Software\JavaSoft\Java Runtime Environment\%CurVer%" /v JavaHome') DO set JAVA_HOME=%%B
-
 @echo off
 if "%OS%" == "Windows_NT" setlocal
 
@@ -72,7 +69,7 @@ set JAVA_OPTS=-ea^
  -Dlogback.configurationFile=logback.xml^
  -Djava.library.path="%CASSANDRA_HOME%\lib\sigar-bin"^
  -Dcassandra.jmx.local.port={{JmxPort}}^
- -Dinternalflag={{NodeInternalName}}^
+ -Dskbkontur.local.node.name={{LocalNodeName}}^
  -Dcom.sun.management.jmxremote.port={{JmxPort}}^
  -Dcom.sun.management.jmxremote.ssl=false^
  -Dcom.sun.management.jmxremote.authenticate=false^
