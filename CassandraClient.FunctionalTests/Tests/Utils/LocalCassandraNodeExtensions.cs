@@ -10,10 +10,10 @@ namespace SKBKontur.Cassandra.FunctionalTests.Utils
 {
     public static class LocalCassandraNodeExtensions
     {
-        public static CassandraSingleNodeClusterSettings CreateSettings(this LocalCassandraNode node)
+        public static SingleNodeCassandraClusterSettings CreateSettings(this LocalCassandraNode node)
         {
             var thriftEndpoint = new IPEndPoint(IPAddress.Parse(node.RpcAddress), node.RpcPort);
-            return new CassandraSingleNodeClusterSettings
+            return new SingleNodeCassandraClusterSettings
                 {
                     ClusterName = node.ClusterName,
                     ReadConsistencyLevel = ConsistencyLevel.QUORUM,
@@ -29,7 +29,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Utils
                 };
         }
 
-        public class CassandraSingleNodeClusterSettings : ICassandraClusterSettings
+        public class SingleNodeCassandraClusterSettings : ICassandraClusterSettings
         {
             public string ClusterName { get; set; }
             public ConsistencyLevel ReadConsistencyLevel { get; set; }
