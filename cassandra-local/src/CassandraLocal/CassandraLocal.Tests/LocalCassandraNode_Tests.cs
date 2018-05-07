@@ -30,7 +30,7 @@ namespace CassandraLocal.Tests
             node.Restart();
 
             Assert.That(Directory.Exists(deployDirectory));
-            var nodePid = LocalCassandraNode.GetLocalCassandraProcessIds(localNodeName).Single();
+            var nodePid = LocalCassandraProcessManager.GetAllLocalCassandraProcessIds().Single();
             var nodeProcess = Process.GetProcessById(nodePid);
             Console.Out.WriteLine($"cassandra node process: [{nodePid}] {nodeProcess.ProcessName}");
             Assert.That(nodeProcess.StartTime > beforeStartTimestamp);
