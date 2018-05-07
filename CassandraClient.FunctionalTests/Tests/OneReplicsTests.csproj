@@ -45,8 +45,8 @@
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
     </Reference>
-    <Reference Include="SkbKontur.Cassandra.Local, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SkbKontur.Cassandra.Local.1.0.1\lib\net471\SkbKontur.Cassandra.Local.dll</HintPath>
+    <Reference Include="SkbKontur.Cassandra.Local, Version=1.0.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SkbKontur.Cassandra.Local.1.0.3\lib\net471\SkbKontur.Cassandra.Local.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
