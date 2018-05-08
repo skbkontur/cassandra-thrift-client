@@ -5,7 +5,6 @@ using System.IO;
 using System.Linq;
 using System.Management;
 using System.Threading;
-using Microsoft.Win32;
 
 namespace SkbKontur.Cassandra.Local
 {
@@ -27,28 +26,11 @@ namespace SkbKontur.Cassandra.Local
                             WindowStyle = ProcessWindowStyle.Normal,
                         }
                 };
-            cassandraShellProcess.StartInfo.EnvironmentVariables["JAVA_HOME"] = GetJava8Home();
+            cassandraShellProcess.StartInfo.EnvironmentVariables["JAVA_HOME"] = JavaHomeHelpers.GetJava8Home();
             cassandraShellProcess.Start();
             WaitForCassandraToStart(cassandraDirectory);
             var localNodeName = GetLocalCassandraNodeName(cassandraShellProcess);
             return localNodeName;
-        }
-
-        private static string GetJava8Home()
-        {
-            const string jdkKey = @"Software\JavaSoft\Java Development Kit\1.8";
-            const string jreKey = @"Software\JavaSoft\Java Runtime Environment\1.8";
-            var java8Home = TryGetJavaHome(jreKey) ?? TryGetJavaHome(jdkKey);
-            if (string.IsNullOrWhiteSpace(java8Home))
-                throw new InvalidOperationException("Java 8 64-bit home directory is not found");
-            return java8Home;
-        }
-
-        private static string TryGetJavaHome(string javaKey)
-        {
-            using (var hklm64 = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64))
-            using (var registryKey = hklm64.OpenSubKey(javaKey))
-                return (string)registryKey?.GetValue("JavaHome");
         }
 
         private static void WaitForCassandraToStart(string cassandraDirectory)

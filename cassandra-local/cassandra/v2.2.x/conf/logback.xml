@@ -36,10 +36,10 @@ appender reference in the root level section below.
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <fileNamePattern>${cassandra.logdir}/system.log.%i.zip</fileNamePattern>
       <minIndex>1</minIndex>
-      <maxIndex>200</maxIndex>
+      <maxIndex>20</maxIndex>
     </rollingPolicy>
     <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-      <maxFileSize>100MB</maxFileSize>
+      <maxFileSize>20MB</maxFileSize>
     </triggeringPolicy>
     <encoder>
       <pattern>%-5level [%thread] %date{ISO8601} %F:%L - %msg%n</pattern>
@@ -53,10 +53,10 @@ appender reference in the root level section below.
     <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
       <fileNamePattern>${cassandra.logdir}/debug.log.%i.zip</fileNamePattern>
       <minIndex>1</minIndex>
-      <maxIndex>200</maxIndex>
+      <maxIndex>20</maxIndex>
     </rollingPolicy>
     <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-      <maxFileSize>100MB</maxFileSize>
+      <maxFileSize>20MB</maxFileSize>
     </triggeringPolicy>
     <encoder>
       <pattern>%-5level [%thread] %date{ISO8601} %F:%L - %msg%n</pattern>

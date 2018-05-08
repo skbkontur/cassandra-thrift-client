@@ -122,6 +122,7 @@ def find_zip(libprefix):
         if zips:
             return max(zips)   # probably the highest version, if multiple
 
+
 cql_zip = find_zip(CQL_LIB_PREFIX)
 if cql_zip:
     ver = os.path.splitext(os.path.basename(cql_zip))[0][len(CQL_LIB_PREFIX):]
@@ -582,6 +583,8 @@ def show_warning_without_quoting_line(message, category, filename, lineno, file=
         file.write(warnings.formatwarning(message, category, filename, lineno, line=''))
     except IOError:
         pass
+
+
 warnings.showwarning = show_warning_without_quoting_line
 warnings.filterwarnings('always', category=cql3handling.UnexpectedTableStructure)
 
@@ -731,10 +734,6 @@ class Shell(cmd.Cmd):
 
         self.display_timezone = display_timezone
 
-        # If there is no schema metadata present (due to a schema mismatch), force schema refresh
-        if not self.conn.metadata.keyspaces:
-            self.refresh_schema_metadata_best_effort()
-
         self.session.default_timeout = request_timeout
         self.session.row_factory = ordered_dict_factory
         self.session.default_consistency_level = cassandra.ConsistencyLevel.ONE
@@ -790,15 +789,6 @@ class Shell(cmd.Cmd):
                           "to support {} encoding on Windows platforms.\n"
                           "If you experience encoding problems, change your console"
                           " codepage with 'chcp 65001' before starting cqlsh.\n".format(self.encoding))
-
-    def refresh_schema_metadata_best_effort(self):
-        try:
-            self.conn.refresh_schema_metadata(5)  # will throw exception if there is a schema mismatch
-        except Exception:
-            self.printerr("Warning: schema version mismatch detected, which might be caused by DOWN nodes; if "
-                          "this is not the case, check the schema versions of your nodes in system.local and "
-                          "system.peers.")
-            self.conn.refresh_schema_metadata(0)
 
     def set_expanded_cql_version(self, ver):
         ver, vertuple = full_cql_version(ver)
@@ -1109,7 +1099,7 @@ class Shell(cmd.Cmd):
                 except EOFError:
                     self.handle_eof()
                 except CQL_ERRORS, cqlerr:
-                    self.printerr(unicode(cqlerr))
+                    self.printerr(cqlerr.message.decode(encoding='utf-8'))
                 except KeyboardInterrupt:
                     self.reset_statement()
                     print
@@ -1224,7 +1214,7 @@ class Shell(cmd.Cmd):
 
             if self.tracing_enabled:
                 try:
-                    for trace in future.get_all_query_traces(self.max_trace_wait):
+                    for trace in future.get_all_query_traces(max_wait_per=self.max_trace_wait, query_cl=self.consistency_level):
                         print_trace(self, trace)
                 except TraceUnavailable:
                     msg = "Statement trace did not complete within %d seconds; trace data may be incomplete." % (self.session.max_trace_wait,)
@@ -1249,22 +1239,27 @@ class Shell(cmd.Cmd):
         if not statement:
             return False, None
 
-        while True:
+        future = self.session.execute_async(statement, trace=self.tracing_enabled)
+        result = None
+        try:
+            result = future.result()
+        except CQL_ERRORS, err:
+            self.printerr(unicode(err.__class__.__name__) + u": " + err.message.decode(encoding='utf-8'))
+        except Exception:
+            import traceback
+            self.printerr(traceback.format_exc())
+
+        # Even if statement failed we try to refresh schema if not agreed (see CASSANDRA-9689)
+        if not future.is_schema_agreed:
             try:
-                future = self.session.execute_async(statement, trace=self.tracing_enabled)
-                result = future.result()
-                break
-            except cassandra.OperationTimedOut, err:
-                self.refresh_schema_metadata_best_effort()
-                self.printerr(unicode(err.__class__.__name__) + u": " + unicode(err))
-                return False, None
-            except CQL_ERRORS, err:
-                self.printerr(unicode(err.__class__.__name__) + u": " + unicode(err))
-                return False, None
-            except Exception, err:
-                import traceback
-                self.printerr(traceback.format_exc())
-                return False, None
+                self.conn.refresh_schema_metadata(5)  # will throw exception if there is a schema mismatch
+            except Exception:
+                self.printerr("Warning: schema version mismatch detected; check the schema versions of your "
+                              "nodes in system.local and system.peers.")
+                self.conn.refresh_schema_metadata(-1)
+
+        if result is None:
+            return False, None
 
         if statement.query_string[:6].lower() == 'select':
             self.print_result(result, self.parse_for_table_meta(statement.query_string))
@@ -1505,12 +1500,10 @@ class Shell(cmd.Cmd):
                 name = protect_name(ksmeta.name)
                 print 'Keyspace %s' % (name,)
                 print '---------%s' % ('-' * len(name))
-                cmd.Cmd.columnize(self, protect_names(ksmeta.functions.keys()))
-                print
+                self._columnize_unicode(ksmeta.functions.keys())
         else:
             ksmeta = self.get_keyspace_meta(ksname)
-            cmd.Cmd.columnize(self, protect_names(ksmeta.functions.keys()))
-            print
+            self._columnize_unicode(ksmeta.functions.keys())
 
     def describe_function(self, ksname, functionname):
         if ksname is None:
@@ -1532,12 +1525,10 @@ class Shell(cmd.Cmd):
                 name = protect_name(ksmeta.name)
                 print 'Keyspace %s' % (name,)
                 print '---------%s' % ('-' * len(name))
-                cmd.Cmd.columnize(self, protect_names(ksmeta.aggregates.keys()))
-                print
+                self._columnize_unicode(ksmeta.aggregates.keys())
         else:
             ksmeta = self.get_keyspace_meta(ksname)
-            cmd.Cmd.columnize(self, protect_names(ksmeta.aggregates.keys()))
-            print
+            self._columnize_unicode(ksmeta.aggregates.keys())
 
     def describe_aggregate(self, ksname, aggregatename):
         if ksname is None:
@@ -1559,12 +1550,10 @@ class Shell(cmd.Cmd):
                 name = protect_name(ksmeta.name)
                 print 'Keyspace %s' % (name,)
                 print '---------%s' % ('-' * len(name))
-                cmd.Cmd.columnize(self, protect_names(ksmeta.user_types.keys()))
-                print
+                self._columnize_unicode(ksmeta.user_types.keys(), quote=True)
         else:
             ksmeta = self.get_keyspace_meta(ksname)
-            cmd.Cmd.columnize(self, protect_names(ksmeta.user_types.keys()))
-            print
+            self._columnize_unicode(ksmeta.user_types.keys(), quote=True)
 
     def describe_usertype(self, ksname, typename):
         if ksname is None:
@@ -1578,6 +1567,16 @@ class Shell(cmd.Cmd):
         except KeyError:
             raise UserTypeNotFound("User type %r not found" % typename)
         print usertype.as_cql_query(formatted=True)
+        print
+
+    def _columnize_unicode(self, name_list, quote=False):
+        """
+        Used when columnizing identifiers that may contain unicode
+        """
+        names = [n.encode('utf-8') for n in name_list]
+        if quote:
+            names = protect_names(names)
+        cmd.Cmd.columnize(self, names)
         print
 
     def describe_cluster(self):
@@ -1911,15 +1910,21 @@ class Shell(cmd.Cmd):
         except IOError, e:
             self.printerr('Could not open %r: %s' % (fname, e))
             return
-        subshell = Shell(self.hostname, self.port,
-                         color=self.color, encoding=self.encoding, stdin=f,
-                         tty=False, use_conn=self.conn, cqlver=self.cql_version,
-                         keyspace=self.current_keyspace,
+        username = self.auth_provider.username if self.auth_provider else None
+        password = self.auth_provider.password if self.auth_provider else None
+        subshell = Shell(self.hostname, self.port, color=self.color,
+                         username=username, password=password,
+                         encoding=self.encoding, stdin=f, tty=False, use_conn=self.conn,
+                         cqlver=self.cql_version, keyspace=self.current_keyspace,
+                         tracing_enabled=self.tracing_enabled,
+                         display_nanotime_format=self.display_nanotime_format,
                          display_timestamp_format=self.display_timestamp_format,
                          display_date_format=self.display_date_format,
-                         display_nanotime_format=self.display_nanotime_format,
                          display_float_precision=self.display_float_precision,
-                         max_trace_wait=self.max_trace_wait)
+                         display_timezone=self.display_timezone,
+                         max_trace_wait=self.max_trace_wait, ssl=self.ssl,
+                         request_timeout=self.session.default_timeout,
+                         connect_timeout=self.conn.connect_timeout)
         subshell.cmdloop()
         f.close()
 
@@ -2112,6 +2117,12 @@ class Shell(cmd.Cmd):
             session = conn.connect(self.current_keyspace)
         else:
             session = conn.connect()
+
+        # Copy session properties
+        session.default_timeout = self.session.default_timeout
+        session.row_factory = self.session.row_factory
+        session.default_consistency_level = self.session.default_consistency_level
+        session.max_trace_wait = self.session.max_trace_wait
 
         # Update after we've connected in case we fail to authenticate
         self.conn = conn
@@ -2510,12 +2521,12 @@ def main(options, hostname, port):
             if options.timezone:
                 try:
                     timezone = pytz.timezone(options.timezone)
-                except:
+                except Exception:
                     sys.stderr.write("Warning: could not recognize timezone '%s' specified in cqlshrc\n\n" % (options.timezone))
             if 'TZ' in os.environ:
                 try:
                     timezone = pytz.timezone(os.environ['TZ'])
-                except:
+                except Exception:
                     sys.stderr.write("Warning: could not recognize timezone '%s' from environment value TZ\n\n" % (os.environ['TZ']))
         except ImportError:
             sys.stderr.write("Warning: Timezone defined and 'pytz' module for timezone conversion not installed. Timestamps will be displayed in UTC timezone.\n\n")
@@ -2569,6 +2580,7 @@ def main(options, hostname, port):
     batch_mode = options.file or options.execute
     if batch_mode and shell.statement_error:
         sys.exit(2)
+
 
 # always call this regardless of module name: when a sub-process is spawned
 # on Windows then the module name is not __main__, see CASSANDRA-9304

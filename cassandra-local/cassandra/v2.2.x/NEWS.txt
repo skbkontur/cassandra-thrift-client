@@ -1,3 +1,23 @@
+PLEASE READ: MAXIMUM TTL EXPIRATION DATE NOTICE (CASSANDRA-14092)
+------------------------------------------------------------------
+(General upgrading instructions are available in the next section)
+
+The maximum expiration timestamp that can be represented by the storage engine is
+2038-01-19T03:14:06+00:00, which means that inserts with TTL thatl expire after
+this date are not currently supported. By default, INSERTS with TTL exceeding the
+maximum supported date are rejected, but it's possible to choose a different
+ expiration overflow policy. See CASSANDRA-14092.txt for more details.
+
+Prior to 3.0.16 (3.0.X) and 3.11.2 (3.11.x) there was no protection against INSERTS
+with TTL expiring after the maximum supported date, causing the expiration time
+field to overflow and the records to expire immediately. Clusters in the 2.X and
+lower series are not subject to this when assertions are enabled. Backed up SSTables
+can be potentially recovered and recovery instructions can be found on the
+CASSANDRA-14092.txt file.
+
+If you use or plan to use very large TTLS (10 to 20 years), read CASSANDRA-14092.txt
+for more information.
+
 GENERAL UPGRADING ADVICE FOR ANY VERSION
 ========================================
 
@@ -13,6 +33,65 @@ restore snapshots created with the previous major version using the
 'sstableloader' tool. You can upgrade the file format of your snapshots
 using the provided 'sstableupgrade' tool.
 
+2.2.12
+======
+
+Upgrading
+---------
+    - See MAXIMUM TTL EXPIRATION DATE NOTICE above.
+    - Cassandra is now relying on the JVM options to properly shutdown on OutOfMemoryError. By default it will
+      rely on the OnOutOfMemoryError option as the ExitOnOutOfMemoryError and CrashOnOutOfMemoryError options
+      are not supported by the older 1.7 and 1.8 JVMs. A warning will be logged at startup if none of those JVM
+      options are used. See CASSANDRA-13006 for more details.
+    - Cassandra is not logging anymore by default an Heap histogram on OutOfMemoryError. To enable that behavior
+      set the 'cassandra.printHeapHistogramOnOutOfMemoryError' System property to 'true'. See CASSANDRA-13006
+      for more details.
+
+2.2.11
+======
+
+Upgrading
+---------
+    - Nothing specific to this release, but please see 2.2 if you are upgrading
+      from a previous version.
+
+2.2.10
+======
+
+Upgrading
+---------
+    - Nothing specific to this release, but please see 2.2 if you are upgrading
+      from a previous version.
+
+2.2.9
+=====
+
+Upgrading
+---------
+   - Compaction now correctly drops sstables out of CompactionTask when there
+     isn't enough disk space to perform the full compaction.  This should reduce
+     pending compaction tasks on systems with little remaining disk space.
+
+Deprecation
+-----------
+
+(See note about the new feature User-Defined-Functions in 2.2.0.)
+
+Since the security manager added in 3.0 only allows Java and JavaScript
+UDFs to be run, UDFs for other languages are deprecated and support for
+non-Java and non-JavaScript UDFs is deprecated in 2.2 and has been removed
+in version 3.0.11.
+
+2.2.8
+=====
+
+Upgrading
+---------
+    - The ReversedType behaviour has been corrected for clustering columns of
+      BYTES type containing empty value. Scrub should be run on the existing
+      SSTables containing a descending clustering column of BYTES type to correct
+      their ordering. See CASSANDRA-12127 for more details.
+
 2.2.7
 =====
 
@@ -20,6 +99,12 @@ New features
 ------------
     - JSON timestamps are now in UTC and contain the timezone information, see
       CASSANDRA-11137 for more details.
+
+Upgrading
+---------
+    - Ec2MultiRegionSnitch will no longer automatically set broadcast_rpc_address
+      to the public instance IP if this property is defined on cassandra.yaml.
+
 
 2.2.6
 =====
@@ -214,6 +299,9 @@ New features
      3.0.  This will inherently be backwards-incompatible with any 2.2
      UDF that perform insecure operations such as opening a socket or
      writing to the filesystem.
+
+     Per the previous note about adding a security manager in 3.0, this security manager
+     means that non JavaScipt UDF's won't run, there for their use is deprecated.
      ************************************************************************
    - Row-cache is now fully off-heap.
    - jemalloc is now automatically preloaded and used on Linux and OS-X if
