@@ -9,12 +9,10 @@ namespace CassandraLocal.Tests
 {
     public class LocalCassandraNode_Tests
     {
-        private const string cassandraTemplates = @"cassandra-local/cassandra/v2.2.x";
-
         [Test]
         public void Restart()
         {
-            var templateDirectory = FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            var templateDirectory = DirectoryHelpers.FindDirectory(AppDomain.CurrentDomain.BaseDirectory, @"cassandra-local/cassandra/v2.2.x");
             Console.Out.WriteLine($"templateDirectory: {templateDirectory}");
 
             var deployDirectory = Path.Combine(Path.GetTempPath(), "deployed_cassandra");
@@ -38,12 +36,6 @@ namespace CassandraLocal.Tests
             node.Stop();
 
             Assert.That(nodeProcess.HasExited);
-        }
-
-        private static string FindCassandraTemplateDirectory(string currentDir)
-        {
-            var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
-            return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
         }
     }
 }

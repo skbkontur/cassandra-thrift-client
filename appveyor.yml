@@ -11,4 +11,4 @@ build_script:
   - cmd: dotnet build --configuration Release ./src/CassandraLocal/CassandraLocal.sln
 
 test_script:
-  - cmd: dotnet test --no-build --configuration Release ./src/CassandraLocal/CassandraLocal.Tests/CassandraLocal.Tests.csproj
+  - cmd: dotnet test --no-build --verbosity normal --configuration Release ./src/CassandraLocal/CassandraLocal.Tests/CassandraLocal.Tests.csproj

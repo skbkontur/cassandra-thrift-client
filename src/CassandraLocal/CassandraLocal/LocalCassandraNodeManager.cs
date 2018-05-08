@@ -14,7 +14,7 @@ namespace SkbKontur.Cassandra.Local
             Start(node);
         }
 
-        private static void Start(this LocalCassandraNode node)
+        public static void Start(this LocalCassandraNode node)
         {
             var localNodeName = LocalCassandraProcessManager.StartLocalCassandraProcess(node.DeployDirectory);
             if (localNodeName != node.LocalNodeName)
@@ -26,7 +26,7 @@ namespace SkbKontur.Cassandra.Local
             LocalCassandraProcessManager.StopLocalCassandraProcess(node.LocalNodeName);
         }
 
-        private static void Deploy(this LocalCassandraNode node)
+        public static void Deploy(this LocalCassandraNode node)
         {
             if (Directory.Exists(node.DeployDirectory))
                 Directory.Delete(node.DeployDirectory, recursive: true);

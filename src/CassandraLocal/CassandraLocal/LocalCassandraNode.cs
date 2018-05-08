@@ -13,10 +13,10 @@
             RpcAddress = localhostAddress;
             ListenAddress = localhostAddress;
             SeedAddresses = new[] {localhostAddress};
-            RpcPort = 9360;
-            CqlPort = 9343;
-            JmxPort = 7399;
-            GossipPort = 7400;
+            RpcPort = 9160;
+            CqlPort = 9042;
+            JmxPort = 7199;
+            GossipPort = 7000;
         }
 
         public string TemplateDirectory { get; }
