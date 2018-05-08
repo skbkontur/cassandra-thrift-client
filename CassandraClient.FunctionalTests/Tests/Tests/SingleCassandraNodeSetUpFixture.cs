@@ -17,9 +17,15 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [SetUp]
         public static void SetUp()
         {
-            Node = new LocalCassandraNode(
-                FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"));
+            var templateDirectory = FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            var deployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra");
+            Node = new LocalCassandraNode(templateDirectory, deployDirectory)
+                {
+                    RpcPort = 9360,
+                    CqlPort = 9343,
+                    JmxPort = 7399,
+                    GossipPort = 7400,
+                };
             Node.Restart();
         }
 
