@@ -25,7 +25,6 @@ pushd %~dp0..
 if NOT DEFINED CASSANDRA_HOME set CASSANDRA_HOME=%CD%
 popd
 
-goto runLegacy
 if /i "%ARG%" == "LEGACY" goto runLegacy
 REM -----------------------------------------------------------------------------
 REM See if we have access to run unsigned powershell scripts

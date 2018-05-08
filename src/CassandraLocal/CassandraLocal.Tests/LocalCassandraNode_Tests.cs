@@ -9,13 +9,14 @@ namespace CassandraLocal.Tests
 {
     public class LocalCassandraNode_Tests
     {
-        [Test]
-        public void Restart()
+        [TestCase("2.2.x")]
+        [TestCase("3.11.x")]
+        public void Restart(string cassandraTemplateVersion)
         {
-            var templateDirectory = DirectoryHelpers.FindDirectory(AppDomain.CurrentDomain.BaseDirectory, @"cassandra-local/cassandra/v2.2.x");
+            var templateDirectory = DirectoryHelpers.FindDirectory(AppDomain.CurrentDomain.BaseDirectory, $@"cassandra-local/cassandra/v{cassandraTemplateVersion}");
             Console.Out.WriteLine($"templateDirectory: {templateDirectory}");
 
-            var deployDirectory = Path.Combine(Path.GetTempPath(), "deployed_cassandra");
+            var deployDirectory = Path.Combine(Path.GetTempPath(), $"deployed_cassandra_v{cassandraTemplateVersion}");
             Console.Out.WriteLine($"deployDirectory: {deployDirectory}");
 
             var beforeStartTimestamp = DateTime.Now;
