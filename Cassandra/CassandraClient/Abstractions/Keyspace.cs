@@ -44,7 +44,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 {
                     Name = ksDef.Name,
                     DurableWrites = ksDef.Durable_writes,
-                    ReplicationStrategy = replicationStrategyFactory.Create(ksDef.Strategy_class, ksDef.Strategy_options),
+                    ReplicationStrategy = replicationStrategyFactory.Create(ksDef),
                     ColumnFamilies = (ksDef.Cf_defs ?? new List<CfDef>()).ToDictionary(def => def.Name, def => def.FromCassandraCfDef()),
                 };
             return keyspace;

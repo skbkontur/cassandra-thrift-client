@@ -1,9 +1,9 @@
-using System.Collections.Generic;
+using Apache.Cassandra;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     internal interface IReplicationStrategyFactory
     {
-        IReplicationStrategy Create(string strategyName, Dictionary<string, string> strategyOptions);
+        IReplicationStrategy Create(KsDef ksDef);
     }
 }
