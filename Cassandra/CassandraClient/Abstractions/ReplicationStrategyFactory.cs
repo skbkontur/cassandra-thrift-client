@@ -1,6 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
+
+using Apache.Cassandra;
 
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
@@ -10,28 +11,26 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     {
         public static readonly ReplicationStrategyFactory FactoryInstance = new ReplicationStrategyFactory();
 
-        public IReplicationStrategy Create(string strategyName, Dictionary<string, string> strategyOptions)
+        public IReplicationStrategy Create(KsDef ksDef)
         {
-            if (strategyOptions == null)
+            if(ksDef.Strategy_options == null)
+                throw new InvalidOperationException($"ksDef.Strategy_options == null for: {ksDef}");
+
+            if (ksDef.Strategy_class == ReplicaPlacementStrategy.Simple.ToStringValue())
             {
-                throw new InvalidOperationException("Strategy options can't be null");
+                if (!ksDef.Strategy_options.ContainsKey(SimpleReplicationStrategy.ReplicationFactorKey))
+                    throw new InvalidOperationException($"Replication factor should be specified for strategy {ksDef.Strategy_class} in: {ksDef}");
+
+                return SimpleReplicationStrategy.Create(int.Parse(ksDef.Strategy_options[SimpleReplicationStrategy.ReplicationFactorKey]));
             }
 
-            if (strategyName == ReplicaPlacementStrategy.Simple.ToStringValue())
+            if (ksDef.Strategy_class == ReplicaPlacementStrategy.NetworkTopology.ToStringValue())
             {
-                if (!strategyOptions.ContainsKey(SimpleReplicationStrategy.ReplicationFactorKey))
-                    throw new InvalidOperationException(string.Format("Replication factor should be specified for strategy {0}", strategyName));
-
-                return SimpleReplicationStrategy.Create(int.Parse(strategyOptions[SimpleReplicationStrategy.ReplicationFactorKey]));
-            }
-
-            if (strategyName == ReplicaPlacementStrategy.NetworkTopology.ToStringValue())
-            {
-                var dataCenterReplicationFactors = strategyOptions.Select(x => new DataCenterReplicationFactor(x.Key, int.Parse(x.Value))).ToArray();
+                var dataCenterReplicationFactors = ksDef.Strategy_options.Select(x => new DataCenterReplicationFactor(x.Key, int.Parse(x.Value))).ToArray();
                 return NetworkTopologyReplicationStrategy.Create(dataCenterReplicationFactors);
             }
 
-            throw new InvalidOperationException(string.Format("Strategy {0} is not implemented", strategyName));
+            throw new InvalidOperationException($"Strategy {ksDef.Strategy_class} is not implemented for: {ksDef}");
         }
     }
 }
