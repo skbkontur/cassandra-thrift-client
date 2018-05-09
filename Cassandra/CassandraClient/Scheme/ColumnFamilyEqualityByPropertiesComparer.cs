@@ -44,7 +44,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             if(lhs == null && rhs == null)
                 return true;
             if(lhs != null && rhs != null)
-                return lhs.ChunkLengthInKb == rhs.ChunkLengthInKb && lhs.CrcCheckChance == rhs.CrcCheckChance;
+                return lhs.ChunkLengthInKb == rhs.ChunkLengthInKb;
             return false;
         }
 
