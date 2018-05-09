@@ -38,7 +38,7 @@
       <HintPath>..\..\Assemblies\Apache.Cassandra.209.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
-      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <HintPath>..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Metrics">
@@ -46,22 +46,22 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration">
-      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\System.Configuration.dll</HintPath>
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\System.Configuration.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Security">
-      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\System.Security.dll</HintPath>
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\System.Security.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Thrift.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Commons, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Commons.dll</HintPath>
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Commons.dll</HintPath>
     </Reference>
     <Reference Include="Vostok.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
