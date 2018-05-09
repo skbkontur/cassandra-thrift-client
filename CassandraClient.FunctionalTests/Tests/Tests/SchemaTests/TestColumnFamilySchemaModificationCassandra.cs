@@ -49,10 +49,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
             Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(originalColumnFamily.Compression.Algorithm));
             if(originalColumnFamily.Compression.Options != null)
-            {
                 Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.EqualTo(originalColumnFamily.Compression.Options.ChunkLengthInKb));
-                Assert.That(columnFamily.Compression.Options.CrcCheckChance, Is.EqualTo(originalColumnFamily.Compression.Options.CrcCheckChance));
-            }
             else
                 Assert.That(columnFamily.Compression.Options, Is.Null);
         }
@@ -105,13 +102,14 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestCreateColumnFamilyWithCompression()
         {
-            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024, CrcCheckChance = 0.2}));
-            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 1024, CrcCheckChance = 0.2}));
-            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 0.2}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.LZ4(new CompressionOptions {ChunkLengthInKb = 128}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.LZ4(new CompressionOptions {ChunkLengthInKb = 1024}));
 
-            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 0.000002}));
-            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 0.000000000002}));
-            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2, CrcCheckChance = 1}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 32}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Snappy(new CompressionOptions {ChunkLengthInKb = 1024}));
+
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 2}));
+            InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 1024}));
 
             InternalTestCreateColumnFamilyCompression(ColumnFamilyCompression.None());
         }
@@ -138,9 +136,9 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
+            Assert.That(columnFamily.Compression.IsEnabled, Is.True);
             Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(CompressionAlgorithms.LZ4));
-            Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.Null);
-            Assert.That(columnFamily.Compression.Options.CrcCheckChance, Is.Null);
+            Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.Null.Or.EqualTo(64));
         }
 
         [Test]
@@ -151,7 +149,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
                     keyspaceConnection.AddColumnFamily(new ColumnFamily
                         {
                             Name = TestSchemaUtils.GetRandomColumnFamilyName(),
-                            Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3, CrcCheckChance = 1})
+                            Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3})
                         }));
         }
 

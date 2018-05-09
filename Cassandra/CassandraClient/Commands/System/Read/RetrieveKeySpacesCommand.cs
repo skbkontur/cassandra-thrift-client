@@ -31,6 +31,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
             return systemKeyspaceNames.Any(s => s.Equals(keyspaceName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private static readonly string[] systemKeyspaceNames = new[] { "system", "system_auth", "system_traces" };
+        private static readonly string[] systemKeyspaceNames = { "system", "system_auth", "system_traces", "system_schema" , "system_distributed" };
     }
 }
