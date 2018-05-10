@@ -174,7 +174,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         [Test]
         public void TestTimeToLiveIsProlongedWhenColumnIsUpdated()
         {
-            const int ttl = 2;
+            const int ttl = 4;
             var rowKey = Guid.NewGuid().ToString();
             for(long timestamp = 0; timestamp < 10; timestamp++)
             {
