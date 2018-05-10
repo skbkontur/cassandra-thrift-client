@@ -80,8 +80,8 @@ namespace Cassandra.Tests.HelpersTests
                           .GroupBy(x => x[1])
                           .ToDictionary(x => x.Key, x => x.Count());
 
-            Assert.That(itemCounts[items[0]], Is.InRange(0.45 * count, 0.55 * count));
-            Assert.That(itemCounts[items[1]], Is.InRange(0.45 * count, 0.55 * count));
+            Assert.That(itemCounts[items[0]], Is.InRange(0.4 * count, 0.6 * count));
+            Assert.That(itemCounts[items[1]], Is.InRange(0.4 * count, 0.6 * count));
         }
 
         [Test]
@@ -104,7 +104,7 @@ namespace Cassandra.Tests.HelpersTests
                 Health = health;
             }
 
-            public double Health { get; private set; }
+            public double Health { get; }
         }
     }
 }
