@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
 
@@ -36,60 +37,68 @@ namespace Cassandra.Tests.CoreTests.PoolTests
         }
 
         [Test]
+        [SuppressMessage("ReSharper", "AccessToDisposedClosure")]
+        [SuppressMessage("ReSharper", "AccessToModifiedClosure")]
         public void TestRemoveConnectionMultiThread()
         {
-            // ReSharper disable AccessToDisposedClosure
-            // ReSharper disable AccessToModifiedClosure
-            var creationCount = 0;
+            var newPoolItemsCreatedCount = 0;
             using(var pool = new Pool<Item>(x =>
                 {
-                    Interlocked.Increment(ref creationCount);
+                    Interlocked.Increment(ref newPoolItemsCreatedCount);
                     return new Item();
                 }, new FakeLog()))
             {
-                var items = Enumerable.Range(0, 10000).ToList().Select(x => pool.Acquire()).ToList();
+                const int threadCount = 100;
+                const int initialPoolItemsCount = threadCount - 1;
+                var items = Enumerable.Range(0, initialPoolItemsCount).ToList().Select(x => pool.Acquire()).ToList();
                 items.ForEach(pool.Release);
                 Thread.Sleep(21);
-                creationCount = 0;
+                Assert.That(pool.TotalCount, Is.EqualTo(initialPoolItemsCount));
+                Assert.That(pool.FreeItemCount, Is.EqualTo(initialPoolItemsCount));
+                Assert.That(pool.BusyItemCount, Is.EqualTo(0));
 
-                const int threadCount = 100;
+                const int acquisitionsPerThreadCount = 1000;
+                newPoolItemsCreatedCount = 0;
                 var threads = Enumerable
                     .Range(0, threadCount)
                     .Select(n => (ThreadStart)(() =>
                         {
-                            for(var i = 0; i < 3000; i++)
+                            var rng = new Random(n);
+                            for(var i = 0; i < acquisitionsPerThreadCount; i++)
                             {
-                                var random = new Random(n);
                                 var item = pool.Acquire();
-                                Thread.Sleep(random.Next(10));
+                                Thread.Sleep(rng.Next(10));
                                 pool.Release(item);
                             }
                         }))
                     .Select(x => new Thread(x))
                     .ToList();
 
+                var minIdleTimeSpan = TimeSpan.FromMilliseconds(20);
+                var stopSignal = new ManualResetEventSlim();
+                var removedIdleItemsCount = 0;
                 var removeThread = new Thread(() =>
                     {
-                        for(var i = 0; i < 1000; i++)
-                        {
-                            Thread.Sleep(10);
-                            pool.RemoveIdleItems(TimeSpan.FromMilliseconds(20));
-                        }
+                        while(!stopSignal.Wait(TimeSpan.FromMilliseconds(10)))
+                            removedIdleItemsCount += pool.RemoveIdleItems(minIdleTimeSpan);
                     });
 
-                threads.ForEach(x => x.Start());
                 removeThread.Start();
+                threads.ForEach(x => x.Start());
 
-                removeThread.Join();
                 threads.ForEach(x => x.Join());
+                Assert.That(newPoolItemsCreatedCount, Is.GreaterThan(0), "invalid newPoolItemsCreatedCount");
+                Assert.That(removedIdleItemsCount, Is.GreaterThan(0), "invalid removedIdleItemsCount");
 
-                Assert.That(creationCount, Is.EqualTo(0));
-                Assert.That(pool.TotalCount, Is.LessThanOrEqualTo(threadCount));
-                Assert.That(pool.FreeItemCount, Is.LessThanOrEqualTo(threadCount));
-                Assert.That(pool.BusyItemCount, Is.EqualTo(0));
+                Thread.Sleep(minIdleTimeSpan + minIdleTimeSpan);
+                stopSignal.Set();
+                removeThread.Join();
+
+                Assert.That(removedIdleItemsCount, Is.EqualTo(initialPoolItemsCount + newPoolItemsCreatedCount), "invalid removedIdleItemsCount");
+                Assert.That(pool.TotalCount, Is.EqualTo(0), "invalid pool.TotalCount");
+                Assert.That(pool.FreeItemCount, Is.EqualTo(0), "invalid pool.FreeItemCount");
+                Assert.That(pool.BusyItemCount, Is.EqualTo(0), "invalid pool.BusyItemCount");
             }
-            // ReSharper restore AccessToModifiedClosure
-            // ReSharper restore AccessToDisposedClosure
         }
 
         private class Item : IDisposable, ILiveness
@@ -104,7 +113,7 @@ namespace Cassandra.Tests.CoreTests.PoolTests
                 Disposed = true;
             }
 
-            public bool IsAlive { get; private set; }
+            public bool IsAlive { get; }
 
             public bool Disposed { get; private set; }
         }
