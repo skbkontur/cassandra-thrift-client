@@ -17,6 +17,8 @@ using Thrift;
 using Thrift.Protocol;
 using Thrift.Transport;
 
+using Vostok.Logging.Logs;
+
 namespace Cassandra.Tests.CoreTests
 {
     public class CommandExecutorTest : TestBase
@@ -35,7 +37,7 @@ namespace Cassandra.Tests.CoreTests
             cassandraClusterSettings = GetMock<ICassandraClusterSettings>();
             cassandraClusterSettings.Expect(x => x.EnableMetrics).Return(false).Repeat.Any();
             cassandraClusterSettings.Expect(settings => settings.Attempts).Return(attempts).Repeat.Any();
-            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings, new FakeLog());
+            executor = new SimpleCommandExecutor(dataConnectionPool, cassandraClusterSettings, new SilentLog());
         }
 
         [Test]

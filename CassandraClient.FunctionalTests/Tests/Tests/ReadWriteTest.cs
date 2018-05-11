@@ -6,8 +6,9 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
+using SKBKontur.Cassandra.FunctionalTests.Utils;
 
-using log4net;
+using Vostok.Logging.Extensions;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
@@ -46,7 +47,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         public void ThreadAction()
         {
-            logger.Info("Start ThreadAction");
+            Logger.Instance.Info("Start ThreadAction");
             var random = new Random(Guid.NewGuid().GetHashCode());
             while(true)
             {
@@ -62,7 +63,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 }
                 catch(Exception e)
                 {
-                    logger.Error(e);
+                    Logger.Instance.Error(e);
                     throw;
                 }
             }
@@ -88,12 +89,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             var ids = connection.GetRow(row).Select(t => t.Name).ToArray();
             var res = ids.Any(t => t == id);
             if(!res)
-                logger.Info("Was [" + row + "]:\n" + string.Join(",\n", ids) + "\nNeeded:\n" + id + "\n");
+                Logger.Instance.Info("Was [" + row + "]:\n" + string.Join(",\n", ids) + "\nNeeded:\n" + id + "\n");
             return res;
         }
 
         private volatile bool stop;
-        private readonly ILog logger = LogManager.GetLogger(typeof(ReadWriteTest));
         private Thread[] threads;
         private IColumnFamilyConnection connection;
         private const int threadsCount = 30;

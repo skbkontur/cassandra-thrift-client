@@ -1,7 +1,6 @@
 using System;
 using System.Text;
-
-using Cassandra.Tests;
+using System.Threading;
 
 using NUnit.Framework;
 
@@ -10,25 +9,24 @@ using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
-using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Cassandra.FunctionalTests.Utils;
+using SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
-    public abstract class CassandraFunctionalTestBase : TestBase
+    public abstract class CassandraFunctionalTestBase
     {
-        public override void SetUp()
+        [SetUp]
+        public virtual void SetUp()
         {
-            base.SetUp();
-            KeyspaceName = string.Format("TestKeyspace_{0}", Guid.NewGuid().ToString("N"));
+            KeyspaceName = $"TestKeyspace_{Guid.NewGuid():N}";
             var cassandraClusterSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
             cassandraClusterSettings.AllowNullTimestamp = true;
             cassandraClusterSettings.ReadConsistencyLevel = ConsistencyLevel.ALL;
             cassandraClusterSettings.WriteConsistencyLevel = ConsistencyLevel.ALL;
-            cassandraCluster = new CassandraCluster(cassandraClusterSettings, new Log4NetWrapper(typeof(CassandraFunctionalTestBase)));
+            cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
-            ServiceUtils.ConfugureLog4Net(AppDomain.CurrentDomain.BaseDirectory);
             ClearKeyspacesOnce();
             cassandraCluster.ActualizeKeyspaces(new[]
                 {
@@ -53,6 +51,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                                 }
                         }
                 });
+        }
+
+        [TearDown]
+        public virtual void TearDown()
+        {
         }
 
         protected ICassandraCluster cassandraCluster;
@@ -82,7 +85,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
                 };
         }
 
-        protected static byte[] ToBytes(string str)
+        private static byte[] ToBytes(string str)
         {
             return Encoding.UTF8.GetBytes(str);
         }
@@ -95,9 +98,8 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected void Check(string key, string columnName, string columnValue, long? timestamp = null, int? ttl = null, IColumnFamilyConnection cfc = null)
         {
             var connection = cfc ?? columnFamilyConnection;
-            Column tryGetResult;
-            Assert.IsTrue(connection.TryGetColumn(key, columnName, out tryGetResult));
-            Column result = connection.GetColumn(key, columnName);
+            Assert.IsTrue(connection.TryGetColumn(key, columnName, out var tryGetResult));
+            var result = connection.GetColumn(key, columnName);
             tryGetResult.AssertEqualsTo(result);
             Assert.AreEqual(columnName, result.Name);
             Assert.AreEqual(columnValue, ToString(result.Value));
@@ -111,10 +113,32 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
         protected void CheckNotFound(string key, string columnName, IColumnFamilyConnection cfc = null)
         {
             var connection = cfc ?? columnFamilyConnection;
-            RunMethodWithException<ColumnIsNotFoundException>(
-                () => connection.GetColumn(key, columnName));
-            Column column;
-            Assert.IsFalse(connection.TryGetColumn(key, columnName, out column));
+            RunMethodWithException<ColumnIsNotFoundException>(() => connection.GetColumn(key, columnName));
+            Assert.IsFalse(connection.TryGetColumn(key, columnName, out _));
+        }
+
+        private static void RunMethodWithException<TE>(Action method) where TE : Exception
+        {
+            RunMethodWithException(method, (Action<TE>)null);
+        }
+
+        private static void RunMethodWithException<TE>(Action method, Action<TE> exceptionCheckDelegate)
+            where TE : Exception
+        {
+            if(typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
+                Assert.Fail("использование типа {0} запрещено", typeof(TE));
+            try
+            {
+                method();
+            }
+            catch(TE e)
+            {
+                if(e is ThreadAbortException)
+                    Thread.ResetAbort();
+                exceptionCheckDelegate?.Invoke(e);
+                return;
+            }
+            Assert.Fail("Method didn't thrown expected exception " + typeof(TE));
         }
     }
 }

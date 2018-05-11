@@ -5,7 +5,6 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-using SKBKontur.Cassandra.ClusterDeployment;
 using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
 using SKBKontur.Cassandra.FunctionalTests.Utils;
 
@@ -17,7 +16,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), new Log4NetWrapper(typeof(TestKeyspaceSchemaModificationCassandra)));
+            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance);
         }
 
         [TearDown]

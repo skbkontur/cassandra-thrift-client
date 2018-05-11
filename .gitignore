@@ -2,12 +2,14 @@
 /Cassandra*/**/obj
 *.suo
 *.user
+.vs/
 _ReSharper.*
 ilmerge.log
 /Assemblies/merged
 /Assemblies/Cassandra.CassandraClient.*
 /Assemblies/Cassandra.ClusterDeployment.*
 /Assemblies/Cassandra.Tests.*
+/Assemblies/Vostok.Logging.dll
 /Cassandra*/.idea/*
 /Cassandra*/packages
 /packages/*

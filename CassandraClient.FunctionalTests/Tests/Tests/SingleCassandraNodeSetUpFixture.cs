@@ -3,26 +3,29 @@ using System.IO;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.ClusterDeployment;
-using SKBKontur.Cassandra.FunctionalTests.Utils;
+using SkbKontur.Cassandra.Local;
 
 namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     [SetUpFixture]
     public class SingleCassandraNodeSetUpFixture
     {
-        private const string cassandraTemplates = @"Assemblies\CassandraTemplate";
+        private const string cassandraTemplates = @"cassandra-local\cassandra\v3.11.x\";
 
-        internal static CassandraNode Node { get; private set; }
+        internal static LocalCassandraNode Node { get; private set; }
 
         [SetUp]
         public static void SetUp()
         {
-            Node = new CassandraNode(
-                FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory),
-                Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra"),
-                new Log4NetWrapper(typeof(SingleCassandraNodeSetUpFixture))
-            );
+            var templateDirectory = FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory);
+            var deployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra");
+            Node = new LocalCassandraNode(templateDirectory, deployDirectory)
+                {
+                    RpcPort = 9360,
+                    CqlPort = 9343,
+                    JmxPort = 7399,
+                    GossipPort = 7400,
+                };
             Node.Restart();
         }
 

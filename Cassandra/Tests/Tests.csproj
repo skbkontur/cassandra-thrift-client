@@ -38,7 +38,7 @@
       <HintPath>..\..\Assemblies\Apache.Cassandra.209.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325">
-      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <HintPath>..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="nunit.framework, Version=2.4.8.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
@@ -50,18 +50,27 @@
       <HintPath>..\..\Assemblies\Rhino.Mocks.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration">
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\System.Configuration.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
+    <Reference Include="System.Security">
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\System.Security.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Xml" />
     <Reference Include="Thrift">
       <HintPath>..\..\Assemblies\Thrift.dll</HintPath>
     </Reference>
-    <Reference Include="Vostok.Logging, Version=0.0.1.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="Vostok.Commons, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Commons.dll</HintPath>
+    </Reference>
+    <Reference Include="Vostok.Logging, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Vostok.Logging.0.0.1\lib\netstandard2.0\Vostok.Logging.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Arg.cs" />
     <Compile Include="CoreTests\ColumnComparatorTypeTest.cs" />
     <Compile Include="CoreTests\ColumnFamilyEqualityByPropertiesComparerTest.cs" />
     <Compile Include="CoreTests\CommandExecutorTest.cs" />
@@ -70,27 +79,12 @@
     <Compile Include="CoreTests\PoolTests\IdleConnectionRemovalFromPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\ReplicaSetPoolTest.cs" />
     <Compile Include="CoreTests\PoolTests\PoolTest.cs" />
-    <Compile Include="FakeLog.cs" />
     <Compile Include="HelpersTests\ConsistencyLevelConverterTest.cs" />
     <Compile Include="HelpersTests\ItemHealthExtensionsTest.cs" />
     <Compile Include="HelpersTests\StringHelpersTest.cs" />
-    <Compile Include="CoreTestHelpers.cs" />
-    <Compile Include="ObjComparer\CompareInterfaceAs.cs" />
-    <Compile Include="ObjComparer\CompareTypeAs.cs" />
-    <Compile Include="ObjComparer\INodeProcessor.cs" />
-    <Compile Include="ObjComparer\ITypeWriter.cs" />
-    <Compile Include="ObjComparer\NodeProcessor.cs" />
-    <Compile Include="ObjComparer\NullableTypeWriter.cs" />
-    <Compile Include="ObjComparer\NullWriter.cs" />
-    <Compile Include="ObjComparer\ObjectWriter.cs" />
-    <Compile Include="ObjComparer\SimpleTypeWriter.cs" />
-    <Compile Include="ObjComparer\TypeHelpers.cs" />
-    <Compile Include="ObjComparer\TypeWriterExtensions.cs" />
-    <Compile Include="ObjectComparer.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ToStringValueEnumExtensionsTest.cs" />
-    <Compile Include="XmlHelpers.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CassandraClient\CassandraClient.csproj">
@@ -99,7 +93,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
