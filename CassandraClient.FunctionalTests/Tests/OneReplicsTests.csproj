@@ -42,6 +42,9 @@
       <HintPath>..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Metrics, Version=0.4.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\SkbKontur.Metrics.Net.0.4.7\lib\net45\Metrics.dll</HintPath>
+    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\Assemblies\nunit.framework.dll</HintPath>
     </Reference>
