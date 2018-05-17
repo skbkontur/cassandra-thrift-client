@@ -5,7 +5,7 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
-namespace Cassandra.Tests.CoreTests
+namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 {
     [TestFixture]
     public class ColumnFamilyEqualityByPropertiesComparerTest

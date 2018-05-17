@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using Rhino.Mocks;
 
-namespace Cassandra.Tests
+namespace Cassandra.ThriftClient.Tests.UnitTests
 {
     public abstract class TestBase
     {

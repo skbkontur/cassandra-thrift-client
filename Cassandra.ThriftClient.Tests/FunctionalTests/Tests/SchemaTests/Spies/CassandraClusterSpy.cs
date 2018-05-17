@@ -8,7 +8,7 @@ using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Spies
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {
     public class CassandraClusterSpy : ICassandraCluster
     {

@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Core;
 
-namespace Cassandra.Tests.CoreTests
+namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 {
     public class DateTimeServiceTest : TestBase
     {

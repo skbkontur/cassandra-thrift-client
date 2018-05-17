@@ -6,7 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 {
     public class SimpleTypeWriter
     {

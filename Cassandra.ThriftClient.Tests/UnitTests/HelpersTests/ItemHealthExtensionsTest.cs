@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
-namespace Cassandra.Tests.HelpersTests
+namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 {
     [TestFixture]
     public class ItemHealthExtensionsTest

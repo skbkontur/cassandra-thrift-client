@@ -7,7 +7,7 @@ using Vostok.Logging.Configuration;
 using Vostok.Logging.Configuration.Settings;
 using Vostok.Logging.Logs;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Utils
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class Logger
     {

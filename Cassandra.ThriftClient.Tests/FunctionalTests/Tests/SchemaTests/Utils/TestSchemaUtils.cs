@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Utils
 {
     public static class TestSchemaUtils
     {

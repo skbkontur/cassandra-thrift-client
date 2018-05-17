@@ -6,7 +6,7 @@ using SkbKontur.Cassandra.Local;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Utils
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class LocalCassandraNodeExtensions
     {

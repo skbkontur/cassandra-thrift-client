@@ -1,15 +1,16 @@
 ﻿using System.Linq;
 
+using Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Utils;
+using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
+
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
-using SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests.Utils;
-using SKBKontur.Cassandra.FunctionalTests.Utils;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Tests.SchemaTests
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 {
     [TestFixture]
     public class ActualizationEventsTest

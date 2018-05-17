@@ -1,12 +1,13 @@
 ﻿using System.Linq;
 using System.Text;
 
+using Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
+
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Tests
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class GetRowTest : CassandraFunctionalTestBase
     {

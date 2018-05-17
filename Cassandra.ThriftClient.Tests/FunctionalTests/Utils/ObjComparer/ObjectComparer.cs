@@ -4,7 +4,7 @@ using System.Xml;
 
 using NUnit.Framework;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 {
     public static class ObjectComparer
     {

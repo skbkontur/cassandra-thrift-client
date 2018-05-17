@@ -2,15 +2,16 @@ using System;
 using System.Linq;
 using System.Threading;
 
+using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
+
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.FunctionalTests.Utils;
 
 using Vostok.Logging.Extensions;
 
-namespace SKBKontur.Cassandra.FunctionalTests.Tests
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class ReadWriteTest : CassandraFunctionalTestBase
     {

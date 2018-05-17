@@ -1,4 +1,4 @@
-namespace SKBKontur.Cassandra.FunctionalTests.Utils.ObjComparer
+namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 {
     public enum CompareInterfaceAs
     {

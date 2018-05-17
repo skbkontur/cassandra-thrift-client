@@ -9,7 +9,7 @@ using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 
 using Vostok.Logging.Logs;
 
-namespace Cassandra.Tests.CoreTests.PoolTests
+namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 {
     [TestFixture]
     public class IdleConnectionRemovalFromPoolTest
