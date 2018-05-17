@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Text;
 
@@ -10,7 +10,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 {
     public class StressTest : CassandraFunctionalTestBase
     {
-        [Test, Ignore]
+        [Test, Ignore("LongRunning")]
         public void TestStress()
         {
             const int count = 200000;

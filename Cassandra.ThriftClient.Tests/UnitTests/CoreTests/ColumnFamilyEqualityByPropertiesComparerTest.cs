@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using NUnit.Framework;
 
@@ -216,10 +216,9 @@ namespace Cassandra.Tests.CoreTests
         }
 
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
         public void TestTryCompareColumnFamiliesWithDifferentComparatorTypes()
         {
-            comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", ComparatorType = new ColumnComparatorType(DataType.Int32Type)}, new ColumnFamily {Name = "123", ComparatorType = new ColumnComparatorType(DataType.BytesType)});
+            Assert.Throws<InvalidOperationException>(() => comparer.NeedUpdateColumnFamily(new ColumnFamily {Name = "123", ComparatorType = new ColumnComparatorType(DataType.Int32Type)}, new ColumnFamily {Name = "123", ComparatorType = new ColumnComparatorType(DataType.BytesType)}));
         }
 
         private ColumnFamilyEqualityByPropertiesComparer comparer;

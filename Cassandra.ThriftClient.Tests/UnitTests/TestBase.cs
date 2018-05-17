@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 using NUnit.Framework;
@@ -7,7 +7,6 @@ using Rhino.Mocks;
 
 namespace Cassandra.Tests
 {
-    [TestFixture]
     public abstract class TestBase
     {
         [SetUp]

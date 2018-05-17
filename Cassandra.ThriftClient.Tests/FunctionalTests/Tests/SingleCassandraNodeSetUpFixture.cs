@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using NUnit.Framework;
@@ -14,11 +14,11 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
 
         internal static LocalCassandraNode Node { get; private set; }
 
-        [SetUp]
+        [OneTimeSetUp]
         public static void SetUp()
         {
             var templateDirectory = FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            var deployDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\DeployedCassandra");
+            var deployDirectory = Path.Combine(Path.GetTempPath(), "deployed_cassandra_v3.11.x");
             Node = new LocalCassandraNode(templateDirectory, deployDirectory)
                 {
                     RpcPort = 9360,
@@ -37,7 +37,7 @@ namespace SKBKontur.Cassandra.FunctionalTests.Tests
             return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));
         }
 
-        [TearDown]
+        [OneTimeTearDown]
         public static void TearDown()
         {
             Node.Stop();

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using NUnit.Framework;
 
@@ -28,10 +28,11 @@ namespace Cassandra.Tests
             Assert.AreEqual(TestEnum2.C, "CString".FromStringValue<TestEnum2>());
         }
 
-        [Test, ExpectedException(ExpectedException = typeof(Exception), ExpectedMessage = "The enum value of type 'TestEnum2' not found for string value 'Unknown'")]
+        [Test]
         public void TestUnknownString()
         {
-            "Unknown".FromStringValue<TestEnum2>();
+            var e = Assert.Throws<Exception>(() => "Unknown".FromStringValue<TestEnum2>());
+            Assert.That(e.Message, Is.EqualTo("The enum value of type 'TestEnum2' not found for string value 'Unknown'"));
         }
 
         [Test]
@@ -40,10 +41,11 @@ namespace Cassandra.Tests
             Assert.AreEqual("BString2", TestEnumBad.B.ToStringValue());
         }
 
-        [Test, ExpectedException(ExpectedException = typeof(Exception), ExpectedMessage = "The string value not found for enum value 'A' of type 'TestEnumBad'")]
+        [Test]
         public void TestBadEnumBadValue()
         {
-            TestEnumBad.A.ToStringValue();
+            var e = Assert.Throws<Exception>(() => TestEnumBad.A.ToStringValue());
+            Assert.That(e.Message, Is.EqualTo("The string value not found for enum value 'A' of type 'TestEnumBad'"));
         }
 
         private enum TestEnum1
