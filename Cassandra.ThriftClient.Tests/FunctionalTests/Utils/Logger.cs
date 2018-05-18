@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Text;
 
@@ -26,7 +26,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
                     EnableRolling = false,
                     Encoding = Encoding.UTF8,
                     ConversionPattern = ConversionPattern.Default,
-                    FilePath = Path.Combine(logsDir, $"FunctionalTests-{DateTime.Now:yyyy-MM-dd.HH:mm:ss}.log"),
+                    FilePath = Path.Combine(logsDir, $"FunctionalTests-{DateTime.Now:yyyy-MM-dd.HH-mm-ss}.log"),
                 });
             return new FileLog();
         }
