@@ -1,0 +1,54 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net471</TargetFramework>
+    <AssemblyName>SkbKontur.Cassandra.ThriftClient</AssemblyName>
+    <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
+    <PackageId>$(AssemblyName)</PackageId>
+    <VersionPrefix>2.0.0</VersionPrefix>
+    <Version>$(VersionPrefix)-rc2</Version>
+    <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
+    <Authors>Alexander Kokovin, Fedor Fominykh, Ivan Burmistrov, Evgeny Tikhonov, Andrew Kostousov</Authors>
+    <PackageTags>cassandra thrift client</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/skbkontur/cassandra-thrift-client</RepositoryUrl>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ILRepack" Version="2.0.15" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
+    <PackageReference Include="SkbKontur.Metrics.Net" Version="0.4.7" />
+    <PackageReference Include="Vostok.Logging" Version="0.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Apache.Cassandra.209">
+      <HintPath>..\Assemblies\Apache.Cassandra.209.dll</HintPath>
+    </Reference>
+    <Reference Include="Thrift">
+      <HintPath>..\Assemblies\Thrift.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>$(MSBuildProjectName).Tests</_Parameter1>
+    </AssemblyAttribute>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>DynamicProxyGenAssembly2</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <!-- see https://natemcmaster.com/blog/2017/11/11/build-tools-in-nuget/ for how this works -->
+  <Target Name="RepackAssemblies" AfterTargets="Build">
+    <ItemGroup>
+      <MergeAssemblies Include="$(AssemblyName).dll" />
+      <MergeAssemblies Include="Thrift.dll" />
+      <MergeAssemblies Include="Apache.Cassandra.209.dll" />
+    </ItemGroup>
+    <Exec WorkingDirectory="$(ProjectDir)$(OutputPath)" Command="$(ILRepack) /internalize /log:ilrepack.log /out:$(AssemblyName).dll @(MergeAssemblies->'%(filename)%(extension)', ' ')" />
+  </Target>
+
+</Project>
