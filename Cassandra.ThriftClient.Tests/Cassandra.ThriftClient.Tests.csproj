@@ -17,14 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Apache.Cassandra.209">
-      <HintPath>..\Assemblies\Apache.Cassandra.209.dll</HintPath>
-    </Reference>
     <Reference Include="Rhino.Mocks">
       <HintPath>..\Assemblies\Rhino.Mocks.dll</HintPath>
-    </Reference>
-    <Reference Include="Thrift">
-      <HintPath>..\Assemblies\Thrift.dll</HintPath>
     </Reference>
   </ItemGroup>
 
