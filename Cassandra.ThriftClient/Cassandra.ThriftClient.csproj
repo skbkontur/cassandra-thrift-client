@@ -6,20 +6,13 @@
     <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
     <PackageId>$(AssemblyName)</PackageId>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <Version>$(VersionPrefix)-rc3</Version>
+    <Version>$(VersionPrefix)-rc4</Version>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <Authors>Alexander Kokovin, Fedor Fominykh, Ivan Burmistrov, Evgeny Tikhonov, Andrew Kostousov</Authors>
     <PackageTags>cassandra thrift client</PackageTags>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/skbkontur/cassandra-thrift-client</RepositoryUrl>
     <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- source line mappings are not supported in portable pdb format yet (https://github.com/dotnet/core/blob/master/Documentation/diagnostics/portable_pdb.md) -->
-    <DebugType>full</DebugType>
-    <DebugSymbols>true</DebugSymbols>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
   </PropertyGroup>
 
   <ItemGroup>
