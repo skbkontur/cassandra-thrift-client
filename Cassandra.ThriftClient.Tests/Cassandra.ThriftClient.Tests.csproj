@@ -9,7 +9,8 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
-    <PackageReference Include="SkbKontur.Cassandra.Local" Version="1.0.9" />
+    <PackageReference Include="SkbKontur.Cassandra.Local" Version="1.0.10" />
+    <PackageReference Include="Vostok.Logging" Version="0.0.1" />
   </ItemGroup>
 
   <ItemGroup>
