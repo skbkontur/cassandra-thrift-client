@@ -14,3 +14,6 @@
 *.iml         text
 *.xml         text
 *.config      text
+
+# For GitHub language statistics to be correct
+cassandra-local/* linguist-vendored
