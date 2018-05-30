@@ -2,10 +2,9 @@ using System;
 using System.IO;
 using System.Text;
 
-using Vostok.Logging;
-using Vostok.Logging.Configuration;
-using Vostok.Logging.Configuration.Settings;
-using Vostok.Logging.Logs;
+using Vostok.Logging.Abstractions;
+using Vostok.Logging.Core.Configuration;
+using Vostok.Logging.FileLog;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {

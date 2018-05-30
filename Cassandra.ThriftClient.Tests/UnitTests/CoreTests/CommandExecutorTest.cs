@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 
 using Apache.Cassandra;
@@ -17,7 +17,7 @@ using Thrift;
 using Thrift.Protocol;
 using Thrift.Transport;
 
-using Vostok.Logging.Logs;
+using Vostok.Logging.Abstractions;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 {

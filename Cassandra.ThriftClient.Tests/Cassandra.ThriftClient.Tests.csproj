@@ -10,6 +10,7 @@
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
     <PackageReference Include="SkbKontur.Cassandra.Local" Version="1.0.10" />
+    <PackageReference Include="Vostok.Logging.FileLog" Version="0.0.5" />
   </ItemGroup>
 
   <ItemGroup>

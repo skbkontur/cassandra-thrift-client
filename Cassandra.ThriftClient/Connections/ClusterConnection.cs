@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
@@ -8,10 +8,8 @@ using SKBKontur.Cassandra.CassandraClient.Commands.System.Read;
 using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
 
-using Vostok.Logging;
-using Vostok.Logging.Extensions;
-
-using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
+using Vostok.Logging.Abstractions;
+using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {

@@ -9,7 +9,7 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 
-using Vostok.Logging.Extensions;
+using Vostok.Logging.Abstractions.Extensions;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {

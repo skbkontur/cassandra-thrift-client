@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading;
@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 
-using Vostok.Logging.Logs;
+using Vostok.Logging.Abstractions;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 {

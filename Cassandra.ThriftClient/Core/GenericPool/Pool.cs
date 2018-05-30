@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,8 +8,8 @@ using System.Threading;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
 
-using Vostok.Logging;
-using Vostok.Logging.Extensions;
+using Vostok.Logging.Abstractions;
+using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {

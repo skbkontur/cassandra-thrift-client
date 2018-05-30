@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 
@@ -8,8 +8,8 @@ using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using Thrift.Protocol;
 using Thrift.Transport;
 
-using Vostok.Logging;
-using Vostok.Logging.Extensions;
+using Vostok.Logging.Abstractions;
+using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {

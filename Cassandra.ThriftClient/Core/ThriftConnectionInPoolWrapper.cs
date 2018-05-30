@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
-using Vostok.Logging;
+using Vostok.Logging.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
