@@ -26,10 +26,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               ILog logger,
                               TimeSpan? itemIdleTimeout = null)
         {
-            this.logger = logger;
+            this.logger = logger.WithContext(nameof(ReplicaSetPool));
             if(replicas.Count == 0)
                 throw new EmptyPoolException("Cannot create empty ReplicaSetPool");
-            logger.Info("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
+            this.logger.Info("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
             replicaIndicies = new Dictionary<TReplicaKey, int>(replicaKeyComparer);
             replicaHealths = new ReplicaHealth<TReplicaKey>[replicas.Count];
             for(var idx = 0; idx < replicas.Count; idx++)
@@ -55,7 +55,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             if(itemIdleTimeout != null)
             {
-                logger.Info("Item idle timeout: {0}", itemIdleTimeout.Value);
+                this.logger.Info("Item idle timeout: {0}", itemIdleTimeout.Value);
                 unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value))
                     {
                         IsBackground = true
@@ -433,18 +433,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             where TReplicaKey : IEquatable<TReplicaKey>
         {
             return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, poolSettings, logger, null);
-        }
-
-        public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
-            TReplicaKey[] replicas, 
-            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
-            ILog logger
-            )
-            where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
-            where TItemKey : IEquatable<TItemKey>
-            where TReplicaKey : IEquatable<TReplicaKey>
-        {
-            return new ReplicaSetPool<TItem, TItemKey, TReplicaKey>(replicas, poolFactory, EqualityComparer<TReplicaKey>.Default, EqualityComparer<TItemKey>.Default, i => i.ReplicaKey, i => i.PoolKey, null, logger, null);
         }
 
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(

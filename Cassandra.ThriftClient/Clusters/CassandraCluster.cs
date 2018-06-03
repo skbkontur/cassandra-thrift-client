@@ -19,7 +19,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
     {
         public CassandraCluster(ICassandraClusterSettings settings, ILog logger)
         {
-            this.logger = logger;
+            this.logger = logger.WithContext("CassandraThriftClient");
             dataCommandsConnectionPool = CreateDataConnectionPool(settings);
             fierceCommandsConnectionPool = CreateFierceConnectionPool(settings);
             commandExecutor = new SimpleCommandExecutor(dataCommandsConnectionPool, settings, logger);
