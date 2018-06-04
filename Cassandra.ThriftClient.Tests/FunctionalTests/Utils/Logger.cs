@@ -10,8 +10,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class Logger
     {
-        private static ILog log;
-
         public static ILog Instance => log ?? (log = InitFileLogger());
 
         private static ILog InitFileLogger()
@@ -29,5 +27,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
                 });
             return new FileLog();
         }
+
+        private static ILog log;
     }
 }

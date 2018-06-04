@@ -2,15 +2,11 @@ using System;
 
 using Vostok.Logging.Abstractions.Extensions;
 
-// todo (avk, 2018.06.03): move to Vostok.Logging.Abstractions
 namespace Vostok.Logging.Abstractions
 {
+    // todo (avk, 2018.06.03): move to Vostok.Logging.Abstractions
     public class ContextLogWrapper : ILog
     {
-        private const string contextNamePropsKey = "ContextName";
-        private readonly ILog baseLog;
-        private readonly string subContextName;
-
         public ContextLogWrapper(ILog baseLog, string subContextName)
         {
             if(string.IsNullOrEmpty(subContextName))
@@ -24,7 +20,7 @@ namespace Vostok.Logging.Abstractions
             var contextName = subContextName;
             if(@event.Properties != null && @event.Properties.TryGetValue(contextNamePropsKey, out var innerContextName))
                 contextName = $"{subContextName}.{innerContextName}";
-            @event.SetProperty(contextNamePropsKey, contextName);
+            @event = @event.SetProperty(contextNamePropsKey, contextName);
             baseLog.Log(@event);
         }
 
@@ -32,6 +28,11 @@ namespace Vostok.Logging.Abstractions
         {
             return baseLog.IsEnabledFor(level);
         }
+
+        private const string contextNamePropsKey = "ContextName";
+
+        private readonly ILog baseLog;
+        private readonly string subContextName;
     }
 
     public static class LogExtensions
