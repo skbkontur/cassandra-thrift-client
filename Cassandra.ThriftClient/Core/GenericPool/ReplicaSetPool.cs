@@ -109,6 +109,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 catch(Exception exception)
                 {
                     logger.Error(exception, "Unexpected error while ping dead replicas.");
+                    if(exception is ThreadAbortException)
+                        throw; // workaround for https://github.com/dotnet/coreclr/issues/16122 on net471
                 }
             }
         }
@@ -423,8 +425,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
     internal static class ReplicaSetPool
     {
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
-            TReplicaKey[] replicas, 
-            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, 
+            TReplicaKey[] replicas,
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
             PoolSettings poolSettings,
             ILog logger
             )
@@ -451,9 +453,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         }
 
         public static ReplicaSetPool<TItem, TItemKey, TReplicaKey> Create<TItem, TItemKey, TReplicaKey>(
-            TReplicaKey[] replicas, 
-            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory, 
-            PoolSettings poolSettings, 
+            TReplicaKey[] replicas,
+            Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
+            PoolSettings poolSettings,
             TimeSpan unusedItemsIdleTimeout,
             ILog logger
             )
