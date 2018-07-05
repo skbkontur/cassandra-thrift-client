@@ -63,6 +63,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                 return true;
             if(lhs != null && rhs != null)
             {
+                if(lhs.Enabled == false && rhs.Enabled == false)
+                    return true;
+
                 return lhs.Enabled == rhs.Enabled &&
                        lhs.MinThreshold == rhs.MinThreshold &&
                        lhs.MaxThreshold == rhs.MaxThreshold &&
