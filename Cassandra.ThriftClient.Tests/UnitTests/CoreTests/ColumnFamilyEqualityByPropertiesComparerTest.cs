@@ -85,6 +85,11 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
                     new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategyDisabled()})
             );
             Assert.That(
+                !comparer.NeedUpdateColumnFamily(
+                    new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategyDisabled()},
+                    new ColumnFamily {Name = "name", CompactionStrategy = new CompactionStrategy(CompactionStrategyType.SizeTiered, new CompactionStrategyOptions {Enabled = false, MinThreshold = 4, MaxThreshold = 32,})})
+            );
+            Assert.That(
                 comparer.NeedUpdateColumnFamily(
                     new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategy(4, 32)},
                     new ColumnFamily {Name = "name", CompactionStrategy = CompactionStrategy.SizeTieredCompactionStrategyDisabled()})
