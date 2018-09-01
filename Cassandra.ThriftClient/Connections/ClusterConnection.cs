@@ -9,7 +9,6 @@ using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {

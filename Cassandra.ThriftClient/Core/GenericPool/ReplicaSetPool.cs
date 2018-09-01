@@ -9,7 +9,6 @@ using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 {
@@ -26,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               ILog logger,
                               TimeSpan? itemIdleTimeout = null)
         {
-            this.logger = logger.WithContext(nameof(ReplicaSetPool));
+            this.logger = logger.ForContext(nameof(ReplicaSetPool));
             if(replicas.Count == 0)
                 throw new EmptyPoolException("Cannot create empty ReplicaSetPool");
             this.logger.Info("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));

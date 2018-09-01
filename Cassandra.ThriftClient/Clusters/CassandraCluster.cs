@@ -11,7 +11,6 @@ using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Clusters
 {
@@ -19,7 +18,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
     {
         public CassandraCluster(ICassandraClusterSettings settings, ILog logger)
         {
-            this.logger = logger.WithContext("CassandraThriftClient");
+            this.logger = logger.ForContext("CassandraThriftClient");
             dataCommandsConnectionPool = CreateDataConnectionPool(settings);
             fierceCommandsConnectionPool = CreateFierceConnectionPool(settings);
             commandExecutor = new SimpleCommandExecutor(dataCommandsConnectionPool, settings, logger);

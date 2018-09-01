@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.ThriftClient</AssemblyName>
     <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
     <PackageId>$(AssemblyName)</PackageId>
     <VersionPrefix>2.0.0</VersionPrefix>
-    <Version>$(VersionPrefix)-rc9-01</Version>
+    <Version>$(VersionPrefix)-rc9-02</Version>
     <AssemblyVersion>$(VersionPrefix).0</AssemblyVersion>
     <Authors>Alexander Kokovin, Fedor Fominykh, Ivan Burmistrov, Evgeny Tikhonov, Andrew Kostousov</Authors>
     <PackageTags>cassandra thrift client</PackageTags>
@@ -17,10 +17,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ILRepack" Version="2.0.15" PrivateAssets="All" />
-    <PackageReference Include="JetBrains.Annotations" Version="11.1.0" PrivateAssets="All" />
+    <PackageReference Include="ILRepack" Version="2.0.16" PrivateAssets="All" />
+    <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" PrivateAssets="All" />
     <PackageReference Include="SkbKontur.Metrics.Net" Version="0.4.7" />
-    <PackageReference Include="Vostok.Logging.Abstractions" Version="0.0.1" />
+    <PackageReference Include="Vostok.Logging.Abstractions" Version="0.0.9-pre000034" />
   </ItemGroup>
 
   <ItemGroup>

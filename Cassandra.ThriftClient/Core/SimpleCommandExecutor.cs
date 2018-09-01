@@ -9,7 +9,6 @@ using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {

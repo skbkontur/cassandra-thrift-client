@@ -9,7 +9,6 @@ using Thrift.Protocol;
 using Thrift.Transport;
 
 using Vostok.Logging.Abstractions;
-using Vostok.Logging.Abstractions.Extensions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Core
 {
