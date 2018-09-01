@@ -26,12 +26,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               TimeSpan? itemIdleTimeout = null)
         {
             this.logger = logger.ForContext(nameof(ReplicaSetPool));
-            if(replicas.Count == 0)
+            if (replicas.Count == 0)
                 throw new EmptyPoolException("Cannot create empty ReplicaSetPool");
             this.logger.Info("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
             replicaIndicies = new Dictionary<TReplicaKey, int>(replicaKeyComparer);
             replicaHealths = new ReplicaHealth<TReplicaKey>[replicas.Count];
-            for(var idx = 0; idx < replicas.Count; idx++)
+            for (var idx = 0; idx < replicas.Count; idx++)
             {
                 var replica = replicas[idx];
                 replicaIndicies.Add(replica, idx);
@@ -52,7 +52,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 };
             checkDeadItemsThread.Start();
 
-            if(itemIdleTimeout != null)
+            if (itemIdleTimeout != null)
             {
                 this.logger.Info("Item idle timeout: {0}", itemIdleTimeout.Value);
                 unusedItemsCollectorThread = new Thread(() => UnusedItemsCollectorProcedure(itemIdleTimeout.Value))
@@ -66,22 +66,22 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private void CheckDeadItemsThread()
         {
             var deadReplicaPingInfos = new Dictionary<TReplicaKey, DeadReplicaInfo>(replicaKeyComparer);
-            while(true)
+            while (true)
             {
                 try
                 {
                     var deadReplicaKeys = GetDeadReplicaKeys();
-                    foreach(var deadReplicaKey in deadReplicaKeys)
+                    foreach (var deadReplicaKey in deadReplicaKeys)
                     {
-                        if(NeedPingDeadReplica(deadReplicaKey, deadReplicaPingInfos))
+                        if (NeedPingDeadReplica(deadReplicaKey, deadReplicaPingInfos))
                         {
                             var deadReplicaPools = GetAllPoolsWithReplicaKey(deadReplicaKey);
-                            foreach(var deadReplicaPool in deadReplicaPools)
+                            foreach (var deadReplicaPool in deadReplicaPools)
                             {
                                 try
                                 {
                                     TItem connection;
-                                    if(TryAcquireNew(deadReplicaPool.Value, out connection))
+                                    if (TryAcquireNew(deadReplicaPool.Value, out connection))
                                     {
                                         deadReplicaPingInfos.Remove(deadReplicaKey);
                                         GoodReplica(deadReplicaKey);
@@ -92,23 +92,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                                         UnsuccessfulReplicaPing(deadReplicaPingInfos, deadReplicaKey);
                                     }
                                 }
-                                catch(Exception exception)
+                                catch (Exception exception)
                                 {
                                     UnsuccessfulReplicaPing(deadReplicaPingInfos, deadReplicaKey);
                                     logger.Warn(exception, "Error while ping dead replica: Cannot acquire new connection for replica [{0}]", deadReplicaKey);
                                 }
-                                if(disposeEvent.WaitOne(0))
+                                if (disposeEvent.WaitOne(0))
                                     return;
                             }
                         }
                     }
-                    if(disposeEvent.WaitOne(poolSettings.CheckIntervalIncreaseBasis))
+                    if (disposeEvent.WaitOne(poolSettings.CheckIntervalIncreaseBasis))
                         return;
                 }
-                catch(Exception exception)
+                catch (Exception exception)
                 {
                     logger.Error(exception, "Unexpected error while ping dead replicas.");
-                    if(exception is ThreadAbortException)
+                    if (exception is ThreadAbortException)
                         throw; // workaround for https://github.com/dotnet/coreclr/issues/16122 on net471
                 }
             }
@@ -128,7 +128,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private bool NeedPingDeadReplica(TReplicaKey deadReplica, Dictionary<TReplicaKey, DeadReplicaInfo> replicaPingInfos)
         {
-            if(!replicaPingInfos.ContainsKey(deadReplica))
+            if (!replicaPingInfos.ContainsKey(deadReplica))
             {
                 replicaPingInfos[deadReplica] = new DeadReplicaInfo
                     {
@@ -152,11 +152,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Dispose()
         {
             disposeEvent.Set();
-            if(!checkDeadItemsThread.Join(TimeSpan.FromSeconds(2)))
+            if (!checkDeadItemsThread.Join(TimeSpan.FromSeconds(2)))
                 logger.Warn("Cannot await stopping check dead items thread. Skip waiting");
-            if(unusedItemsCollectorThread != null)
+            if (unusedItemsCollectorThread != null)
             {
-                if(!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
+                if (!unusedItemsCollectorThread.Join(TimeSpan.FromMilliseconds(100)))
                     logger.Warn("UnusedItemsCollector do not completed in 100ms. Skip waiting.");
             }
             pools.Values.ToList().ForEach(p => p.Dispose());
@@ -179,21 +179,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                          GetDesiredActiveItemCountForReplica(poolInfo.Health, totalReplicaHealth, totalReplicaCount),
                          out result));
 
-            if(!existingAcquired)
+            if (!existingAcquired)
             {
                 var replicaKeys = replicaHealths.ShuffleByHealth(x => x.Value, x => x.ReplicaKey);
 
                 var exceptions = new List<Exception>();
-                foreach(var replicaKey in replicaKeys)
+                foreach (var replicaKey in replicaKeys)
                 {
                     var replicaPool = GetPool(itemKey, replicaKey);
                     try
                     {
                         TItem item;
-                        if(TryAcquireNew(replicaPool, out item))
+                        if (TryAcquireNew(replicaPool, out item))
                             return item;
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         logger.Warn(e, "Cannot acquire new connection for replica [{0}]", replicaKey);
                         BadReplica(replicaKey);
@@ -246,11 +246,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         internal void BadReplica(TReplicaKey replicaKey)
         {
             int replicaIndex;
-            if(replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
+            if (replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
             {
                 var replicaHealth = replicaHealths[replicaIndex];
                 var healthValue = replicaHealth.Value * dieRate;
-                if(healthValue < deadHealth) healthValue = deadHealth;
+                if (healthValue < deadHealth) healthValue = deadHealth;
                 replicaHealth.Value = healthValue;
             }
         }
@@ -258,7 +258,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private bool TryAcquireNew(Pool<TItem> replicaPool, out TItem result)
         {
             result = replicaPool.AcquireNew();
-            if(!result.IsAlive)
+            if (!result.IsAlive)
             {
                 Bad(result);
                 result = null;
@@ -275,16 +275,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private bool TryAcquireExistsOrNew(PoolKey poolKey, double replicaDesiredItemCount, out TItem result)
         {
             var pool = GetPool(poolKey);
-            if(pool.TryAcquireExists(out result))
+            if (pool.TryAcquireExists(out result))
                 return true;
 
-            if(pool.TotalCount <= replicaDesiredItemCount)
+            if (pool.TotalCount <= replicaDesiredItemCount)
             {
                 try
                 {
                     return TryAcquireNew(pool, out result);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.Warn(e, "Cannot acquire new connection for replica [{0}]", poolKey.ReplicaKey);
                     BadReplica(poolKey.ReplicaKey);
@@ -297,19 +297,19 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private void UnusedItemsCollectorProcedure(TimeSpan itemIdleTimeout)
         {
             var checkInterval = TimeSpan.FromMilliseconds(itemIdleTimeout.TotalMilliseconds / 2);
-            while(true)
+            while (true)
             {
-                if(disposeEvent.WaitOne(checkInterval))
+                if (disposeEvent.WaitOne(checkInterval))
                     return;
                 var poolArray = pools.ToArray();
                 var totals = new Dictionary<PoolKey, int>();
-                foreach(var pool in poolArray)
+                foreach (var pool in poolArray)
                 {
                     var unusedItemCount = pool.Value.RemoveIdleItems(itemIdleTimeout);
-                    if(unusedItemCount > 0)
+                    if (unusedItemCount > 0)
                         totals.Add(pool.Key, unusedItemCount);
                 }
-                if(totals.Count > 0)
+                if (totals.Count > 0)
                     logger.Info("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
                 logger.Info("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => string.Format("  {0}: Free: {1}, Busy: {2}", x.Key, x.Value.FreeItemCount, x.Value.BusyItemCount))));
             }
@@ -328,10 +328,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private Pool<TItem> GetPool(PoolKey key, bool createNewIfNotExists = true)
         {
-            if(!createNewIfNotExists)
+            if (!createNewIfNotExists)
             {
                 Pool<TItem> result;
-                if(!pools.TryGetValue(key, out result))
+                if (!pools.TryGetValue(key, out result))
                     throw new InvalidPoolKeyException(string.Format("Pool with key [{0}] does not exists", key));
                 return result;
             }
@@ -341,11 +341,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private void GoodReplica(TReplicaKey replicaKey)
         {
             int replicaIndex;
-            if(replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
+            if (replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
             {
                 var replicaHealth = replicaHealths[replicaIndex];
                 var healthValue = replicaHealth.Value * aliveRate;
-                if(healthValue > aliveHealth) healthValue = aliveHealth;
+                if (healthValue > aliveHealth) healthValue = aliveHealth;
                 replicaHealth.Value = healthValue;
             }
         }
@@ -401,8 +401,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             public bool Equals(PoolKey x, PoolKey y)
             {
-                if(ReferenceEquals(x, y)) return true;
-                if(ReferenceEquals(null, x) || ReferenceEquals(null, y)) return false;
+                if (ReferenceEquals(x, y)) return true;
+                if (ReferenceEquals(null, x) || ReferenceEquals(null, y)) return false;
                 return
                     itemKeyComparer.Equals(x.ItemKey, y.ItemKey) &&
                     replicaKeyComparer.Equals(x.ReplicaKey, y.ReplicaKey);

@@ -17,7 +17,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveConnection()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -44,7 +44,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         public void TestRemoveConnectionMultiThread()
         {
             var newPoolItemsCreatedCount = 0;
-            using(var pool = new Pool<Item>(x =>
+            using (var pool = new Pool<Item>(x =>
                 {
                     Interlocked.Increment(ref newPoolItemsCreatedCount);
                     return new Item();
@@ -66,7 +66,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     .Select(n => (ThreadStart)(() =>
                         {
                             var rng = new Random(n);
-                            for(var i = 0; i < acquisitionsPerThreadCount; i++)
+                            for (var i = 0; i < acquisitionsPerThreadCount; i++)
                             {
                                 var item = pool.Acquire();
                                 Thread.Sleep(rng.Next(10));
@@ -81,7 +81,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 var removedIdleItemsCount = 0;
                 var removeThread = new Thread(() =>
                     {
-                        while(!stopSignal.Wait(TimeSpan.FromMilliseconds(10)))
+                        while (!stopSignal.Wait(TimeSpan.FromMilliseconds(10)))
                             removedIdleItemsCount += pool.RemoveIdleItems(minIdleTimeSpan);
                     });
 

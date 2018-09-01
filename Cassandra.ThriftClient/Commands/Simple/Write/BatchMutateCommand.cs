@@ -30,14 +30,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
         private Dictionary<byte[], Dictionary<string, List<Mutation>>> TranslateMutations()
         {
             var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(ByteArrayEqualityComparer.Instance);
-            foreach(var mutationsPerColumnFamily in mutations)
+            foreach (var mutationsPerColumnFamily in mutations)
             {
-                foreach(var mutationsPerRow in mutationsPerColumnFamily.Value)
+                foreach (var mutationsPerRow in mutationsPerColumnFamily.Value)
                 {
                     var mutationList = mutationsPerRow.Value.Select(mutation => mutation.ToCassandraMutation()).ToList();
-                    if(!result.ContainsKey(mutationsPerRow.Key))
+                    if (!result.ContainsKey(mutationsPerRow.Key))
                         result.Add(mutationsPerRow.Key, new Dictionary<string, List<Mutation>>());
-                    if(!result[mutationsPerRow.Key].ContainsKey(mutationsPerColumnFamily.Key))
+                    if (!result[mutationsPerRow.Key].ContainsKey(mutationsPerColumnFamily.Key))
                         result[mutationsPerRow.Key].Add(mutationsPerColumnFamily.Key, new List<Mutation>());
                     result[mutationsPerRow.Key][mutationsPerColumnFamily.Key].AddRange(mutationList);
                 }

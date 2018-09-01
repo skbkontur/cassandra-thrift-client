@@ -9,18 +9,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class NetworkTopologyReplicationStrategy : IReplicationStrategy
     {
-        public DataCenterReplicationFactor[] DataCenterReplicationFactors { get; private set; }
-
         private NetworkTopologyReplicationStrategy()
         {
         }
 
-        public string Name { get { return ReplicaPlacementStrategy.NetworkTopology.ToStringValue(); } }
+        public DataCenterReplicationFactor[] DataCenterReplicationFactors { get; private set; }
 
-        public Dictionary<string, string> StrategyOptions
-        {
-            get { return DataCenterReplicationFactors.ToDictionary(x => x.DataCenterName, x => x.ReplicationFactor.ToString(CultureInfo.InvariantCulture)); }
-        }
+        public string Name => ReplicaPlacementStrategy.NetworkTopology.ToStringValue();
+
+        public Dictionary<string, string> StrategyOptions { get { return DataCenterReplicationFactors.ToDictionary(x => x.DataCenterName, x => x.ReplicationFactor.ToString(CultureInfo.InvariantCulture)); } }
 
         public static NetworkTopologyReplicationStrategy Create(DataCenterReplicationFactor[] dataCenterReplicationFactors)
         {
@@ -28,9 +25,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 throw new InvalidOperationException("Data center replication factors should be specified");
 
             return new NetworkTopologyReplicationStrategy
-            {
-                DataCenterReplicationFactors = dataCenterReplicationFactors
-            };
+                {
+                    DataCenterReplicationFactors = dataCenterReplicationFactors
+                };
         }
     }
 }

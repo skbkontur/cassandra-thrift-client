@@ -14,7 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     {
         public static ColumnFamilyCaching ToColumnFamilyCaching(this string value)
         {
-            switch(value.ToUpper())
+            switch (value.ToUpper())
             {
             case "ALL":
                 return ColumnFamilyCaching.All;
@@ -31,7 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public static string ToCassandraStringValue(this ColumnFamilyCaching value)
         {
-            switch(value)
+            switch (value)
             {
             case ColumnFamilyCaching.All:
                 return "ALL";

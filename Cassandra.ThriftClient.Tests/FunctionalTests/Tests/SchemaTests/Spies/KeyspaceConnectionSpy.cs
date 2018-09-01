@@ -5,8 +5,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {
     public class KeyspaceConnectionSpy : IKeyspaceConnection
     {
-        private readonly IKeyspaceConnection innerConnection;
-
         public KeyspaceConnectionSpy(IKeyspaceConnection innerConnection)
         {
             this.innerConnection = innerConnection;
@@ -39,5 +37,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
         {
             return innerConnection.DescribeKeyspace();
         }
+
+        private readonly IKeyspaceConnection innerConnection;
     }
 }

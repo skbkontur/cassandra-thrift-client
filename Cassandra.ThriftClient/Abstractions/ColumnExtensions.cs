@@ -7,7 +7,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     {
         public static Apache.Cassandra.Column ToCassandraColumn(this RawColumn column)
         {
-            if(column == null)
+            if (column == null)
                 return null;
             var result = new Apache.Cassandra.Column
                 {
@@ -15,14 +15,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Value = column.Value,
                     Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks,
                 };
-            if(column.TTL.HasValue)
+            if (column.TTL.HasValue)
                 result.Ttl = column.TTL.Value;
             return result;
         }
 
         public static RawColumn FromCassandraColumn(this Apache.Cassandra.Column cassandraColumn)
         {
-            if(cassandraColumn == null)
+            if (cassandraColumn == null)
                 return null;
             var result = new RawColumn
                 {
@@ -30,14 +30,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Timestamp = cassandraColumn.Timestamp,
                     Value = cassandraColumn.Value
                 };
-            if(cassandraColumn.__isset.ttl)
+            if (cassandraColumn.__isset.ttl)
                 result.TTL = cassandraColumn.Ttl;
             return result;
         }
 
         public static RawColumn ToRawColumn(this Column column)
         {
-            if(column == null)
+            if (column == null)
                 return null;
             return new RawColumn
                 {
@@ -50,7 +50,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public static Column ToColumn(this RawColumn rawColumn)
         {
-            if(rawColumn == null)
+            if (rawColumn == null)
                 return null;
             return new Column
                 {

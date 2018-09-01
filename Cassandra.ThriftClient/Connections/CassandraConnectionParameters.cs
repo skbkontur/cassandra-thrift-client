@@ -15,8 +15,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             this.cassandraClusterSettings = cassandraClusterSettings;
         }
 
-        public int Attempts { get { return cassandraClusterSettings.Attempts; } }
-        public int Timeout { get { return cassandraClusterSettings.Timeout; } }
+        public int Attempts => cassandraClusterSettings.Attempts;
+        public int Timeout => cassandraClusterSettings.Timeout;
 
         private readonly ICassandraClusterSettings cassandraClusterSettings;
     }

@@ -15,15 +15,15 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
         {
             nodeType = fieldInfo.FieldType;
             nodeValue = null;
-            if(fieldInfo.FieldType.IsInterface)
+            if (fieldInfo.FieldType.IsInterface)
             {
-                switch(compareInterfaceAs)
+                switch (compareInterfaceAs)
                 {
                 case CompareInterfaceAs.None:
                     return false;
                 case CompareInterfaceAs.Hash:
                     nodeValue = fieldInfo.GetValue(node);
-                    if(nodeValue != null)
+                    if (nodeValue != null)
                     {
                         nodeValue = "interface(" + nodeValue.GetHashCode() + ")";
                         nodeType = typeof(string);
@@ -34,10 +34,10 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
             else
             {
                 nodeValue = fieldInfo.GetValue(node);
-                switch(compareTypeAs)
+                switch (compareTypeAs)
                 {
                 case CompareTypeAs.Actual:
-                    if(nodeValue != null)
+                    if (nodeValue != null)
                         nodeType = nodeValue.GetType();
                     break;
                 case CompareTypeAs.Declared:

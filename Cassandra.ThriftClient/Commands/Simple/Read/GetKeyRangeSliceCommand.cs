@@ -32,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         public List<byte[]> Output { get; private set; }
-        public int QueriedPartitionsCount { get { return Output.Count; } }
+        public int QueriedPartitionsCount => Output.Count;
 
         private void BuildOut(IEnumerable<KeySlice> output)
         {

@@ -24,14 +24,14 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                     RpcPort = 9360,
                     CqlPort = 9343,
                     JmxPort = 7399,
-                    GossipPort = 7400,
+                    GossipPort = 7400
                 };
             Node.Restart();
         }
 
         private static string FindCassandraTemplateDirectory(string currentDir)
         {
-            if(currentDir == null)
+            if (currentDir == null)
                 throw new Exception("Невозможно найти каталог с Cassandra-шаблонами");
             var cassandraTemplateDirectory = Path.Combine(currentDir, cassandraTemplates);
             return Directory.Exists(cassandraTemplateDirectory) ? cassandraTemplateDirectory : FindCassandraTemplateDirectory(Path.GetDirectoryName(currentDir));

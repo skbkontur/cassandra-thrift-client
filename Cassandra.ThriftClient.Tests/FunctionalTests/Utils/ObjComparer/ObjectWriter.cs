@@ -30,20 +30,20 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         private void DoWrite(Type type, object value)
         {
-            if(IsBadType(type))
+            if (IsBadType(type))
                 throw new NotSupportedException("Не поддерживается тип " + type);
 
-            if(TryWriteNullValue(value)) return;
-            if(TryWriteNullableTypeValue(type, value)) return;
-            if(TryWriteSimpleTypeValue(type, value)) return;
-            if(TryWriteKnownTypeValue(type, value)) return;
-            if(TryWriteArrayTypeValue(type, value)) return;
+            if (TryWriteNullValue(value)) return;
+            if (TryWriteNullableTypeValue(type, value)) return;
+            if (TryWriteSimpleTypeValue(type, value)) return;
+            if (TryWriteKnownTypeValue(type, value)) return;
+            if (TryWriteArrayTypeValue(type, value)) return;
             WriteComplexTypeValue(type, value);
         }
 
         private static bool TryWriteKnownTypeValue(Type type, object value)
         {
-            if(value == null) return false;
+            if (value == null) return false;
             return false;
         }
 
@@ -54,32 +54,32 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         private void WriteComplexTypeValue(Type type, object value)
         {
-            foreach(var fieldInfo in TypeHelpers.GetFields(type))
+            foreach (var fieldInfo in TypeHelpers.GetFields(type))
             {
-                if(fieldInfo.FieldType.IsInterface)
+                if (fieldInfo.FieldType.IsInterface)
                     continue;
                 object fieldValue;
                 Type typeToSerialize;
-                if(nodeProcessor.TryProcess(value, fieldInfo, out typeToSerialize, out fieldValue))
+                if (nodeProcessor.TryProcess(value, fieldInfo, out typeToSerialize, out fieldValue))
                     Write(typeToSerialize, fieldValue, FieldNameToTagName(fieldInfo.Name));
             }
         }
 
         private static string FieldNameToTagName(string name)
         {
-            if(name.EndsWith(">k__BackingField"))
+            if (name.EndsWith(">k__BackingField"))
                 return name.Substring(1, name.IndexOf('>') - 1);
             return name;
         }
 
         private bool TryWriteArrayTypeValue(Type type, object value)
         {
-            if(!type.IsArray) return false;
+            if (!type.IsArray) return false;
             writer.WriteAttributeString("type", "array");
             var array = (Array)value;
-            if(array.Rank > 1) throw new NotSupportedException("array with rank > 1");
+            if (array.Rank > 1) throw new NotSupportedException("array with rank > 1");
             var elementType = type.GetElementType();
-            for(var i = 0; i < array.Length; ++i)
+            for (var i = 0; i < array.Length; ++i)
             {
                 var arrayItem = array.GetValue(i);
                 Write(elementType, arrayItem, "item");
@@ -90,7 +90,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
         private bool TryWriteSimpleTypeValue(Type type, object value)
         {
             var result = SimpleTypeWriter.TryWrite(type, value);
-            if(result != null)
+            if (result != null)
             {
                 writer.WriteValue(result);
                 return true;
@@ -100,11 +100,11 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         private bool TryWriteNullableTypeValue(Type type, object value)
         {
-            if(!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
+            if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(Nullable<>))
                 return false;
             var getMethodHasValue = type.GetProperty("HasValue").GetGetMethod();
             var hasValue = (bool)getMethodHasValue.Invoke(value, new object[0]);
-            if(!hasValue)
+            if (!hasValue)
                 WriteNull();
             else
             {
@@ -117,7 +117,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         private bool TryWriteNullValue(object value)
         {
-            if(value == null)
+            if (value == null)
             {
                 WriteNull();
                 return true;

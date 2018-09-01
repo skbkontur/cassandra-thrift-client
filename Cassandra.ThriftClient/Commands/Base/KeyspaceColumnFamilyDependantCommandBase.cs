@@ -12,22 +12,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Base
             this.columnFamily = columnFamily;
         }
 
-        public override CommandContext CommandContext
-        {
-            get
+        public override CommandContext CommandContext => new CommandContext
             {
-                return new CommandContext
-                    {
-                        KeyspaceName = keyspace,
-                        ColumnFamilyName = columnFamily
-                    };
-            }
-        }
+                KeyspaceName = keyspace,
+                ColumnFamilyName = columnFamily
+            };
 
         protected ColumnPath BuildColumnPath(byte[] column)
         {
             var columnPath = new ColumnPath {Column_family = columnFamily};
-            if(column != null)
+            if (column != null)
                 columnPath.Column = column;
             return columnPath;
         }

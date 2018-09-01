@@ -31,9 +31,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             actualize.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
         }
 
-        private CassandraClusterSpy cluster;
-        private SchemeActualizer actualize;
-
         [Test]
         public void TestActualizeWithNullProperties()
         {
@@ -208,5 +205,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             cluster.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.All));
         }
+
+        private CassandraClusterSpy cluster;
+        private SchemeActualizer actualize;
     }
 }

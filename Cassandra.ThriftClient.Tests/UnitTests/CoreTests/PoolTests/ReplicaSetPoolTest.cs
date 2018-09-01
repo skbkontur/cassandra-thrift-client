@@ -24,7 +24,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireWithItemKeyIsNull()
         {
-            using(var pool = CreateReplicaSetPool())
+            using (var pool = CreateReplicaSetPool())
             {
                 var item1 = pool.Acquire(null);
                 pool.Release(item1);
@@ -39,7 +39,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             Item item1;
             Item item2;
             Item item3;
-            using(var pool = CreateReplicaSetPool())
+            using (var pool = CreateReplicaSetPool())
             {
                 item1 = pool.Acquire(new ItemKey("key1"));
                 item2 = pool.Acquire(new ItemKey("key1"));
@@ -53,7 +53,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireItemWithSameKey()
         {
-            using(var pool = CreateReplicaSetPool())
+            using (var pool = CreateReplicaSetPool())
             {
                 var item1 = pool.Acquire(new ItemKey("key1"));
                 pool.Release(item1);
@@ -65,7 +65,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireItemWithDifferentKeys()
         {
-            using(var pool = CreateReplicaSetPool())
+            using (var pool = CreateReplicaSetPool())
             {
                 var item1 = pool.Acquire(new ItemKey("key1"));
                 pool.Release(item1);
@@ -77,7 +77,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestReleaseItemOfNotRegisterPool()
         {
-            using(var pool = CreateReplicaSetPool())
+            using (var pool = CreateReplicaSetPool())
             {
                 var item1 = pool.Acquire(new ItemKey("key2"));
                 pool.Release(item1);
@@ -89,7 +89,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestReleaseItemNotAcquiredFromPool()
         {
-            using(var pool = CreateReplicaSetPool())
+            using (var pool = CreateReplicaSetPool())
             {
                 var item1 = pool.Acquire(new ItemKey("key1"));
                 pool.Release(item1);
@@ -101,7 +101,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireItemFromKeysWithHealthNodes()
         {
-            using(var pool = CreateReplicaSetPool(2))
+            using (var pool = CreateReplicaSetPool(2))
             {
                 var itemKey = new ItemKey("key1");
 
@@ -145,7 +145,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireItemFromKeysWithPartiallyBadNodes()
         {
-            using(var pool = CreateReplicaSetPool(2))
+            using (var pool = CreateReplicaSetPool(2))
             {
                 var itemKey = new ItemKey("key1");
                 pool.BadReplica(new ReplicaKey("replica2"));
@@ -194,7 +194,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireOnlyLiveItemsWithDeadNode()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(
                 new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")},
                 (x, r) => r.Name == "replica2" ?
                               new Pool<Item>(y => new Item(x, r) {IsAlive = false}, new SilentLog()) :
@@ -225,7 +225,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             const int itemCount = 100;
             var deadNodeAttemptCount = 0;
 
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(
                 new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")},
                 (x, r) => r.Name == "replica2" ?
                               new Pool<Item>(y =>
@@ -242,7 +242,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     .ToList()
                     .ForEach(n =>
                         {
-                            var items = Enumerable.Range(0, itemCount).Select<int, Item>(x => pool.Acquire(itemKey)).ToList();
+                            var items = Enumerable.Range(0, itemCount).Select(x => pool.Acquire(itemKey)).ToList();
                             items.ForEach(pool.Good);
                             items.ForEach(pool.Release);
                         });
@@ -258,7 +258,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             const int itemCount = 100;
             var deadNodeAttemptCount = 0;
 
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(
                 new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")},
                 (x, r) => r.Name == "replica2" ?
                               new Pool<Item>(y =>
@@ -277,7 +277,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     .ToList()
                     .ForEach(n =>
                         {
-                            var items = Enumerable.Range(0, itemCount).Select<int, Item>(x => pool.Acquire(itemKey)).ToList();
+                            var items = Enumerable.Range(0, itemCount).Select(x => pool.Acquire(itemKey)).ToList();
                             items.ForEach(pool.Good);
                             items.ForEach(pool.Release);
                         });
@@ -290,9 +290,9 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         public void TestAcquireNewFromDeadNode()
         {
             var acquireFromDeadNodeCount = 0;
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, r) =>
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, r) =>
                 {
-                    if(r.Name == "replica2")
+                    if (r.Name == "replica2")
                     {
                         return new Pool<Item>(y =>
                             {
@@ -307,7 +307,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 
                 var acquiredItems = Enumerable
                     .Range(0, 100)
-                    .SelectMany<int, Item>(n =>
+                    .SelectMany(n =>
                         {
                             var item1 = pool.Acquire(itemKey);
                             var item2 = pool.Acquire(itemKey);
@@ -323,7 +323,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 
                 var reacquiredItems = Enumerable
                     .Range(0, 2000)
-                    .SelectMany<int, Item>(n =>
+                    .SelectMany(n =>
                         {
                             var item1 = pool.Acquire(itemKey);
                             var item2 = pool.Acquire(itemKey);
@@ -344,7 +344,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}, new SilentLog())))
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}, new SilentLog())))
             {
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
@@ -354,14 +354,14 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireConnectionWithExceptionInOnePool()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y =>
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y =>
                 {
-                    if(z.Name == "replica1")
+                    if (z.Name == "replica1")
                         throw new Exception("FakeException");
                     return new Item(x, z);
                 }, new SilentLog())))
             {
-                for(var i = 0; i < 1000; i++)
+                for (var i = 0; i < 1000; i++)
                 {
                     var item = pool.Acquire(new ItemKey("1"));
                     Assert.That(item.ReplicaKey.Name, Is.EqualTo("replica2"));
@@ -372,16 +372,16 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestTryAcquireConnectionWithExceptionAllPools()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); }, new SilentLog())))
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); }, new SilentLog())))
             {
-                for(var i = 0; i < 1000; i++)
+                for (var i = 0; i < 1000; i++)
                 {
                     try
                     {
                         pool.Acquire(new ItemKey("1"));
                         Assert.Fail();
                     }
-                    catch(Exception exception)
+                    catch (Exception exception)
                     {
                         Assert.That(exception is AllItemsIsDeadExceptions);
                         Assert.That(exception.InnerException, Is.Not.Null);
@@ -396,7 +396,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveUnusedConnection()
         {
-            using(var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog()), PoolSettings.CreateDefault(), TimeSpan.FromMilliseconds(100), new SilentLog()))
+            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog()), PoolSettings.CreateDefault(), TimeSpan.FromMilliseconds(100), new SilentLog()))
             {
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
@@ -417,7 +417,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveAcquiredConnectionFromPool()
         {
-            using(var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog())))
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog())))
             {
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
@@ -435,7 +435,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestOneDeadReplicaDoCreateConnectionsWhenAcquire()
         {
-            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            using (var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
             {
                 SimulateLoad(poolManager, threads : 10, operations : 1000);
                 Assert.That(poolManager.GetCreateCount(0), Is.InRange(5, 10));
@@ -456,7 +456,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestOneDeadReplicaTryCreateConnections()
         {
-            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            using (var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
             {
                 SimulateLoad(poolManager, threads : 10, operations : 1000);
                 Assert.That(poolManager.GetCreateCount(0), Is.InRange(5, 10));
@@ -473,10 +473,11 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 Assert.That(poolManager.GetAcquiredCount(1), Is.EqualTo(1000 * 10));
             }
         }
+
         [Test]
         public void TestOneReplicaAliveAfterDead()
         {
-            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            using (var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
             {
                 SimulateLoad(poolManager, threads : 10, operations : 1000);
                 Assert.That(poolManager.GetCreateCount(0), Is.InRange(5, 10));
@@ -493,11 +494,11 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 Assert.That(poolManager.GetAcquiredCount(1), Is.InRange(1000 * 3, 1000 * 7));
             }
         }
-        
+
         [Test]
         public void TestAllReplicaDeadCauseSynchronousConnect()
         {
-            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            using (var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
             {
                 SimulateLoad(poolManager, threads : 10, operations : 1000);
 
@@ -513,20 +514,20 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 Assert.That(poolManager.GetCreateCount(1), Is.InRange(4, 4 * 2));
             }
         }
-        
+
         [Test]
         public void TestAliveAfterAllReplicaDead()
         {
-            using(var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
+            using (var poolManager = new ReplicaSetPoolManager(2, new PoolSettings {DeadHealth = 0.01, MaxCheckInterval = TimeSpan.FromSeconds(1), CheckIntervalIncreaseBasis = TimeSpan.FromMilliseconds(100)}))
             {
                 SimulateLoad(poolManager, threads : 10, operations : 1000);
 
                 poolManager.MakeDeadReplica(0);
                 poolManager.MakeDeadReplica(1);
                 poolManager.ResetCounters();
-                for(var i = 0; i < 1000; i++)
+                for (var i = 0; i < 1000; i++)
                     Assert.Throws<AllItemsIsDeadExceptions>(() => poolManager.Acquire());
-                
+
                 poolManager.MakeLiveReplica(0);
                 poolManager.MakeLiveReplica(1);
                 poolManager.ResetCounters();
@@ -537,22 +538,20 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 Assert.That(poolManager.GetAcquiredCount(1), Is.InRange(1000 * 3, 1000 * 7));
             }
         }
-        
 
         private void SimulateLoad(ReplicaSetPoolManager poolManager, int threads, int operations, TimeSpan? interval = null)
         {
             var operationsInterval = interval == null ? (TimeSpan?)null : TimeSpan.FromTicks(interval.Value.Ticks / operations);
-            for(var i = 0; i < operations; i++)
+            for (var i = 0; i < operations; i++)
             {
                 var acquiredItems = Enumerable.Range(0, threads).Select(x => poolManager.Acquire()).ToArray();
-                if(operationsInterval != null)
+                if (operationsInterval != null)
                     Thread.Sleep(operationsInterval.Value);
-                foreach(var acquiredItem in acquiredItems)
+                foreach (var acquiredItem in acquiredItems)
                 {
                     poolManager.Good(acquiredItem);
                     poolManager.Release(acquiredItem);
                 }
-                    
             }
         }
 
@@ -568,7 +567,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         }
 
         private static ReplicaSetPool<TItem, TItemKey, TReplicaKey> CreatePool<TItem, TItemKey, TReplicaKey>(
-            TReplicaKey[] replicas, 
+            TReplicaKey[] replicas,
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory
             )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
@@ -592,9 +591,9 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 
             public override bool Equals(object obj)
             {
-                if(ReferenceEquals(null, obj)) return false;
-                if(ReferenceEquals(this, obj)) return true;
-                if(obj.GetType() != GetType()) return false;
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
+                if (obj.GetType() != GetType()) return false;
                 return Equals((ItemKey)obj);
             }
 
@@ -615,15 +614,15 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 
             public bool Equals(ReplicaKey other)
             {
-                if(ReferenceEquals(null, other)) return false;
-                if(ReferenceEquals(this, other)) return true;
+                if (ReferenceEquals(null, other)) return false;
+                if (ReferenceEquals(this, other)) return true;
                 return string.Equals(Name, other.Name);
             }
 
             public override bool Equals(object obj)
             {
-                if(ReferenceEquals(null, obj)) return false;
-                if(ReferenceEquals(this, obj)) return true;
+                if (ReferenceEquals(null, obj)) return false;
+                if (ReferenceEquals(this, obj)) return true;
                 return obj.GetType() == GetType() && Equals((ReplicaKey)obj);
             }
 
@@ -656,13 +655,13 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             {
                 get
                 {
-                    if(isAliveFunc != null)
+                    if (isAliveFunc != null)
                         return isAliveFunc(ReplicaKey);
                     return isAlive;
                 }
                 set
                 {
-                    if(isAliveFunc != null)
+                    if (isAliveFunc != null)
                         throw new Exception("Cannot set IsAlive flag if isAliveFunc provided");
                     isAlive = value;
                 }
@@ -694,7 +693,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             {
                 var replicaNumber = Int32.Parse(replicaKey.Name.Replace("replica", ""));
                 replicaInfos[replicaNumber].IncrementCreationCount();
-                if(replicaInfos[replicaNumber].IsDead)
+                if (replicaInfos[replicaNumber].IsDead)
                     throw new Exception(String.Format("Replica {0} is dead", replicaNumber));
                 return new Item(itemKey, replicaKey, i => !replicaInfos[replicaNumber].IsDead);
             }
@@ -706,7 +705,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 replicaInfos[replicaNumber].IncrementAcquiredCount();
                 return result;
             }
-            
+
             public void Release(Item item)
             {
                 replicaSetPool.Release(item);
@@ -739,7 +738,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 
             public void ResetCounters()
             {
-                foreach(var value in replicaInfos.Values)
+                foreach (var value in replicaInfos.Values)
                     value.ResetCreationCount();
             }
 
@@ -755,8 +754,8 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             {
                 public ReplicaKey Key { get; set; }
                 public bool IsDead { get; set; }
-                public int CreationCount { get { return creationCount; } }
-                public int AcquiredCount { get { return acquiredCount; } }
+                public int CreationCount => creationCount;
+                public int AcquiredCount => acquiredCount;
 
                 public void IncrementCreationCount()
                 {
@@ -769,13 +768,13 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     Interlocked.Exchange(ref acquiredCount, 0);
                 }
 
-                private int creationCount;
-                private int acquiredCount;
-
                 public void IncrementAcquiredCount()
                 {
-                    Interlocked.Increment(ref acquiredCount);                    
+                    Interlocked.Increment(ref acquiredCount);
                 }
+
+                private int creationCount;
+                private int acquiredCount;
             }
         }
     }

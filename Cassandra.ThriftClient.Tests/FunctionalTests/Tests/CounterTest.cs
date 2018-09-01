@@ -43,6 +43,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             count = columnFamilyConnection.GetCount("row");
             Assert.AreEqual(0, count);
         }
+
         [Test]
         public void TestGetCounts()
         {
@@ -60,7 +61,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 columnFamilyConnection.AddBatch("row" + i, cols);
             }
             var counts = columnFamilyConnection.GetCounts(rows);
-            for (int i = 0; i < 10; ++i )
+            for (int i = 0; i < 10; ++i)
             {
                 Assert.AreEqual(10 * i, counts["row" + i]);
             }

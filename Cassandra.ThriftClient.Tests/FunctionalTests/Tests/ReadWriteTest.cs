@@ -25,15 +25,15 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestReadWrite()
         {
             threads = new Thread[threadsCount];
-            for(int i = 0; i < threadsCount; i++)
+            for (int i = 0; i < threadsCount; i++)
                 threads[i] = new Thread(ThreadAction);
-            for(int i = 0; i < threadsCount; i++)
+            for (int i = 0; i < threadsCount; i++)
                 threads[i].Start();
             const int minutesCount = 1;
-            for(int i = 0; i < minutesCount * 12; i++)
+            for (int i = 0; i < minutesCount * 12; i++)
             {
                 Thread.Sleep(5000);
-                for(int j = 0; j < threadsCount; j++)
+                for (int j = 0; j < threadsCount; j++)
                     Assert.That(threads[j].IsAlive);
             }
         }
@@ -41,7 +41,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public override void TearDown()
         {
             stop = true;
-            for(int i = 0; i < threadsCount; i++)
+            for (int i = 0; i < threadsCount; i++)
                 threads[i].Join();
             base.TearDown();
         }
@@ -50,19 +50,19 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             Logger.Instance.Info("Start ThreadAction");
             var random = new Random(Guid.NewGuid().GetHashCode());
-            while(true)
+            while (true)
             {
-                if(stop) return;
+                if (stop) return;
                 try
                 {
                     var guid = Guid.NewGuid().ToString();
                     var row = "row" + random.Next(10);
                     Add(row, guid);
-                    if(!CheckIn(row, guid))
+                    if (!CheckIn(row, guid))
                         throw new Exception("bug");
                     Delete(row, guid);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     Logger.Instance.Error(e);
                     throw;
@@ -89,14 +89,15 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var ids = connection.GetRow(row).Select(t => t.Name).ToArray();
             var res = ids.Any(t => t == id);
-            if(!res)
+            if (!res)
                 Logger.Instance.Info("Was [" + row + "]:\n" + string.Join(",\n", ids) + "\nNeeded:\n" + id + "\n");
             return res;
         }
 
+        private const int threadsCount = 30;
+
         private volatile bool stop;
         private Thread[] threads;
         private IColumnFamilyConnection connection;
-        private const int threadsCount = 30;
     }
 }

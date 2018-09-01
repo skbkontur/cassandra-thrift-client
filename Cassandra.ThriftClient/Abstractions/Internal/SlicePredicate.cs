@@ -22,7 +22,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
     {
         internal static Apache.Cassandra.SlicePredicate ToCassandraSlicePredicate(this SlicePredicate slicePredicate)
         {
-            if(slicePredicate == null)
+            if (slicePredicate == null)
                 return null;
             return new Apache.Cassandra.SlicePredicate
                 {

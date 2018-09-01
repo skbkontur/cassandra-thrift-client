@@ -15,7 +15,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestGetFullRow()
         {
             var columns = new Column[14];
-            for(int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i;
                 string columnValue = "columnValue" + i;
@@ -30,7 +30,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestGetAllRows()
         {
             var rows = new string[14];
-            for(int i = 0; i < rows.Length; i++)
+            for (int i = 0; i < rows.Length; i++)
             {
                 rows[i] = "row" + i;
                 columnFamilyConnection.AddColumn(rows[i], new Column
@@ -48,7 +48,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestGetRow()
         {
             var columns = new Column[4];
-            for(int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i;
                 string columnValue = "columnValue" + i;
@@ -63,7 +63,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestGetRowSmallCount()
         {
             var columns = new Column[4];
-            for(int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i;
                 string columnValue = "columnValue" + i;
@@ -72,7 +72,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             }
             Column[] actualColumns = columnFamilyConnection.GetColumns("row", null, 3);
             Assert.AreEqual(3, actualColumns.Length);
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
                 actualColumns[i].AssertEqualsTo(columns[i]);
         }
 
@@ -183,9 +183,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 columns[i] = ToColumn("columnName" + i, "columnValue" + i, 100);
                 columnFamilyConnection.AddColumn("row", columns[i]);
             }
-            var actualColumns = columnFamilyConnection.GetColumns("row", new []{ "columnName5", "columnName3"});
+            var actualColumns = columnFamilyConnection.GetColumns("row", new[] {"columnName5", "columnName3"});
             Assert.AreEqual(2, actualColumns.Length);
-            
+
             actualColumns[0].AssertEqualsTo(columns[3]);
             actualColumns[1].AssertEqualsTo(columns[5]);
         }
@@ -199,7 +199,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 columns[i] = ToColumn("columnName" + i, "columnValue" + i, 100);
                 columnFamilyConnection.AddColumn("row", columns[i]);
             }
-            var actualColumns = columnFamilyConnection.GetColumns("row", new[] { "columnName5", "columnName11" });
+            var actualColumns = columnFamilyConnection.GetColumns("row", new[] {"columnName5", "columnName11"});
             Assert.AreEqual(1, actualColumns.Length);
 
             actualColumns[0].AssertEqualsTo(columns[5]);
@@ -225,7 +225,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             columnFamilyConnection.AddColumn(key, new Column
                 {
                     Name = "b",
-                    Value = new byte[]{3}
+                    Value = new byte[] {3}
                 });
             CollectionAssert.IsEmpty(columnFamilyConnection.GetColumns(key, "c", 100));
         }
@@ -235,7 +235,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var columns = new Column[4];
             const string key = "key";
-            for(int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i;
                 string columnValue = "columnValue" + i;
@@ -244,7 +244,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             }
             Column[] actualColumns = columnFamilyConnection.GetColumns(key, columns[0].Name, 4);
             Assert.AreEqual(3, actualColumns.Length);
-            for(int i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
                 actualColumns[i].AssertEqualsTo(columns[i + 1]);
         }
 
@@ -253,7 +253,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var columns = new Column[5];
             const string key = "key";
-            for(int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i;
                 string columnValue = "columnValue" + i;
@@ -262,7 +262,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             }
             Column[] actualColumns = columnFamilyConnection.GetColumns(key, "columnName", 4);
             Assert.AreEqual(4, actualColumns.Length);
-            for(int i = 0; i < 4; i++)
+            for (int i = 0; i < 4; i++)
                 actualColumns[i].AssertEqualsTo(columns[i]);
         }
 
@@ -277,7 +277,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var columns = new Column[1000];
             const string key = "key";
-            for(int i = 0; i < columns.Length; i++)
+            for (int i = 0; i < columns.Length; i++)
             {
                 string columnName = "columnName" + i.ToString("D3");
                 string columnValue = "columnValue" + i;
@@ -287,7 +287,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             conn.AddBatch(key, columns);
             var actualColumns = conn.GetRow(key, "columnName020", 20).ToArray();
             Assert.AreEqual(979, actualColumns.Length);
-            for(int i = 0; i < actualColumns.Length; i++)
+            for (int i = 0; i < actualColumns.Length; i++)
                 actualColumns[i].AssertEqualsTo(columns[i + 21]);
         }
     }

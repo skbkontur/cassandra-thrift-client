@@ -36,11 +36,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListene
         {
             get
             {
-                if(instance == null)
+                if (instance == null)
                 {
-                    lock(instanceLockObject)
+                    lock (instanceLockObject)
                     {
-                        if(instance == null)
+                        if (instance == null)
                             instance = new EmptyCassandraActualizerEventListener();
                     }
                 }

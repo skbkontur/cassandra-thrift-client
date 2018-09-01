@@ -54,10 +54,10 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
             var createdKeyspace = new Keyspace
                 {
-                    Name = keyspaceName, 
+                    Name = keyspaceName,
                     ReplicationStrategy = SimpleReplicationStrategy.Create(1)
                 };
-            
+
             clusterConnection.AddKeyspace(createdKeyspace);
             createdKeyspace.ReplicationStrategy = SimpleReplicationStrategy.Create(2);
             clusterConnection.UpdateKeyspace(createdKeyspace);
@@ -92,7 +92,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                     ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]
                         {
                             new DataCenterReplicationFactor("dc1", 3),
-                            new DataCenterReplicationFactor("dc2", 5),
+                            new DataCenterReplicationFactor("dc2", 5)
                         })
                 };
             clusterConnection.AddKeyspace(createdKeyspace);
@@ -114,14 +114,14 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                     ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]
                         {
                             new DataCenterReplicationFactor("dc1", 3),
-                            new DataCenterReplicationFactor("dc2", 5),
+                            new DataCenterReplicationFactor("dc2", 5)
                         })
                 };
             clusterConnection.AddKeyspace(createdKeyspace);
 
             createdKeyspace.ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[]
                 {
-                    new DataCenterReplicationFactor("dc3", 7),
+                    new DataCenterReplicationFactor("dc3", 7)
                 });
             clusterConnection.UpdateKeyspace(createdKeyspace);
 

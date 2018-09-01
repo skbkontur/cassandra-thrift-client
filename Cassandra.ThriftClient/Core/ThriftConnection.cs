@@ -36,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void Dispose()
         {
-            if(isDisposed)
+            if (isDisposed)
                 return;
             isDisposed = true;
             CloseTransport();
@@ -44,9 +44,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void ExecuteCommand(ICommand command)
         {
-            lock(lockObject)
+            lock (lockObject)
             {
-                if(!isAlive)
+                if (!isAlive)
                 {
                     var e = new DeadConnectionException();
                     logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
@@ -58,7 +58,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public DateTime CreationDateTime { get; private set; }
 
-        public bool IsAlive { get { return isAlive && CassandraTransportIsOpen() && Ping(); } }
+        public bool IsAlive => isAlive && CassandraTransportIsOpen() && Ping();
 
         public override string ToString()
         {
@@ -67,18 +67,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private bool Ping()
         {
-            lock(lockObject)
+            lock (lockObject)
             {
-                if(!isAlive)
+                if (!isAlive)
                     return false;
-                if(lastSuccessPingDateTime.HasValue && DateTime.UtcNow - lastSuccessPingDateTime.Value < TimeSpan.FromMinutes(1))
+                if (lastSuccessPingDateTime.HasValue && DateTime.UtcNow - lastSuccessPingDateTime.Value < TimeSpan.FromMinutes(1))
                     return true;
                 try
                 {
                     cassandraClient.describe_cluster_name();
                     lastSuccessPingDateTime = DateTime.UtcNow;
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     logger.Error(e, "Error while ping");
                     isAlive = false;
@@ -94,7 +94,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             {
                 return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 return false;
             }
@@ -102,22 +102,22 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private void OpenTransport()
         {
-            lock(lockObject)
+            lock (lockObject)
             {
                 cassandraClient.InputProtocol.Transport.Open();
-                if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
+                if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                     cassandraClient.OutputProtocol.Transport.Open();
-                if(!string.IsNullOrEmpty(keyspaceName))
+                if (!string.IsNullOrEmpty(keyspaceName))
                     cassandraClient.set_keyspace(keyspaceName);
             }
         }
 
         private void CloseTransport()
         {
-            lock(lockObject)
+            lock (lockObject)
             {
                 cassandraClient.InputProtocol.Transport.Close();
-                if(!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
+                if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                     cassandraClient.OutputProtocol.Transport.Close();
             }
         }

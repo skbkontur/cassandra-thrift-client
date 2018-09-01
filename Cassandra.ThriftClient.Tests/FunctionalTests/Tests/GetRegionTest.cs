@@ -20,7 +20,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var actualColumns = columnFamilyConnection.GetRegion(rowKeys, null, "019", 1000).ToDictionary(x => x.Key, x => x.Value.ToArray());
 
             Assert.That(actualColumns.Keys.Count, Is.EqualTo(100));
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
             {
                 Assert.That(actualColumns[rowKey].Length, Is.EqualTo(20));
                 Assert.That(actualColumns[rowKey][0].Name, Is.EqualTo("000"));
@@ -38,7 +38,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var actualColumns = columnFamilyConnection.GetRegion(rowKeys, "042", "058", 1000).ToDictionary(x => x.Key, x => x.Value.ToArray());
 
             Assert.That(actualColumns.Keys.Count, Is.EqualTo(100));
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
             {
                 Assert.That(actualColumns[rowKey].Length, Is.EqualTo(17));
                 Assert.That(actualColumns[rowKey][0].Name, Is.EqualTo("042"));
@@ -56,7 +56,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var actualColumns = columnFamilyConnection.GetRegion(rowKeys, "095", null, 1000).ToDictionary(x => x.Key, x => x.Value.ToArray());
 
             Assert.That(actualColumns.Keys.Count, Is.EqualTo(100));
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
             {
                 Assert.That(actualColumns[rowKey].Length, Is.EqualTo(5));
                 Assert.That(actualColumns[rowKey][0].Name, Is.EqualTo("095"));
@@ -74,7 +74,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var actualColumns = columnFamilyConnection.GetRegion(rowKeys, "001", "025", 20).ToDictionary(x => x.Key, x => x.Value.ToArray());
 
             Assert.That(actualColumns.Keys.Count, Is.EqualTo(100));
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
             {
                 Assert.That(actualColumns[rowKey].Length, Is.EqualTo(20));
                 Assert.That(actualColumns[rowKey][0].Name, Is.EqualTo("001"));
@@ -93,7 +93,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var actualColumns = columnFamilyConnection.GetRegion(rowKeys.Concat(emptyRowKeys), "001", "025", 100).ToDictionary(x => x.Key, x => x.Value.ToArray());
 
             Assert.That(actualColumns.Keys.Count, Is.EqualTo(100));
-            foreach(var emptyRowKey in emptyRowKeys)
+            foreach (var emptyRowKey in emptyRowKeys)
                 Assert.That(actualColumns.Keys, Has.No.EqualTo(emptyRowKey));
         }
 

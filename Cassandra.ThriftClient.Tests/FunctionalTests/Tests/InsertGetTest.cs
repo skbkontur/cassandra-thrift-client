@@ -126,7 +126,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Thread.Sleep(10000);
             CheckNotFound("row", "columnName");
         }
-        
+
         [Test]
         public void TestDefaultTimeToLive()
         {
@@ -138,7 +138,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Thread.Sleep(10000);
             CheckNotFound("row", "columnName", columnFamilyConnectionDefaultTtl);
         }
-        
+
         [Test]
         public void TestTimeToLiveIsMoreImportantThanDefaultTimeToLive()
         {
@@ -150,7 +150,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                     Timestamp = 10
                 });
             Thread.Sleep(10000);
-            Check("row", "columnName", "columnValue", ttl: 30, cfc: columnFamilyConnectionDefaultTtl);
+            Check("row", "columnName", "columnValue", ttl : 30, cfc : columnFamilyConnectionDefaultTtl);
             Thread.Sleep(45000);
             CheckNotFound("row", "columnName", columnFamilyConnectionDefaultTtl);
         }
@@ -176,7 +176,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             const int ttl = 4;
             var rowKey = Guid.NewGuid().ToString();
-            for(long timestamp = 0; timestamp < 10; timestamp++)
+            for (long timestamp = 0; timestamp < 10; timestamp++)
             {
                 var columnValue = timestamp.ToString();
                 columnFamilyConnection.AddColumn(rowKey, new Column
@@ -184,7 +184,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                         Name = "columnName",
                         Value = Encoding.UTF8.GetBytes(columnValue),
                         Timestamp = timestamp,
-                        TTL = ttl,
+                        TTL = ttl
                     });
                 Thread.Sleep(TimeSpan.FromSeconds(ttl / 2.0));
                 Check(rowKey, "columnName", columnValue, timestamp, ttl);

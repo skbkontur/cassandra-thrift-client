@@ -24,7 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
 
         public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
         {
-            if(keyspaceShemas == null || keyspaceShemas.Length == 0)
+            if (keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
                 logger.Info("Found 0 keyspaces in scheme, skip applying scheme");
                 return;
@@ -38,15 +38,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     DoActualizeKeyspaces(keyspaceShemas, changeExistingKeyspaceMetadata);
                     return;
                 }
-                catch(CassandraClientIOException e)
+                catch (CassandraClientIOException e)
                 {
                     logger.Warn("CassandraClientIOException (e.g. socket timeout) occured during scheme actualization", e);
                 }
-                catch(CassandraClientTimedOutException e)
+                catch (CassandraClientTimedOutException e)
                 {
                     logger.Warn("CassandraClientTimedOutException occured during scheme actualization", e);
                 }
-            } while(sw.Elapsed < timeout);
+            } while (sw.Elapsed < timeout);
             throw new InvalidOperationException(string.Format("Failed to actualize cassandra scheme in {0}", timeout));
         }
 
@@ -60,7 +60,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             var keyspaces = clusterConnection.RetrieveKeyspaces().ToDictionary(keyspace => keyspace.Name, StringComparer.OrdinalIgnoreCase);
             eventListener.SchemaRetrieved(keyspaces.Values.ToArray());
             logger.Info("Found {0} keyspaces in database", keyspaces.Count);
-            foreach(var keyspaceScheme in keyspaceShemas)
+            foreach (var keyspaceScheme in keyspaceShemas)
             {
                 logger.Info("Start actualize scheme for keyspace {0}", keyspaceScheme.Name);
                 eventListener.KeyspaceActualizationStarted(keyspaceScheme.Name);
@@ -70,9 +70,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                         DurableWrites = keyspaceScheme.Configuration.DurableWrites,
                         ReplicationStrategy = keyspaceScheme.Configuration.ReplicationStrategy,
                     };
-                if(keyspaces.ContainsKey(keyspaceScheme.Name))
+                if (keyspaces.ContainsKey(keyspaceScheme.Name))
                 {
-                    if(changeExistingKeyspaceMetadata)
+                    if (changeExistingKeyspaceMetadata)
                     {
                         logger.Info("Keyspace {0} already exists in the database, so run update keyspace command", keyspaceScheme.Name);
                         clusterConnection.UpdateKeyspace(keyspace);
@@ -99,14 +99,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
             var keyspaceConnection = cassandraCluster.RetrieveKeyspaceConnection(keyspaceName);
             var keyspace = keyspaceConnection.DescribeKeyspace();
             var existsColumnFamilies = keyspace.ColumnFamilies ?? new Dictionary<string, ColumnFamily>();
-            foreach(var columnFamily in columnFamilies)
+            foreach (var columnFamily in columnFamilies)
             {
                 logger.Info("Start actualize column family '{0}' for keyspace '{1}'", columnFamily.Name, keyspaceName);
-                if(existsColumnFamilies.ContainsKey(columnFamily.Name))
+                if (existsColumnFamilies.ContainsKey(columnFamily.Name))
                 {
                     var existsColumnFamily = existsColumnFamilies[columnFamily.Name];
                     columnFamily.Id = existsColumnFamily.Id;
-                    if(columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
+                    if (columnFamilyComparer.NeedUpdateColumnFamily(columnFamily, existsColumnFamily))
                     {
                         logger.Info("Column family '{0}' already exists in the keyspace '{1}' and needs to be altered, so run UpdateColumnFamily command", columnFamily.Name, keyspaceName);
                         eventListener.ColumnFamilyUpdated(keyspaceName, columnFamily);

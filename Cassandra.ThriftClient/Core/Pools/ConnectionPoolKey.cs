@@ -6,9 +6,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
     {
         public override bool Equals(object obj)
         {
-            if(ReferenceEquals(null, obj)) return false;
-            if(ReferenceEquals(this, obj)) return true;
-            if(obj.GetType() != typeof(ConnectionPoolKey)) return false;
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != typeof(ConnectionPoolKey)) return false;
             return Equals((ConnectionPoolKey)obj);
         }
 
@@ -34,8 +34,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         private bool Equals(ConnectionPoolKey other)
         {
-            if(ReferenceEquals(null, other)) return false;
-            if(ReferenceEquals(this, other)) return true;
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
             return Equals(other.IpEndPoint, IpEndPoint) && Equals(other.Keyspace, Keyspace) && other.IsFierce.Equals(IsFierce);
         }
     }

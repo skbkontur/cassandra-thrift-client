@@ -20,11 +20,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
     internal static class KeyspaceExtensions
     {
-        private static readonly IReplicationStrategyFactory replicationStrategyFactory = ReplicationStrategyFactory.FactoryInstance;
-
         public static KsDef ToCassandraKsDef(this Keyspace keyspace)
         {
-            if(keyspace == null)
+            if (keyspace == null)
                 return null;
             return new KsDef
                 {
@@ -38,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public static Keyspace FromCassandraKsDef(this KsDef ksDef)
         {
-            if(ksDef == null)
+            if (ksDef == null)
                 return null;
             var keyspace = new Keyspace
                 {
@@ -49,5 +47,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 };
             return keyspace;
         }
+
+        private static readonly IReplicationStrategyFactory replicationStrategyFactory = ReplicationStrategyFactory.FactoryInstance;
     }
 }

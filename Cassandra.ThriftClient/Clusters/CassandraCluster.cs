@@ -56,7 +56,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
                 knowledgePair => new ConnectionPoolKey {IsFierce = false, IpEndPoint = knowledgePair.Key.ReplicaKey, Keyspace = knowledgePair.Key.ItemKey},
                 knowledgePair => knowledgePair.Value);
 
-            foreach(var knowledgePair in fierceConnectionKnowledges)
+            foreach (var knowledgePair in fierceConnectionKnowledges)
                 result.Add(new ConnectionPoolKey {IsFierce = true, IpEndPoint = knowledgePair.Key.ReplicaKey, Keyspace = knowledgePair.Key.ItemKey}, knowledgePair.Value);
 
             return result;

@@ -73,12 +73,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public List<KeyValuePair<byte[], List<RawColumn>>> GetRegion(List<byte[]> keys, byte[] startColumnName, byte[] finishColumnName, int limitPerRow)
         {
             var slicePredicate = new SlicePredicate(new SliceRange
-                                                        {
-                                                            Count = limitPerRow,
-                                                            StartColumn = startColumnName,
-                                                            EndColumn = finishColumnName,
-                                                            Reversed = false
-                                                        });
+                {
+                    Count = limitPerRow,
+                    StartColumn = startColumnName,
+                    EndColumn = finishColumnName,
+                    Reversed = false
+                });
             var command = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel, keys, slicePredicate);
             commandExecutor.Execute(command);
             return command.Output.Where(pair => pair.Value.Any()).ToList();
@@ -87,7 +87,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public RawColumn GetColumn(byte[] key, byte[] columnName)
         {
             RawColumn result;
-            if(!TryGetColumn(key, columnName, out result))
+            if (!TryGetColumn(key, columnName, out result))
                 throw new ColumnIsNotFoundException(columnFamilyName, key, columnName);
             return result;
         }
@@ -97,7 +97,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             result = null;
             var getCommand = new GetCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, columnName);
             commandExecutor.Execute(getCommand);
-            if(getCommand.Output == null)
+            if (getCommand.Output == null)
                 return false;
             result = getCommand.Output;
             return true;
@@ -112,12 +112,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void AddBatch(Func<int, KeyColumnsPair<byte[], RawColumn>> createKeyColumnsPair)
         {
             ExecuteMutations(attempt =>
-                                 {
-                                     var pair = createKeyColumnsPair(attempt);
-                                     return new KeyValuePair<byte[], List<IMutation>>(
-                                         pair.Key,
-                                         ToMutationsList(pair.Columns, cassandraClusterSettings.AllowNullTimestamp));
-                                 });
+                {
+                    var pair = createKeyColumnsPair(attempt);
+                    return new KeyValuePair<byte[], List<IMutation>>(
+                        pair.Key,
+                        ToMutationsList(pair.Columns, cassandraClusterSettings.AllowNullTimestamp));
+                });
         }
 
         public void DeleteBatch(byte[] key, List<byte[]> columnNames, long? timestamp = null)
@@ -141,12 +141,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public List<RawColumn> GetRow(byte[] key, byte[] startColumnName, byte[] endColumnName, int count, bool reversed)
         {
             var aquilesSlicePredicate = new SlicePredicate(new SliceRange
-                                                               {
-                                                                   Count = count,
-                                                                   StartColumn = startColumnName,
-                                                                   EndColumn = endColumnName,
-                                                                   Reversed = reversed
-                                                               });
+                {
+                    Count = count,
+                    StartColumn = startColumnName,
+                    EndColumn = endColumnName,
+                    Reversed = reversed
+                });
             var getSliceCommand = new GetSliceCommand(keyspaceName, columnFamilyName, key, readConsistencyLevel, aquilesSlicePredicate);
             commandExecutor.Execute(getSliceCommand);
             return getSliceCommand.Output;
@@ -180,10 +180,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var multiGetSliceCommand = new MultiGetSliceCommand(keyspaceName, columnFamilyName, readConsistencyLevel,
                                                                 keys,
                                                                 new SlicePredicate(new SliceRange
-                                                                                       {
-                                                                                           Count = count,
-                                                                                           StartColumn = startColumnName
-                                                                                       }));
+                                                                    {
+                                                                        Count = count,
+                                                                        StartColumn = startColumnName
+                                                                    }));
             commandExecutor.Execute(multiGetSliceCommand);
             return multiGetSliceCommand.Output.Where(pair => pair.Value.Any()).ToList();
         }
@@ -212,15 +212,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void BatchDelete(List<KeyValuePair<byte[], List<byte[]>>> data, long? timestamp = null)
         {
             var mutationsList = data.Select(
-                                        row => new KeyValuePair<byte[], List<IMutation>>(row.Key,
-                                                                                         new List<IMutation>
-                                                                                             {
-                                                                                                 new DeletionMutation
-                                                                                                     {
-                                                                                                         SlicePredicate = new SlicePredicate(row.Value),
-                                                                                                         Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
-                                                                                                     }
-                                                                                             })).ToList();
+                row => new KeyValuePair<byte[], List<IMutation>>(row.Key,
+                                                                 new List<IMutation>
+                                                                     {
+                                                                         new DeletionMutation
+                                                                             {
+                                                                                 SlicePredicate = new SlicePredicate(row.Value),
+                                                                                 Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
+                                                                             }
+                                                                     })).ToList();
             ExecuteMutations(mutationsList);
         }
 
@@ -233,21 +233,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         private void CheckColumnHasTimestampValue(RawColumn column)
         {
-            if(!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
+            if (!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
                 throw new ArgumentException("Timestamp should be filled.");
         }
 
         private static List<IMutation> ToMutationsList(List<RawColumn> columns, bool allowNullTimestamp)
         {
             var result = new List<IMutation>();
-            foreach(var column in columns)
+            foreach (var column in columns)
             {
-                if(!allowNullTimestamp && !column.Timestamp.HasValue)
+                if (!allowNullTimestamp && !column.Timestamp.HasValue)
                     throw new ArgumentException("Timestamp should be filled.");
                 result.Add(new SetMutation
-                               {
-                                   Column = column
-                               });
+                    {
+                        Column = column
+                    });
             }
             return result;
         }
@@ -256,12 +256,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var columnFamilyMutations = new Dictionary<byte[], List<IMutation>>
                 {
-                        {key, mutationsList}
+                    {key, mutationsList}
                 };
 
             var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
                 {
-                        {columnFamilyName, columnFamilyMutations}
+                    {columnFamilyName, columnFamilyMutations}
                 };
 
             var batchMutateCommand = new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);
@@ -272,21 +272,21 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         private void ExecuteMutations(Func<int, KeyValuePair<byte[], List<IMutation>>> createKeyMutationsListPair)
         {
             commandExecutor.Execute(attempt =>
-                               {
-                                   var keyMutationsListPair = createKeyMutationsListPair(attempt);
+                {
+                    var keyMutationsListPair = createKeyMutationsListPair(attempt);
 
-                                   var columnFamilyMutations = new Dictionary<byte[], List<IMutation>>
-                                       {
-                                               {keyMutationsListPair.Key, keyMutationsListPair.Value}
-                                       };
+                    var columnFamilyMutations = new Dictionary<byte[], List<IMutation>>
+                        {
+                            {keyMutationsListPair.Key, keyMutationsListPair.Value}
+                        };
 
-                                   var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
-                                       {
-                                               {columnFamilyName, columnFamilyMutations}
-                                       };
+                    var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
+                        {
+                            {columnFamilyName, columnFamilyMutations}
+                        };
 
-                                   return new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);
-                               });
+                    return new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);
+                });
         }
 
         private void ExecuteMutations(IEnumerable<KeyValuePair<byte[], List<IMutation>>> mutationsList)
@@ -294,7 +294,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var dict = mutationsList.ToDictionary(item => item.Key, item => item.Value);
             var keyMutations = new Dictionary<string, Dictionary<byte[], List<IMutation>>>
                 {
-                        {columnFamilyName, dict}
+                    {columnFamilyName, dict}
                 };
 
             var batchMutateCommand = new BatchMutateCommand(keyspaceName, columnFamilyName, writeConsistencyLevel, keyMutations);

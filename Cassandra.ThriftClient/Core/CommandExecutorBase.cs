@@ -31,7 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         protected void ExecuteCommand([NotNull] TCommand command, [NotNull] ICommandMetrics metrics)
         {
             IThriftConnection connectionInPool;
-            using(metrics.NewAcquireConnectionFromPoolContext())
+            using (metrics.NewAcquireConnectionFromPoolContext())
                 connectionInPool = connectionPool.Acquire(command.CommandContext.KeyspaceName);
             ExecuteCommandInPool(connectionInPool, command, metrics);
             connectionPool.Good(connectionInPool);
@@ -42,17 +42,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             try
             {
-                using(metrics.NewThriftQueryContext())
+                using (metrics.NewThriftQueryContext())
                     connectionInPool.ExecuteCommand(command);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 var exception = CassandraExceptionTransformer.Transform(e, string.Format("Failed to execute cassandra command {0} in pool {1}", command.Name, connectionInPool));
-                if(exception.ReduceReplicaLive)
+                if (exception.ReduceReplicaLive)
                     connectionPool.Bad(connectionInPool);
                 else
                     connectionPool.Good(connectionInPool);
-                if(exception.IsCorruptConnection)
+                if (exception.IsCorruptConnection)
                     connectionPool.Remove(connectionInPool);
                 else
                     connectionPool.Release(connectionInPool);
@@ -62,11 +62,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public virtual void Dispose()
         {
-            if(!disposed)
+            if (!disposed)
             {
-                lock(disposeLock)
+                lock (disposeLock)
                 {
-                    if(!disposed)
+                    if (!disposed)
                     {
                         disposed = true;
                         connectionPool.Dispose();

@@ -13,9 +13,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         private static T TryGetChildNode<T>(this XmlNode parent, string localName, string namespaceUri) where T : XmlNode
         {
-            foreach(XmlNode node in parent.ChildNodes)
+            foreach (XmlNode node in parent.ChildNodes)
             {
-                if(localName.Equals(node.LocalName, StringComparison.OrdinalIgnoreCase) && node is T && (namespaceUri == null || node.NamespaceURI == namespaceUri))
+                if (localName.Equals(node.LocalName, StringComparison.OrdinalIgnoreCase) && node is T && (namespaceUri == null || node.NamespaceURI == namespaceUri))
                     return (T)node;
             }
             return null;

@@ -23,15 +23,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void DeleteRows(string[] keys, long? timestamp = null, int batchSize = 1000)
         {
             var counts = GetCounts(keys);
-            while(counts.Count > 0)
+            while (counts.Count > 0)
             {
                 var rows = GetRowsExclusive(keys, null, batchSize);
                 var d = rows.Select(row => new KeyValuePair<string, IEnumerable<string>>(row.Key, row.Value.Select(col => col.Name)));
                 BatchDelete(d, timestamp);
                 var newCounts = new Dictionary<string, int>();
-                foreach(var keyValuePair in counts)
+                foreach (var keyValuePair in counts)
                 {
-                    if(keyValuePair.Value > batchSize)
+                    if (keyValuePair.Value > batchSize)
                         newCounts.Add(keyValuePair.Key, keyValuePair.Value - batchSize);
                 }
                 counts = newCounts;
@@ -69,7 +69,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             result = null;
             RawColumn rawColumn;
-            if(!implementation.TryGetColumn(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(columnName), out rawColumn))
+            if (!implementation.TryGetColumn(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(columnName), out rawColumn))
                 return false;
             result = rawColumn.ToColumn();
             return true;
@@ -103,11 +103,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data)
         {
             var keyToColumns = new Dictionary<byte[], List<RawColumn>>(ByteArrayEqualityComparer.Instance);
-            foreach(var item in data)
+            foreach (var item in data)
             {
                 List<RawColumn> rawColumns;
                 var rawKey = StringExtensions.StringToBytes(item.Key);
-                if(!keyToColumns.TryGetValue(rawKey, out rawColumns))
+                if (!keyToColumns.TryGetValue(rawKey, out rawColumns))
                 {
                     rawColumns = new List<RawColumn>();
                     keyToColumns.Add(rawKey, rawColumns);
@@ -119,8 +119,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public Column[] GetColumns(string key, string exclusiveStartColumnName, int count, bool reversed = false)
         {
-            if(count == int.MaxValue) count--;
-            if(count <= 0) return new Column[0];
+            if (count == int.MaxValue) count--;
+            if (count <= 0) return new Column[0];
             return implementation.GetRow(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(exclusiveStartColumnName), count + 1, reversed)
                                  .Select(ColumnExtensions.ToColumn)
                                  .Where(x => x.Name != exclusiveStartColumnName)
@@ -138,7 +138,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public Column[] GetColumns(string key, string[] columnNames)
         {
-            if(columnNames == null || columnNames.Length == int.MaxValue || columnNames.Length == 0)
+            if (columnNames == null || columnNames.Length == int.MaxValue || columnNames.Length == 0)
                 return new Column[0];
             return implementation.GetColumns(StringExtensions.StringToBytes(key), columnNames.Select(StringExtensions.StringToBytes).ToList())
                                  .Select(ColumnExtensions.ToColumn)
@@ -157,8 +157,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public string[] GetKeys(string exclusiveStartKey, int count)
         {
-            if(count == int.MaxValue) count--;
-            if(count <= 0) return new string[0];
+            if (count == int.MaxValue) count--;
+            if (count <= 0) return new string[0];
             return implementation.GetKeys(StringExtensions.StringToBytes(exclusiveStartKey), count + 1)
                                  .Select(StringExtensions.BytesToString)
                                  .Where(key => key != exclusiveStartKey)
@@ -201,8 +201,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public List<KeyValuePair<string, Column[]>> GetRowsExclusive(IEnumerable<string> keys, string exclusiveStartColumnName, int count)
         {
-            if(count == int.MaxValue) count--;
-            if(count <= 0) return keys.Select(row => new KeyValuePair<string, Column[]>(row, new Column[0])).ToList();
+            if (count == int.MaxValue) count--;
+            if (count <= 0) return keys.Select(row => new KeyValuePair<string, Column[]>(row, new Column[0])).ToList();
 
             var rawKeys = keys.Select(StringExtensions.StringToBytes).ToList();
             var rawStartColumnName = StringExtensions.StringToBytes(exclusiveStartColumnName);

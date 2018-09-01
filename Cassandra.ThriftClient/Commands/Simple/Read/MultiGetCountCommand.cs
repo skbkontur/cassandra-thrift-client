@@ -5,8 +5,6 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
-using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
-using SliceRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SliceRange;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 {
@@ -26,7 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         public Dictionary<byte[], int> Output { get; private set; }
-        public int QueriedPartitionsCount { get { return keys.Count; } }
+        public int QueriedPartitionsCount => keys.Count;
 
         private readonly ConsistencyLevel consistencyLevel;
         private readonly List<byte[]> keys;

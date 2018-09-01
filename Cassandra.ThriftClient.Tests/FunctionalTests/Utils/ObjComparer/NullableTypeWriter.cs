@@ -13,11 +13,11 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         public bool TryWrite(Type type, object value, XmlWriter writer)
         {
-            if(type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 var getMethodHasValue = type.GetProperty("HasValue").GetGetMethod();
                 var hasValue = (bool)getMethodHasValue.Invoke(value, new object[0]);
-                if(!hasValue)
+                if (!hasValue)
                     nullWriter.Write(null, null, writer);
                 else
                 {

@@ -26,7 +26,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
         private static string ObjectToString(Type type, object instance)
         {
-            if(type.IsInterface)
+            if (type.IsInterface)
                 throw new InvalidOperationException(string.Format("Cannot compare interface type={0}", type.Name));
             var builder = new StringBuilder();
             var writer = XmlWriter.Create(builder, new XmlWriterSettings {Indent = true, OmitXmlDeclaration = true});

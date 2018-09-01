@@ -21,7 +21,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
         {
             var currentType = type;
             var result = new List<FieldInfo>();
-            while(currentType != null)
+            while (currentType != null)
             {
                 result.AddRange(GetTypeInstanceFields(currentType));
                 currentType = currentType.BaseType;

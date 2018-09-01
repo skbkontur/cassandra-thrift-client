@@ -7,7 +7,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
     {
         public bool TryWrite(Type type, object value, XmlWriter writer)
         {
-            if(value == null)
+            if (value == null)
             {
                 writer.WriteAttributeString("type", "null");
                 return true;

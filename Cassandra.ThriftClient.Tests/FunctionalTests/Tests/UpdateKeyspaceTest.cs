@@ -40,7 +40,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                             new ColumnFamily
                                                 {
                                                     Name = "3"
-                                                },
+                                                }
                                         }
                                 }
                         }
@@ -73,7 +73,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 {
                     Name = keyspaceName,
                     DurableWrites = durableWrites,
-                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[] {new DataCenterReplicationFactor("dc1", 3),}),
+                    ReplicationStrategy = NetworkTopologyReplicationStrategy.Create(new[] {new DataCenterReplicationFactor("dc1", 3)}),
                     ColumnFamilies = new Dictionary<string, ColumnFamily>
                         {
                             {"1", new ColumnFamily {Name = "1"}},
@@ -90,7 +90,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Assert.AreEqual(expected.ReplicationStrategy.Name, actual.ReplicationStrategy.Name);
             Assert.AreEqual(expected.ReplicationStrategy.StrategyOptions, actual.ReplicationStrategy.StrategyOptions);
 
-            if(expected.ColumnFamilies == null)
+            if (expected.ColumnFamilies == null)
                 Assert.IsNull(actual.ColumnFamilies);
             else
             {
@@ -110,11 +110,14 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                     Configuration = new KeyspaceConfiguration
                         {
                             ReplicationStrategy = SimpleReplicationStrategy.Create(1),
-                            ColumnFamilies = new[] {new ColumnFamily
+                            ColumnFamilies = new[]
                                 {
-                                    Name = columnFamilyName,
-                                    BloomFilterFpChance = null,
-                                }},
+                                    new ColumnFamily
+                                        {
+                                            Name = columnFamilyName,
+                                            BloomFilterFpChance = null
+                                        }
+                                }
                         }
                 };
             cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});

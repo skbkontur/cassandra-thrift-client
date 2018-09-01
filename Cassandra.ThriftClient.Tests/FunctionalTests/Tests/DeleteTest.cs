@@ -74,7 +74,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var rowKeys = new List<string> {"1", "2", "3", "4", "5"};
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
             {
                 conn.AddColumn(rowKey, new Column
                     {
@@ -90,7 +90,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                     });
             }
             conn.DeleteRows(rowKeys.ToArray(), 20);
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
                 Assert.AreEqual(0, conn.GetRow(rowKey).ToArray().Length);
         }
 
@@ -103,20 +103,20 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             const int batchSize = 50;
             var random = new Random();
             var columnCount = new int[rowCount];
-            for(int i = 0; i < rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
                 columnCount[i] = random.Next(minColumnCount, maxColumnCount);
 
             const int addTimestamp = 1;
             var keys = new List<string>();
             var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
-            for(int i = 0; i < rowCount; i++)
+            for (int i = 0; i < rowCount; i++)
             {
                 var forAdd = new List<KeyValuePair<string, IEnumerable<Column>>>();
                 Console.WriteLine("Writing " + i * 100 / rowCount + " percents");
                 var key = i.ToString();
                 keys.Add(key);
                 var columns = new List<Column>();
-                for(int j = 0; j < columnCount[i]; j++)
+                for (int j = 0; j < columnCount[i]; j++)
                 {
                     columns.Add(new Column
                         {
@@ -133,7 +133,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Console.WriteLine("Deleting");
             conn.DeleteRows(keys.ToArray(), deleteTimestamp, batchSize);
 
-            for(int i = 0; i < keys.Count; i++)
+            for (int i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];
                 Console.WriteLine("Checking " + i * 100 / rowCount + " percents");

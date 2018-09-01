@@ -21,7 +21,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
             string[] rowKeys = new int[rowKeysCount].Select(x => Guid.NewGuid().ToString()).ToArray();
             Array.Sort(rowKeys);
-            foreach(string rowKey in rowKeys)
+            foreach (string rowKey in rowKeys)
             {
                 IEnumerable<Column> columns = new int[columnNamesCount].Select((x, i) => new Column
                     {
@@ -33,18 +33,18 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 columnFamilyConnection.BatchInsert(keyValuePairs);
             }
 
-            for(int i = 0; i < columnNamesCount; i++)
+            for (int i = 0; i < columnNamesCount; i++)
             {
                 List<KeyValuePair<string, Column[]>> res = columnFamilyConnection.GetRowsExclusive(rowKeys, IntToString(i), columnsCount);
                 res.Sort((x, y) => String.Compare(x.Key, y.Key, StringComparison.Ordinal));
                 Assert.AreEqual(rowKeysCount, res.Count);
-                for(int j = 0; j < res.Count; j++)
+                for (int j = 0; j < res.Count; j++)
                 {
                     KeyValuePair<string, Column[]> row = res[j];
                     Assert.AreEqual(row.Key, rowKeys[j]);
                     Column[] columns = row.Value;
                     Assert.AreEqual(Math.Min(columnsCount, columnNamesCount - i - 1), columns.Length);
-                    for(int k = 0; k < columns.Length; k++)
+                    for (int k = 0; k < columns.Length; k++)
                         Assert.AreEqual(columns[k].Name, IntToString(k + i + 1));
                 }
             }
@@ -58,7 +58,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
             var rowKeys = new int[rowKeysCount].Select(x => Guid.NewGuid().ToString()).ToArray();
             Array.Sort(rowKeys);
-            foreach(var rowKey in rowKeys)
+            foreach (var rowKey in rowKeys)
             {
                 var currentRowKey = rowKey;
                 var columns = new int[columnNamesCount].Select((x, i) => new Column
@@ -71,21 +71,21 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 columnFamilyConnection.BatchInsert(keyValuePairs);
             }
 
-            for(var i = 0; i < columnNamesCount; i++)
+            for (var i = 0; i < columnNamesCount; i++)
             {
                 var intColumnNames = GetRandomColumnIndexesFromRange(0, columnNamesCount, columnNamesCount).ToArray();
                 var orderedintColumnNames = intColumnNames.Distinct().OrderBy(i1 => i1).ToArray();
                 var strColumnNames = intColumnNames.Select(IntToString).ToArray();
-                var res = columnFamilyConnection.GetRows(rowKeys, strColumnNames.Concat(new[]{100, 101, 102}.Select(IntToString)).ToArray());
+                var res = columnFamilyConnection.GetRows(rowKeys, strColumnNames.Concat(new[] {100, 101, 102}.Select(IntToString)).ToArray());
                 res.Sort((x, y) => String.Compare(x.Key, y.Key, StringComparison.Ordinal));
                 Assert.AreEqual(rowKeysCount, res.Count);
-                for(var j = 0; j < res.Count; j++)
+                for (var j = 0; j < res.Count; j++)
                 {
                     var row = res[j];
                     Assert.AreEqual(row.Key, rowKeys[j]);
                     var columns = row.Value;
                     Assert.AreEqual(orderedintColumnNames.Length, columns.Length);
-                    for(var k = 0; k < columns.Length; k++)
+                    for (var k = 0; k < columns.Length; k++)
                     {
                         Assert.AreEqual(IntToString(orderedintColumnNames[k]), columns[k].Name);
                         Assert.AreEqual(row.Key + "_" + IntToString(orderedintColumnNames[k]), Encoding.UTF8.GetString(columns[k].Value));

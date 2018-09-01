@@ -17,7 +17,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         public SimpleCommandExecutor([NotNull] IPoolSet<IThriftConnection, string> connectionPool, [NotNull] ICassandraClusterSettings settings, ILog logger)
             : base(connectionPool, settings)
         {
-            if(settings.Attempts <= 0)
+            if (settings.Attempts <= 0)
                 throw new InvalidOperationException(string.Format("settings.Attempts <= 0 for: {0}", settings));
             this.logger = logger;
         }
@@ -27,9 +27,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             var attempt = 0;
             var command = createCommand(attempt);
             var metrics = command.GetMetrics(settings);
-            using(metrics.NewTotalContext())
+            using (metrics.NewTotalContext())
             {
-                while(true)
+                while (true)
                 {
                     try
                     {
@@ -37,15 +37,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                         metrics.RecordQueriedPartitions(command);
                         break;
                     }
-                    catch(CassandraClientException exception)
+                    catch (CassandraClientException exception)
                     {
                         metrics.RecordError(exception);
                         logger.Warn(exception, "Attempt {0} failed", attempt);
-                        if(!exception.UseAttempts)
+                        if (!exception.UseAttempts)
                             throw;
-                        if(attempt == 0)
+                        if (attempt == 0)
                             metrics.RecordRetry();
-                        if(++attempt == settings.Attempts)
+                        if (++attempt == settings.Attempts)
                             throw new CassandraAttemptsException(settings.Attempts, exception);
                         command = createCommand(attempt);
                     }

@@ -46,7 +46,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             Column column;
-            
+
             Assert.IsFalse(conn.TryGetColumn("id1", "qzz", out column));
             Assert.IsFalse(conn.TryGetColumn("id1", "qxx", out column));
             Assert.IsFalse(conn.TryGetColumn("id2", "qzz", out column));
@@ -79,16 +79,16 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                             Value = new byte[] {3}
                         }
                 });
-            
+
             Assert.IsTrue(conn.TryGetColumn("id1", "qzz", out column));
-            CollectionAssert.AreEqual(new byte[]{1}, column.Value);
+            CollectionAssert.AreEqual(new byte[] {1}, column.Value);
             Assert.IsFalse(conn.TryGetColumn("id1", "qxx", out column));
             Assert.IsFalse(conn.TryGetColumn("id2", "qzz", out column));
             Assert.IsFalse(conn.TryGetColumn("id2", "qxx", out column));
             Assert.IsTrue(conn.TryGetColumn("id3", "qzz", out column));
-            CollectionAssert.AreEqual(new byte[] { 2 }, column.Value);
+            CollectionAssert.AreEqual(new byte[] {2}, column.Value);
             Assert.IsTrue(conn.TryGetColumn("id3", "qxx", out column));
-            CollectionAssert.AreEqual(new byte[] { 3 }, column.Value);
+            CollectionAssert.AreEqual(new byte[] {3}, column.Value);
         }
     }
 }

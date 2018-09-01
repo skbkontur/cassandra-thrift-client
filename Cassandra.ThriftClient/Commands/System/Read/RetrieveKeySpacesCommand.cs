@@ -21,7 +21,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
 
         private static List<Keyspace> BuildKeyspaces(IEnumerable<KsDef> keySpaces)
         {
-            if(keySpaces == null) return null;
+            if (keySpaces == null) return null;
             var convertedKeyspaces = keySpaces.Where(x => !IsSystemKeyspace(x.Name)).Select(def => def.FromCassandraKsDef()).ToList();
             return convertedKeyspaces;
         }
@@ -31,6 +31,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
             return systemKeyspaceNames.Any(s => s.Equals(keyspaceName, StringComparison.OrdinalIgnoreCase));
         }
 
-        private static readonly string[] systemKeyspaceNames = { "system", "system_auth", "system_traces", "system_schema" , "system_distributed" };
+        private static readonly string[] systemKeyspaceNames = {"system", "system_auth", "system_traces", "system_schema", "system_distributed"};
     }
 }

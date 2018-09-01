@@ -12,9 +12,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {
     public class CassandraClusterSpy : ICassandraCluster
     {
-        private readonly ICassandraCluster innerCluster;
-        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
-
         public CassandraClusterSpy(Func<ICassandraCluster> cassandraClusterFactory)
         {
             innerCluster = cassandraClusterFactory();
@@ -58,5 +55,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
         {
             innerCluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
+
+        private readonly ICassandraCluster innerCluster;
+        private readonly List<KeyspaceConnectionSpy> keyspaceConnectionSpies = new List<KeyspaceConnectionSpy>();
     }
 }

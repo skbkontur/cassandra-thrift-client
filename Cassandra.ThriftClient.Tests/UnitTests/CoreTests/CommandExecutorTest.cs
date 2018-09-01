@@ -77,13 +77,13 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithCorruptConnectionAndBadReplica(
             [Values(
-                 typeof(TimedOutException),
-                 typeof(TProtocolException),
-                 typeof(TApplicationException),
-                 typeof(TTransportException),
-                 typeof(IOException),
-                 typeof(Exception)
-             )] Type commandExecutionException)
+                typeof(TimedOutException),
+                typeof(TProtocolException),
+                typeof(TApplicationException),
+                typeof(TTransportException),
+                typeof(IOException),
+                typeof(Exception)
+                )] Type commandExecutionException)
         {
             InternalTestReleaseConnectionOnException((Exception)Activator.CreateInstance(commandExecutionException), true, true);
         }
@@ -91,9 +91,9 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithCorrectConnectionAndGoodReplica(
             [Values(
-                 typeof(NotFoundException),
-                 typeof(UnavailableException)
-             )] Type commandExecutionException)
+                typeof(NotFoundException),
+                typeof(UnavailableException)
+                )] Type commandExecutionException)
         {
             InternalTestReleaseConnectionOnException((Exception)Activator.CreateInstance(commandExecutionException), false, false);
         }
@@ -101,18 +101,18 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithNoTransformationToAttemptsException(
             [Values(
-                 typeof(InvalidRequestException),
-                 typeof(AuthenticationException),
-                 typeof(AuthorizationException),
-                 typeof(SchemaDisagreementException)
-             )] Type commandExecutionException,
+                typeof(InvalidRequestException),
+                typeof(AuthenticationException),
+                typeof(AuthorizationException),
+                typeof(SchemaDisagreementException)
+                )] Type commandExecutionException,
             [Values(
-                 typeof(CassandraClientInvalidRequestException),
-                 typeof(CassandraClientAuthenticationException),
-                 typeof(CassandraClientAuthorizationException),
-                 typeof(CassandraClientSchemaDisagreementException)
-             )] Type excpectedExceptionType
-        )
+                typeof(CassandraClientInvalidRequestException),
+                typeof(CassandraClientAuthenticationException),
+                typeof(CassandraClientAuthorizationException),
+                typeof(CassandraClientSchemaDisagreementException)
+                )] Type excpectedExceptionType
+            )
         {
             InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), excpectedExceptionType);
         }
@@ -120,16 +120,16 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
         [Test, Sequential]
         public void TestHandleExceptionWithTransformationToAttemptsException(
             [Values(
-                 typeof(NotFoundException),
-                 typeof(UnavailableException),
-                 typeof(TimedOutException),
-                 typeof(TProtocolException),
-                 typeof(TApplicationException),
-                 typeof(TTransportException),
-                 typeof(IOException),
-                 typeof(Exception)
-             )] Type commandExecutionException
-        )
+                typeof(NotFoundException),
+                typeof(UnavailableException),
+                typeof(TimedOutException),
+                typeof(TProtocolException),
+                typeof(TApplicationException),
+                typeof(TTransportException),
+                typeof(IOException),
+                typeof(Exception)
+                )] Type commandExecutionException
+            )
         {
             InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), typeof(CassandraAttemptsException));
         }
@@ -156,12 +156,12 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
             dataConnectionPool.Expect(pool => pool.Acquire("keyspace")).Return(thriftConnection);
             thriftConnection.Expect(connection => connection.ExecuteCommand(command)).Throw(commandExecutionException);
 
-            if(removeConnection)
+            if (removeConnection)
                 dataConnectionPool.Expect(pool => pool.Remove(thriftConnection));
             else
                 dataConnectionPool.Expect(pool => pool.Release(thriftConnection));
 
-            if(reduceReplicaLive)
+            if (reduceReplicaLive)
                 dataConnectionPool.Expect(pool => pool.Bad(thriftConnection));
             else
                 dataConnectionPool.Expect(pool => pool.Good(thriftConnection));

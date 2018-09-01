@@ -48,7 +48,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
             Assert.That(columnFamily.Compression.Algorithm, Is.EqualTo(originalColumnFamily.Compression.Algorithm));
-            if(originalColumnFamily.Compression.Options != null)
+            if (originalColumnFamily.Compression.Options != null)
                 Assert.That(columnFamily.Compression.Options.ChunkLengthInKb, Is.EqualTo(originalColumnFamily.Compression.Options.ChunkLengthInKb));
             else
                 Assert.That(columnFamily.Compression.Options, Is.Null);
@@ -64,19 +64,16 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                     GCGraceSeconds = 123,
                     ReadRepairChance = 0.3
                 };
-            if(columnFamilyCaching != null)
+            if (columnFamilyCaching != null)
                 originalColumnFamily.Caching = columnFamilyCaching.Value;
             keyspaceConnection.AddColumnFamily(originalColumnFamily);
 
             var columnFamily = keyspaceConnection.DescribeKeyspace().ColumnFamilies[name];
-            if(columnFamilyCaching != null)
+            if (columnFamilyCaching != null)
                 Assert.That(columnFamily.Caching, Is.EqualTo(columnFamilyCaching));
             else
                 Assert.That(columnFamily.Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
         }
-
-        private CassandraCluster cluster;
-        private IKeyspaceConnection keyspaceConnection;
 
         [Test]
         public void TestCreateColumnFamily()
@@ -146,11 +143,11 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         {
             Assert.Throws<CassandraClientInvalidRequestException>(
                 () =>
-                    keyspaceConnection.AddColumnFamily(new ColumnFamily
-                        {
-                            Name = TestSchemaUtils.GetRandomColumnFamilyName(),
-                            Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3})
-                        }));
+                keyspaceConnection.AddColumnFamily(new ColumnFamily
+                    {
+                        Name = TestSchemaUtils.GetRandomColumnFamilyName(),
+                        Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3})
+                    }));
         }
 
         [Test]
@@ -193,5 +190,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             Assert.That(columnFamily.GCGraceSeconds, Is.EqualTo(originalColumnFamily.GCGraceSeconds));
             Assert.That(columnFamily.ReadRepairChance, Is.EqualTo(originalColumnFamily.ReadRepairChance));
         }
+
+        private CassandraCluster cluster;
+        private IKeyspaceConnection keyspaceConnection;
     }
 }

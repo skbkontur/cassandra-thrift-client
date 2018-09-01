@@ -7,23 +7,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public class SimpleReplicationStrategy : IReplicationStrategy
     {
-        public const string ReplicationFactorKey = "replication_factor";
-
         private SimpleReplicationStrategy()
         {
         }
 
+        public const string ReplicationFactorKey = "replication_factor";
+
         public int ReplicationFactor { get; private set; }
 
-        public string Name { get { return ReplicaPlacementStrategy.Simple.ToStringValue(); } }
+        public string Name => ReplicaPlacementStrategy.Simple.ToStringValue();
 
-        public Dictionary<string, string> StrategyOptions
-        {
-            get
-            {
-                return new Dictionary<string, string> { { ReplicationFactorKey, ReplicationFactor.ToString(CultureInfo.InvariantCulture) } };
-            }
-        }
+        public Dictionary<string, string> StrategyOptions => new Dictionary<string, string> {{ReplicationFactorKey, ReplicationFactor.ToString(CultureInfo.InvariantCulture)}};
 
         public static SimpleReplicationStrategy Create(int replicationFactor)
         {

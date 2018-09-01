@@ -40,15 +40,15 @@ namespace Cassandra.ThriftClient.Tests.UnitTests
         private static void RunMethodWithException<TE>(Action method, Action<TE> exceptionCheckDelegate)
             where TE : Exception
         {
-            if(typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
+            if (typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
                 Assert.Fail("использование типа {0} запрещено", typeof(TE));
             try
             {
                 method();
             }
-            catch(TE e)
+            catch (TE e)
             {
-                if(e is ThreadAbortException)
+                if (e is ThreadAbortException)
                     Thread.ResetAbort();
                 exceptionCheckDelegate?.Invoke(e);
                 return;

@@ -17,15 +17,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public IEnumerable<string> GetRowKeysEnumerator(int batchSize)
         {
             return new ObjectsEnumerable<string>(
-                exclusiveStartKey => cfConnection.GetKeys(exclusiveStartKey, count: batchSize),
+                exclusiveStartKey => cfConnection.GetKeys(exclusiveStartKey, count : batchSize),
                 x => x,
-                initialExclusiveStartKey: null);
+                initialExclusiveStartKey : null);
         }
 
         public IEnumerable<Column> GetColumnsEnumerator(string key, int batchSize, string initialExclusiveStartColumnName)
         {
             return new ObjectsEnumerable<Column>(
-                exclusiveStartColumnName => cfConnection.GetColumns(key, exclusiveStartColumnName, count: batchSize, reversed: false),
+                exclusiveStartColumnName => cfConnection.GetColumns(key, exclusiveStartColumnName, count : batchSize, reversed : false),
                 col => col.Name,
                 initialExclusiveStartColumnName);
         }
@@ -65,9 +65,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                 bulk = new T[0];
             }
 
-            public T Current { get { return bulk[index]; } }
+            public T Current => bulk[index];
 
-            object IEnumerator.Current { get { return Current; } }
+            object IEnumerator.Current => Current;
             private readonly Func<string, T[]> getObjs;
             private readonly Func<T, string> getKey;
             private readonly string initialExclusiveStartKey;

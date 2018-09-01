@@ -1,4 +1,4 @@
-﻿using Apache.Cassandra;
+using Apache.Cassandra;
 
 using JetBrains.Annotations;
 
@@ -14,15 +14,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         public GetCommand(string keyspace, string columnFamily, byte[] rowKey, ConsistencyLevel consistencyLevel, byte[] columnName)
             : base(keyspace, columnFamily)
         {
-            this.rowKey = rowKey;
+            PartitionKey = rowKey;
             this.consistencyLevel = consistencyLevel;
             this.columnName = columnName;
         }
 
         [NotNull]
-        public byte[] PartitionKey { get { return rowKey; } }
+        public byte[] PartitionKey { get; }
 
-        public int QueriedPartitionsCount { get { return 1; } }
+        public int QueriedPartitionsCount => 1;
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
         {
@@ -30,9 +30,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             var columnPath = BuildColumnPath(columnName);
             try
             {
-                columnOrSupercolumn = cassandraClient.get(rowKey, columnPath, consistencyLevel);
+                columnOrSupercolumn = cassandraClient.get(PartitionKey, columnPath, consistencyLevel);
             }
-            catch(NotFoundException)
+            catch (NotFoundException)
             {
                 //ничего не делаем
             }
@@ -42,7 +42,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public RawColumn Output { get; private set; }
 
-        private readonly byte[] rowKey;
         private readonly ConsistencyLevel consistencyLevel;
         private readonly byte[] columnName;
     }

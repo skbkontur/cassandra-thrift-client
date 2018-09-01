@@ -59,18 +59,14 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
         }
 
-        protected ICassandraCluster cassandraCluster;
-        protected IColumnFamilyConnection columnFamilyConnection;
-        private static bool keyspacesDeleted;
-        protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
         protected string KeyspaceName { get; private set; }
 
         private void ClearKeyspacesOnce()
         {
-            if(keyspacesDeleted) return;
+            if (keyspacesDeleted) return;
             var clusterConnection = cassandraCluster.RetrieveClusterConnection();
             var result = clusterConnection.RetrieveKeyspaces();
-            foreach(var keyspace in result)
+            foreach (var keyspace in result)
                 cassandraCluster.RetrieveClusterConnection().RemoveKeyspace(keyspace.Name);
             keyspacesDeleted = true;
         }
@@ -104,7 +100,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             tryGetResult.AssertEqualsTo(result);
             Assert.AreEqual(columnName, result.Name);
             Assert.AreEqual(columnValue, ToString(result.Value));
-            if(timestamp == null)
+            if (timestamp == null)
                 Assert.IsNotNull(result.Timestamp);
             else
                 Assert.AreEqual(timestamp, result.Timestamp);
@@ -126,20 +122,25 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         private static void RunMethodWithException<TE>(Action method, Action<TE> exceptionCheckDelegate)
             where TE : Exception
         {
-            if(typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
+            if (typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
                 Assert.Fail("использование типа {0} запрещено", typeof(TE));
             try
             {
                 method();
             }
-            catch(TE e)
+            catch (TE e)
             {
-                if(e is ThreadAbortException)
+                if (e is ThreadAbortException)
                     Thread.ResetAbort();
                 exceptionCheckDelegate?.Invoke(e);
                 return;
             }
             Assert.Fail("Method didn't thrown expected exception " + typeof(TE));
         }
+
+        protected ICassandraCluster cassandraCluster;
+        protected IColumnFamilyConnection columnFamilyConnection;
+        private static bool keyspacesDeleted;
+        protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
     }
 }

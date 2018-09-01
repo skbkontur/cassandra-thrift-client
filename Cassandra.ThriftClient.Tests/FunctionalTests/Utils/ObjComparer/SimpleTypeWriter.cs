@@ -12,10 +12,10 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
     {
         public static string TryWrite(Type type, object value)
         {
-            if(type.IsEnum || type.IsPrimitive)
+            if (type.IsEnum || type.IsPrimitive)
                 return value.ToString();
             Func<object, string> func;
-            if(!serializers.TryGetValue(type, out func))
+            if (!serializers.TryGetValue(type, out func))
                 return null;
             return func(value);
         }
@@ -33,7 +33,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
         private static string DumpCollection(NameValueCollection collection)
         {
             var list = new List<CollectionSlot>();
-            if(collection != null)
+            if (collection != null)
             {
                 list.AddRange(
                     collection.Cast<object>().
@@ -46,34 +46,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
             list.Sort((x, y) => String.CompareOrdinal(x.Key, y.Key));
 
             var result = new StringBuilder();
-            foreach(var slot in list)
+            foreach (var slot in list)
                 result.Append((slot + "\r\n"));
             return result.ToString();
-        }
-
-        private class CollectionSlot
-        {
-            public override string ToString()
-            {
-                var result = new StringBuilder();
-                result.Append("{'" + Key + "':{");
-                if(Values != null)
-                {
-                    Array.Sort(Values);
-                    var notFirst = false;
-                    foreach(var value in Values)
-                    {
-                        if(notFirst) result.Append(", ");
-                        notFirst = true;
-                        result.Append("'" + value + "'");
-                    }
-                }
-                result.Append("}}");
-                return result.ToString();
-            }
-
-            public string Key { get; set; }
-            public string[] Values { get; set; }
         }
 
         private static readonly Dictionary<Type, Func<object, string>> serializers =
@@ -89,7 +64,32 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
                                 var t = (DateTime)o;
                                 return t.Ticks.ToString(CultureInfo.InvariantCulture);
                             }
-                    },
+                    }
                 };
+
+        private class CollectionSlot
+        {
+            public override string ToString()
+            {
+                var result = new StringBuilder();
+                result.Append("{'" + Key + "':{");
+                if (Values != null)
+                {
+                    Array.Sort(Values);
+                    var notFirst = false;
+                    foreach (var value in Values)
+                    {
+                        if (notFirst) result.Append(", ");
+                        notFirst = true;
+                        result.Append("'" + value + "'");
+                    }
+                }
+                result.Append("}}");
+                return result.ToString();
+            }
+
+            public string Key { get; set; }
+            public string[] Values { get; set; }
+        }
     }
 }

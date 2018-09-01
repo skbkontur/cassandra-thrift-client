@@ -10,8 +10,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
         }
 
         public bool DurableWrites { get; set; }
-        public IReplicationStrategy ReplicationStrategy { get { return replicationStrategy ?? defaultReplicationStrategy; } set { replicationStrategy = value; } }
-        public ColumnFamily[] ColumnFamilies { get { return columnFamilies ?? new ColumnFamily[0]; } set { columnFamilies = value; } }
+        public IReplicationStrategy ReplicationStrategy { get => replicationStrategy ?? defaultReplicationStrategy; set => replicationStrategy = value; }
+        public ColumnFamily[] ColumnFamilies { get => columnFamilies ?? new ColumnFamily[0]; set => columnFamilies = value; }
 
         private ColumnFamily[] columnFamilies;
         private IReplicationStrategy replicationStrategy;

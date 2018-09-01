@@ -38,7 +38,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestEmpty()
         {
             CollectionAssert.IsEmpty(cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName)
-                                         .GetKeys());
+                                                     .GetKeys());
         }
 
         [Test]
@@ -60,7 +60,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var keys = new List<string>();
-            for(int i = 0; i < 100; i++)
+            for (int i = 0; i < 100; i++)
             {
                 var key = Guid.NewGuid().ToString();
                 connection.AddColumn(key, new Column
@@ -79,7 +79,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             var keys = new List<string>();
-            for(var i = 0; i < 100; i++)
+            for (var i = 0; i < 100; i++)
             {
                 var key = Guid.NewGuid().ToString();
                 connection.AddColumn(key, new Column
@@ -92,7 +92,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
             var actualKeys = new List<string>();
             string exclusiveStartKey = null;
-            for(var i = 0; i < 25; i++)
+            for (var i = 0; i < 25; i++)
             {
                 var nextBatch = connection.GetKeys(exclusiveStartKey, 4);
                 Assert.AreEqual(4, nextBatch.Length);

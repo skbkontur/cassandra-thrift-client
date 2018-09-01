@@ -15,7 +15,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils
             return RuntimeHelpers.GetHashCode(obj);
         }
 
-        public new static IEqualityComparer<T> Default { get { return defaultComparer ?? (defaultComparer = new ObjectReferenceEqualityComparer<T>()); } }
+        public new static IEqualityComparer<T> Default => defaultComparer ?? (defaultComparer = new ObjectReferenceEqualityComparer<T>());
         private static IEqualityComparer<T> defaultComparer;
     }
 }

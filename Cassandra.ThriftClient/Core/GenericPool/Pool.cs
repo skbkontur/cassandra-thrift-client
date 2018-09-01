@@ -23,7 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Dispose()
         {
             var items = freeItems.Select(x => x.Item).Union(busyItems.Keys).ToArray();
-            foreach(var item in items)
+            foreach (var item in items)
                 item.Dispose();
         }
 
@@ -35,9 +35,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public bool TryAcquireExists(out T result)
         {
-            while(TryPopFreeItem(out result))
+            while (TryPopFreeItem(out result))
             {
-                if(!result.IsAlive)
+                if (!result.IsAlive)
                 {
                     result.Dispose();
                     continue;
@@ -51,7 +51,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Release(T item)
         {
             object dummy;
-            if(!busyItems.TryRemove(item, out dummy))
+            if (!busyItems.TryRemove(item, out dummy))
                 throw new FailedReleaseItemException(item.ToString());
             Interlocked.Decrement(ref busyItemCount);
             freeItems.Push(new FreeItemInfo(item, DateTime.UtcNow));
@@ -77,9 +77,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     var now = DateTime.UtcNow;
                     FreeItemInfo item;
 
-                    while(freeItems.TryPop(out item))
+                    while (freeItems.TryPop(out item))
                     {
-                        if(now - item.IdleTime >= minIdleTimeSpan)
+                        if (now - item.IdleTime >= minIdleTimeSpan)
                         {
                             result++;
                             item.Item.Dispose();
@@ -87,13 +87,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                         }
                         tempStack.Push(item);
                     }
-                    while(tempStack.Count > 0)
+                    while (tempStack.Count > 0)
                         freeItems.Push(tempStack.Pop());
                     return result;
                 }
                 finally
                 {
-                    if(timer.ElapsedMilliseconds > 1)
+                    if (timer.ElapsedMilliseconds > 1)
                         logger.Warn("RemoveIdleItems from pool: Time={0}ms, RemovedItemsCount={1}", timer.ElapsedMilliseconds, result);
                 }
             }
@@ -106,14 +106,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         public void Remove(T item)
         {
             object dummy;
-            if(!busyItems.TryRemove(item, out dummy))
+            if (!busyItems.TryRemove(item, out dummy))
                 throw new RemoveFromPoolFailedException("Cannot find item to remove in busy items. This item does not belong in this pool or in released state.");
             Interlocked.Decrement(ref busyItemCount);
         }
 
-        public int TotalCount { get { return FreeItemCount + BusyItemCount; } }
-        public int FreeItemCount { get { return freeItems.Count; } }
-        public int BusyItemCount { get { return busyItemCount; } }
+        public int TotalCount => FreeItemCount + BusyItemCount;
+        public int FreeItemCount => freeItems.Count;
+        public int BusyItemCount => busyItemCount;
 
         private bool TryPopFreeItem(out T item)
         {
@@ -134,7 +134,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private void MarkItemAsBusy(T result)
         {
-            if(!busyItems.TryAdd(result, new object()))
+            if (!busyItems.TryAdd(result, new object()))
                 throw new ItemInPoolCollisionException();
             Interlocked.Increment(ref busyItemCount);
         }

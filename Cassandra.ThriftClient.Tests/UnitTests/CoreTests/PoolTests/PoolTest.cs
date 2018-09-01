@@ -20,7 +20,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             Item lastFactoryResult = null;
             var factoryInvokeCount = 0;
 
-            using(var pool = new Pool<Item>(x =>
+            using (var pool = new Pool<Item>(x =>
                 {
                     factoryInvokeCount++;
                     return lastFactoryResult = new Item();
@@ -35,7 +35,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void DisposeAndReleaseDeadItemsThroughAcquire()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
@@ -49,7 +49,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void DisposeAndReleaseDeadItemsThroughAcquireExists()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
@@ -65,7 +65,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         {
             var factoryInvokeCount = 0;
 
-            using(var pool = new Pool<Item>(x =>
+            using (var pool = new Pool<Item>(x =>
                 {
                     factoryInvokeCount++;
                     return new Item();
@@ -83,7 +83,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TryReleaseItemTwice()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -96,7 +96,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         {
             Item item1;
             Item item2;
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 item1 = pool.Acquire();
                 item2 = pool.Acquire();
@@ -111,7 +111,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNew()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
@@ -123,7 +123,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireExists()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
@@ -138,7 +138,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveItemFromPool()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -155,7 +155,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestTryRemoveReleasedItemFromPool()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -168,7 +168,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestTryRemoveItemDoesNotBelongInPool()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -179,7 +179,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void MultiThreadTest()
         {
-            using(var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
             {
                 var threads = Enumerable
                     .Range(0, 100)
@@ -187,7 +187,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                         {
                             // ReSharper disable AccessToDisposedClosure
                             var random = new Random(n * DateTime.UtcNow.Millisecond);
-                            for(var i = 0; i < 100; i++)
+                            for (var i = 0; i < 100; i++)
                             {
                                 var item = pool.Acquire();
                                 try

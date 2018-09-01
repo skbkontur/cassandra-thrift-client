@@ -11,7 +11,7 @@
     {
         internal static Apache.Cassandra.KeyRange ToCassandraKeyRange(this KeyRange keyRange)
         {
-            if(keyRange == null)
+            if (keyRange == null)
                 return null;
             return new Apache.Cassandra.KeyRange
                 {

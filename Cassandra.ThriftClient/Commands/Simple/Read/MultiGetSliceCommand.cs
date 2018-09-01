@@ -29,12 +29,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         }
 
         public Dictionary<byte[], List<RawColumn>> Output { get; private set; }
-        public int QueriedPartitionsCount { get { return keys.Count; } }
+        public int QueriedPartitionsCount => keys.Count;
 
         private void BuildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {
             Output = new Dictionary<byte[], List<RawColumn>>();
-            foreach(var outputKeyValuePair in output)
+            foreach (var outputKeyValuePair in output)
             {
                 var columnOrSuperColumnList = outputKeyValuePair.Value.Select(x => x.Column)
                                                                 .Select(x => x.FromCassandraColumn()).ToList();

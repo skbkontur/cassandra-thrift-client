@@ -11,7 +11,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             get
             {
                 var cand = new DateTime(GetUtcTicks(), DateTimeKind.Utc);
-                if(cand < lastReturned)
+                if (cand < lastReturned)
                     cand = lastReturned;
                 lastReturned = cand;
                 return cand;
@@ -27,7 +27,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private static long GetCounter()
         {
             long counter;
-            if(!QueryPerformanceCounter(out counter))
+            if (!QueryPerformanceCounter(out counter))
                 throw new InvalidOperationException("Cannot get performance counter!");
             return counter;
         }
@@ -35,7 +35,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         private static long GetFrequency()
         {
             long result;
-            if(!QueryPerformanceFrequency(out result))
+            if (!QueryPerformanceFrequency(out result))
                 throw new InvalidOperationException("Cannot get performance frequency!");
             return result;
         }
@@ -49,15 +49,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private static long GetUtcTicks()
         {
-            if(!initialized) Init();
+            if (!initialized) Init();
             var elapsed = (double)(GetCounter() - startCounter) / frequency;
-            if(elapsed > 1.0)
+            if (elapsed > 1.0)
             {
                 //Тут происходят действия, направленные на то, чтобы функция UtcNow была неубывающей
-                lock(lockObject)
+                lock (lockObject)
                 {
                     elapsed = (double)(GetCounter() - startCounter) / frequency;
-                    if(elapsed > 1.0)
+                    if (elapsed > 1.0)
                     {
                         initialized = false;
                         Thread.Sleep(10);

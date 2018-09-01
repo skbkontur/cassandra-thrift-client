@@ -9,11 +9,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     internal class ReplicationStrategyFactory : IReplicationStrategyFactory
     {
-        public static readonly ReplicationStrategyFactory FactoryInstance = new ReplicationStrategyFactory();
-
         public IReplicationStrategy Create(KsDef ksDef)
         {
-            if(ksDef.Strategy_options == null)
+            if (ksDef.Strategy_options == null)
                 throw new InvalidOperationException($"ksDef.Strategy_options == null for: {ksDef}");
 
             if (ksDef.Strategy_class == ReplicaPlacementStrategy.Simple.ToStringValue())
@@ -32,5 +30,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
             throw new InvalidOperationException($"Strategy {ksDef.Strategy_class} is not implemented for: {ksDef}");
         }
+
+        public static readonly ReplicationStrategyFactory FactoryInstance = new ReplicationStrategyFactory();
     }
 }

@@ -21,14 +21,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             thriftConnection.Dispose();
         }
 
-        public bool IsAlive { get { return thriftConnection.IsAlive; } }
+        public bool IsAlive => thriftConnection.IsAlive;
 
         public void ExecuteCommand(ICommand command)
         {
             thriftConnection.ExecuteCommand(command);
         }
 
-        public DateTime CreationDateTime { get { return thriftConnection.CreationDateTime; } }
+        public DateTime CreationDateTime => thriftConnection.CreationDateTime;
 
         public override string ToString()
         {

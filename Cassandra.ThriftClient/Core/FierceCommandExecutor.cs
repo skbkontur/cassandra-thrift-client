@@ -20,13 +20,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             var command = createCommand(0);
             var metrics = command.GetMetrics(settings);
-            using(metrics.NewTotalContext())
+            using (metrics.NewTotalContext())
             {
                 try
                 {
                     ExecuteCommand(command, metrics);
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     metrics.RecordError(e);
                     throw;

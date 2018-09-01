@@ -32,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
     {
         public static CfDef ToCassandraCfDef(this ColumnFamily columnFamily, string keyspace)
         {
-            if(columnFamily == null)
+            if (columnFamily == null)
                 return null;
             var result = new CfDef
                 {
@@ -43,24 +43,24 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Comparator_type = columnFamily.ComparatorType.ToString(),
                     Caching = columnFamily.ToCassandraCachingValue()
                 };
-            if(columnFamily.Compression != null)
+            if (columnFamily.Compression != null)
                 result.Compression_options = columnFamily.Compression.ToCassandraCompressionDef();
-            if(columnFamily.GCGraceSeconds.HasValue)
+            if (columnFamily.GCGraceSeconds.HasValue)
                 result.Gc_grace_seconds = columnFamily.GCGraceSeconds.Value;
-            if(columnFamily.ReadRepairChance != null)
+            if (columnFamily.ReadRepairChance != null)
                 result.Read_repair_chance = columnFamily.ReadRepairChance.Value;
 
             var compactionStrategy = columnFamily.CompactionStrategy;
-            if(compactionStrategy != null)
+            if (compactionStrategy != null)
             {
                 result.Compaction_strategy = compactionStrategy.CompactionStrategyType.ToStringValue();
                 result.Compaction_strategy_options = compactionStrategy.CompactionStrategyOptions.ToCassandraCompactionStrategyOptions();
             }
 
-            if(columnFamily.BloomFilterFpChance.HasValue)
+            if (columnFamily.BloomFilterFpChance.HasValue)
                 result.Bloom_filter_fp_chance = columnFamily.BloomFilterFpChance.Value;
 
-            if(columnFamily.DefaultTtl.HasValue)
+            if (columnFamily.DefaultTtl.HasValue)
                 result.Default_time_to_live = columnFamily.DefaultTtl.Value;
 
             return result;
@@ -68,7 +68,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
         public static ColumnFamily FromCassandraCfDef(this CfDef cfDef)
         {
-            if(cfDef == null)
+            if (cfDef == null)
                 return null;
             var result = new ColumnFamily
                 {
@@ -76,23 +76,23 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                     Id = cfDef.Id,
                     ComparatorType = new ColumnComparatorType(cfDef.Comparator_type)
                 };
-            if(cfDef.__isset.gc_grace_seconds)
+            if (cfDef.__isset.gc_grace_seconds)
                 result.GCGraceSeconds = cfDef.Gc_grace_seconds;
-            if(cfDef.__isset.caching)
+            if (cfDef.__isset.caching)
                 result.Caching = cfDef.Caching.ToColumnFamilyCaching();
-            if(cfDef.__isset.read_repair_chance)
+            if (cfDef.__isset.read_repair_chance)
                 result.ReadRepairChance = cfDef.Read_repair_chance;
-            if(cfDef.Compression_options != null)
+            if (cfDef.Compression_options != null)
                 result.Compression = cfDef.Compression_options.FromCassandraCompressionOptions();
 
             var compactionStrategyType = cfDef.Compaction_strategy.FromStringValue<CompactionStrategyType>();
             var compactionStrategyOptions = cfDef.Compaction_strategy_options.FromCassandraCompactionStrategyOptions();
             result.CompactionStrategy = new CompactionStrategy(compactionStrategyType, compactionStrategyOptions);
 
-            if(cfDef.__isset.bloom_filter_fp_chance)
+            if (cfDef.__isset.bloom_filter_fp_chance)
                 result.BloomFilterFpChance = cfDef.Bloom_filter_fp_chance;
 
-            if(cfDef.__isset.default_time_to_live)
+            if (cfDef.__isset.default_time_to_live)
                 result.DefaultTtl = cfDef.Default_time_to_live;
 
             return result;

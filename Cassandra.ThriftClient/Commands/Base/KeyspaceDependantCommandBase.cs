@@ -9,16 +9,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Base
             this.keyspace = keyspace;
         }
 
-        public override CommandContext CommandContext
-        {
-            get
+        public override CommandContext CommandContext => new CommandContext
             {
-                return new CommandContext
-                    {
-                        KeyspaceName = keyspace
-                    };
-            }
-        }
+                KeyspaceName = keyspace
+            };
 
         protected readonly string keyspace;
     }

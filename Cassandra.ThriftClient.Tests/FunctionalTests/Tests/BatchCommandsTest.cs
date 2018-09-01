@@ -15,7 +15,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};
             columnFamilyConnection.AddBatch("someKey", columns);
             columnFamilyConnection.DeleteBatch("someKey", columns.Select(column => column.Name));
-            foreach(var column in columns)
+            foreach (var column in columns)
                 CheckNotFound("someKey", column.Name);
         }
 
@@ -25,7 +25,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};
             columnFamilyConnection.AddBatch("someKey", columns);
             columnFamilyConnection.DeleteBatch("someKey", columns.Select(column => column.Name), 123);
-            foreach(var column in columns)
+            foreach (var column in columns)
                 Check("someKey", column.Name, ToString(column.Value));
         }
 
@@ -36,7 +36,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             columnFamilyConnection.AddBatch("someKey", columns);
             columnFamilyConnection.DeleteBatch("someKey", columns.Select(column => column.Name));
             columnFamilyConnection.DeleteBatch("someKey", columns.Select(column => column.Name));
-            foreach(var column in columns)
+            foreach (var column in columns)
                 CheckNotFound("someKey", column.Name);
         }
 
@@ -64,7 +64,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};
             columnFamilyConnection.AddBatch("someKey", columns);
-            foreach(var column in columns)
+            foreach (var column in columns)
                 Check("someKey", column.Name, ToString(column.Value));
         }
     }

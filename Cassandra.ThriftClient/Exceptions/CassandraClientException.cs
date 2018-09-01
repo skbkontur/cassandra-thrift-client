@@ -14,9 +14,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
         {
         }
 
-        public virtual bool IsCorruptConnection { get { return true; } }
+        public virtual bool IsCorruptConnection => true;
 
-        public virtual bool ReduceReplicaLive { get { return true; } }
-        public virtual bool UseAttempts { get { return true; } }
+        public virtual bool ReduceReplicaLive => true;
+        public virtual bool UseAttempts => true;
     }
 }

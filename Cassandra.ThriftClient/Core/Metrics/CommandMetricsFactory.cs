@@ -32,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         private static string FormatSinglePartitionKey([NotNull] ICommand command)
         {
             var singlePartitionQuery = command as ISinglePartitionQuery;
-            if(singlePartitionQuery == null)
+            if (singlePartitionQuery == null)
                 return null;
             try
             {
@@ -48,9 +48,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         private static MetricsContext GetMetricsContext([NotNull] ICommand command, [NotNull] string commandCategory)
         {
             var metricsContext = Metric.Context("CassandraClient").Context(commandCategory);
-            if(!string.IsNullOrEmpty(command.CommandContext.KeyspaceName))
+            if (!string.IsNullOrEmpty(command.CommandContext.KeyspaceName))
                 metricsContext = metricsContext.Context(command.CommandContext.KeyspaceName);
-            if(!string.IsNullOrEmpty(command.CommandContext.ColumnFamilyName))
+            if (!string.IsNullOrEmpty(command.CommandContext.ColumnFamilyName))
                 metricsContext = metricsContext.Context(command.CommandContext.ColumnFamilyName);
             return metricsContext.Context(command.Name);
         }

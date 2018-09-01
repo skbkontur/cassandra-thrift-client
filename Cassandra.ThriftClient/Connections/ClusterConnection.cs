@@ -24,7 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var retrieveKeyspacesCommand = new RetrieveKeyspacesCommand();
             commandExecutor.Execute(retrieveKeyspacesCommand);
-            if(retrieveKeyspacesCommand.Keyspaces == null)
+            if (retrieveKeyspacesCommand.Keyspaces == null)
                 return new List<Keyspace>();
             return retrieveKeyspacesCommand.Keyspaces;
         }
@@ -60,7 +60,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             {
                 var schemaAgreementCommand = new SchemaAgreementCommand();
                 commandExecutor.Execute(schemaAgreementCommand);
-                if(schemaAgreementCommand.Output.Count == 1)
+                if (schemaAgreementCommand.Output.Count == 1)
                     return;
                 LogVersions(schemaAgreementCommand.Output);
             } while (sw.Elapsed < timeout);
@@ -71,7 +71,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         {
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("Cassandra scheme is not synchronized:");
-            foreach(var kvp in versions)
+            foreach (var kvp in versions)
                 stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", kvp.Key, string.Join(",", kvp.Value)));
             logger.Info(stringBuilder.ToString());
         }

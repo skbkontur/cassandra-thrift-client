@@ -25,7 +25,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
                     Timeout = (int)TimeSpan.FromSeconds(6).TotalMilliseconds,
                     FierceTimeout = (int)TimeSpan.FromSeconds(10).TotalMilliseconds,
                     ConnectionIdleTimeout = TimeSpan.FromSeconds(30),
-                    EnableMetrics = false,
+                    EnableMetrics = false
                 };
         }
 
