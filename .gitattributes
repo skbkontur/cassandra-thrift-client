@@ -13,7 +13,10 @@
 *.java        text
 *.iml         text
 *.xml         text
+*.json        text
 *.config      text
+*.props       text
+*.targets     text
 
 # For GitHub language statistics to be correct
 cassandra-local/* linguist-vendored
