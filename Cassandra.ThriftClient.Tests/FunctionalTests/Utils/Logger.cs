@@ -16,9 +16,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
         private static ILog InitFileLogger()
         {
             var logsDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "logs");
-            if (!Directory.Exists(logsDir))
-                Directory.CreateDirectory(logsDir);
-            return new FileLog(() => new FileLogSettings
+            return new FileLog(new FileLogSettings
                 {
                     Encoding = Encoding.UTF8,
                     FileOpenMode = FileOpenMode.Rewrite,
