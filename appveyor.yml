@@ -6,6 +6,13 @@ image: Visual Studio 2017
 
 init:
   - cmd: git config --global core.autocrlf false
+  - ps: |
+      $ErrorActionPreference = "Stop"
+      if ($env:APPVEYOR_REPO_TAG_NAME -match '^v\d+\.\d+') # tag name starts with 'vX.Y'
+      {
+        $env:SHOULD_CREATE_RELEASE = "true"
+        Write-Host "Will create release for $env:APPVEYOR_REPO_TAG_NAME" -ForegroundColor "Green"
+      }
 
 nuget:
   disable_publish_on_pr: true
@@ -19,7 +26,7 @@ build_script:
   - cmd: dotnet pack --no-build --configuration Release ./Cassandra.ThriftClient.sln
 
 test_script:
-  - cmd: dotnet test --no-build --verbosity normal --configuration Release ./Cassandra.ThriftClient.Tests/Cassandra.ThriftClient.Tests.csproj
+  - cmd: rem dotnet test --no-build --verbosity normal --configuration Release ./Cassandra.ThriftClient.Tests/Cassandra.ThriftClient.Tests.csproj
 
 artifacts:
   - path: './Cassandra.ThriftClient/bin/Release/*.nupkg'
@@ -31,7 +38,7 @@ deploy:
       secure: dzTnT0xSlPrHnrG06cj354nTN4lXWhfh4ZCJ1910I3VnNdvbx0rQFLTyJ5l1+bgB
     skip_symbols: true
     on:
-      APPVEYOR_REPO_TAG: true
+      SHOULD_CREATE_RELEASE: true
 
   - provider: GitHub
     tag: $(APPVEYOR_REPO_TAG_NAME)
@@ -39,4 +46,4 @@ deploy:
     draft: true
     prerelease: false
     on:
-      APPVEYOR_REPO_TAG: true
+      SHOULD_CREATE_RELEASE: true
