@@ -35,6 +35,7 @@ deploy:
 
   - provider: GitHub
     tag: $(APPVEYOR_REPO_TAG_NAME)
+    auth_token: OZgDvhf2y1VmZ0d8WdUiy+5Jesan1yVtJegSIrFsITrTWdSIRPVuTq1RHbDfgFVi
     draft: true
     prerelease: false
     on:
