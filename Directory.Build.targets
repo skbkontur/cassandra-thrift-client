@@ -7,4 +7,17 @@
     </ItemGroup>
   </Target>
 
+  <Target Name="SetNuSpecProperties" BeforeTargets="GenerateNuspec" DependsOnTargets="GetBuildVersion">
+    <PropertyGroup>
+      <PackageId>$(AssemblyName)</PackageId>
+      <Authors>Alexander Kokovin, Fedor Fominykh, Ivan Burmistrov, Evgeny Tikhonov, Andrew Kostousov</Authors>
+      <PackageTags>cassandra thrift client</PackageTags>
+      <PackageDescription>.NET client for Apache Cassandra thrift interface</PackageDescription>
+      <RepositoryType>git</RepositoryType>
+      <RepositoryUrl>https://github.com/skbkontur/cassandra-thrift-client</RepositoryUrl>
+      <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+      <PackageReleaseNotes>$(RepositoryUrl)/releases/tag/v$(MajorMinorVersion)</PackageReleaseNotes>
+    </PropertyGroup>
+  </Target>
+
 </Project>

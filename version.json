@@ -9,9 +9,9 @@
     "semVer": 2
   },
   "cloudBuild": {
+    "setVersionVariables": true,
     "buildNumber": {
-      "enabled": true,
-      "setVersionVariables": true
+      "enabled": true
     }
   }
 }
