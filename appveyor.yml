@@ -1,7 +1,14 @@
+skip_commits:
+  files:
+    - '**/*.md'
+
 image: Visual Studio 2017
 
 init:
   - cmd: git config --global core.autocrlf false
+
+nuget:
+  disable_publish_on_pr: true
 
 before_build:
   - cmd: dotnet --info
@@ -9,6 +16,26 @@ before_build:
 
 build_script:
   - cmd: dotnet build --configuration Release ./Cassandra.ThriftClient.sln
+  - cmd: dotnet pack --no-build --configuration Release ./Cassandra.ThriftClient.sln
 
 test_script:
   - cmd: dotnet test --no-build --verbosity normal --configuration Release ./Cassandra.ThriftClient.Tests/Cassandra.ThriftClient.Tests.csproj
+
+artifacts:
+  - path: './Cassandra.ThriftClient/bin/Release/*.nupkg'
+
+deploy:
+  - provider: NuGet
+    server: https://nuget.org
+    api_key:
+      secure: dzTnT0xSlPrHnrG06cj354nTN4lXWhfh4ZCJ1910I3VnNdvbx0rQFLTyJ5l1+bgB
+    skip_symbols: true
+    on:
+      APPVEYOR_REPO_TAG: true
+
+  - provider: GitHub
+    tag: $(APPVEYOR_REPO_TAG_NAME)
+    draft: true
+    prerelease: false
+    on:
+      APPVEYOR_REPO_TAG: true
