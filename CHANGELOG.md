@@ -1,6 +1,6 @@
 # Changelog
 
-## 2.0 - 2018.09.11
+## v2.0 - 2018.09.12
 - Prepare SkbKontur.Cassandra.ThriftClient to work with Cassandra v3.11.x 
   (see [CASSANDRA-9839](https://issues.apache.org/jira/browse/CASSANDRA-9839)).
 - Use [SkbKontur.Cassandra.Local](https://github.com/skbkontur/cassandra-local) module for integration testing.

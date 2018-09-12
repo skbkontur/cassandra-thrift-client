@@ -12,11 +12,11 @@ init:
       if ($tagName -match '^v\d+\.\d+') # tag name starts with 'vX.Y'
       {
         $env:SHOULD_PUBLISH_NUGET_PACKAGE = "true"
-        Write-Host "Will publish nuget package for $tagName" -ForegroundColor "Green"
+        Write-Host "Will publish nuget package for $tagName tag" -ForegroundColor "Green"
         if ($tagName -match '^v\d+\.\d+-release$') # tag name matches 'vX.Y-release'
         {
           $env:SHOULD_CREATE_RELEASE = "true"
-          Write-Host "Will create release for $tagName" -ForegroundColor "Green"
+          Write-Host "Will create release for $tagName tag" -ForegroundColor "Green"
         }
       }
 
@@ -32,7 +32,7 @@ build_script:
   - cmd: dotnet pack --no-build --configuration Release ./Cassandra.ThriftClient.sln
 
 test_script:
-  - cmd: rem dotnet test --no-build --verbosity normal --configuration Release ./Cassandra.ThriftClient.Tests/Cassandra.ThriftClient.Tests.csproj
+  - cmd: dotnet test --no-build --verbosity normal --configuration Release ./Cassandra.ThriftClient.Tests/Cassandra.ThriftClient.Tests.csproj
 
 artifacts:
   - path: './Cassandra.ThriftClient/bin/Release/*.nupkg'
@@ -50,7 +50,7 @@ deploy:
     tag: $(APPVEYOR_REPO_TAG_NAME)
     auth_token:
       secure: y8dDOcAtq4U1MTDJFX8f23xsvyFU1u4bhwr9Lzbkf2revNWPPTifBkWghris9v8i
-    draft: true
+    draft: false
     prerelease: false
     on:
       SHOULD_CREATE_RELEASE: true
