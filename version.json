@@ -11,7 +11,7 @@
   "cloudBuild": {
     "setVersionVariables": true,
     "buildNumber": {
-      "enabled": true
+      "enabled": false
     }
   }
 }
