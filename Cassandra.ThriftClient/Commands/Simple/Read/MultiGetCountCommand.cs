@@ -4,6 +4,8 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using Vostok.Logging.Abstractions;
+
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
@@ -18,7 +20,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.predicate = predicate ?? new SlicePredicate(new SliceRange {Count = int.MaxValue});
         }
 
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
             Output = cassandraClient.multiget_count(keys, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
         }

@@ -52,7 +52,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
                     throw e;
                 }
-                command.Execute(cassandraClient);
+                command.Execute(cassandraClient, logger);
             }
         }
 

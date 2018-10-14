@@ -7,6 +7,8 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using Vostok.Logging.Abstractions;
+
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 using KeyRange = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.KeyRange;
 using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
@@ -23,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             this.predicate = predicate;
         }
 
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
             Output = null;
             var columnParent = BuildColumnParent();

@@ -1,6 +1,8 @@
 ﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 
+using Vostok.Logging.Abstractions;
+
 namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
 {
     internal class UpdateColumnFamilyCommand : KeyspaceDependantCommandBase, IFierceCommand
@@ -11,7 +13,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
             this.columnFamilyDefinition = columnFamilyDefinition;
         }
 
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
             Output = cassandraClient.system_update_column_family(columnFamilyDefinition.ToCassandraCfDef(keyspace));
         }
