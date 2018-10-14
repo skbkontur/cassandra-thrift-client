@@ -94,6 +94,18 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             }
         }
 
+        [Test]
+        public void TestGetNonexistentRows()
+        {
+            const int rowKeysCount = 100;
+            const int columnNamesCount = 100;
+            var rowKeys = new int[rowKeysCount].Select(x => Guid.NewGuid().ToString()).ToArray();
+            var intColumnNames = GetRandomColumnIndexesFromRange(0, columnNamesCount, columnNamesCount).ToArray();
+            var strColumnNames = intColumnNames.Select(IntToString).ToArray();
+            var res = columnFamilyConnection.GetRows(rowKeys, strColumnNames.Concat(new[]{100, 101, 102}.Select(IntToString)).ToArray());
+            Assert.IsEmpty(res);
+        }
+
         private string IntToString(int x)
         {
             return x.ToString("0000", CultureInfo.InvariantCulture);
