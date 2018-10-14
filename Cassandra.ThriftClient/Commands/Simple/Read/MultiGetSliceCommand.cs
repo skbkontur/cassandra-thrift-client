@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 using Apache.Cassandra;
@@ -6,6 +7,7 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using Vostok.Logging.Abstractions;
 
@@ -26,7 +28,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
-            var output = cassandraClient.multiget_slice(keys, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
+            var columnParent = BuildColumnParent();
+            var slicePredicate = predicate.ToCassandraSlicePredicate();
+            var output = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(
+                keys,
+                queryKeys => cassandraClient.multiget_slice(queryKeys, columnParent, slicePredicate, consistencyLevel),
+                logger.WithContext($"MultiGetSliceCommand[keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel='{consistencyLevel}']"));
             BuildOut(output);
         }
 

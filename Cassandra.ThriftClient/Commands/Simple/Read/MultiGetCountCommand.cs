@@ -3,6 +3,8 @@
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SKBKontur.Cassandra.CassandraClient.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using Vostok.Logging.Abstractions;
 
@@ -22,7 +24,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
-            Output = cassandraClient.multiget_count(keys, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);
+            var columnParent = BuildColumnParent();
+            var slicePredicate = predicate.ToCassandraSlicePredicate();
+            Output = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(
+                keys,
+                queryKeys => cassandraClient.multiget_count(keys, columnParent, slicePredicate, consistencyLevel),
+                logger.WithContext($"MultiGetCountCommand[keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel='{consistencyLevel}']"));
         }
 
         public Dictionary<byte[], int> Output { get; private set; }
