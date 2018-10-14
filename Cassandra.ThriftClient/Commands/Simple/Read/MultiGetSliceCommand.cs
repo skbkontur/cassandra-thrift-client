@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 using Apache.Cassandra;
@@ -33,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
             var output = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(
                 keys,
                 queryKeys => cassandraClient.multiget_slice(queryKeys, columnParent, slicePredicate, consistencyLevel),
-                logger.WithContext($"MultiGetSliceCommand[keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel='{consistencyLevel}']"));
+                logger.ForContext($"MultiGetSliceCommand[keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel='{consistencyLevel}']"));
             BuildOut(output);
         }
 
