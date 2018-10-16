@@ -12,9 +12,9 @@ using Vostok.Logging.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
-    internal class MultigetQueryHelpers
+    internal class MultigetQueryHelper
     {
-        internal MultigetQueryHelpers(string commandName, string keyspace, string columnFamily, ConsistencyLevel? consistencyLevel)
+        internal MultigetQueryHelper(string commandName, string keyspace, string columnFamily, ConsistencyLevel? consistencyLevel)
         {
             this.commandName = commandName;
             this.keyspace = keyspace;

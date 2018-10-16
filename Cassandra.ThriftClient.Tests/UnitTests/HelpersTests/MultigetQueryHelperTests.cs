@@ -15,21 +15,21 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         [Test]
         public void TestPartialFetcher()
         {
-            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, ReturnFirstElementFetcherFactory());
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReturnFirstElementFetcherFactory());
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFullFetcher()
         {
-            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, FullFetcherFactory());
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, FullFetcherFactory());
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFetcherThatShuffleRequestPrefix()
         {
-            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, ReversePrefixFetcherFactory(prefixLength : 7));
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReversePrefixFetcherFactory(prefixLength : 7));
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
@@ -41,7 +41,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
             const string columnFamily = "test_column_family_name";
             const string consistencyLevel = "QUORUM";
 
-            void FetchKeys() => new MultigetQueryHelpers(commandName, keyspace, columnFamily, Apache.Cassandra.ConsistencyLevel.QUORUM)
+            void FetchKeys() => new MultigetQueryHelper(commandName, keyspace, columnFamily, Apache.Cassandra.ConsistencyLevel.QUORUM)
                 .EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory());
 
             Assert.Throws(Is.TypeOf<CassandraClientInvalidResponseException>()
@@ -54,14 +54,11 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         [Test]
         public void TestFetcherThatDoesNotReturnRequestPrefix()
         {
-            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, ReverseSuffixFetcherFactory(suffixLength : 7));
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReverseSuffixFetcherFactory(suffixLength : 7));
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
-        private MultigetQueryHelpers Default()
-        {
-            return new MultigetQueryHelpers(string.Empty, string.Empty, string.Empty, null);
-        }
+        private MultigetQueryHelper DefaultMultigetQueryHelper => new MultigetQueryHelper(string.Empty, string.Empty, string.Empty, null);
 
         private static Func<List<byte[]>, Dictionary<byte[], int>> ReturnFirstElementFetcherFactory()
         {

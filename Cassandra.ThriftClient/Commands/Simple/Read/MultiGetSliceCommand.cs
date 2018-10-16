@@ -29,7 +29,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         {
             var columnParent = BuildColumnParent();
             var slicePredicate = predicate.ToCassandraSlicePredicate();
-            var output = new MultigetQueryHelpers(nameof(MultiGetSliceCommand), keyspace, columnFamily, consistencyLevel)
+            var output = new MultigetQueryHelper(nameof(MultiGetSliceCommand), keyspace, columnFamily, consistencyLevel)
                 .EnumerateAllKeysWithPartialFetcher(
                     keys,
                     queryKeys => cassandraClient.multiget_slice(queryKeys, columnParent, slicePredicate, consistencyLevel), logger);
