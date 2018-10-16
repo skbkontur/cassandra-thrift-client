@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Apache.Cassandra;
+
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
@@ -15,36 +17,47 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         [Test]
         public void TestPartialFetcher()
         {
-            var result = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(keys, ReturnFirstElementFetcherFactory());
+            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, ReturnFirstElementFetcherFactory());
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFullFetcher()
         {
-            var result = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(keys, FullFetcherFactory());
+            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, FullFetcherFactory());
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFetcherThatShuffleRequestPrefix()
         {
-            var result = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(keys, ReversePrefixFetcherFactory(prefixLength : 7));
+            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, ReversePrefixFetcherFactory(prefixLength : 7));
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFetcherThatStuck()
         {
-            Assert.Throws<CassandraClientInvalidResponseException>(
-                () => MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory()));
+            var keyspace = "test_keyspace_name";
+            var columnFamily = "test_column_family_name";
+            var consistencyLevel = "QUORUM";
+            Assert.Throws(Is.TypeOf<CassandraClientInvalidResponseException>()
+                            .And.Message.Contains(keyspace)
+                            .And.Message.Contains(columnFamily)
+                            .And.Message.Contains(consistencyLevel),
+                          () => new MultigetQueryHelpers(keyspace, columnFamily, ConsistencyLevel.QUORUM).EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory()));
         }
 
         [Test]
         public void TestFetcherThatDoesNotReturnRequestPrefix()
         {
-            var result = MultigetQueryHelpers.EnumerateAllKeysWithPartialFetcher(keys, ReverseSuffixFetcherFactory(suffixLength : 7));
+            var result = Default().EnumerateAllKeysWithPartialFetcher(keys, ReverseSuffixFetcherFactory(suffixLength : 7));
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
+        }
+
+        private MultigetQueryHelpers Default()
+        {
+            return new MultigetQueryHelpers(string.Empty, string.Empty, null);
         }
 
         private static Func<List<byte[]>, Dictionary<byte[], int>> ReturnFirstElementFetcherFactory()
