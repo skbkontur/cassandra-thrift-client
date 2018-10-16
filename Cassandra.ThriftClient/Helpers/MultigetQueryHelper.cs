@@ -32,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
         internal Dictionary<byte[], TValue> EnumerateAllKeysWithPartialFetcher<TValue>(
             [NotNull] List<byte[]> keys,
             [NotNull] Func<List<byte[]>, Dictionary<byte[], TValue>> partialFetcher,
-            [CanBeNull] ILog logger = null)
+            [NotNull] ILog logger)
         {
             var keysToFetch = new HashSet<byte[]>(keys, ByteArrayEqualityComparer.Instance);
             var output = new Dictionary<byte[], TValue>();
@@ -51,7 +51,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
 
             if (attempts > 1)
             {
-                logger?.Warn($"Query with parameters {QueryParameters} enumerates {keys.Count} partitions in {attempts} attempts");
+                logger.Warn($"Query with parameters {QueryParameters} enumerates {keys.Count} partitions in {attempts} attempts");
             }
 
             return output;

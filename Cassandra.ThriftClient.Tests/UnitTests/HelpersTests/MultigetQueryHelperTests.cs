@@ -8,6 +8,8 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
+using Vostok.Logging.Abstractions;
+
 namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 {
     public class MultigetQueryHelperTests : TestBase
@@ -15,21 +17,21 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         [Test]
         public void TestPartialFetcher()
         {
-            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReturnFirstElementFetcherFactory());
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReturnFirstElementFetcherFactory(), silentLog);
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFullFetcher()
         {
-            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, FullFetcherFactory());
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, FullFetcherFactory(), silentLog);
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
         [Test]
         public void TestFetcherThatShuffleRequestPrefix()
         {
-            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReversePrefixFetcherFactory(prefixLength : 7));
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReversePrefixFetcherFactory(prefixLength : 7), silentLog);
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
@@ -42,7 +44,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
             const string consistencyLevel = "QUORUM";
 
             void FetchKeys() => new MultigetQueryHelper(commandName, keyspace, columnFamily, Apache.Cassandra.ConsistencyLevel.QUORUM)
-                .EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory());
+                .EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory(), silentLog);
 
             Assert.Throws(Is.TypeOf<CassandraClientInvalidResponseException>()
                             .And.Message.Contains(commandName)
@@ -54,7 +56,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         [Test]
         public void TestFetcherThatDoesNotReturnRequestPrefix()
         {
-            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReverseSuffixFetcherFactory(suffixLength : 7));
+            var result = DefaultMultigetQueryHelper.EnumerateAllKeysWithPartialFetcher(keys, ReverseSuffixFetcherFactory(suffixLength : 7), silentLog);
             CollectionAssert.AreEquivalent(result.Select(item => (Key : item.Key, Value : item.Value)), keysWithValues);
         }
 
@@ -96,6 +98,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         }
 
         private static byte[] GetBytes(string s) => Encoding.UTF8.GetBytes(s);
+        private static ILog silentLog = new SilentLog();
         private static readonly List<byte[]> keys = Enumerable.Range(0, 100).Select(i => GetBytes(i.ToString())).ToList();
         private static readonly List<(byte[] Key, int Value)> keysWithValues = keys.Select(key => (Key : key, Value : (int)key[0])).ToList();
     }
