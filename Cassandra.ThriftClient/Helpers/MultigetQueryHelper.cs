@@ -12,6 +12,12 @@ using Vostok.Logging.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
+    /// <summary>
+    /// There is a bug in the Cassandra that was introduced in the multiget_slice/multiget_count Thrift queries since version 3.0.
+    /// This bug affects read in such a way that Cassandra sometimes doesn't return all the requested data but only return the prefix of the requested keys.
+    /// <see cref="MultigetQueryHelper "/> retries queries in case of bug affection and avoids any data skips at the cost of longer requests. 
+    /// See more details in the issue: https://issues.apache.org/jira/browse/CASSANDRA-14812
+    /// </summary>
     internal class MultigetQueryHelper
     {
         internal MultigetQueryHelper(string commandName, string keyspace, string columnFamily, ConsistencyLevel? consistencyLevel)
