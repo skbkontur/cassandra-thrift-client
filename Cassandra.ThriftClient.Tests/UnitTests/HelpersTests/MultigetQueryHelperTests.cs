@@ -98,7 +98,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         }
 
         private static byte[] GetBytes(string s) => Encoding.UTF8.GetBytes(s);
-        private static ILog silentLog = new SilentLog();
+        private static readonly ILog silentLog = new SilentLog();
         private static readonly List<byte[]> keys = Enumerable.Range(0, 100).Select(i => GetBytes(i.ToString())).ToList();
         private static readonly List<(byte[] Key, int Value)> keysWithValues = keys.Select(key => (Key : key, Value : (int)key[0])).ToList();
     }

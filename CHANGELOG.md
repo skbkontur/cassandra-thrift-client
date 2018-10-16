@@ -15,3 +15,5 @@
 - Fix comparison of disabled compaction strategies 
   (PR [#2](https://github.com/skbkontur/cassandra-thrift-client/pull/2)).
 - Add org.apache.cassandra.db.marshal.SimpleDateType to supported DataTypes.
+- Add retry logic for MultigetSlice/MultigetCount queries to avoid data skip that caused by the bug [CASSANDRA-14812](https://issues.apache.org/jira/browse/CASSANDRA-14812) 
+(PR [#3](https://github.com/skbkontur/cassandra-thrift-client/pull/3)).
