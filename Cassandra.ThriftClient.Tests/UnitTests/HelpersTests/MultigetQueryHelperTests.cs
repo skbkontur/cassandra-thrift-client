@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-using Apache.Cassandra;
-
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
@@ -38,14 +36,19 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
         [Test]
         public void TestFetcherThatStuck()
         {
-            var keyspace = "test_keyspace_name";
-            var columnFamily = "test_column_family_name";
-            var consistencyLevel = "QUORUM";
+            const string commandName = "test_command_name";
+            const string keyspace = "test_keyspace_name";
+            const string columnFamily = "test_column_family_name";
+            const string consistencyLevel = "QUORUM";
+
+            void FetchKeys() => new MultigetQueryHelpers(commandName, keyspace, columnFamily, Apache.Cassandra.ConsistencyLevel.QUORUM)
+                .EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory());
+
             Assert.Throws(Is.TypeOf<CassandraClientInvalidResponseException>()
+                            .And.Message.Contains(commandName)
                             .And.Message.Contains(keyspace)
                             .And.Message.Contains(columnFamily)
-                            .And.Message.Contains(consistencyLevel),
-                          () => new MultigetQueryHelpers(keyspace, columnFamily, ConsistencyLevel.QUORUM).EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory()));
+                            .And.Message.Contains(consistencyLevel), FetchKeys);
         }
 
         [Test]
@@ -57,7 +60,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 
         private MultigetQueryHelpers Default()
         {
-            return new MultigetQueryHelpers(string.Empty, string.Empty, null);
+            return new MultigetQueryHelpers(string.Empty, string.Empty, string.Empty, null);
         }
 
         private static Func<List<byte[]>, Dictionary<byte[], int>> ReturnFirstElementFetcherFactory()

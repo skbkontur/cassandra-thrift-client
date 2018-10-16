@@ -25,10 +25,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         {
             var columnParent = BuildColumnParent();
             var slicePredicate = predicate.ToCassandraSlicePredicate();
-            Output = new MultigetQueryHelpers(keyspace, columnFamily, consistencyLevel).EnumerateAllKeysWithPartialFetcher(
-                keys,
-                queryKeys => cassandraClient.multiget_count(queryKeys, columnParent, slicePredicate, consistencyLevel),
-                logger.ForContext($"MultiGetCountCommand[keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel='{consistencyLevel}']"));
+            Output = new MultigetQueryHelpers(nameof(MultiGetCountCommand), keyspace, columnFamily, consistencyLevel)
+                .EnumerateAllKeysWithPartialFetcher(
+                    keys,
+                    queryKeys => cassandraClient.multiget_count(queryKeys, columnParent, slicePredicate, consistencyLevel), logger);
         }
 
         public Dictionary<byte[], int> Output { get; private set; }

@@ -14,12 +14,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     internal class MultigetQueryHelpers
     {
-        private readonly string keyspace;
-        private readonly string columnFamily;
-        private readonly ConsistencyLevel? consistencyLevel;
-
-        internal MultigetQueryHelpers(string keyspace, string columnFamily, ConsistencyLevel? consistencyLevel)
+        internal MultigetQueryHelpers(string commandName, string keyspace, string columnFamily, ConsistencyLevel? consistencyLevel)
         {
+            this.commandName = commandName;
             this.keyspace = keyspace;
             this.columnFamily = columnFamily;
             this.consistencyLevel = consistencyLevel;
@@ -34,10 +31,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
             var keysToFetch = new HashSet<byte[]>(keys, ByteArrayEqualityComparer.Instance);
             var output = new Dictionary<byte[], TValue>();
             var attempts = 0;
-            while(keysToFetch.Any())
+            while (keysToFetch.Any())
             {
                 var maybePartialOutput = FetchPartialResult(keysToFetch.ToList(), partialFetcher);
-                foreach(var item in maybePartialOutput)
+                foreach (var item in maybePartialOutput)
                 {
                     output.Add(item.Key, item.Value);
                     keysToFetch.Remove(item.Key);
@@ -46,7 +43,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                 attempts++;
             }
 
-            if(attempts > 1)
+            if (attempts > 1)
             {
                 logger?.Warn($"Query with parameters {QueryParameters} enumerates {keys.Count} partitions in {attempts} attempts");
             }
@@ -60,12 +57,18 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
             [NotNull] Func<List<byte[]>, Dictionary<byte[], TValue>> partialFetcher)
         {
             var maybePartialOutput = partialFetcher(keys);
-            if(maybePartialOutput.Count == 0)
+            if (maybePartialOutput.Count == 0)
                 throw new CassandraClientInvalidResponseException($"Queried {keys.Count} partitions with parameters {QueryParameters}, Cassandra returned empty result");
 
             return maybePartialOutput;
         }
 
-        private string QueryParameters => $"[keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel={consistencyLevel}]";
+        [NotNull]
+        private string QueryParameters => $"[command='{commandName}', keyspace='{keyspace}', columnFamily='{columnFamily}', consistencyLevel={consistencyLevel}]";
+
+        private readonly string commandName;
+        private readonly string keyspace;
+        private readonly string columnFamily;
+        private readonly ConsistencyLevel? consistencyLevel;
     }
 }
