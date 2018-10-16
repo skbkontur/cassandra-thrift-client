@@ -33,6 +33,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
                 return new CassandraClientIOException(message, e);
             if (e is SchemaDisagreementException)
                 return new CassandraClientSchemaDisagreementException(message, e);
+            if(e is CassandraClientInvalidResponseException)
+                return (CassandraClientInvalidResponseException)e;
             return new CassandraUnknownException(message, e);
             // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
         }

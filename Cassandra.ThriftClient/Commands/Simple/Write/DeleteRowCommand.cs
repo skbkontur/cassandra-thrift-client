@@ -6,6 +6,8 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 using SKBKontur.Cassandra.CassandraClient.Core;
 
+using Vostok.Logging.Abstractions;
+
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
@@ -25,7 +27,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 
         public int QueriedPartitionsCount => 1;
 
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
             cassandraClient.remove(
                 PartitionKey,

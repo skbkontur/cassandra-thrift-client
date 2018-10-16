@@ -8,6 +8,8 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
+using Vostok.Logging.Abstractions;
+
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
@@ -21,7 +23,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
             this.mutations = mutations;
         }
 
-        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient)
+        public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
             var mutationMap = TranslateMutations();
             cassandraClient.batch_mutate(mutationMap, consistencyLevel);
