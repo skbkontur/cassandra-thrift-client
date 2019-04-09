@@ -13,7 +13,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         {
             retries = context.Meter("Retries", Unit.Items, TimeUnit.Minutes);
             queriedPartitions = context.Meter("QueriedPartitions", Unit.Items, TimeUnit.Minutes);
-            responseSize = context.Meter("ResponseSize", Unit.Bytes, TimeUnit.Minutes);
+            responseBytesPerMinute = context.Meter("ResponseBytesPerMinute", Unit.Bytes, TimeUnit.Minutes);
+            responseBytes = context.Histogram("ResponseBytes", Unit.Bytes);
         }
 
         public void RecordRetry()
@@ -25,11 +26,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         {
             queriedPartitions.Mark(command.QueriedPartitionsCount);
             if(command.ResponseSize.HasValue)
-                responseSize.Mark(command.ResponseSize.Value);
+            {
+                responseBytesPerMinute.Mark(command.ResponseSize.Value);
+                responseBytes.Update(command.ResponseSize.Value);
+            }
         }
 
         private readonly Meter retries;
         private readonly Meter queriedPartitions;
-        private readonly Meter responseSize;
+        private readonly Meter responseBytesPerMinute;
+        private readonly Histogram responseBytes;
     }
 }
