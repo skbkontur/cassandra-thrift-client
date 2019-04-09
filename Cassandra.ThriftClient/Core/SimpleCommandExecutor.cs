@@ -34,7 +34,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
                     try
                     {
                         ExecuteCommand(command, metrics);
-                        metrics.RecordQueriedPartitions(command);
+                        metrics.RecordCommandExecutionInfo(command);
                         break;
                     }
                     catch (CassandraClientException exception)

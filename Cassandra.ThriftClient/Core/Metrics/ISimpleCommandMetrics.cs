@@ -7,6 +7,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
     internal interface ISimpleCommandMetrics : ICommandMetrics
     {
         void RecordRetry();
-        void RecordQueriedPartitions([NotNull] ISimpleCommand command);
+        void RecordCommandExecutionInfo([NotNull] ISimpleCommand command);
     }
 }

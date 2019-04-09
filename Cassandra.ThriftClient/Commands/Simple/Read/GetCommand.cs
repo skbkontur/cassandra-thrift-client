@@ -25,6 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         public byte[] PartitionKey { get; }
 
         public int QueriedPartitionsCount => 1;
+        public long? ResponseSize => Output?.Value?.Length;
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
@@ -39,7 +40,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
                 //ничего не делаем
             }
 
-            Output = columnOrSupercolumn != null ? columnOrSupercolumn.Column.FromCassandraColumn() : null;
+            Output = columnOrSupercolumn?.Column.FromCassandraColumn();
         }
 
         public RawColumn Output { get; private set; }

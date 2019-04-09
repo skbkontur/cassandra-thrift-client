@@ -3,5 +3,6 @@
     internal interface ISimpleCommand : ICommand
     {
         int QueriedPartitionsCount { get; }
+        long? ResponseSize { get; }
     }
 }

@@ -35,6 +35,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public List<byte[]> Output { get; private set; }
         public int QueriedPartitionsCount => Output.Count;
+        public long? ResponseSize => Output.Sum(x => (long)x.Length);
 
         private void BuildOut(IEnumerable<KeySlice> output)
         {
