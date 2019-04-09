@@ -38,6 +38,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public Dictionary<byte[], List<RawColumn>> Output { get; private set; }
         public int QueriedPartitionsCount => keys.Count;
+        public long? ResponseSize => Output.Sum(kvp => kvp.Value.Sum(x => (long)x.Value.Length));
 
         private void BuildOut(Dictionary<byte[], List<ColumnOrSuperColumn>> output)
         {

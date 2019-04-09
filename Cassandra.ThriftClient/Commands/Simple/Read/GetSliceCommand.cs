@@ -30,6 +30,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
         public byte[] PartitionKey { get; }
 
         public int QueriedPartitionsCount => 1;
+        public long? ResponseSize => Output.Sum(x => (long)x.Value.Length);
 
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {

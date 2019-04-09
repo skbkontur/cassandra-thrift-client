@@ -48,6 +48,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
         }
 
         public int QueriedPartitionsCount { get { return mutations.Sum(columnFamilyMutations => columnFamilyMutations.Value.Count); } }
+        public long? ResponseSize => null;
 
         private readonly ConsistencyLevel consistencyLevel;
         private readonly Dictionary<string, Dictionary<byte[], List<IMutation>>> mutations;

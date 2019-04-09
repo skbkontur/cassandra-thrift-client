@@ -25,6 +25,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public int QueriedPartitionsCount => 1;
 
+        public long? ResponseSize => null;
+
         public override void Execute(Apache.Cassandra.Cassandra.Client cassandraClient, ILog logger)
         {
             Count = cassandraClient.get_count(PartitionKey, BuildColumnParent(), predicate.ToCassandraSlicePredicate(), consistencyLevel);

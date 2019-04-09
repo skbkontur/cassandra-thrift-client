@@ -38,7 +38,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         {
         }
 
-        public void RecordQueriedPartitions([NotNull] ISimpleCommand command)
+        public void RecordCommandExecutionInfo([NotNull] ISimpleCommand command)
         {
         }
 

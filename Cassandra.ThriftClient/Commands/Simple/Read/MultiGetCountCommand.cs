@@ -33,6 +33,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
 
         public Dictionary<byte[], int> Output { get; private set; }
         public int QueriedPartitionsCount => keys.Count;
+        public long? ResponseSize => null;
 
         private readonly ConsistencyLevel consistencyLevel;
         private readonly List<byte[]> keys;
