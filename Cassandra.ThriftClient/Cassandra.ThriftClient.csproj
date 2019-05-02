@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="ILRepack" Version="2.0.16" PrivateAssets="All" />
     <PackageReference Include="SkbKontur.Metrics.Net" Version="0.4.7" />
-    <PackageReference Include="Vostok.Logging.Abstractions" Version="0.1.0" />
+    <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.1" />
   </ItemGroup>
 
   <ItemGroup>

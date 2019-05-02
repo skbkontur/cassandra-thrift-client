@@ -25,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                               ILog logger,
                               TimeSpan? itemIdleTimeout = null)
         {
-            this.logger = logger.ForContext("CassandraThriftClient.ReplicaSetPool");
+            this.logger = logger.ForContext("ReplicaSetPool");
             if (replicas.Count == 0)
                 throw new EmptyPoolException("Cannot create empty ReplicaSetPool");
             this.logger.Info("ReplicaSetPool created with client topology: {0}", string.Join(", ", replicas));
