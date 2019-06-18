@@ -48,6 +48,9 @@
         CounterColumnType,
 
         [StringValue("org.apache.cassandra.db.marshal.CompositeType")]
-        CompositeType
+        CompositeType,
+
+        [StringValue("org.apache.cassandra.db.marshal.TimestampType")]
+        TimestampType
     }
 }
