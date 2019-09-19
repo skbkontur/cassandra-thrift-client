@@ -1,9 +1,9 @@
 using System;
 using System.Threading;
 
-using NUnit.Framework;
+using Moq;
 
-using Rhino.Mocks;
+using NUnit.Framework;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests
 {
@@ -12,22 +12,21 @@ namespace Cassandra.ThriftClient.Tests.UnitTests
         [SetUp]
         public virtual void SetUp()
         {
-            MockRepository = new MockRepository();
+            MockRepository = new MockRepository(MockBehavior.Strict);
         }
 
         [TearDown]
         public virtual void TearDown()
         {
             MockRepository.VerifyAll();
+            MockRepository.VerifyNoOtherCalls();
         }
 
-        public static MockRepository MockRepository { get; private set; }
+        private static MockRepository MockRepository { get; set; }
 
-        protected static T GetMock<T>()
+        protected static Mock<T> GetMock<T>() where T : class
         {
-            var mock = MockRepository.StrictMock<T>();
-            mock.Replay();
-            return mock;
+            return MockRepository.Create<T>();
         }
 
         protected static void RunMethodWithException<TE>(Action method, string expectedMessageSubstring)
