@@ -48,10 +48,10 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 
             var thriftConnectionMock = GetMock<IThriftConnection>();
             var thriftConnection = thriftConnectionMock.Object;
-            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection);
-            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command));
-            dataConnectionPool.Setup(pool => pool.Release(thriftConnection));
-            dataConnectionPool.Setup(pool => pool.Good(thriftConnection));
+            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection).Verifiable();
+            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Release(thriftConnection)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Good(thriftConnection)).Verifiable();
 
             executor.Execute(command);
         }
@@ -63,17 +63,15 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 
             var thriftConnectionMock = GetMock<IThriftConnection>();
             var thriftConnection = thriftConnectionMock.Object;
-            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection);
-            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Throws(new TimedOutException());
-            dataConnectionPool.Setup(pool => pool.Remove(thriftConnection));
-            dataConnectionPool.Setup(pool => pool.Bad(thriftConnection));
+            thriftConnectionMock.SetupSequence(connection => connection.ExecuteCommand(command))
+                                .Throws(new TimedOutException())
+                                .Pass();
 
-            var goodThriftConnectionMock = GetMock<IThriftConnection>();
-            var goodThriftConnection = goodThriftConnectionMock.Object;
-            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(goodThriftConnection);
-            goodThriftConnectionMock.Setup(connection => connection.ExecuteCommand(command));
-            dataConnectionPool.Setup(pool => pool.Release(goodThriftConnection));
-            dataConnectionPool.Setup(pool => pool.Good(goodThriftConnection));
+            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Remove(thriftConnection)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Bad(thriftConnection)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Release(thriftConnection)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Good(thriftConnection)).Verifiable();
 
             executor.Execute(command);
         }
@@ -145,10 +143,10 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 
             var thriftConnectionMock = GetMock<IThriftConnection>();
             var thriftConnection = thriftConnectionMock.Object;
-            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection);
-            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Throws(new TimedOutException());
-            dataConnectionPool.Setup(pool => pool.Remove(thriftConnection));
-            dataConnectionPool.Setup(pool => pool.Bad(thriftConnection));
+            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection).Verifiable();
+            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Throws(new TimedOutException()).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Remove(thriftConnection)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Bad(thriftConnection)).Verifiable();
 
             RunMethodWithException<CassandraAttemptsException>(() => executor.Execute(command), "Operation failed for 1 attempts");
         }
@@ -159,25 +157,23 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 
             var thriftConnectionMock = GetMock<IThriftConnection>();
             var thriftConnection = thriftConnectionMock.Object;
-            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection);
-            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Throws(commandExecutionException);
+            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection).Verifiable();
+            thriftConnectionMock.SetupSequence(connection => connection.ExecuteCommand(command))
+                                .Throws(commandExecutionException)
+                                .Pass();
 
             if (removeConnection)
-                dataConnectionPool.Setup(pool => pool.Remove(thriftConnection));
+                dataConnectionPool.Setup(pool => pool.Remove(thriftConnection)).Verifiable();
             else
-                dataConnectionPool.Setup(pool => pool.Release(thriftConnection));
+                dataConnectionPool.Setup(pool => pool.Release(thriftConnection)).Verifiable();
 
             if (reduceReplicaLive)
-                dataConnectionPool.Setup(pool => pool.Bad(thriftConnection));
+                dataConnectionPool.Setup(pool => pool.Bad(thriftConnection)).Verifiable();
             else
-                dataConnectionPool.Setup(pool => pool.Good(thriftConnection));
+                dataConnectionPool.Setup(pool => pool.Good(thriftConnection)).Verifiable();
 
-            var goodThriftConnectionMock = GetMock<IThriftConnection>();
-            var goodThriftConnection = goodThriftConnectionMock.Object;
-            dataConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(goodThriftConnection);
-            goodThriftConnectionMock.Setup(connection => connection.ExecuteCommand(command));
-            dataConnectionPool.Setup(pool => pool.Release(goodThriftConnection));
-            dataConnectionPool.Setup(pool => pool.Good(goodThriftConnection));
+            dataConnectionPool.Setup(pool => pool.Release(thriftConnection)).Verifiable();
+            dataConnectionPool.Setup(pool => pool.Good(thriftConnection)).Verifiable();
 
             executor.Execute(command);
         }

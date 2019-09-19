@@ -34,10 +34,10 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 
             var thriftConnectionMock = GetMock<IThriftConnection>();
             var thriftConnection = thriftConnectionMock.Object;
-            fierceConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection);
-            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command));
-            fierceConnectionPool.Setup(pool => pool.Release(thriftConnection));
-            fierceConnectionPool.Setup(manager => manager.Good(thriftConnection));
+            fierceConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection).Verifiable();
+            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Verifiable();
+            fierceConnectionPool.Setup(pool => pool.Release(thriftConnection)).Verifiable();
+            fierceConnectionPool.Setup(manager => manager.Good(thriftConnection)).Verifiable();
 
             executor.Execute(command);
         }
@@ -47,10 +47,10 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
         {
             var thriftConnectionMock = GetMock<IThriftConnection>();
             var thriftConnection = thriftConnectionMock.Object;
-            fierceConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection);
-            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Throws(new TimedOutException());
-            fierceConnectionPool.Setup(pool => pool.Remove(thriftConnection));
-            fierceConnectionPool.Setup(pool => pool.Bad(thriftConnection));
+            fierceConnectionPool.Setup(pool => pool.Acquire("keyspace")).Returns(thriftConnection).Verifiable();
+            thriftConnectionMock.Setup(connection => connection.ExecuteCommand(command)).Throws(new TimedOutException()).Verifiable();
+            fierceConnectionPool.Setup(pool => pool.Remove(thriftConnection)).Verifiable();
+            fierceConnectionPool.Setup(pool => pool.Bad(thriftConnection)).Verifiable();
 
             RunMethodWithException<CassandraClientTimedOutException>(() => executor.Execute(command), "Failed to execute cassandra command commandName in pool");
         }

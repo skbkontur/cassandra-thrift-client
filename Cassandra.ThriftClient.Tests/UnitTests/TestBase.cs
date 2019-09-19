@@ -18,8 +18,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests
         [TearDown]
         public virtual void TearDown()
         {
-            MockRepository.VerifyAll();
-            MockRepository.VerifyNoOtherCalls();
+            MockRepository.Verify();
         }
 
         private static MockRepository MockRepository { get; set; }
