@@ -37,7 +37,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class SliceRange : TBase
+  internal partial class SliceRange : TBase
   {
 
     public byte[] Start { get; set; }

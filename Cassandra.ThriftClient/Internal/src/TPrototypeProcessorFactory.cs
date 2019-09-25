@@ -26,7 +26,7 @@ using Thrift.Transport;
 
 namespace Thrift
 {
-    public class TPrototypeProcessorFactory<P, H> : TProcessorFactory where P : TProcessor
+    internal class TPrototypeProcessorFactory<P, H> : TProcessorFactory where P : TProcessor
     {
         object[] handlerArgs = null;
 

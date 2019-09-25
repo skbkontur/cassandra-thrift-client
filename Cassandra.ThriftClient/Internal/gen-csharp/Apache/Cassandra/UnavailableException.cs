@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class UnavailableException : TException, TBase
+  internal partial class UnavailableException : TException, TBase
   {
 
     public UnavailableException() {

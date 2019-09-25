@@ -25,7 +25,7 @@ using System;
 
 namespace Thrift.Transport
 {
-    public class TTransportException : TException
+    internal class TTransportException : TException
     {
         protected ExceptionType type;
 
@@ -56,7 +56,7 @@ namespace Thrift.Transport
             get { return type; }
         }
 
-        public enum ExceptionType
+        internal enum ExceptionType
         {
             Unknown,
             NotOpen,

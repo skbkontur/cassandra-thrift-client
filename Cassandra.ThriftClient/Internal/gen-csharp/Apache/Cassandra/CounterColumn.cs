@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CounterColumn : TBase
+  internal partial class CounterColumn : TBase
   {
 
     public byte[] Name { get; set; }

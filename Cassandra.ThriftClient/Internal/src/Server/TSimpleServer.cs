@@ -30,7 +30,7 @@ namespace Thrift.Server
     /// <summary>
     /// Simple single-threaded server for testing.
     /// </summary>
-    public class TSimpleServer : TServer
+    internal class TSimpleServer : TServer
     {
         private bool stop = false;
 

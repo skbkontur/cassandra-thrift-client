@@ -29,7 +29,7 @@ namespace Thrift.Server
     /// <summary>
     /// Server that uses C# threads (as opposed to the ThreadPool) when handling requests.
     /// </summary>
-    public class TThreadedServer : TServer
+    internal class TThreadedServer : TServer
     {
         private const int DEFAULT_MAX_THREADS = 100;
         private volatile bool stop = false;

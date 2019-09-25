@@ -27,7 +27,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class SchemaDisagreementException : TException, TBase
+  internal partial class SchemaDisagreementException : TException, TBase
   {
 
     public SchemaDisagreementException() {

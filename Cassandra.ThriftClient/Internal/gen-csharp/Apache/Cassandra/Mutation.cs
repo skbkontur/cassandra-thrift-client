@@ -26,7 +26,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class Mutation : TBase
+  internal partial class Mutation : TBase
   {
     private ColumnOrSuperColumn _column_or_supercolumn;
     private Deletion _deletion;
@@ -62,7 +62,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool column_or_supercolumn;
       public bool deletion;
     }

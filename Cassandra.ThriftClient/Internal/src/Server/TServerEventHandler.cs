@@ -28,7 +28,7 @@ namespace Thrift.Server
     /// <summary>
     /// Interface implemented by server users to handle events from the server.
     /// </summary>
-    public interface TServerEventHandler
+    internal interface TServerEventHandler
     {
         /// <summary>
         /// Called before the server begins.

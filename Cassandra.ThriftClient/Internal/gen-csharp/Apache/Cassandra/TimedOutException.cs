@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class TimedOutException : TException, TBase
+  internal partial class TimedOutException : TException, TBase
   {
     private int _acknowledged_by;
     private bool _acknowledged_by_batchlog;
@@ -88,7 +88,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool acknowledged_by;
       public bool acknowledged_by_batchlog;
       public bool paxos_in_progress;

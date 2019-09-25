@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CASResult : TBase
+  internal partial class CASResult : TBase
   {
     private List<Column> _current_values;
 
@@ -45,7 +45,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool current_values;
     }
 

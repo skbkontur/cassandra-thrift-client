@@ -26,7 +26,7 @@ using Thrift.Transport;
 
 namespace Thrift
 {
-    public class TSingletonProcessorFactory : TProcessorFactory
+    internal class TSingletonProcessorFactory : TProcessorFactory
     {
         private readonly TProcessor processor_;
 

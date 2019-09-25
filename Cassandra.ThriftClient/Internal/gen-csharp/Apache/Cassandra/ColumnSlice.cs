@@ -28,7 +28,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class ColumnSlice : TBase
+  internal partial class ColumnSlice : TBase
   {
     private byte[] _start;
     private byte[] _finish;
@@ -64,7 +64,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool start;
       public bool finish;
     }

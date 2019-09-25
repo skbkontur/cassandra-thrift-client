@@ -7,7 +7,7 @@
 
 namespace Apache.Cassandra
 {
-  public enum IndexType
+  internal enum IndexType
   {
     KEYS = 0,
     CUSTOM = 1,

@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class ColumnDef : TBase
+  internal partial class ColumnDef : TBase
   {
     private IndexType _index_type;
     private string _index_name;
@@ -79,7 +79,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool index_type;
       public bool index_name;
       public bool index_options;

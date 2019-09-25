@@ -23,7 +23,7 @@ using Thrift.Transport;
 
 namespace Thrift
 {
-    public interface TProcessorFactory
+    internal interface TProcessorFactory
     {
         TProcessor GetProcessor(TTransport trans, TServer server = null);
     }

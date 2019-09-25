@@ -51,7 +51,7 @@ namespace Apache.Cassandra
   ///   EACH_QUORUM  Returns the record with the most recent timestamp once a majority of replicas within each datacenter have replied.
   ///   ALL          Returns the record with the most recent timestamp once all replicas have replied (implies no replica may be down)..
   /// </summary>
-  public enum ConsistencyLevel
+  internal enum ConsistencyLevel
   {
     ONE = 1,
     QUORUM = 2,

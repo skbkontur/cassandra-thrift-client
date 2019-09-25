@@ -28,7 +28,7 @@ namespace Thrift.Transport
     /// <summary>
     /// SSL Server Socket Wrapper Class
     /// </summary>
-    public class TTLSServerSocket : TServerTransport
+    internal class TTLSServerSocket : TServerTransport
     {
         /// <summary>
         /// Underlying tcp server

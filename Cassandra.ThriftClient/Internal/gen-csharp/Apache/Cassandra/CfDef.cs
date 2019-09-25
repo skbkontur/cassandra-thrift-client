@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CfDef : TBase
+  internal partial class CfDef : TBase
   {
     private string _column_type;
     private string _comparator_type;
@@ -618,7 +618,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool column_type;
       public bool comparator_type;
       public bool subcomparator_type;

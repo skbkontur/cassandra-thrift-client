@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class Deletion : TBase
+  internal partial class Deletion : TBase
   {
     private long _timestamp;
     private byte[] _super_column;
@@ -74,7 +74,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool timestamp;
       public bool super_column;
       public bool predicate;

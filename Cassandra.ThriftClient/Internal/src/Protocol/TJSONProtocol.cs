@@ -37,12 +37,12 @@ namespace Thrift.Protocol
     /// <para/>
     /// Adapted from the Java version.
     /// </summary>
-    public class TJSONProtocol : TProtocol
+    internal class TJSONProtocol : TProtocol
     {
         /// <summary>
         /// Factory for JSON protocol objects.
         /// </summary>
-        public class Factory : TProtocolFactory
+        internal class Factory : TProtocolFactory
         {
             public TProtocol GetProtocol(TTransport trans)
             {

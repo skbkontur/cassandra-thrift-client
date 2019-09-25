@@ -32,7 +32,7 @@ using System.Threading;
 
 namespace Thrift.Transport
 {
-    public class TSilverlightSocket : TTransport
+    internal class TSilverlightSocket : TTransport
     {
         Socket socket = null;
         static ManualResetEvent readAsyncComplete = new ManualResetEvent(false);

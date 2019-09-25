@@ -32,7 +32,7 @@ namespace Thrift.Transport
     /// a ServerTransport and then may want to mutate them (i.e. create
     /// a BufferedTransport from the underlying base transport)
     /// </summary>
-    public class TTransportFactory
+    internal class TTransportFactory
     {
         public virtual TTransport GetTransport(TTransport trans)
         {

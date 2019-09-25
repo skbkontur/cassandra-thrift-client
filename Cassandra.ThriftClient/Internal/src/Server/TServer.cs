@@ -28,7 +28,7 @@ using System.IO;
 
 namespace Thrift.Server
 {
-    public abstract class TServer
+    internal abstract class TServer
     {
         //Attributes
         protected TProcessorFactory processorFactory;

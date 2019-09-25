@@ -28,7 +28,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class Column : TBase
+  internal partial class Column : TBase
   {
     private byte[] _value;
     private long _timestamp;
@@ -80,7 +80,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool @value;
       public bool timestamp;
       public bool ttl;

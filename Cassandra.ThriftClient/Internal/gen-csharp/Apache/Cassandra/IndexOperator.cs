@@ -7,7 +7,7 @@
 
 namespace Apache.Cassandra
 {
-  public enum IndexOperator
+  internal enum IndexOperator
   {
     EQ = 0,
     GTE = 1,
