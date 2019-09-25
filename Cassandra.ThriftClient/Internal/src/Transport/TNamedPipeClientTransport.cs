@@ -27,7 +27,7 @@ using System.Threading;
 
 namespace Thrift.Transport
 {
-    public class TNamedPipeClientTransport : TTransport
+    internal class TNamedPipeClientTransport : TTransport
     {
         private NamedPipeClientStream client;
         private string ServerName;

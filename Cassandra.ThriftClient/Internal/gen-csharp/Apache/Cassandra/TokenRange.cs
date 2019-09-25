@@ -29,7 +29,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class TokenRange : TBase
+  internal partial class TokenRange : TBase
   {
     private List<string> _rpc_endpoints;
     private List<EndpointDetails> _endpoint_details;
@@ -71,7 +71,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool rpc_endpoints;
       public bool endpoint_details;
     }

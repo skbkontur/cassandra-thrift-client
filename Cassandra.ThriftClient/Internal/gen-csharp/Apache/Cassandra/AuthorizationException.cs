@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class AuthorizationException : TException, TBase
+  internal partial class AuthorizationException : TException, TBase
   {
 
     public string Why { get; set; }

@@ -24,7 +24,7 @@ using Thrift.Protocol;
 
 namespace Thrift.Transport
 {
-    public class TMemoryBuffer : TTransport
+    internal class TMemoryBuffer : TTransport
     {
 
         private readonly MemoryStream byteStream;

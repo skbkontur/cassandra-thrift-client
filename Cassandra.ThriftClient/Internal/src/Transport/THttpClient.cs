@@ -30,7 +30,7 @@ using System.IO.Compression;
 
 namespace Thrift.Transport
 {
-    public class THttpClient : TTransport, IDisposable
+    internal class THttpClient : TTransport, IDisposable
     {
         private readonly Uri uri;
         private readonly X509Certificate[] certificates;

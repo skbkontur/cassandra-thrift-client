@@ -26,7 +26,7 @@ using Thrift.Protocol;
 
 namespace Thrift
 {
-    public class TApplicationException : TException
+    internal class TApplicationException : TException
     {
         protected ExceptionType type;
 
@@ -123,7 +123,7 @@ namespace Thrift
             oprot.WriteStructEnd();
         }
 
-        public enum ExceptionType
+        internal enum ExceptionType
         {
             Unknown,
             UnknownMethod,

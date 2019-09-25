@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class KsDef : TBase
+  internal partial class KsDef : TBase
   {
     private Dictionary<string, string> _strategy_options;
     private int _replication_factor;
@@ -80,7 +80,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool strategy_options;
       public bool replication_factor;
       public bool durable_writes;

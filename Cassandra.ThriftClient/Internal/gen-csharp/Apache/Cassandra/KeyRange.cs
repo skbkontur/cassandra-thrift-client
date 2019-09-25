@@ -29,7 +29,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class KeyRange : TBase
+  internal partial class KeyRange : TBase
   {
     private byte[] _start_key;
     private byte[] _end_key;
@@ -109,7 +109,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool start_key;
       public bool end_key;
       public bool start_token;

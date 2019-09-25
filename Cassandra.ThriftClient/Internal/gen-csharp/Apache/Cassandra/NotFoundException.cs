@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class NotFoundException : TException, TBase
+  internal partial class NotFoundException : TException, TBase
   {
 
     public NotFoundException() {

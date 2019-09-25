@@ -33,7 +33,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class SlicePredicate : TBase
+  internal partial class SlicePredicate : TBase
   {
     private List<byte[]> _column_names;
     private SliceRange _slice_range;
@@ -69,7 +69,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool column_names;
       public bool slice_range;
     }

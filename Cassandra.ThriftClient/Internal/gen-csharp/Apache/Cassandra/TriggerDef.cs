@@ -26,7 +26,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class TriggerDef : TBase
+  internal partial class TriggerDef : TBase
   {
 
     public string Name { get; set; }

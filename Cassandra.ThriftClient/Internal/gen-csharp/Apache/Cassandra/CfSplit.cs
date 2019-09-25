@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CfSplit : TBase
+  internal partial class CfSplit : TBase
   {
 
     public string Start_token { get; set; }

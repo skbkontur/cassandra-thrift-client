@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CqlMetadata : TBase
+  internal partial class CqlMetadata : TBase
   {
 
     public Dictionary<byte[], string> Name_types { get; set; }

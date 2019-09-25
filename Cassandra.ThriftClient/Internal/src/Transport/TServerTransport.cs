@@ -25,7 +25,7 @@ using System;
 
 namespace Thrift.Transport
 {
-    public abstract class TServerTransport
+    internal abstract class TServerTransport
     {
         public abstract void Listen();
         public abstract void Close();

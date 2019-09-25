@@ -29,7 +29,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CqlRow : TBase
+  internal partial class CqlRow : TBase
   {
 
     public byte[] Key { get; set; }

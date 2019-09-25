@@ -25,7 +25,7 @@ using System;
 
 namespace Thrift
 {
-    public class TException : Exception
+    internal class TException : Exception
     {
         public TException()
         {

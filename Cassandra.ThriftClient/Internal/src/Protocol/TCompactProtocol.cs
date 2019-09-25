@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 namespace Thrift.Protocol
 {
-    public class TCompactProtocol : TProtocol
+    internal class TCompactProtocol : TProtocol
     {
         private static TStruct ANONYMOUS_STRUCT = new TStruct("");
         private static TField TSTOP = new TField("", TType.Stop, (short)0);
@@ -87,7 +87,7 @@ namespace Thrift.Protocol
 
         #region CompactProtocol Factory
 
-        public class Factory : TProtocolFactory
+        internal class Factory : TProtocolFactory
         {
             public Factory() { }
 

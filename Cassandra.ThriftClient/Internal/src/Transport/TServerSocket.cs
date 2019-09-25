@@ -27,7 +27,7 @@ using System.Net.Sockets;
 
 namespace Thrift.Transport
 {
-    public class TServerSocket : TServerTransport
+    internal class TServerSocket : TServerTransport
     {
         /// <summary>
         /// Underlying server with socket.

@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class IndexClause : TBase
+  internal partial class IndexClause : TBase
   {
 
     public List<IndexExpression> Expressions { get; set; }

@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class KeyCount : TBase
+  internal partial class KeyCount : TBase
   {
 
     public byte[] Key { get; set; }

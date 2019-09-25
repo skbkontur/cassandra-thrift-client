@@ -21,7 +21,7 @@ using System.IO;
 
 namespace Thrift.Transport
 {
-    public class TFramedTransport : TTransport, IDisposable
+    internal class TFramedTransport : TTransport, IDisposable
     {
         private readonly TTransport transport;
         private readonly MemoryStream writeBuffer = new MemoryStream(1024);
@@ -30,7 +30,7 @@ namespace Thrift.Transport
         private const int HeaderSize = 4;
         private readonly byte[] headerBuf = new byte[HeaderSize];
 
-        public class Factory : TTransportFactory
+        internal class Factory : TTransportFactory
         {
             public override TTransport GetTransport(TTransport trans)
             {

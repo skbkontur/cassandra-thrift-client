@@ -22,7 +22,7 @@ using System.IO;
 
 namespace Thrift.Transport
 {
-    public class TBufferedTransport : TTransport, IDisposable
+    internal class TBufferedTransport : TTransport, IDisposable
     {
         private readonly int bufSize;
         private readonly MemoryStream inputBuffer = new MemoryStream(0);

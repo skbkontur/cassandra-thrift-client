@@ -26,7 +26,7 @@ using System.Net.Sockets;
 
 namespace Thrift.Transport
 {
-    public class TSocket : TStreamTransport
+    internal class TSocket : TStreamTransport
     {
         private TcpClient client = null;
         private string host = null;
