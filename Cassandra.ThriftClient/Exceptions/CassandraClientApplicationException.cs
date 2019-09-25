@@ -11,7 +11,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
         {
         }
 
-        public CassandraClientApplicationException(string message, TApplicationException innerException)
+        internal CassandraClientApplicationException(string message, TApplicationException innerException)
             : base(message + "\nType: " + GetFuckingType(innerException), innerException)
         {
         }

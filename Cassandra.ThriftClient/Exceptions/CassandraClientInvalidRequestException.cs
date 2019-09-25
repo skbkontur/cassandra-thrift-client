@@ -11,7 +11,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
         {
         }
 
-        public CassandraClientInvalidRequestException(string message, InvalidRequestException innerException)
+        internal CassandraClientInvalidRequestException(string message, InvalidRequestException innerException)
             : base(message + Environment.NewLine + "Why: " + innerException.Why, innerException)
         {
         }
