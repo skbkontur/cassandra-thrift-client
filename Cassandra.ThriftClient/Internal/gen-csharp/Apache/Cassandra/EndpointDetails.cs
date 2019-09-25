@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class EndpointDetails : TBase
+  internal partial class EndpointDetails : TBase
   {
     private string _host;
     private string _datacenter;
@@ -71,7 +71,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool host;
       public bool datacenter;
       public bool rack;

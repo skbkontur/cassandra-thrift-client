@@ -7,7 +7,7 @@
 
 namespace Apache.Cassandra
 {
-  public enum CqlResultType
+  internal enum CqlResultType
   {
     ROWS = 1,
     VOID = 2,

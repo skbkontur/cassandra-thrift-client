@@ -22,7 +22,7 @@ using Thrift.Server;
 
 namespace Thrift
 {
-    public interface TControllingHandler
+    internal interface TControllingHandler
     {
         TServer server { get; set; }
     }

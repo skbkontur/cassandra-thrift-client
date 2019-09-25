@@ -31,13 +31,13 @@ namespace Thrift.Server
     /// <summary>
     /// Server that uses C# built-in ThreadPool to spawn threads when handling requests.
     /// </summary>
-    public class TThreadPoolServer : TServer
+    internal class TThreadPoolServer : TServer
     {
         private const int DEFAULT_MIN_THREADS = -1;  // use .NET ThreadPool defaults
         private const int DEFAULT_MAX_THREADS = -1;  // use .NET ThreadPool defaults
         private volatile bool stop = false;
 
-        public struct Configuration
+        internal struct Configuration
         {
             public int MinWorkerThreads;
             public int MaxWorkerThreads;

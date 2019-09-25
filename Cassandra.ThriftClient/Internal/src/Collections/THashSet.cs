@@ -32,7 +32,7 @@ namespace Thrift.Collections
 #else
     [Serializable]
 #endif
-    public class THashSet<T> : ICollection<T>
+    internal class THashSet<T> : ICollection<T>
     {
 #if NET_2_0 || SILVERLIGHT
 #if SILVERLIGHT

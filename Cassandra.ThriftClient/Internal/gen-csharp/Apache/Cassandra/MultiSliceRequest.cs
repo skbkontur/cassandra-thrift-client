@@ -30,7 +30,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class MultiSliceRequest : TBase
+  internal partial class MultiSliceRequest : TBase
   {
     private byte[] _key;
     private ColumnParent _column_parent;
@@ -126,7 +126,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool key;
       public bool column_parent;
       public bool column_slices;

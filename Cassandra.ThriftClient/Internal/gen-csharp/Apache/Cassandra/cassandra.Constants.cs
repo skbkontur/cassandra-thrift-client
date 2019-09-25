@@ -15,7 +15,7 @@ using System.Runtime.Serialization;
 
 namespace Apache.Cassandra
 {
-  public static class cassandraConstants
+  internal static class cassandraConstants
   {
     public const string VERSION = "20.1.0";
   }

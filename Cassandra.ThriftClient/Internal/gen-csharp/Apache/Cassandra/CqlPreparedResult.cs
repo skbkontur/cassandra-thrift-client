@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CqlPreparedResult : TBase
+  internal partial class CqlPreparedResult : TBase
   {
     private List<string> _variable_types;
     private List<string> _variable_names;
@@ -61,7 +61,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool variable_types;
       public bool variable_names;
     }

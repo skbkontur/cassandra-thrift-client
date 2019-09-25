@@ -24,7 +24,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class AuthenticationRequest : TBase
+  internal partial class AuthenticationRequest : TBase
   {
 
     public Dictionary<string, string> Credentials { get; set; }

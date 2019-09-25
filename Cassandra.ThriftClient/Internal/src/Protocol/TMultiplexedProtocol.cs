@@ -54,7 +54,7 @@ namespace Thrift.Protocol
     ///     System.out.println(service2.getTemperature());
     /// </code>
     /// </summary>
-    public class TMultiplexedProtocol : TProtocolDecorator
+    internal class TMultiplexedProtocol : TProtocolDecorator
     {
 
         /// <summary>

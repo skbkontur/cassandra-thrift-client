@@ -17,8 +17,8 @@ using Thrift.Transport;
 
 namespace Apache.Cassandra
 {
-  public partial class Cassandra {
-    public interface ISync {
+  internal partial class Cassandra {
+    internal interface ISync {
       void login(AuthenticationRequest auth_request);
       void set_keyspace(string keyspace);
       /// <summary>
@@ -331,7 +331,7 @@ namespace Apache.Cassandra
       void set_cql_version(string version);
     }
 
-    public interface Iface : ISync {
+    internal interface Iface : ISync {
       #if SILVERLIGHT
       IAsyncResult Begin_login(AsyncCallback callback, object state, AuthenticationRequest auth_request);
       void End_login(IAsyncResult asyncResult);
@@ -779,7 +779,7 @@ namespace Apache.Cassandra
       #endif
     }
 
-    public class Client : IDisposable, Iface {
+    internal class Client : IDisposable, Iface {
       public Client(TProtocol prot) : this(prot, prot)
       {
       }
@@ -4555,7 +4555,7 @@ namespace Apache.Cassandra
       }
 
     }
-    public class Processor : TProcessor {
+    internal class Processor : TProcessor {
       public Processor(ISync iface)
       {
         iface_ = iface;
@@ -6402,7 +6402,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class login_args : TBase
+    internal partial class login_args : TBase
     {
 
       public AuthenticationRequest Auth_request { get; set; }
@@ -6493,7 +6493,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class login_result : TBase
+    internal partial class login_result : TBase
     {
       private AuthenticationException _authnx;
       private AuthorizationException _authzx;
@@ -6529,7 +6529,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool authnx;
         public bool authzx;
       }
@@ -6643,7 +6643,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class set_keyspace_args : TBase
+    internal partial class set_keyspace_args : TBase
     {
 
       public string Keyspace { get; set; }
@@ -6733,7 +6733,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class set_keyspace_result : TBase
+    internal partial class set_keyspace_result : TBase
     {
       private InvalidRequestException _ire;
 
@@ -6755,7 +6755,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
       }
 
@@ -6845,7 +6845,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_args : TBase
+    internal partial class get_args : TBase
     {
 
       public byte[] Key { get; set; }
@@ -6987,7 +6987,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_result : TBase
+    internal partial class get_result : TBase
     {
       private ColumnOrSuperColumn _success;
       private InvalidRequestException _ire;
@@ -7065,7 +7065,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool nfe;
@@ -7251,7 +7251,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_slice_args : TBase
+    internal partial class get_slice_args : TBase
     {
 
       public byte[] Key { get; set; }
@@ -7418,7 +7418,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_slice_result : TBase
+    internal partial class get_slice_result : TBase
     {
       private List<ColumnOrSuperColumn> _success;
       private InvalidRequestException _ire;
@@ -7482,7 +7482,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -7661,7 +7661,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_count_args : TBase
+    internal partial class get_count_args : TBase
     {
 
       public byte[] Key { get; set; }
@@ -7828,7 +7828,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_count_result : TBase
+    internal partial class get_count_result : TBase
     {
       private int _success;
       private InvalidRequestException _ire;
@@ -7892,7 +7892,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -8051,7 +8051,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class multiget_slice_args : TBase
+    internal partial class multiget_slice_args : TBase
     {
 
       public List<byte[]> Keys { get; set; }
@@ -8235,7 +8235,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class multiget_slice_result : TBase
+    internal partial class multiget_slice_result : TBase
     {
       private Dictionary<byte[], List<ColumnOrSuperColumn>> _success;
       private InvalidRequestException _ire;
@@ -8299,7 +8299,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -8498,7 +8498,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class multiget_count_args : TBase
+    internal partial class multiget_count_args : TBase
     {
 
       public List<byte[]> Keys { get; set; }
@@ -8682,7 +8682,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class multiget_count_result : TBase
+    internal partial class multiget_count_result : TBase
     {
       private Dictionary<byte[], int> _success;
       private InvalidRequestException _ire;
@@ -8746,7 +8746,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -8927,7 +8927,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_range_slices_args : TBase
+    internal partial class get_range_slices_args : TBase
     {
 
       public ColumnParent Column_parent { get; set; }
@@ -9095,7 +9095,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_range_slices_result : TBase
+    internal partial class get_range_slices_result : TBase
     {
       private List<KeySlice> _success;
       private InvalidRequestException _ire;
@@ -9159,7 +9159,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -9338,7 +9338,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_paged_slice_args : TBase
+    internal partial class get_paged_slice_args : TBase
     {
 
       public string Column_family { get; set; }
@@ -9504,7 +9504,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_paged_slice_result : TBase
+    internal partial class get_paged_slice_result : TBase
     {
       private List<KeySlice> _success;
       private InvalidRequestException _ire;
@@ -9568,7 +9568,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -9747,7 +9747,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_indexed_slices_args : TBase
+    internal partial class get_indexed_slices_args : TBase
     {
 
       public ColumnParent Column_parent { get; set; }
@@ -9915,7 +9915,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_indexed_slices_result : TBase
+    internal partial class get_indexed_slices_result : TBase
     {
       private List<KeySlice> _success;
       private InvalidRequestException _ire;
@@ -9979,7 +9979,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -10158,7 +10158,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class insert_args : TBase
+    internal partial class insert_args : TBase
     {
 
       public byte[] Key { get; set; }
@@ -10325,7 +10325,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class insert_result : TBase
+    internal partial class insert_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -10375,7 +10375,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -10513,7 +10513,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class add_args : TBase
+    internal partial class add_args : TBase
     {
 
       public byte[] Key { get; set; }
@@ -10680,7 +10680,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class add_result : TBase
+    internal partial class add_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -10730,7 +10730,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -10868,7 +10868,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class cas_args : TBase
+    internal partial class cas_args : TBase
     {
       private List<Column> _expected;
       private List<Column> _updates;
@@ -10920,7 +10920,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool expected;
         public bool updates;
       }
@@ -11148,7 +11148,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class cas_result : TBase
+    internal partial class cas_result : TBase
     {
       private CASResult _success;
       private InvalidRequestException _ire;
@@ -11212,7 +11212,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -11374,7 +11374,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class remove_args : TBase
+    internal partial class remove_args : TBase
     {
       private ConsistencyLevel _consistency_level;
 
@@ -11406,7 +11406,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool consistency_level;
       }
 
@@ -11559,7 +11559,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class remove_result : TBase
+    internal partial class remove_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -11609,7 +11609,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -11747,7 +11747,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class remove_counter_args : TBase
+    internal partial class remove_counter_args : TBase
     {
 
       public byte[] Key { get; set; }
@@ -11889,7 +11889,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class remove_counter_result : TBase
+    internal partial class remove_counter_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -11939,7 +11939,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -12077,7 +12077,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class batch_mutate_args : TBase
+    internal partial class batch_mutate_args : TBase
     {
 
       public Dictionary<byte[], Dictionary<string, List<Mutation>>> Mutation_map { get; set; }
@@ -12252,7 +12252,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class batch_mutate_result : TBase
+    internal partial class batch_mutate_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -12302,7 +12302,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -12440,7 +12440,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class atomic_batch_mutate_args : TBase
+    internal partial class atomic_batch_mutate_args : TBase
     {
 
       public Dictionary<byte[], Dictionary<string, List<Mutation>>> Mutation_map { get; set; }
@@ -12615,7 +12615,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class atomic_batch_mutate_result : TBase
+    internal partial class atomic_batch_mutate_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -12665,7 +12665,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -12803,7 +12803,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class truncate_args : TBase
+    internal partial class truncate_args : TBase
     {
 
       public string Cfname { get; set; }
@@ -12893,7 +12893,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class truncate_result : TBase
+    internal partial class truncate_result : TBase
     {
       private InvalidRequestException _ire;
       private UnavailableException _ue;
@@ -12943,7 +12943,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
         public bool ue;
         public bool te;
@@ -13081,7 +13081,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_multi_slice_args : TBase
+    internal partial class get_multi_slice_args : TBase
     {
 
       public MultiSliceRequest Request { get; set; }
@@ -13172,7 +13172,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class get_multi_slice_result : TBase
+    internal partial class get_multi_slice_result : TBase
     {
       private List<ColumnOrSuperColumn> _success;
       private InvalidRequestException _ire;
@@ -13236,7 +13236,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -13415,7 +13415,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_schema_versions_args : TBase
+    internal partial class describe_schema_versions_args : TBase
     {
 
       public describe_schema_versions_args() {
@@ -13477,7 +13477,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_schema_versions_result : TBase
+    internal partial class describe_schema_versions_result : TBase
     {
       private Dictionary<string, List<string>> _success;
       private InvalidRequestException _ire;
@@ -13513,7 +13513,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -13663,7 +13663,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_keyspaces_args : TBase
+    internal partial class describe_keyspaces_args : TBase
     {
 
       public describe_keyspaces_args() {
@@ -13725,7 +13725,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_keyspaces_result : TBase
+    internal partial class describe_keyspaces_result : TBase
     {
       private List<KsDef> _success;
       private InvalidRequestException _ire;
@@ -13761,7 +13761,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -13892,7 +13892,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_cluster_name_args : TBase
+    internal partial class describe_cluster_name_args : TBase
     {
 
       public describe_cluster_name_args() {
@@ -13954,7 +13954,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_cluster_name_result : TBase
+    internal partial class describe_cluster_name_result : TBase
     {
       private string _success;
 
@@ -13976,7 +13976,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
       }
 
@@ -14065,7 +14065,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_version_args : TBase
+    internal partial class describe_version_args : TBase
     {
 
       public describe_version_args() {
@@ -14127,7 +14127,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_version_result : TBase
+    internal partial class describe_version_result : TBase
     {
       private string _success;
 
@@ -14149,7 +14149,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
       }
 
@@ -14238,7 +14238,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_ring_args : TBase
+    internal partial class describe_ring_args : TBase
     {
 
       public string Keyspace { get; set; }
@@ -14328,7 +14328,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_ring_result : TBase
+    internal partial class describe_ring_result : TBase
     {
       private List<TokenRange> _success;
       private InvalidRequestException _ire;
@@ -14364,7 +14364,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -14495,7 +14495,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_local_ring_args : TBase
+    internal partial class describe_local_ring_args : TBase
     {
 
       public string Keyspace { get; set; }
@@ -14585,7 +14585,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_local_ring_result : TBase
+    internal partial class describe_local_ring_result : TBase
     {
       private List<TokenRange> _success;
       private InvalidRequestException _ire;
@@ -14621,7 +14621,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -14752,7 +14752,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_token_map_args : TBase
+    internal partial class describe_token_map_args : TBase
     {
 
       public describe_token_map_args() {
@@ -14814,7 +14814,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_token_map_result : TBase
+    internal partial class describe_token_map_result : TBase
     {
       private Dictionary<string, string> _success;
       private InvalidRequestException _ire;
@@ -14850,7 +14850,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -14983,7 +14983,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_partitioner_args : TBase
+    internal partial class describe_partitioner_args : TBase
     {
 
       public describe_partitioner_args() {
@@ -15045,7 +15045,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_partitioner_result : TBase
+    internal partial class describe_partitioner_result : TBase
     {
       private string _success;
 
@@ -15067,7 +15067,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
       }
 
@@ -15156,7 +15156,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_snitch_args : TBase
+    internal partial class describe_snitch_args : TBase
     {
 
       public describe_snitch_args() {
@@ -15218,7 +15218,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_snitch_result : TBase
+    internal partial class describe_snitch_result : TBase
     {
       private string _success;
 
@@ -15240,7 +15240,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
       }
 
@@ -15329,7 +15329,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_keyspace_args : TBase
+    internal partial class describe_keyspace_args : TBase
     {
 
       public string Keyspace { get; set; }
@@ -15419,7 +15419,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_keyspace_result : TBase
+    internal partial class describe_keyspace_result : TBase
     {
       private KsDef _success;
       private NotFoundException _nfe;
@@ -15469,7 +15469,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool nfe;
         public bool ire;
@@ -15607,7 +15607,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_splits_args : TBase
+    internal partial class describe_splits_args : TBase
     {
 
       public string CfName { get; set; }
@@ -15767,7 +15767,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_splits_result : TBase
+    internal partial class describe_splits_result : TBase
     {
       private List<string> _success;
       private InvalidRequestException _ire;
@@ -15803,7 +15803,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -15933,7 +15933,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class trace_next_query_args : TBase
+    internal partial class trace_next_query_args : TBase
     {
 
       public trace_next_query_args() {
@@ -15995,7 +15995,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class trace_next_query_result : TBase
+    internal partial class trace_next_query_result : TBase
     {
       private byte[] _success;
 
@@ -16017,7 +16017,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
       }
 
@@ -16106,7 +16106,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_splits_ex_args : TBase
+    internal partial class describe_splits_ex_args : TBase
     {
 
       public string CfName { get; set; }
@@ -16266,7 +16266,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class describe_splits_ex_result : TBase
+    internal partial class describe_splits_ex_result : TBase
     {
       private List<CfSplit> _success;
       private InvalidRequestException _ire;
@@ -16302,7 +16302,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -16433,7 +16433,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_add_column_family_args : TBase
+    internal partial class system_add_column_family_args : TBase
     {
 
       public CfDef Cf_def { get; set; }
@@ -16524,7 +16524,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_add_column_family_result : TBase
+    internal partial class system_add_column_family_result : TBase
     {
       private string _success;
       private InvalidRequestException _ire;
@@ -16574,7 +16574,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool sde;
@@ -16711,7 +16711,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_drop_column_family_args : TBase
+    internal partial class system_drop_column_family_args : TBase
     {
 
       public string Column_family { get; set; }
@@ -16801,7 +16801,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_drop_column_family_result : TBase
+    internal partial class system_drop_column_family_result : TBase
     {
       private string _success;
       private InvalidRequestException _ire;
@@ -16851,7 +16851,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool sde;
@@ -16988,7 +16988,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_add_keyspace_args : TBase
+    internal partial class system_add_keyspace_args : TBase
     {
 
       public KsDef Ks_def { get; set; }
@@ -17079,7 +17079,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_add_keyspace_result : TBase
+    internal partial class system_add_keyspace_result : TBase
     {
       private string _success;
       private InvalidRequestException _ire;
@@ -17129,7 +17129,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool sde;
@@ -17266,7 +17266,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_drop_keyspace_args : TBase
+    internal partial class system_drop_keyspace_args : TBase
     {
 
       public string Keyspace { get; set; }
@@ -17356,7 +17356,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_drop_keyspace_result : TBase
+    internal partial class system_drop_keyspace_result : TBase
     {
       private string _success;
       private InvalidRequestException _ire;
@@ -17406,7 +17406,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool sde;
@@ -17543,7 +17543,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_update_keyspace_args : TBase
+    internal partial class system_update_keyspace_args : TBase
     {
 
       public KsDef Ks_def { get; set; }
@@ -17634,7 +17634,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_update_keyspace_result : TBase
+    internal partial class system_update_keyspace_result : TBase
     {
       private string _success;
       private InvalidRequestException _ire;
@@ -17684,7 +17684,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool sde;
@@ -17821,7 +17821,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_update_column_family_args : TBase
+    internal partial class system_update_column_family_args : TBase
     {
 
       public CfDef Cf_def { get; set; }
@@ -17912,7 +17912,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class system_update_column_family_result : TBase
+    internal partial class system_update_column_family_result : TBase
     {
       private string _success;
       private InvalidRequestException _ire;
@@ -17962,7 +17962,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool sde;
@@ -18099,7 +18099,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_cql_query_args : TBase
+    internal partial class execute_cql_query_args : TBase
     {
 
       public byte[] Query { get; set; }
@@ -18215,7 +18215,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_cql_query_result : TBase
+    internal partial class execute_cql_query_result : TBase
     {
       private CqlResult _success;
       private InvalidRequestException _ire;
@@ -18293,7 +18293,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -18479,7 +18479,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_cql3_query_args : TBase
+    internal partial class execute_cql3_query_args : TBase
     {
 
       public byte[] Query { get; set; }
@@ -18621,7 +18621,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_cql3_query_result : TBase
+    internal partial class execute_cql3_query_result : TBase
     {
       private CqlResult _success;
       private InvalidRequestException _ire;
@@ -18699,7 +18699,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -18885,7 +18885,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class prepare_cql_query_args : TBase
+    internal partial class prepare_cql_query_args : TBase
     {
 
       public byte[] Query { get; set; }
@@ -19001,7 +19001,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class prepare_cql_query_result : TBase
+    internal partial class prepare_cql_query_result : TBase
     {
       private CqlPreparedResult _success;
       private InvalidRequestException _ire;
@@ -19037,7 +19037,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -19151,7 +19151,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class prepare_cql3_query_args : TBase
+    internal partial class prepare_cql3_query_args : TBase
     {
 
       public byte[] Query { get; set; }
@@ -19267,7 +19267,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class prepare_cql3_query_result : TBase
+    internal partial class prepare_cql3_query_result : TBase
     {
       private CqlPreparedResult _success;
       private InvalidRequestException _ire;
@@ -19303,7 +19303,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
       }
@@ -19417,7 +19417,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_prepared_cql_query_args : TBase
+    internal partial class execute_prepared_cql_query_args : TBase
     {
 
       public int ItemId { get; set; }
@@ -19546,7 +19546,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_prepared_cql_query_result : TBase
+    internal partial class execute_prepared_cql_query_result : TBase
     {
       private CqlResult _success;
       private InvalidRequestException _ire;
@@ -19624,7 +19624,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -19810,7 +19810,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_prepared_cql3_query_args : TBase
+    internal partial class execute_prepared_cql3_query_args : TBase
     {
 
       public int ItemId { get; set; }
@@ -19965,7 +19965,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class execute_prepared_cql3_query_result : TBase
+    internal partial class execute_prepared_cql3_query_result : TBase
     {
       private CqlResult _success;
       private InvalidRequestException _ire;
@@ -20043,7 +20043,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool success;
         public bool ire;
         public bool ue;
@@ -20229,7 +20229,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class set_cql_version_args : TBase
+    internal partial class set_cql_version_args : TBase
     {
 
       public string Version { get; set; }
@@ -20319,7 +20319,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public partial class set_cql_version_result : TBase
+    internal partial class set_cql_version_result : TBase
     {
       private InvalidRequestException _ire;
 
@@ -20341,7 +20341,7 @@ namespace Apache.Cassandra
       #if !SILVERLIGHT
       [Serializable]
       #endif
-      public struct Isset {
+      internal struct Isset {
         public bool ire;
       }
 

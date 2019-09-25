@@ -21,7 +21,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class CqlResult : TBase
+  internal partial class CqlResult : TBase
   {
     private List<CqlRow> _rows;
     private int _num;
@@ -77,7 +77,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool rows;
       public bool num;
       public bool schema;

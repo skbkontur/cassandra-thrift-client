@@ -27,7 +27,7 @@ using System.Text;
 
 namespace Thrift.Protocol
 {
-    public struct TMap
+    internal struct TMap
     {
         private TType keyType;
         private TType valueType;

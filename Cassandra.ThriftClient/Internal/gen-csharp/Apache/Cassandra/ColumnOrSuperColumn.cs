@@ -36,7 +36,7 @@ namespace Apache.Cassandra
   #if !SILVERLIGHT
   [Serializable]
   #endif
-  public partial class ColumnOrSuperColumn : TBase
+  internal partial class ColumnOrSuperColumn : TBase
   {
     private Column _column;
     private SuperColumn _super_column;
@@ -100,7 +100,7 @@ namespace Apache.Cassandra
     #if !SILVERLIGHT
     [Serializable]
     #endif
-    public struct Isset {
+    internal struct Isset {
       public bool column;
       public bool super_column;
       public bool counter_column;

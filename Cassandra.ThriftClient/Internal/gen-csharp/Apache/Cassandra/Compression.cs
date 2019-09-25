@@ -10,7 +10,7 @@ namespace Apache.Cassandra
   /// <summary>
   /// CQL query compression
   /// </summary>
-  public enum Compression
+  internal enum Compression
   {
     GZIP = 1,
     NONE = 2,

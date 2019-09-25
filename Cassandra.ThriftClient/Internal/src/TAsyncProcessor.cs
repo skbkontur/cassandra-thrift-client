@@ -25,7 +25,7 @@ namespace Thrift
     /// <summary>
     /// Processes a message asynchronously.
     /// </summary>
-    public interface TAsyncProcessor
+    internal interface TAsyncProcessor
     {
         /// <summary>
         /// Processes the next part of the message.
