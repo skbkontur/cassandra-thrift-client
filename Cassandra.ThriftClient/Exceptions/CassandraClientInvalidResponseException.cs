@@ -1,4 +1,4 @@
-namespace SKBKontur.Cassandra.CassandraClient.Exceptions
+﻿namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientInvalidResponseException : CassandraClientException
     {

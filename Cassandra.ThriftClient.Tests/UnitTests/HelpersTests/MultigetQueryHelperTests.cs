@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using Apache.Cassandra;
+
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
@@ -43,7 +45,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
             const string columnFamily = "test_column_family_name";
             const string consistencyLevel = "QUORUM";
 
-            void FetchKeys() => new MultigetQueryHelper(commandName, keyspace, columnFamily, Apache.Cassandra.ConsistencyLevel.QUORUM)
+            void FetchKeys() => new MultigetQueryHelper(commandName, keyspace, columnFamily, ConsistencyLevel.QUORUM)
                 .EnumerateAllKeysWithPartialFetcher(keys, EmptyFetcherFactory(), silentLog);
 
             Assert.Throws(Is.TypeOf<CassandraClientInvalidResponseException>()

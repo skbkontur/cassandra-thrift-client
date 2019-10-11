@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 
 using Apache.Cassandra;
@@ -32,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
                 return new CassandraClientIOException(message, e);
             if (e is SchemaDisagreementException)
                 return new CassandraClientSchemaDisagreementException(message, e);
-            if(e is CassandraClientInvalidResponseException cassandraClientInvalidResponseException)
+            if (e is CassandraClientInvalidResponseException cassandraClientInvalidResponseException)
                 return cassandraClientInvalidResponseException;
             return new CassandraUnknownException(message, e);
         }

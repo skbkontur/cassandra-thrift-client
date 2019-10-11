@@ -26,7 +26,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                     JmxPort = 7399,
                     GossipPort = 7400
                 };
-            Node.Restart(timeout: TimeSpan.FromMinutes(1));
+            Node.Restart(timeout : TimeSpan.FromMinutes(1));
         }
 
         private static string FindCassandraTemplateDirectory(string currentDir)

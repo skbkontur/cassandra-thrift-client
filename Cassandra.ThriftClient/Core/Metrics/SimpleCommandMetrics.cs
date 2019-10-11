@@ -1,4 +1,4 @@
-﻿using JetBrains.Annotations;
+using JetBrains.Annotations;
 
 using Metrics;
 
@@ -25,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
         public void RecordCommandExecutionInfo(ISimpleCommand command)
         {
             queriedPartitions.Mark(command.QueriedPartitionsCount);
-            if(command.ResponseSize.HasValue)
+            if (command.ResponseSize.HasValue)
             {
                 responseBytesPerMinute.Mark(command.ResponseSize.Value);
                 responseBytes.Update(command.ResponseSize.Value);
