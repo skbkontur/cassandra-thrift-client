@@ -1,6 +1,6 @@
 # Changelog
 
-## v3.0.0 - 2019.10.11
+## v2.1.0 - 2019.10.11
 - Target .NET Standard 2.0 (PR [#8](https://github.com/skbkontur/cassandra-thrift-client/pull/8)).
 - Use Moq instead of Rhino.Mocks to be able to target netstandard2.0 (PR [#7](https://github.com/skbkontur/cassandra-thrift-client/pull/7)).
 - Inline Apache Thrift library source code of [v0.12.0](https://github.com/apache/thrift/tree/v0.12.0/lib/csharp/src).
