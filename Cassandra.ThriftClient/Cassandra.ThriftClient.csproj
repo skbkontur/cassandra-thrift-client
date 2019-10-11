@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SkbKontur.Metrics.Net" Version="0.4.8-rc1" />
+    <PackageReference Include="SkbKontur.Metrics.Net" Version="1.0.12" />
     <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.2" />
   </ItemGroup>
 
