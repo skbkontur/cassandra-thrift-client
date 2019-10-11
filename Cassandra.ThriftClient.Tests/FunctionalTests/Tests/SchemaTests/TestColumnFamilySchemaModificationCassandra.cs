@@ -1,4 +1,4 @@
-﻿using Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Utils;
+using Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Utils;
 using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
 using NUnit.Framework;
@@ -142,8 +142,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         public void TestTryCreateColumnFamilyWithWrongChunkLength()
         {
             Assert.Throws<CassandraClientInvalidRequestException>(
-                () =>
-                keyspaceConnection.AddColumnFamily(new ColumnFamily
+                () => keyspaceConnection.AddColumnFamily(new ColumnFamily
                     {
                         Name = TestSchemaUtils.GetRandomColumnFamilyName(),
                         Compression = ColumnFamilyCompression.Deflate(new CompressionOptions {ChunkLengthInKb = 3})

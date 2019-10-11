@@ -12,17 +12,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
     {
         public static CassandraClientException Transform(Exception e, string message)
         {
-            // ReSharper disable CanBeReplacedWithTryCastAndCheckForNull
             if (e is NotFoundException)
                 return new CassandraClientSomethingNotFoundException(message, e);
-            if (e is InvalidRequestException)
-                return new CassandraClientInvalidRequestException(message, (InvalidRequestException)e);
+            if (e is InvalidRequestException invalidRequestException)
+                return new CassandraClientInvalidRequestException(message, invalidRequestException);
             if (e is UnavailableException)
                 return new CassandraClientUnavailableException(message, e);
             if (e is TimedOutException)
                 return new CassandraClientTimedOutException(message, e);
-            if (e is TApplicationException)
-                return new CassandraClientApplicationException(message, (TApplicationException)e);
+            if (e is TApplicationException applicationException)
+                return new CassandraClientApplicationException(message, applicationException);
             if (e is AuthenticationException)
                 return new CassandraClientAuthenticationException(message, e);
             if (e is AuthorizationException)
@@ -33,10 +32,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
                 return new CassandraClientIOException(message, e);
             if (e is SchemaDisagreementException)
                 return new CassandraClientSchemaDisagreementException(message, e);
-            if(e is CassandraClientInvalidResponseException)
-                return (CassandraClientInvalidResponseException)e;
+            if (e is CassandraClientInvalidResponseException cassandraClientInvalidResponseException)
+                return cassandraClientInvalidResponseException;
             return new CassandraUnknownException(message, e);
-            // ReSharper restore CanBeReplacedWithTryCastAndCheckForNull
         }
     }
 }

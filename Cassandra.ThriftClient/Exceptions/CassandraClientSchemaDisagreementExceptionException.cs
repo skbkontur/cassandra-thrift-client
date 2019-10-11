@@ -4,12 +4,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientSchemaDisagreementException : CassandraClientException
     {
-        public CassandraClientSchemaDisagreementException(string message)
-            : base(message)
-        {
-        }
-
-        public CassandraClientSchemaDisagreementException(string message, Exception innerException)
+        internal CassandraClientSchemaDisagreementException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

@@ -173,11 +173,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             var existingAcquired = replicaHealths
                 .Where(x => IsAliveReplica(x.ReplicaKey, x.Value))
                 .ShuffleByHealth(x => x.Value, x => new {Health = x.Value, x.ReplicaKey})
-                .Any(poolInfo =>
-                     TryAcquireExistsOrNew(
-                         new PoolKey(itemKey, poolInfo.ReplicaKey),
-                         GetDesiredActiveItemCountForReplica(poolInfo.Health, totalReplicaHealth, totalReplicaCount),
-                         out result));
+                .Any(poolInfo => TryAcquireExistsOrNew(
+                    new PoolKey(itemKey, poolInfo.ReplicaKey),
+                    GetDesiredActiveItemCountForReplica(poolInfo.Health, totalReplicaHealth, totalReplicaCount),
+                    out result));
 
             if (!existingAcquired)
             {
