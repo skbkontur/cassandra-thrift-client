@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System;
 
 using Thrift;
 
@@ -6,25 +6,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientApplicationException : CassandraClientException
     {
-        public CassandraClientApplicationException(string message)
-            : base(message)
-        {
-        }
-
         internal CassandraClientApplicationException(string message, TApplicationException innerException)
-            : base(message + "\nType: " + GetFuckingType(innerException), innerException)
+            : base($"{message}{Environment.NewLine}Type: {innerException.Type}", innerException)
         {
-        }
-
-        private static string GetFuckingType(TApplicationException exception)
-        {
-            var field = typeof(TApplicationException).GetField("type", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (field != null)
-            {
-                var type = (TApplicationException.ExceptionType)(field.GetValue(exception));
-                return type.ToString();
-            }
-            return "<failed to get type>";
         }
     }
 }

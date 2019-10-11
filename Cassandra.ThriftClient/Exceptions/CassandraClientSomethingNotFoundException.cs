@@ -4,12 +4,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientSomethingNotFoundException : CassandraClientException
     {
-        public CassandraClientSomethingNotFoundException(string message)
-            : base(message)
-        {
-        }
-
-        public CassandraClientSomethingNotFoundException(string message, Exception innerException)
+        internal CassandraClientSomethingNotFoundException(string message, Exception innerException)
             : base(message, innerException)
         {
         }

@@ -1,15 +1,10 @@
-﻿using System;
+using System;
 
 namespace SKBKontur.Cassandra.CassandraClient.Exceptions
 {
     public class CassandraClientUnavailableException : CassandraClientException
     {
-        public CassandraClientUnavailableException(string message)
-            : base(message)
-        {
-        }
-
-        public CassandraClientUnavailableException(string message, Exception innerException)
+        internal CassandraClientUnavailableException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
