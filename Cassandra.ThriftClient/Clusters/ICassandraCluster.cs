@@ -13,6 +13,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
         IClusterConnection RetrieveClusterConnection();
         IKeyspaceConnection RetrieveKeyspaceConnection(string keyspaceName);
         IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName);
+        ITimeBasedColumnFamilyConnection RetrieveTimeBasedColumnFamilyConnection(string keyspace, string columnFamily);
         IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName);
         Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges();
         void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false);

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,6 +39,11 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
         public IColumnFamilyConnection RetrieveColumnFamilyConnection(string keySpaceName, string columnFamilyName)
         {
             return innerCluster.RetrieveColumnFamilyConnection(keySpaceName, columnFamilyName);
+        }
+
+        public ITimeBasedColumnFamilyConnection RetrieveTimeBasedColumnFamilyConnection(string keyspace, string columnFamily)
+        {
+            return innerCluster.RetrieveTimeBasedColumnFamilyConnection(keyspace, columnFamily);
         }
 
         public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)

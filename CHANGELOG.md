@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.2.0 - 2019.11.12
+- Use monotonic timestamp from [SkbKontur.Cassandra.TimeGuid](https://github.com/skbkontur/cassandra-time-guid) package.
+- Add `TimeBasedColumnFamilyConnection` to work with `TimeUUID` clustering keys.
+
 ## v2.1.7 - 2019.10.11
 - Target .NET Standard 2.0 (PR [#8](https://github.com/skbkontur/cassandra-thrift-client/pull/8)).
 - Use Moq instead of Rhino.Mocks to be able to target netstandard2.0 (PR [#7](https://github.com/skbkontur/cassandra-thrift-client/pull/7)).

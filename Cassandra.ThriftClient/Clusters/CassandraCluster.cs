@@ -42,6 +42,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Clusters
             return new ColumnFamilyConnection(columnFamilyConnectionImplementation);
         }
 
+        public ITimeBasedColumnFamilyConnection RetrieveTimeBasedColumnFamilyConnection(string keyspace, string columnFamily)
+        {
+            var columnFamilyConnectionImplementation = RetrieveColumnFamilyConnectionImplementation(keyspace, columnFamily);
+            return new TimeBasedColumnFamilyConnection(columnFamilyConnectionImplementation);
+        }
+
         public IColumnFamilyConnectionImplementation RetrieveColumnFamilyConnectionImplementation(string keySpaceName, string columnFamilyName)
         {
             return new ColumnFamilyConnectionImplementation(keySpaceName, columnFamilyName, clusterSettings, commandExecutor, fierceCommandExecutor);
