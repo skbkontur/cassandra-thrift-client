@@ -602,7 +602,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 return (Value != null ? Value.GetHashCode() : 0);
             }
 
-            private string Value { get; set; }
+            private string Value { get; }
         }
 
         private class ReplicaKey : IEquatable<ReplicaKey>
@@ -631,7 +631,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 return (Name != null ? Name.GetHashCode() : 0);
             }
 
-            public string Name { get; private set; }
+            public string Name { get; }
         }
 
         private class Item : IDisposable, IPoolKeyContainer<ItemKey, ReplicaKey>, ILiveness
@@ -667,8 +667,8 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 }
             }
 
-            public ItemKey PoolKey { get; private set; }
-            public ReplicaKey ReplicaKey { get; private set; }
+            public ItemKey PoolKey { get; }
+            public ReplicaKey ReplicaKey { get; }
             private readonly Func<ReplicaKey, bool> isAliveFunc;
 
             private bool isAlive;
@@ -694,7 +694,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 var replicaNumber = Int32.Parse(replicaKey.Name.Replace("replica", ""));
                 replicaInfos[replicaNumber].IncrementCreationCount();
                 if (replicaInfos[replicaNumber].IsDead)
-                    throw new Exception(String.Format("Replica {0} is dead", replicaNumber));
+                    throw new Exception($"Replica {replicaNumber} is dead");
                 return new Item(itemKey, replicaKey, i => !replicaInfos[replicaNumber].IsDead);
             }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 
 using NUnit.Framework;
@@ -40,7 +40,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
                 for (var i = 0; i < 1000000; ++i)
                 {
                     var cur = DateTimeService.UtcNow.Ticks;
-                    Assert.That(cur >= last, string.Format("cur={0}\r\n last={1}", cur, last));
+                    Assert.That(cur >= last, $"cur={cur}\r\n last={last}");
                     last = cur;
                 }
             } while (DateTime.UtcNow - start < TimeSpan.FromSeconds(10));

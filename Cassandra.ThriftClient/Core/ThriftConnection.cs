@@ -56,13 +56,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        public DateTime CreationDateTime { get; private set; }
+        public DateTime CreationDateTime { get; }
 
         public bool IsAlive => isAlive && CassandraTransportIsOpen() && Ping();
 
         public override string ToString()
         {
-            return string.Format("ThriftConnection[EndPoint='{0}' KeyspaceName='{1}']", ipEndPoint, keyspaceName);
+            return $"ThriftConnection[EndPoint='{ipEndPoint}' KeyspaceName='{keyspaceName}']";
         }
 
         private bool Ping()

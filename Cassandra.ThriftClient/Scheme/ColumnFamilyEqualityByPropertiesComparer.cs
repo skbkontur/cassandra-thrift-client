@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -10,9 +10,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
         public bool NeedUpdateColumnFamily(ColumnFamily columnFamilyWithNewProperties, ColumnFamily columnFamilyFromTarget)
         {
             if (columnFamilyWithNewProperties.Name != columnFamilyFromTarget.Name)
-                throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different names ('{0}' and '{1}')", columnFamilyWithNewProperties.Name, columnFamilyFromTarget.Name));
+                throw new InvalidOperationException($"Cannot compare ColumnFamilies with different names ('{columnFamilyWithNewProperties.Name}' and '{columnFamilyFromTarget.Name}')");
             if (!CompareComparatorType(columnFamilyWithNewProperties.ComparatorType, columnFamilyFromTarget.ComparatorType))
-                throw new InvalidOperationException(string.Format("Cannot compare ColumnFamilies with different comparatorTypes ('{0}' and '{1}')", columnFamilyWithNewProperties.ComparatorType, columnFamilyFromTarget.ComparatorType));
+                throw new InvalidOperationException($"Cannot compare ColumnFamilies with different comparatorTypes ('{columnFamilyWithNewProperties.ComparatorType}' and '{columnFamilyFromTarget.ComparatorType}')");
             return
                 !(
                      columnFamilyWithNewProperties.Caching.Equals(columnFamilyFromTarget.Caching) &&

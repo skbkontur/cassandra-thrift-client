@@ -54,8 +54,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             if (string.IsNullOrEmpty(boolValue))
                 return null;
-            bool result;
-            if (!bool.TryParse(boolValue, out result))
+            if (!bool.TryParse(boolValue, out var result))
                 return null;
             return result;
         }
@@ -64,8 +63,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             if (string.IsNullOrEmpty(intValue))
                 return null;
-            int result;
-            if (!int.TryParse(intValue, out result))
+            if (!int.TryParse(intValue, out var result))
                 return null;
             return result;
         }

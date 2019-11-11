@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 using NUnit.Framework;
@@ -16,11 +16,11 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
             Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType((string)null));
             Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType("some-string"));
             Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(DataType.CompositeType.ToStringValue()));
-            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(string.Format("{0}({1})", DataType.CompositeType.ToStringValue(), DataType.Int32Type.ToStringValue())));
-            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(string.Format("{0}({1},{2})", DataType.CompositeType.ToStringValue(), DataType.CompositeType.ToStringValue(), DataType.CompositeType.ToStringValue())));
-            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(string.Format("{0}({1},{2})", DataType.CompositeType.ToStringValue(), DataType.CompositeType.ToStringValue(), DataType.Int32Type.ToStringValue())));
-            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(string.Format("{0},{1},{2}", DataType.CompositeType.ToStringValue(), DataType.UTF8Type.ToStringValue(), DataType.Int32Type.ToStringValue())));
-            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(string.Format("{0},{1}", DataType.UTF8Type.ToStringValue(), DataType.Int32Type.ToStringValue())));
+            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType($"{DataType.CompositeType.ToStringValue()}({DataType.Int32Type.ToStringValue()})"));
+            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType($"{DataType.CompositeType.ToStringValue()}({DataType.CompositeType.ToStringValue()},{DataType.CompositeType.ToStringValue()})"));
+            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType($"{DataType.CompositeType.ToStringValue()}({DataType.CompositeType.ToStringValue()},{DataType.Int32Type.ToStringValue()})"));
+            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType($"{DataType.CompositeType.ToStringValue()},{DataType.UTF8Type.ToStringValue()},{DataType.Int32Type.ToStringValue()}"));
+            Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType($"{DataType.UTF8Type.ToStringValue()},{DataType.Int32Type.ToStringValue()}"));
             Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType((DataType[])null));
             Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(new DataType[0]));
             Assert.Throws<InvalidOperationException>(() => new ColumnComparatorType(new[] {DataType.CompositeType}));
@@ -40,7 +40,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
         [Test]
         public void TestCreateFromStringCompositeDataType()
         {
-            var input = string.Format("{0}({1},{2},{3})", DataType.CompositeType.ToStringValue(), DataType.UTF8Type.ToStringValue(), DataType.Int32Type.ToStringValue(), DataType.FloatType.ToStringValue());
+            var input = $"{DataType.CompositeType.ToStringValue()}({DataType.UTF8Type.ToStringValue()},{DataType.Int32Type.ToStringValue()},{DataType.FloatType.ToStringValue()})";
             var comparatorType = new ColumnComparatorType(input);
             Assert.That(comparatorType.IsComposite, Is.True);
             Assert.That(comparatorType.Types, Is.EqualTo(new[] {DataType.UTF8Type, DataType.Int32Type, DataType.FloatType}));
@@ -63,7 +63,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
             var comparatorType = new ColumnComparatorType(subTypes);
             Assert.That(comparatorType.IsComposite, Is.True);
             Assert.That(comparatorType.Types, Is.EqualTo(subTypes));
-            Assert.That(comparatorType.ToString(), Is.EqualTo(string.Format("{0}({1})", DataType.CompositeType.ToStringValue(), string.Join(",", subTypes.Select(x => x.ToStringValue())))));
+            Assert.That(comparatorType.ToString(), Is.EqualTo($"{DataType.CompositeType.ToStringValue()}({string.Join(",", subTypes.Select(x => x.ToStringValue()))})"));
         }
     }
 }

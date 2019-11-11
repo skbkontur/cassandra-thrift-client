@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -86,8 +86,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public RawColumn GetColumn(byte[] key, byte[] columnName)
         {
-            RawColumn result;
-            if (!TryGetColumn(key, columnName, out result))
+            if (!TryGetColumn(key, columnName, out var result))
                 throw new ColumnIsNotFoundException(columnFamilyName, key, columnName);
             return result;
         }

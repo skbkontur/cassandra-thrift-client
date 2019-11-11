@@ -64,7 +64,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     return;
                 LogVersions(schemaAgreementCommand.Output);
             } while (sw.Elapsed < timeout);
-            throw new InvalidOperationException(string.Format("WaitUntilSchemeAgreementIsReached didn't complete in {0}", timeout));
+            throw new InvalidOperationException($"WaitUntilSchemeAgreementIsReached didn't complete in {timeout}");
         }
 
         private void LogVersions(IDictionary<string, List<string>> versions)
@@ -72,7 +72,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var stringBuilder = new StringBuilder();
             stringBuilder.AppendLine("Cassandra scheme is not synchronized:");
             foreach (var kvp in versions)
-                stringBuilder.AppendLine(string.Format("\tVerson: {0}, Nodes: {1}", kvp.Key, string.Join(",", kvp.Value)));
+                stringBuilder.AppendLine($"\tVerson: {kvp.Key}, Nodes: {string.Join(",", kvp.Value)}");
             logger.Info(stringBuilder.ToString());
         }
 

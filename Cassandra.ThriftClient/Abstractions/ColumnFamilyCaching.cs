@@ -25,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             case "NONE":
                 return ColumnFamilyCaching.None;
             default:
-                throw new ArgumentException("value", string.Format("Cannot parse '{0}' to ColumnFamilyCaching", value));
+                throw new ArgumentException("value", $"Cannot parse '{value}' to ColumnFamilyCaching");
             }
         }
 

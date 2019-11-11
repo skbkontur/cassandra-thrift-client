@@ -8,7 +8,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             ReplicationFactor = replicationFactor;
         }
 
-        public string DataCenterName { get; private set; }
-        public int ReplicationFactor { get; private set; }
+        public string DataCenterName { get; }
+        public int ReplicationFactor { get; }
     }
 }

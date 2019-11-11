@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 using JetBrains.Annotations;
 
@@ -47,7 +47,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
             catch (Exception e)
             {
-                var exception = CassandraExceptionTransformer.Transform(e, string.Format("Failed to execute cassandra command {0} in pool {1}", command.Name, connectionInPool));
+                var exception = CassandraExceptionTransformer.Transform(e, $"Failed to execute cassandra command {command.Name} in pool {connectionInPool}");
                 if (exception.ReduceReplicaLive)
                     connectionPool.Bad(connectionInPool);
                 else

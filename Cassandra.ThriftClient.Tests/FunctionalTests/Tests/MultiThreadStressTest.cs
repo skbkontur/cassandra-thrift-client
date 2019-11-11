@@ -39,7 +39,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 for (int i = 0; i < threadCount; i++)
                 {
                     if (threadStatuses[i] == 2)
-                        throw new Exception(string.Format("Поток {0} сдох", i), threadExceptions[i]);
+                        throw new Exception($"Поток {i} сдох", threadExceptions[i]);
                 }
                 if (cnt == threadCount)
                     break;
@@ -80,9 +80,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 {
                     if (i % 1000 == 0)
                         Log(key, "Reading " + i + " of " + columnValues.Length);
-                    Column column;
                     Assert.IsTrue(cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName)
-                                                  .TryGetColumn(key, columnNames[i], out column));
+                                                  .TryGetColumn(key, columnNames[i], out var column));
                 }
                 threadStatuses[threadIndex] = 1;
             }

@@ -14,8 +14,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
         {
             if (type.IsEnum || type.IsPrimitive)
                 return value.ToString();
-            Func<object, string> func;
-            if (!serializers.TryGetValue(type, out func))
+            if (!serializers.TryGetValue(type, out var func))
                 return null;
             return func(value);
         }

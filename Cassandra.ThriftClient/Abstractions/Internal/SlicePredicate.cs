@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 {
@@ -14,8 +14,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
             SliceRange = sliceRange ?? new SliceRange {Count = int.MaxValue};
         }
 
-        public List<byte[]> Columns { get; private set; }
-        public SliceRange SliceRange { get; private set; }
+        public List<byte[]> Columns { get; }
+        public SliceRange SliceRange { get; }
     }
 
     internal static class SlicePredicateExtensions

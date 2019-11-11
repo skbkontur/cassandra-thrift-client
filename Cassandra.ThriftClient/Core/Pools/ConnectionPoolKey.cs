@@ -25,7 +25,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
 
         public override string ToString()
         {
-            return string.Format("EndPoint={0}; KeySpace={1}, IsFierce={2}", IpEndPoint, Keyspace, IsFierce);
+            return $"EndPoint={IpEndPoint}; KeySpace={Keyspace}, IsFierce={IsFierce}";
         }
 
         public IPEndPoint IpEndPoint { get; set; }

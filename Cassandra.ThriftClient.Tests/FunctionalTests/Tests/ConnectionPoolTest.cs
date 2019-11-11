@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -87,13 +87,13 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                             break;
                         list.Add(new Column
                             {
-                                Name = string.Format("name_{0}_{1}_{2}", id, i, j),
+                                Name = $"name_{id}_{i}_{j}",
                                 Value = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30}
                             });
                     }
                     if (stopped)
                         break;
-                    connection.AddBatch(string.Format("row_{0}_{1}", id, i), list);
+                    connection.AddBatch($"row_{id}_{i}", list);
                 }
             }
             catch

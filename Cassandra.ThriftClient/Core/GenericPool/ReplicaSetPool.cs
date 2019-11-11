@@ -47,7 +47,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             disposeEvent = new ManualResetEvent(false);
             checkDeadItemsThread = new Thread(CheckDeadItemsThread)
                 {
-                    Name = string.Format("CheckDeadConnectionsForThread {0}", string.Join(", ", replicas)),
+                    Name = $"CheckDeadConnectionsForThread {string.Join(", ", replicas)}",
                     IsBackground = true
                 };
             checkDeadItemsThread.Start();
@@ -80,8 +80,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                             {
                                 try
                                 {
-                                    TItem connection;
-                                    if (TryAcquireNew(deadReplicaPool.Value, out connection))
+                                    if (TryAcquireNew(deadReplicaPool.Value, out var connection))
                                     {
                                         deadReplicaPingInfos.Remove(deadReplicaKey);
                                         GoodReplica(deadReplicaKey);
@@ -188,8 +187,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     var replicaPool = GetPool(itemKey, replicaKey);
                     try
                     {
-                        TItem item;
-                        if (TryAcquireNew(replicaPool, out item))
+                        if (TryAcquireNew(replicaPool, out var item))
                             return item;
                     }
                     catch (Exception e)
@@ -200,7 +198,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                     }
                 }
                 throw new AllItemsIsDeadExceptions(
-                    string.Format("Cannot acquire connection from any of pool with keys [{0}]", string.Join(", ", pools.Keys.Select(x => x.ToString()))),
+                    $"Cannot acquire connection from any of pool with keys [{string.Join(", ", pools.Keys.Select(x => x.ToString()))}]",
                     exceptions
                     );
             }
@@ -244,8 +242,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         internal void BadReplica(TReplicaKey replicaKey)
         {
-            int replicaIndex;
-            if (replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
+            if (replicaIndicies.TryGetValue(replicaKey, out var replicaIndex))
             {
                 var replicaHealth = replicaHealths[replicaIndex];
                 var healthValue = replicaHealth.Value * dieRate;
@@ -309,8 +306,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                         totals.Add(pool.Key, unusedItemCount);
                 }
                 if (totals.Count > 0)
-                    logger.Info("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => string.Format("  {0}: {1}", x.Key, x.Value))));
-                logger.Info("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => string.Format("  {0}: Free: {1}, Busy: {2}", x.Key, x.Value.FreeItemCount, x.Value.BusyItemCount))));
+                    logger.Info("UnusedItemsCollecting: \n{0}", string.Join(Environment.NewLine, totals.Select(x => $"  {x.Key}: {x.Value}")));
+                logger.Info("PoolInfo: \n{0}", string.Join(Environment.NewLine, poolArray.Select(x => $"  {x.Key}: Free: {x.Value.FreeItemCount}, Busy: {x.Value.BusyItemCount}")));
             }
         }
 
@@ -329,9 +326,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         {
             if (!createNewIfNotExists)
             {
-                Pool<TItem> result;
-                if (!pools.TryGetValue(key, out result))
-                    throw new InvalidPoolKeyException(string.Format("Pool with key [{0}] does not exists", key));
+                if (!pools.TryGetValue(key, out var result))
+                    throw new InvalidPoolKeyException($"Pool with key [{key}] does not exists");
                 return result;
             }
             return pools.GetOrAdd(key, x => poolFactory(x.ItemKey, x.ReplicaKey));
@@ -339,8 +335,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private void GoodReplica(TReplicaKey replicaKey)
         {
-            int replicaIndex;
-            if (replicaIndicies.TryGetValue(replicaKey, out replicaIndex))
+            if (replicaIndicies.TryGetValue(replicaKey, out var replicaIndex))
             {
                 var replicaHealth = replicaHealths[replicaIndex];
                 var healthValue = replicaHealth.Value * aliveRate;
@@ -377,11 +372,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
             public override string ToString()
             {
-                return string.Format("PoolKey[Key: {0}, ReplicaKey: {1}]", ItemKey, ReplicaKey);
+                return $"PoolKey[Key: {ItemKey}, ReplicaKey: {ReplicaKey}]";
             }
 
-            public TItemKey ItemKey { get; private set; }
-            public TReplicaKey ReplicaKey { get; private set; }
+            public TItemKey ItemKey { get; }
+            public TReplicaKey ReplicaKey { get; }
         }
 
         private class DeadReplicaInfo

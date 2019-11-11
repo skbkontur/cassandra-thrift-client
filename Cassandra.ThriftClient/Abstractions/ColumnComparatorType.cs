@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -14,7 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 
             var match = pattern.Match(input);
             if (!match.Success)
-                throw new InvalidOperationException(string.Format("string '{0}' has invalid format", input));
+                throw new InvalidOperationException($"string '{input}' has invalid format");
 
             var dataTypes = new List<DataType>();
             var group = match.Groups["dataType"];
@@ -29,10 +29,10 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             {
                 dataTypes.Remove(DataType.CompositeType);
                 if (dataTypes.Count < 2)
-                    throw new InvalidOperationException(string.Format("invalid comparatorType: {0}.CompositeType must have more than one subtypes", input));
+                    throw new InvalidOperationException($"invalid comparatorType: {input}.CompositeType must have more than one subtypes");
 
                 if (dataTypes.Count(x => x == DataType.CompositeType) != 0)
-                    throw new InvalidOperationException(string.Format("invalid comparatorType: {0}.Cannot be more than one compositeType", input));
+                    throw new InvalidOperationException($"invalid comparatorType: {input}.Cannot be more than one compositeType");
             }
 
             Types = dataTypes.ToArray();
@@ -53,12 +53,12 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
         }
 
-        public bool IsComposite { get; private set; }
-        public DataType[] Types { get; private set; }
+        public bool IsComposite { get; }
+        public DataType[] Types { get; }
 
         public override string ToString()
         {
-            return IsComposite ? string.Format("{0}({1})", DataType.CompositeType.ToStringValue(), string.Join(",", Types.Select(x => x.ToStringValue()))) : Types.First().ToStringValue();
+            return IsComposite ? $"{DataType.CompositeType.ToStringValue()}({string.Join(",", Types.Select(x => x.ToStringValue()))})" : Types.First().ToStringValue();
         }
 
         private static readonly Regex pattern = new Regex(@"^(?<dataType>(([\w]+\.)*[\w]+))(\(((?<dataType>(([\w]+\.)*[\w]+)),)*(?<dataType>(([\w]+\.)*[\w]+))\))*$");

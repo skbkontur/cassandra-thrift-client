@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -26,16 +26,14 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private static long GetCounter()
         {
-            long counter;
-            if (!QueryPerformanceCounter(out counter))
+            if (!QueryPerformanceCounter(out var counter))
                 throw new InvalidOperationException("Cannot get performance counter!");
             return counter;
         }
 
         private static long GetFrequency()
         {
-            long result;
-            if (!QueryPerformanceFrequency(out result))
+            if (!QueryPerformanceFrequency(out var result))
                 throw new InvalidOperationException("Cannot get performance frequency!");
             return result;
         }

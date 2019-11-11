@@ -47,7 +47,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Scheme
                     logger.Warn("CassandraClientTimedOutException occured during scheme actualization", e);
                 }
             } while (sw.Elapsed < timeout);
-            throw new InvalidOperationException(string.Format("Failed to actualize cassandra scheme in {0}", timeout));
+            throw new InvalidOperationException($"Failed to actualize cassandra scheme in {timeout}");
         }
 
         private void DoActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)

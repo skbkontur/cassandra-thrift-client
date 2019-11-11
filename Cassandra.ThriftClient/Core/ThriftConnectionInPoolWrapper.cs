@@ -32,11 +32,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public override string ToString()
         {
-            return string.Format("ThriftConnectionInPoolWrapper[KeyspaceName: {0}, NodeEndPoint: {1}]", KeyspaceName, ReplicaKey);
+            return $"ThriftConnectionInPoolWrapper[KeyspaceName: {KeyspaceName}, NodeEndPoint: {ReplicaKey}]";
         }
 
-        public string KeyspaceName { get; private set; }
-        public IPEndPoint ReplicaKey { get; private set; }
+        public string KeyspaceName { get; }
+        public IPEndPoint ReplicaKey { get; }
 
         private readonly ThriftConnection thriftConnection;
     }

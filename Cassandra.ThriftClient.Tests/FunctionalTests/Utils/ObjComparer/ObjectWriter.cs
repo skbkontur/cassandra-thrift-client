@@ -31,7 +31,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
         private void DoWrite(Type type, object value)
         {
             if (IsBadType(type))
-                throw new NotSupportedException("Не поддерживается тип " + type);
+                throw new NotSupportedException("РќРµ РїРѕРґРґРµСЂР¶РёРІР°РµС‚СЃСЏ С‚РёРї " + type);
 
             if (TryWriteNullValue(value)) return;
             if (TryWriteNullableTypeValue(type, value)) return;
@@ -58,9 +58,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
             {
                 if (fieldInfo.FieldType.IsInterface)
                     continue;
-                object fieldValue;
-                Type typeToSerialize;
-                if (nodeProcessor.TryProcess(value, fieldInfo, out typeToSerialize, out fieldValue))
+                if (nodeProcessor.TryProcess(value, fieldInfo, out var typeToSerialize, out var fieldValue))
                     Write(typeToSerialize, fieldValue, FieldNameToTagName(fieldInfo.Name));
             }
         }

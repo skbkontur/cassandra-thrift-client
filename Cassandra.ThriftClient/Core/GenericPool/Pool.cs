@@ -29,8 +29,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public T Acquire()
         {
-            T result;
-            return TryAcquireExists(out result) ? result : AcquireNew();
+            return TryAcquireExists(out var result) ? result : AcquireNew();
         }
 
         public bool TryAcquireExists(out T result)
@@ -50,8 +49,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public void Release(T item)
         {
-            object dummy;
-            if (!busyItems.TryRemove(item, out dummy))
+            if (!busyItems.TryRemove(item, out var dummy))
                 throw new FailedReleaseItemException(item.ToString());
             Interlocked.Decrement(ref busyItemCount);
             freeItems.Push(new FreeItemInfo(item, DateTime.UtcNow));
@@ -75,9 +73,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 {
                     var tempStack = new Stack<FreeItemInfo>();
                     var now = DateTime.UtcNow;
-                    FreeItemInfo item;
 
-                    while (freeItems.TryPop(out item))
+                    while (freeItems.TryPop(out var item))
                     {
                         if (now - item.IdleTime >= minIdleTimeSpan)
                         {
@@ -105,8 +102,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         public void Remove(T item)
         {
-            object dummy;
-            if (!busyItems.TryRemove(item, out dummy))
+            if (!busyItems.TryRemove(item, out var dummy))
                 throw new RemoveFromPoolFailedException("Cannot find item to remove in busy items. This item does not belong in this pool or in released state.");
             Interlocked.Decrement(ref busyItemCount);
         }
@@ -154,8 +150,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 IdleTime = idleTime;
             }
 
-            public T Item { get; private set; }
-            public DateTime IdleTime { get; private set; }
+            public T Item { get; }
+            public DateTime IdleTime { get; }
         }
     }
 }

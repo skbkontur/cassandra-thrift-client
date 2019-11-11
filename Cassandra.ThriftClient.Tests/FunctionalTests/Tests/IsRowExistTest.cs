@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
@@ -45,9 +45,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestTryGetColumn()
         {
             var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
-            Column column;
 
-            Assert.IsFalse(conn.TryGetColumn("id1", "qzz", out column));
+            Assert.IsFalse(conn.TryGetColumn("id1", "qzz", out var column));
             Assert.IsFalse(conn.TryGetColumn("id1", "qxx", out column));
             Assert.IsFalse(conn.TryGetColumn("id2", "qzz", out column));
             Assert.IsFalse(conn.TryGetColumn("id2", "qxx", out column));

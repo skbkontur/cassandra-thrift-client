@@ -28,7 +28,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             return new CompactionStrategy(CompactionStrategyType.SizeTiered, new CompactionStrategyOptions {Enabled = false});
         }
 
-        public CompactionStrategyType CompactionStrategyType { get; private set; }
-        public CompactionStrategyOptions CompactionStrategyOptions { get; private set; }
+        public CompactionStrategyType CompactionStrategyType { get; }
+        public CompactionStrategyOptions CompactionStrategyOptions { get; }
     }
 }

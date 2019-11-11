@@ -54,8 +54,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
                 pool.Release(item1);
-                Item item2;
-                Assert.That(!pool.TryAcquireExists(out item2));
+                Assert.That(!pool.TryAcquireExists(out var item2));
                 Assert.That(item1.Disposed);
             }
         }
@@ -127,11 +126,9 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
-                Item item2;
-                Assert.That(pool.TryAcquireExists(out item2));
+                Assert.That(pool.TryAcquireExists(out var item2));
                 Assert.That(item2, Is.EqualTo(item1));
-                Item item3;
-                Assert.That(!pool.TryAcquireExists(out item3));
+                Assert.That(!pool.TryAcquireExists(out var item3));
             }
         }
 

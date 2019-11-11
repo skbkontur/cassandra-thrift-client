@@ -18,7 +18,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             : base(connectionPool, settings)
         {
             if (settings.Attempts <= 0)
-                throw new InvalidOperationException(string.Format("settings.Attempts <= 0 for: {0}", settings));
+                throw new InvalidOperationException($"settings.Attempts <= 0 for: {settings}");
             this.logger = logger;
         }
 

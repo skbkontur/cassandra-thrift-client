@@ -1,4 +1,4 @@
-﻿namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
     public struct CommandContext
     {
@@ -7,8 +7,8 @@
             if (string.IsNullOrEmpty(KeyspaceName))
                 return "";
             if (string.IsNullOrEmpty(ColumnFamilyName))
-                return string.Format("(Keyspace: {0})", KeyspaceName);
-            return string.Format("(Keyspace: {0}, ColumnFamily: {1})", KeyspaceName, ColumnFamilyName);
+                return $"(Keyspace: {KeyspaceName})";
+            return $"(Keyspace: {KeyspaceName}, ColumnFamily: {ColumnFamilyName})";
         }
 
         public string KeyspaceName { get; set; }

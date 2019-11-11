@@ -47,9 +47,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             {
                 if (i % 1000 == 0)
                     Log("Reading " + i + " of " + columnValues.Length);
-                Column column;
                 Assert.IsTrue(cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName)
-                                              .TryGetColumn(key, columnNames[i], out column));
+                                              .TryGetColumn(key, columnNames[i], out var column));
             }
         }
 

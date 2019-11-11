@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -68,8 +68,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public bool TryGetColumn(string key, string columnName, out Column result)
         {
             result = null;
-            RawColumn rawColumn;
-            if (!implementation.TryGetColumn(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(columnName), out rawColumn))
+            if (!implementation.TryGetColumn(StringExtensions.StringToBytes(key), StringExtensions.StringToBytes(columnName), out var rawColumn))
                 return false;
             result = rawColumn.ToColumn();
             return true;
@@ -105,9 +104,8 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             var keyToColumns = new Dictionary<byte[], List<RawColumn>>(ByteArrayEqualityComparer.Instance);
             foreach (var item in data)
             {
-                List<RawColumn> rawColumns;
                 var rawKey = StringExtensions.StringToBytes(item.Key);
-                if (!keyToColumns.TryGetValue(rawKey, out rawColumns))
+                if (!keyToColumns.TryGetValue(rawKey, out var rawColumns))
                 {
                     rawColumns = new List<RawColumn>();
                     keyToColumns.Add(rawKey, rawColumns);

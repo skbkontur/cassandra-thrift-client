@@ -19,7 +19,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             var hashtable = (Hashtable)enumToString[enumType];
             var result = hashtable[value];
             if (result == null)
-                throw new Exception(string.Format("The string value not found for enum value '{0}' of type '{1}'", value, enumType.Name));
+                throw new Exception($"The string value not found for enum value '{value}' of type '{enumType.Name}'");
             return (string)result;
         }
 
@@ -27,7 +27,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
         {
             var enumType = typeof(T);
             if (!enumType.IsEnum)
-                throw new Exception(string.Format("The type '{0}' not enum", enumType.Name));
+                throw new Exception($"The type '{enumType.Name}' not enum");
             if (stringToEnum[enumType] == null)
             {
                 lock (stringToEnum)
@@ -39,7 +39,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             var hashtable = (Hashtable)stringToEnum[enumType];
             var result = hashtable[value];
             if (result == null)
-                throw new Exception(string.Format("The enum value of type '{0}' not found for string value '{1}'", enumType.Name, value));
+                throw new Exception($"The enum value of type '{enumType.Name}' not found for string value '{value}'");
             return (T)result;
         }
 
@@ -63,7 +63,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
             {
                 var stringValue = GetStringValue((Enum)value);
                 if (result.ContainsKey(stringValue))
-                    throw new Exception(string.Format("The string '{0}' is the string value both for values '{1}' and '{2}'", stringValue, value, result[stringValue]));
+                    throw new Exception($"The string '{stringValue}' is the string value both for values '{value}' and '{result[stringValue]}'");
                 result.Add(stringValue, value);
             }
             return result;
