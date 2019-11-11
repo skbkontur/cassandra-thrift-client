@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 using Apache.Cassandra;
@@ -6,7 +6,8 @@ using Apache.Cassandra;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+
+using SkbKontur.Cassandra.TimeBasedUuid.Bits;
 
 using Vostok.Logging.Abstractions;
 
@@ -31,7 +32,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
 
         private Dictionary<byte[], Dictionary<string, List<Mutation>>> TranslateMutations()
         {
-            var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(ByteArrayEqualityComparer.Instance);
+            var result = new Dictionary<byte[], Dictionary<string, List<Mutation>>>(ByteArrayComparer.Instance);
             foreach (var mutationsPerColumnFamily in mutations)
             {
                 foreach (var mutationsPerRow in mutationsPerColumnFamily.Value)

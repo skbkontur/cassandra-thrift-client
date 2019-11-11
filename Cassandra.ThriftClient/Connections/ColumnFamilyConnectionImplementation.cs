@@ -10,9 +10,9 @@ using SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write;
 using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
 using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 using SkbKontur.Cassandra.TimeBasedUuid;
+using SkbKontur.Cassandra.TimeBasedUuid.Bits;
 
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
@@ -39,7 +39,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
         public bool IsRowExist(byte[] key)
         {
             var keys = GetKeys(key, 1);
-            return keys.Count == 1 && ByteArrayEqualityComparer.Instance.Equals(keys[0], key);
+            return keys.Count == 1 && ByteArrayComparer.Instance.Equals(keys[0], key);
         }
 
         public int GetCount(byte[] key)

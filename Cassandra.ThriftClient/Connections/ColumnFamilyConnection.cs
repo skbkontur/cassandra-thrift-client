@@ -5,6 +5,8 @@ using System.Linq;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
+using SkbKontur.Cassandra.TimeBasedUuid.Bits;
+
 namespace SKBKontur.Cassandra.CassandraClient.Connections
 {
     internal class ColumnFamilyConnection : IColumnFamilyConnection
@@ -101,7 +103,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
 
         public void BatchInsert(IEnumerable<KeyValuePair<string, IEnumerable<Column>>> data)
         {
-            var keyToColumns = new Dictionary<byte[], List<RawColumn>>(ByteArrayEqualityComparer.Instance);
+            var keyToColumns = new Dictionary<byte[], List<RawColumn>>(ByteArrayComparer.Instance);
             foreach (var item in data)
             {
                 var rawKey = StringExtensions.StringToBytes(item.Key);

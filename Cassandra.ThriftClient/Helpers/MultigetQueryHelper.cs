@@ -8,6 +8,8 @@ using JetBrains.Annotations;
 
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
+using SkbKontur.Cassandra.TimeBasedUuid.Bits;
+
 using Vostok.Logging.Abstractions;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
@@ -34,7 +36,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
             [NotNull] Func<List<byte[]>, Dictionary<byte[], TValue>> partialFetcher,
             [NotNull] ILog logger)
         {
-            var keysToFetch = new HashSet<byte[]>(keys, ByteArrayEqualityComparer.Instance);
+            var keysToFetch = new HashSet<byte[]>(keys, ByteArrayComparer.Instance);
             var output = new Dictionary<byte[], TValue>();
             var attempts = 0;
             while (keysToFetch.Any())
