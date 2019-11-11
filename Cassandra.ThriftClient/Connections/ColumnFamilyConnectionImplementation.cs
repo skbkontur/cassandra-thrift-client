@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -232,6 +233,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
             return new InsertCommand(keyspaceName, columnFamilyName, keyColumnPair.Key, writeConsistencyLevel, keyColumnPair.Column);
         }
 
+        [SuppressMessage("ReSharper", "ParameterOnlyUsedForPreconditionCheck.Local")]
         private void CheckColumnHasTimestampValue(RawColumn column)
         {
             if (!cassandraClusterSettings.AllowNullTimestamp && !column.Timestamp.HasValue)
