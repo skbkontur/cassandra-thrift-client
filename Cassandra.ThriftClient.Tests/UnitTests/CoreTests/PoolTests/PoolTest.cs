@@ -7,6 +7,8 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using Vostok.Logging.Abstractions;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
@@ -183,7 +185,6 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     .Select(n => (Action)(() =>
                         {
                             // ReSharper disable AccessToDisposedClosure
-                            var random = new Random(n * DateTime.UtcNow.Millisecond);
                             for (var i = 0; i < 100; i++)
                             {
                                 var item = pool.Acquire();
@@ -196,13 +197,13 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                                     {
                                         Assert.That(!item2.IsUse);
                                         Assert.That(!item2.Disposed);
-                                        item2.Use(TimeSpan.FromMilliseconds(random.Next(100)));
+                                        item2.Use(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
                                     }
                                     finally
                                     {
                                         pool.Release(item2);
                                     }
-                                    item.Use(TimeSpan.FromMilliseconds(random.Next(100)));
+                                    item.Use(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
                                     Assert.That(!item.IsUse);
                                     Assert.That(!item.Disposed);
                                 }
@@ -210,7 +211,7 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                                 {
                                     pool.Release(item);
                                 }
-                                Thread.Sleep(TimeSpan.FromMilliseconds(random.Next(100)));
+                                Thread.Sleep(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
                             }
                             // ReSharper restore AccessToDisposedClosure
                         }))

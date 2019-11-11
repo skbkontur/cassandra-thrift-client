@@ -9,6 +9,8 @@ using NUnit.Framework;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using Vostok.Logging.Abstractions;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
@@ -49,14 +51,14 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void ThreadAction()
         {
             Logger.Instance.Info("Start ThreadAction");
-            var random = new Random(Guid.NewGuid().GetHashCode());
             while (true)
             {
-                if (stop) return;
+                if (stop) 
+                    return;
                 try
                 {
                     var guid = Guid.NewGuid().ToString();
-                    var row = "row" + random.Next(10);
+                    var row = $"row{ThreadLocalRandom.Instance.Next(10)}";
                     Add(row, guid);
                     if (!CheckIn(row, guid))
                         throw new Exception("bug");

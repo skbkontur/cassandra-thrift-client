@@ -1,10 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -101,10 +103,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             const int minColumnCount = 200;
             const int maxColumnCount = 300;
             const int batchSize = 50;
-            var random = new Random();
             var columnCount = new int[rowCount];
             for (int i = 0; i < rowCount; i++)
-                columnCount[i] = random.Next(minColumnCount, maxColumnCount);
+                columnCount[i] = ThreadLocalRandom.Instance.Next(minColumnCount, maxColumnCount);
 
             const int addTimestamp = 1;
             var keys = new List<string>();

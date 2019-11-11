@@ -1,8 +1,10 @@
-﻿using System;
+using System;
 
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -11,7 +13,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         [Test]
         public void TestGetCount()
         {
-            var start1 = DateTime.Now;
+            var start1 = Timestamp.Now;
             const int rowsCount = 100;
             const int columnsCount = 100;
             for (int i = 0; i < rowsCount; i++)
@@ -26,10 +28,10 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
                 columnFamilyConnection.AddBatch("row", cols);
             }
-            var finish1 = DateTime.Now;
-            var start = DateTime.Now;
+            var finish1 = Timestamp.Now;
+            var start = Timestamp.Now;
             var count = columnFamilyConnection.GetCount("row");
-            var finish = DateTime.Now;
+            var finish = Timestamp.Now;
             Assert.AreEqual(rowsCount * columnsCount, count);
             Console.WriteLine("GetCount Completed at " + (finish - start).TotalMilliseconds + "ms");
             Console.WriteLine("Write Completed at " + (finish1 - start1).TotalMilliseconds + "ms");

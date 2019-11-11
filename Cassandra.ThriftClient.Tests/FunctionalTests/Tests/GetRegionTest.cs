@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -6,6 +6,8 @@ using System.Linq;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -109,7 +111,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             return Enumerable.Range(0, count).Select(i => new Column
                 {
                     Name = i.ToString(format),
-                    Timestamp = DateTime.UtcNow.Ticks,
+                    Timestamp = Timestamp.Now.Ticks,
                     Value = new byte[] {1, 2, 3}
                 });
         }

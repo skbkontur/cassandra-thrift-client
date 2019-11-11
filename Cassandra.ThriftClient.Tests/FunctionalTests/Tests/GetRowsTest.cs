@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,6 +7,8 @@ using System.Text;
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -26,7 +28,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 IEnumerable<Column> columns = new int[columnNamesCount].Select((x, i) => new Column
                     {
                         Name = IntToString(i),
-                        Timestamp = DateTime.UtcNow.Ticks,
+                        Timestamp = Timestamp.Now.Ticks,
                         Value = new byte[] {1, 2, 3}
                     });
                 IEnumerable<KeyValuePair<string, IEnumerable<Column>>> keyValuePairs = columns.Select(column => new KeyValuePair<string, IEnumerable<Column>>(rowKey, new[] {column}));
@@ -64,7 +66,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                 var columns = new int[columnNamesCount].Select((x, i) => new Column
                     {
                         Name = IntToString(i),
-                        Timestamp = DateTime.UtcNow.Ticks,
+                        Timestamp = Timestamp.Now.Ticks,
                         Value = Encoding.UTF8.GetBytes(currentRowKey + "_" + IntToString(i))
                     });
                 var keyValuePairs = columns.Select(column => new KeyValuePair<string, IEnumerable<Column>>(currentRowKey, new[] {column}));
@@ -74,7 +76,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             for (var i = 0; i < columnNamesCount; i++)
             {
                 var intColumnNames = GetRandomColumnIndexesFromRange(0, columnNamesCount, columnNamesCount).ToArray();
-                var orderedintColumnNames = intColumnNames.Distinct().OrderBy(i1 => i1).ToArray();
+                var orderedIntColumnNames = intColumnNames.Distinct().OrderBy(i1 => i1).ToArray();
                 var strColumnNames = intColumnNames.Select(IntToString).ToArray();
                 var res = columnFamilyConnection.GetRows(rowKeys, strColumnNames.Concat(new[] {100, 101, 102}.Select(IntToString)).ToArray());
                 res.Sort((x, y) => String.Compare(x.Key, y.Key, StringComparison.Ordinal));
@@ -84,11 +86,11 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                     var row = res[j];
                     Assert.AreEqual(row.Key, rowKeys[j]);
                     var columns = row.Value;
-                    Assert.AreEqual(orderedintColumnNames.Length, columns.Length);
+                    Assert.AreEqual(orderedIntColumnNames.Length, columns.Length);
                     for (var k = 0; k < columns.Length; k++)
                     {
-                        Assert.AreEqual(IntToString(orderedintColumnNames[k]), columns[k].Name);
-                        Assert.AreEqual(row.Key + "_" + IntToString(orderedintColumnNames[k]), Encoding.UTF8.GetString(columns[k].Value));
+                        Assert.AreEqual(IntToString(orderedIntColumnNames[k]), columns[k].Name);
+                        Assert.AreEqual(row.Key + "_" + IntToString(orderedIntColumnNames[k]), Encoding.UTF8.GetString(columns[k].Value));
                     }
                 }
             }
@@ -106,7 +108,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Assert.IsEmpty(res);
         }
 
-        private string IntToString(int x)
+        private static string IntToString(int x)
         {
             return x.ToString("0000", CultureInfo.InvariantCulture);
         }
@@ -114,11 +116,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         private IEnumerable<int> GetRandomColumnIndexesFromRange(int fromInclusive, int toExclusive, int maxCount)
         {
             Assert.That(maxCount > 1);
-            var count = random.Next(1, maxCount);
+            var count = ThreadLocalRandom.Instance.Next(1, maxCount);
             for (var i = 0; i < count; i++)
-                yield return random.Next(fromInclusive, toExclusive);
+                yield return ThreadLocalRandom.Instance.Next(fromInclusive, toExclusive);
         }
-
-        private readonly Random random = new Random();
     }
 }

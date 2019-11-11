@@ -7,6 +7,8 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class MultiThreadStressTest : CassandraFunctionalTestBase
@@ -14,15 +16,13 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         [Test, Ignore("LongRunning")]
         public void TestStress()
         {
-            var random = new Random();
-
             var threads = new Thread[threadCount];
             threadStatuses = new int[threadCount];
             threadExceptions = new Exception[threadCount];
 
             for (int i = 0; i < threadCount; i++)
             {
-                string key = RandomString(random, 20);
+                string key = RandomString(20);
                 int threadIndex = i;
                 threads[i] = new Thread(() => Test(threadIndex, key));
                 threads[i].Start();
@@ -50,18 +50,17 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             try
             {
-                var random = new Random();
-                Log(key, "Fillind names...");
+                Log(key, "Filling names...");
                 var columnNames = new string[count];
                 for (int i = 0; i < columnNames.Length; i++)
-                    columnNames[i] = RandomString(random, 20);
+                    columnNames[i] = RandomString(20);
 
-                Log(key, "Fillind values...");
+                Log(key, "Filling values...");
                 var columnValues = new byte[count][];
                 for (int i = 0; i < columnValues.Length; i++)
                 {
                     columnValues[i] = new byte[columnSize];
-                    random.NextBytes(columnValues[i]);
+                    ThreadLocalRandom.Instance.NextBytes(columnValues[i]);
                 }
 
                 Log(key, "Start writing...");
@@ -92,17 +91,17 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             }
         }
 
-        private static string RandomString(Random rnd, int length)
+        private static string RandomString(int length)
         {
             var stringBuilder = new StringBuilder();
             for (int i = 0; i < length; i++)
-                stringBuilder.Append('a' + rnd.Next(0, 26));
+                stringBuilder.Append('a' + ThreadLocalRandom.Instance.Next(0, 26));
             return stringBuilder.ToString();
         }
 
-        private void Log(string key, string str)
+        private static void Log(string key, string str)
         {
-            Debug.WriteLine("key:{2} {0:yyyy-MM-ddTHH:mm:ss.fff}: {1}", DateTime.Now, str, key);
+            Debug.WriteLine("key:{2} {0:yyyy-MM-ddTHH:mm:ss.fff}: {1}", Timestamp.Now.ToDateTime(), str, key);
         }
 
         private const int columnSize = 1000;

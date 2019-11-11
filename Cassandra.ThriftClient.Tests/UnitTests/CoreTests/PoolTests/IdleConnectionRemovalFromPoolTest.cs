@@ -7,6 +7,8 @@ using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using Vostok.Logging.Abstractions;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
@@ -65,11 +67,10 @@ namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     .Range(0, threadCount)
                     .Select(n => (ThreadStart)(() =>
                         {
-                            var rng = new Random(n);
                             for (var i = 0; i < acquisitionsPerThreadCount; i++)
                             {
                                 var item = pool.Acquire();
-                                Thread.Sleep(rng.Next(10));
+                                Thread.Sleep(ThreadLocalRandom.Instance.Next(10));
                                 pool.Release(item);
                             }
                         }))
