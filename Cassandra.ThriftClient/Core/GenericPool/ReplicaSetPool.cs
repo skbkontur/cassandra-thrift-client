@@ -4,9 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
+using JetBrains.Annotations;
+
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.Pools;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
 
@@ -116,13 +120,13 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private void UnsuccessfulReplicaPing(Dictionary<TReplicaKey, DeadReplicaInfo> deadReplicaPingInfos, TReplicaKey deadReplicaKey)
         {
             deadReplicaPingInfos[deadReplicaKey].Attempts++;
-            deadReplicaPingInfos[deadReplicaKey].LastPingDateTime = DateTime.UtcNow;
+            deadReplicaPingInfos[deadReplicaKey].LastPingTimestamp = Timestamp.Now;
             BadReplica(deadReplicaKey);
         }
 
         private TReplicaKey[] GetDeadReplicaKeys()
         {
-            return replicaHealths.Where(x => !IsAliveReplica(x.ReplicaKey, x.Value)).Select(x => x.ReplicaKey).ToArray();
+            return replicaHealths.Where(x => !IsAliveReplica(x.Value)).Select(x => x.ReplicaKey).ToArray();
         }
 
         private bool NeedPingDeadReplica(TReplicaKey deadReplica, Dictionary<TReplicaKey, DeadReplicaInfo> replicaPingInfos)
@@ -132,7 +136,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 replicaPingInfos[deadReplica] = new DeadReplicaInfo
                     {
                         Attempts = 0,
-                        LastPingDateTime = DateTime.MinValue
+                        LastPingTimestamp = Timestamp.MinValue
                     };
                 return true;
             }
@@ -140,7 +144,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             var nextInterval = TimeSpan.FromMilliseconds(Math.Min(
                 poolSettings.MaxCheckInterval.TotalMilliseconds,
                 (long)Math.Round(poolSettings.CheckIntervalIncreaseBasis.TotalMilliseconds * Math.Pow(2, Math.Min(20, deadReplicaInfo.Attempts)))));
-            return (DateTime.UtcNow - deadReplicaInfo.LastPingDateTime) >= nextInterval;
+            return Timestamp.Now - deadReplicaInfo.LastPingTimestamp >= nextInterval;
         }
 
         private KeyValuePair<PoolKey, Pool<TItem>>[] GetAllPoolsWithReplicaKey(TReplicaKey deadReplica)
@@ -170,7 +174,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             var totalReplicaHealth = replicaHealths.Select(x => x.Value).Sum();
 
             var existingAcquired = replicaHealths
-                .Where(x => IsAliveReplica(x.ReplicaKey, x.Value))
+                .Where(x => IsAliveReplica(x.Value))
                 .ShuffleByHealth(x => x.Value, x => new {Health = x.Value, x.ReplicaKey})
                 .Any(poolInfo => TryAcquireExistsOrNew(
                     new PoolKey(itemKey, poolInfo.ReplicaKey),
@@ -206,9 +210,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             return result;
         }
 
-        private bool IsAliveReplica(TReplicaKey replicaKey, double health)
+        private bool IsAliveReplica(double health)
         {
-            return health > (poolSettings.DeadHealth + 0.00001);
+            return health > poolSettings.DeadHealth + 0.00001;
         }
 
         public void Release(TItem item)
@@ -382,7 +386,9 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
         private class DeadReplicaInfo
         {
             public int Attempts { get; set; }
-            public DateTime LastPingDateTime { get; set; }
+
+            [NotNull]
+            public Timestamp LastPingTimestamp { get; set; }
         }
 
         private class PoolKeyEqualityComparer : IEqualityComparer<PoolKey>

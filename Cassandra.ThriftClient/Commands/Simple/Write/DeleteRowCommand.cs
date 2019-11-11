@@ -4,7 +4,8 @@ using JetBrains.Annotations;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Commands.Base;
-using SKBKontur.Cassandra.CassandraClient.Core;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
 
@@ -33,7 +34,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
             cassandraClient.remove(
                 PartitionKey,
                 new ColumnPath {Column_family = columnFamily},
-                timestamp ?? DateTimeService.UtcNow.Ticks,
+                timestamp ?? Timestamp.Now.Ticks,
                 consistencyLevel);
         }
 

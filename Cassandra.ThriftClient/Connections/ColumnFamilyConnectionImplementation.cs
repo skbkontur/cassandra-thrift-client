@@ -12,6 +12,8 @@ using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
 namespace SKBKontur.Cassandra.CassandraClient.Connections
@@ -126,7 +128,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                     new DeletionMutation
                         {
                             SlicePredicate = new SlicePredicate(columnNames),
-                            Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
+                            Timestamp = timestamp ?? Timestamp.Now.Ticks
                         }
                 };
             ExecuteMutations(key, mutationsList);
@@ -217,7 +219,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Connections
                                                                          new DeletionMutation
                                                                              {
                                                                                  SlicePredicate = new SlicePredicate(row.Value),
-                                                                                 Timestamp = timestamp ?? DateTimeService.UtcNow.Ticks
+                                                                                 Timestamp = timestamp ?? Timestamp.Now.Ticks
                                                                              }
                                                                      })).ToList();
             ExecuteMutations(mutationsList);

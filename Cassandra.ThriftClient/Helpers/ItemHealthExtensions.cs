@@ -1,14 +1,16 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace SKBKontur.Cassandra.CassandraClient.Helpers
 {
     internal static class ItemHealthExtensions
     {
-        public static T2 RandomItemByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector)
+        public static IEnumerable<T> ShuffleByHealth<T>(this IEnumerable<T> items, Func<T, double> healthSelector)
         {
-            return items.ShuffleByHealth(healthSelector, resultSelector).First();
+            return items.ShuffleByHealth(healthSelector, x => x);
         }
 
         public static IEnumerable<T2> ShuffleByHealth<T, T2>(this IEnumerable<T> items, Func<T, double> healthSelector, Func<T, T2> resultSelector)
@@ -22,7 +24,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
                 var healthSum = itemsWithHealth.Sum(h => h.Value);
 
                 var valueFound = false;
-                var randomValue = Random.NextDouble();
+                var randomValue = ThreadLocalRandom.Instance.NextDouble();
                 foreach (var itemWithHealth in itemsWithHealth)
                 {
                     randomValue -= itemWithHealth.Value / healthSum;
@@ -44,16 +46,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Helpers
             }
         }
 
-        public static IEnumerable<T> ShuffleByHealth<T>(this IEnumerable<T> items, Func<T, double> healthSelector)
-        {
-            return items.ShuffleByHealth(healthSelector, x => x);
-        }
-
-        private static Random Random => random ?? (random = new Random());
-
         private const double epsilon = 1e-15;
-
-        [ThreadStatic]
-        private static Random random;
     }
 }

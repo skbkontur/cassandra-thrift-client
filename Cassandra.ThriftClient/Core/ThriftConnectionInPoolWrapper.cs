@@ -1,4 +1,3 @@
-using System;
 using System.Net;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -27,8 +26,6 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             thriftConnection.ExecuteCommand(command);
         }
-
-        public DateTime CreationDateTime => thriftConnection.CreationDateTime;
 
         public override string ToString()
         {

@@ -5,8 +5,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 
+using JetBrains.Annotations;
+
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
 using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
 
@@ -52,7 +56,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
             if (!busyItems.TryRemove(item, out var dummy))
                 throw new FailedReleaseItemException(item.ToString());
             Interlocked.Decrement(ref busyItemCount);
-            freeItems.Push(new FreeItemInfo(item, DateTime.UtcNow));
+            freeItems.Push(new FreeItemInfo(item, idleTimestamp : Timestamp.Now));
         }
 
         public T AcquireNew()
@@ -72,11 +76,11 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
                 try
                 {
                     var tempStack = new Stack<FreeItemInfo>();
-                    var now = DateTime.UtcNow;
+                    var now = Timestamp.Now;
 
                     while (freeItems.TryPop(out var item))
                     {
-                        if (now - item.IdleTime >= minIdleTimeSpan)
+                        if (now - item.IdleTimestamp >= minIdleTimeSpan)
                         {
                             result++;
                             item.Item.Dispose();
@@ -144,14 +148,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
 
         private class FreeItemInfo
         {
-            public FreeItemInfo(T item, DateTime idleTime)
+            public FreeItemInfo(T item, [NotNull] Timestamp idleTimestamp)
             {
                 Item = item;
-                IdleTime = idleTime;
+                IdleTimestamp = idleTimestamp;
             }
 
             public T Item { get; }
-            public DateTime IdleTime { get; }
+
+            [NotNull]
+            public Timestamp IdleTimestamp { get; }
         }
     }
 }

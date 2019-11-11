@@ -1,6 +1,6 @@
-﻿using Apache.Cassandra;
+using Apache.Cassandra;
 
-using SKBKontur.Cassandra.CassandraClient.Core;
+using PreciseTimestamp = SkbKontur.Cassandra.TimeBasedUuid.Timestamp;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
 {
@@ -13,7 +13,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
                     Deletion = new Deletion
                         {
                             Predicate = SlicePredicate.ToCassandraSlicePredicate(),
-                            Timestamp = Timestamp.HasValue ? Timestamp.Value : DateTimeService.UtcNow.Ticks
+                            Timestamp = Timestamp ?? PreciseTimestamp.Now.Ticks
                         }
                 };
         }

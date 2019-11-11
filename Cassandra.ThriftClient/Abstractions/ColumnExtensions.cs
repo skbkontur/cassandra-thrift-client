@@ -1,5 +1,6 @@
-using SKBKontur.Cassandra.CassandraClient.Core;
 using SKBKontur.Cassandra.CassandraClient.Helpers;
+
+using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace SKBKontur.Cassandra.CassandraClient.Abstractions
 {
@@ -13,7 +14,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Abstractions
                 {
                     Name = column.Name,
                     Value = column.Value,
-                    Timestamp = column.Timestamp ?? DateTimeService.UtcNow.Ticks,
+                    Timestamp = column.Timestamp ?? Timestamp.Now.Ticks,
                 };
             if (column.TTL.HasValue)
                 result.Ttl = column.TTL.Value;

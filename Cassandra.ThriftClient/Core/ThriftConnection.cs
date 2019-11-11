@@ -5,6 +5,8 @@ using System.Net.Sockets;
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
 
+using SkbKontur.Cassandra.TimeBasedUuid;
+
 using Thrift.Protocol;
 using Thrift.Transport;
 
@@ -29,8 +31,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, 1);
             var transport = new TFramedTransport(tsocket);
             cassandraClient = new Apache.Cassandra.Cassandra.Client(new TBinaryProtocol(transport));
-            lockObject = new object();
-            CreationDateTime = DateTime.UtcNow;
+            creationTimestamp = Timestamp.Now;
             OpenTransport();
         }
 
@@ -44,19 +45,17 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         public void ExecuteCommand(ICommand command)
         {
-            lock (lockObject)
+            lock (locker)
             {
                 if (!isAlive)
                 {
                     var e = new DeadConnectionException();
-                    logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", DateTime.UtcNow - CreationDateTime);
+                    logger.Error(e, "Взяли дохлую коннекцию. Время жизни коннекции до этого: {0}", Timestamp.Now - creationTimestamp);
                     throw e;
                 }
                 command.Execute(cassandraClient, logger);
             }
         }
-
-        public DateTime CreationDateTime { get; }
 
         public bool IsAlive => isAlive && CassandraTransportIsOpen() && Ping();
 
@@ -67,16 +66,16 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private bool Ping()
         {
-            lock (lockObject)
+            lock (locker)
             {
                 if (!isAlive)
                     return false;
-                if (lastSuccessPingDateTime.HasValue && DateTime.UtcNow - lastSuccessPingDateTime.Value < TimeSpan.FromMinutes(1))
+                if (lastSuccessPingTimestamp != null && Timestamp.Now - lastSuccessPingTimestamp < TimeSpan.FromMinutes(1))
                     return true;
                 try
                 {
                     cassandraClient.describe_cluster_name();
-                    lastSuccessPingDateTime = DateTime.UtcNow;
+                    lastSuccessPingTimestamp = Timestamp.Now;
                 }
                 catch (Exception e)
                 {
@@ -92,7 +91,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
         {
             try
             {
-                return (cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen);
+                return cassandraClient.InputProtocol.Transport.IsOpen && cassandraClient.OutputProtocol.Transport.IsOpen;
             }
             catch (Exception)
             {
@@ -102,7 +101,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private void OpenTransport()
         {
-            lock (lockObject)
+            lock (locker)
             {
                 cassandraClient.InputProtocol.Transport.Open();
                 if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
@@ -114,7 +113,7 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
 
         private void CloseTransport()
         {
-            lock (lockObject)
+            lock (locker)
             {
                 cassandraClient.InputProtocol.Transport.Close();
                 if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
@@ -122,14 +121,15 @@ namespace SKBKontur.Cassandra.CassandraClient.Core
             }
         }
 
-        private DateTime? lastSuccessPingDateTime;
+        private Timestamp lastSuccessPingTimestamp;
         private bool isAlive;
 
         private readonly string keyspaceName;
         private readonly ILog logger;
         private readonly IPEndPoint ipEndPoint;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
-        private readonly object lockObject;
+        private readonly Timestamp creationTimestamp;
+        private readonly object locker = new object();
         private bool isDisposed;
     }
 }
