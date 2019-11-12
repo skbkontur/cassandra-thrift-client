@@ -4,6 +4,8 @@ using System.Linq;
 
 using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
+using MoreLinq;
+
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
@@ -67,19 +69,19 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         }
 
         [Test]
-        public void VerifyOrder_DiffrentTimestamps()
+        public void VerifyOrder_DifferentTimestamps()
         {
             VerifyOrder(RandomColumnsByTimestamp(1000));
         }
 
         [Test]
-        public void VerifyOrder_DiffrentClockSequences()
+        public void VerifyOrder_DifferentClockSequences()
         {
             VerifyOrder(RandomColumnsByClockSequence(TimeGuidBitsLayout.MaxClockSequence + 1));
         }
 
         [Test]
-        public void VerifyOrder_DiffrentNodes()
+        public void VerifyOrder_DifferentNodes()
         {
             VerifyOrder(RandomColumnsByNode(1000));
         }
