@@ -20,23 +20,23 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             threadStatuses = new int[threadCount];
             threadExceptions = new Exception[threadCount];
 
-            for (int i = 0; i < threadCount; i++)
+            for (var i = 0; i < threadCount; i++)
             {
-                string key = RandomString(20);
-                int threadIndex = i;
+                var key = RandomString(20);
+                var threadIndex = i;
                 threads[i] = new Thread(() => Test(threadIndex, key));
                 threads[i].Start();
                 threadStatuses[i] = 0;
             }
             while (true)
             {
-                int cnt = 0;
-                for (int i = 0; i < threadCount; i++)
+                var cnt = 0;
+                for (var i = 0; i < threadCount; i++)
                 {
                     if (threadStatuses[i] == 1)
                         cnt++;
                 }
-                for (int i = 0; i < threadCount; i++)
+                for (var i = 0; i < threadCount; i++)
                 {
                     if (threadStatuses[i] == 2)
                         throw new Exception($"Поток {i} сдох", threadExceptions[i]);
@@ -52,19 +52,19 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             {
                 Log(key, "Filling names...");
                 var columnNames = new string[count];
-                for (int i = 0; i < columnNames.Length; i++)
+                for (var i = 0; i < columnNames.Length; i++)
                     columnNames[i] = RandomString(20);
 
                 Log(key, "Filling values...");
                 var columnValues = new byte[count][];
-                for (int i = 0; i < columnValues.Length; i++)
+                for (var i = 0; i < columnValues.Length; i++)
                 {
                     columnValues[i] = new byte[columnSize];
                     ThreadLocalRandom.Instance.NextBytes(columnValues[i]);
                 }
 
                 Log(key, "Start writing...");
-                for (int i = 0; i < columnValues.Length; i++)
+                for (var i = 0; i < columnValues.Length; i++)
                 {
                     if (i % 1000 == 0)
                         Log(key, "Writing " + i + " of " + columnValues.Length);
@@ -75,7 +75,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                         });
                 }
                 Log(key, "Start reading...");
-                for (int i = 0; i < columnValues.Length; i++)
+                for (var i = 0; i < columnValues.Length; i++)
                 {
                     if (i % 1000 == 0)
                         Log(key, "Reading " + i + " of " + columnValues.Length);
@@ -94,7 +94,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         private static string RandomString(int length)
         {
             var stringBuilder = new StringBuilder();
-            for (int i = 0; i < length; i++)
+            for (var i = 0; i < length; i++)
                 stringBuilder.Append('a' + ThreadLocalRandom.Instance.Next(0, 26));
             return stringBuilder.ToString();
         }

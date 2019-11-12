@@ -1,5 +1,4 @@
 using System;
-using System.Text;
 using System.Threading;
 
 using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
@@ -11,6 +10,7 @@ using SKBKontur.Cassandra.CassandraClient.Abstractions;
 using SKBKontur.Cassandra.CassandraClient.Clusters;
 using SKBKontur.Cassandra.CassandraClient.Connections;
 using SKBKontur.Cassandra.CassandraClient.Exceptions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 using SKBKontur.Cassandra.CassandraClient.Scheme;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
@@ -28,7 +28,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
-            ClearKeyspacesOnce();
             cassandraCluster.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
@@ -61,35 +60,15 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
         protected string KeyspaceName { get; private set; }
 
-        private void ClearKeyspacesOnce()
-        {
-            if (keyspacesDeleted) return;
-            var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            var result = clusterConnection.RetrieveKeyspaces();
-            foreach (var keyspace in result)
-                cassandraCluster.RetrieveClusterConnection().RemoveKeyspace(keyspace.Name);
-            keyspacesDeleted = true;
-        }
-
         protected static Column ToColumn(string columnName, string columnValue, long? timestamp = null, int? ttl = null)
         {
             return new Column
                 {
                     Name = columnName,
-                    Value = ToBytes(columnValue),
+                    Value = StringExtensions.StringToBytes(columnValue),
                     Timestamp = timestamp,
                     TTL = ttl
                 };
-        }
-
-        private static byte[] ToBytes(string str)
-        {
-            return Encoding.UTF8.GetBytes(str);
-        }
-
-        protected static string ToString(byte[] bytes)
-        {
-            return Encoding.UTF8.GetString(bytes);
         }
 
         protected void Check(string key, string columnName, string columnValue, long? timestamp = null, int? ttl = null, IColumnFamilyConnection cfc = null)
@@ -99,7 +78,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var result = connection.GetColumn(key, columnName);
             tryGetResult.AssertEqualsTo(result);
             Assert.AreEqual(columnName, result.Name);
-            Assert.AreEqual(columnValue, ToString(result.Value));
+            Assert.AreEqual(columnValue, StringExtensions.BytesToString(result.Value));
             if (timestamp == null)
                 Assert.IsNotNull(result.Timestamp);
             else
@@ -123,7 +102,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             where TE : Exception
         {
             if (typeof(TE) == typeof(Exception) || typeof(TE) == typeof(AssertionException))
-                Assert.Fail("использование типа {0} запрещено", typeof(TE));
+                Assert.Fail("РёСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ С‚РёРїР° {0} Р·Р°РїСЂРµС‰РµРЅРѕ", typeof(TE));
             try
             {
                 method();
@@ -140,7 +119,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
         protected ICassandraCluster cassandraCluster;
         protected IColumnFamilyConnection columnFamilyConnection;
-        private static bool keyspacesDeleted;
         protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
     }
 }

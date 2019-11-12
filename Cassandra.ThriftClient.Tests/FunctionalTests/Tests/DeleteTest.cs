@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -104,20 +104,20 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             const int maxColumnCount = 300;
             const int batchSize = 50;
             var columnCount = new int[rowCount];
-            for (int i = 0; i < rowCount; i++)
+            for (var i = 0; i < rowCount; i++)
                 columnCount[i] = ThreadLocalRandom.Instance.Next(minColumnCount, maxColumnCount);
 
             const int addTimestamp = 1;
             var keys = new List<string>();
             var conn = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
-            for (int i = 0; i < rowCount; i++)
+            for (var i = 0; i < rowCount; i++)
             {
                 var forAdd = new List<KeyValuePair<string, IEnumerable<Column>>>();
                 Console.WriteLine("Writing " + i * 100 / rowCount + " percents");
                 var key = i.ToString();
                 keys.Add(key);
                 var columns = new List<Column>();
-                for (int j = 0; j < columnCount[i]; j++)
+                for (var j = 0; j < columnCount[i]; j++)
                 {
                     columns.Add(new Column
                         {
@@ -134,7 +134,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Console.WriteLine("Deleting");
             conn.DeleteRows(keys.ToArray(), deleteTimestamp, batchSize);
 
-            for (int i = 0; i < keys.Count; i++)
+            for (var i = 0; i < keys.Count; i++)
             {
                 var key = keys[i];
                 Console.WriteLine("Checking " + i * 100 / rowCount + " percents");

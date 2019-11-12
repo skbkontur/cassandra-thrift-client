@@ -14,7 +14,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 
             var expectedStr = expected.ObjectToString();
             Assert.AreNotEqual(expectedStr.ReformatXml(), badXml, "bug(expected)");
-            string actualStr = actual.ObjectToString();
+            var actualStr = actual.ObjectToString();
             Assert.AreNotEqual(actualStr.ReformatXml(), badXml, "bug(actual)");
             Assert.AreEqual(expectedStr, actualStr, "actual:\n{0}\nexpected:\n{1}", actualStr, expectedStr);
         }

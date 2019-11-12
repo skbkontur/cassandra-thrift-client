@@ -16,13 +16,13 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var start1 = Timestamp.Now;
             const int rowsCount = 100;
             const int columnsCount = 100;
-            for (int i = 0; i < rowsCount; i++)
+            for (var i = 0; i < rowsCount; i++)
             {
                 var cols = new Column[columnsCount];
-                for (int j = 0; j < columnsCount; ++j)
+                for (var j = 0; j < columnsCount; ++j)
                 {
-                    string columnName = "columnName" + i + "_" + j;
-                    string columnValue = "columnValue" + i + "_" + j;
+                    var columnName = "columnName" + i + "_" + j;
+                    var columnValue = "columnValue" + i + "_" + j;
                     cols[j] = ToColumn(columnName, columnValue, 100);
                 }
 
@@ -50,20 +50,20 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestGetCounts()
         {
             var rows = new string[10];
-            for (int i = 0; i < rows.Length; i++)
+            for (var i = 0; i < rows.Length; i++)
             {
                 var cols = new Column[10 * i];
-                for (int j = 0; j < 10 * i; ++j)
+                for (var j = 0; j < 10 * i; ++j)
                 {
-                    string columnName = "columnName" + i + "_" + j;
-                    string columnValue = "columnValue" + i + "_" + j;
+                    var columnName = "columnName" + i + "_" + j;
+                    var columnValue = "columnValue" + i + "_" + j;
                     cols[j] = ToColumn(columnName, columnValue, 100);
                 }
                 rows[i] = "row" + i;
                 columnFamilyConnection.AddBatch("row" + i, cols);
             }
             var counts = columnFamilyConnection.GetCounts(rows);
-            for (int i = 0; i < 10; ++i)
+            for (var i = 0; i < 10; ++i)
             {
                 Assert.AreEqual(10 * i, counts["row" + i]);
             }

@@ -1,9 +1,10 @@
-﻿using System.Linq;
+using System.Linq;
 using System.Text;
 
 using NUnit.Framework;
 
 using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SKBKontur.Cassandra.CassandraClient.Helpers;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -26,7 +27,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             columnFamilyConnection.AddBatch("someKey", columns);
             columnFamilyConnection.DeleteBatch("someKey", columns.Select(column => column.Name), 123);
             foreach (var column in columns)
-                Check("someKey", column.Name, ToString(column.Value));
+                Check("someKey", column.Name, StringExtensions.BytesToString(column.Value));
         }
 
         [Test]
@@ -65,7 +66,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var columns = new[] {ToColumn("a", "b"), ToColumn("c", "d"), ToColumn("e", "f")};
             columnFamilyConnection.AddBatch("someKey", columns);
             foreach (var column in columns)
-                Check("someKey", column.Name, ToString(column.Value));
+                Check("someKey", column.Name, StringExtensions.BytesToString(column.Value));
         }
     }
 }

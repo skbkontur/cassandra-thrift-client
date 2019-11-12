@@ -28,15 +28,15 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             threads = new List<Thread>();
             finished = new int[threadCount];
             stopped = false;
-            for (int i = 0; i < threadCount; i++)
+            for (var i = 0; i < threadCount; i++)
             {
-                int i1 = i;
+                var i1 = i;
                 var thread = new Thread(() => FillColumnFamily(i1));
                 threads.Add(thread);
                 thread.Start();
             }
-            int maxFree = 0;
-            int maxBusy = 0;
+            var maxFree = 0;
+            var maxBusy = 0;
             while (true)
             {
                 if (stopped)
@@ -56,16 +56,16 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 
                 var flag = threads.Aggregate(false, (current, thread) => current || (thread.IsAlive));
                 if (!flag || stopped) break;
-                for (int i = 0; i < threadCount; i++)
+                for (var i = 0; i < threadCount; i++)
                 {
                     if (finished[i] == -1)
                         stopped = true;
                 }
             }
-            for (int i = 0; i < threadCount; i++)
+            for (var i = 0; i < threadCount; i++)
                 threads[i].Join();
 
-            for (int i = 0; i < threadCount; i++)
+            for (var i = 0; i < threadCount; i++)
                 Assert.AreEqual(1, finished[i]);
             Console.WriteLine("Max free = {0}; Max busy: {1}", maxFree, maxBusy);
         }
@@ -74,14 +74,14 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             try
             {
-                for (int i = 0; i < 100; i++)
+                for (var i = 0; i < 100; i++)
                 {
                     if (stopped)
                         break;
                     var connection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
 
                     var list = new List<Column>();
-                    for (int j = 0; j < 1000; j++)
+                    for (var j = 0; j < 1000; j++)
                     {
                         if (stopped)
                             break;
