@@ -1,8 +1,9 @@
 # Changelog
 
-## v2.2.0 - 2019.11.12
+## v2.2.x - 2019.11.13
 - Add `TimeBasedColumnFamilyConnection` to support `TimeUUID` clustering keys.
 - Use monotonic timestamp from [SkbKontur.Cassandra.TimeGuid](https://github.com/skbkontur/cassandra-time-guid) package.
+- Use [SourceLink](https://github.com/dotnet/sourcelink) to help ReSharper decompiler show actual code.
 
 ## v2.1.7 - 2019.10.11
 - Target .NET Standard 2.0 (PR [#8](https://github.com/skbkontur/cassandra-thrift-client/pull/8)).
