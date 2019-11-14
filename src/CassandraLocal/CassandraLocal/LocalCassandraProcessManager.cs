@@ -1,9 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Management;
+using System.Net.NetworkInformation;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace SkbKontur.Cassandra.Local
@@ -11,8 +13,9 @@ namespace SkbKontur.Cassandra.Local
     public static class LocalCassandraProcessManager
     {
         private const string localCassandraNodeNameMarker = "skbkontur.local.cassandra.node.name";
+        private static readonly Regex anyCassandraProcessRegex = new Regex(@"org\.apache\.cassandra\.service\.CassandraDaemon", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
-        public static string StartLocalCassandraProcess(string cassandraDirectory)
+        public static string StartLocalCassandraProcess(string cassandraDirectory, TimeSpan? timeout = null)
         {
             var cassandraShellProcess = new Process
                 {
@@ -28,49 +31,44 @@ namespace SkbKontur.Cassandra.Local
                 };
             cassandraShellProcess.StartInfo.EnvironmentVariables["JAVA_HOME"] = JavaHomeHelpers.GetJava8Home();
             cassandraShellProcess.Start();
-            WaitForCassandraToStart(cassandraDirectory);
-            var localNodeName = GetLocalCassandraNodeName(cassandraShellProcess);
+            var localNodeName = GetLocalCassandraNodeName(cassandraShellProcess, timeout);
             return localNodeName;
         }
 
-        private static void WaitForCassandraToStart(string cassandraDirectory)
+        public static void WaitForLocalCassandraPortsToOpen(int rpcPort, int cqlPort, TimeSpan? timeout = null)
         {
-            var sw = Stopwatch.StartNew();
-            var logFileName = Path.Combine(cassandraDirectory, @"logs/system.log");
-            while (sw.Elapsed < TimeSpan.FromSeconds(30))
+            WaitFor($"wait for local cassandra node to start listening on rpc port {rpcPort} and cql port {cqlPort}", timeout, () =>
             {
-                if (File.Exists(logFileName))
-                {
-                    using (var file = new FileStream(logFileName, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (var reader = new StreamReader(file))
-                    {
-                        while (true)
-                        {
-                            var logContent = reader.ReadLine();
-                            if (!string.IsNullOrEmpty(logContent) && logContent.Contains("Listening for thrift clients..."))
-                                return;
-                        }
-                    }
-                }
-                Thread.Sleep(TimeSpan.FromMilliseconds(300));
-            }
-            throw new InvalidOperationException($"Failed to start cassandra in: {cassandraDirectory}");
+                var activeTcpListeners = IPGlobalProperties.GetIPGlobalProperties().GetActiveTcpListeners();
+                return activeTcpListeners.Any(x => x.Port == rpcPort) && activeTcpListeners.Any(x => x.Port == cqlPort);
+            });
         }
 
-        public static void StopAllLocalCassandraProcesses()
+        public static void StopAllLocalCassandraProcesses(TimeSpan? timeout = null)
         {
             foreach (var cassandraPid in GetAllLocalCassandraProcessIds())
                 Process.GetProcessById(cassandraPid).Kill();
-            while (GetAllLocalCassandraProcessIds().Any())
-                Thread.Sleep(TimeSpan.FromMilliseconds(300));
+            WaitFor("stop all local cassandra processes", timeout, () => !GetAllLocalCassandraProcessIds().Any());
         }
 
-        public static void StopLocalCassandraProcess(string localNodeName)
+        public static void StopLocalCassandraProcess(string localNodeName, TimeSpan? timeout = null)
         {
             foreach (var cassandraPid in GetLocalCassandraProcessIds(localNodeName))
                 Process.GetProcessById(cassandraPid).Kill();
-            while (GetLocalCassandraProcessIds(localNodeName).Any())
+            WaitFor($"stop local cassandra node {localNodeName}", timeout, () => !GetLocalCassandraProcessIds(localNodeName).Any());
+        }
+
+        private static void WaitFor(string actionDescription, TimeSpan? timeout, Func<bool> action)
+        {
+            var waitTimeout = timeout ?? TimeSpan.FromSeconds(30);
+            var sw = Stopwatch.StartNew();
+            while (sw.Elapsed < waitTimeout)
+            {
+                if (action())
+                    return;
                 Thread.Sleep(TimeSpan.FromMilliseconds(300));
+            }
+            throw new InvalidOperationException($"Failed to {actionDescription} in {waitTimeout}");
         }
 
         public static List<int> GetAllLocalCassandraProcessIds()
@@ -99,7 +97,7 @@ namespace SkbKontur.Cassandra.Local
                     var cassandraPid = int.Parse(mo["ProcessId"].ToString());
                     if (string.IsNullOrEmpty(localNodeNameOrNothing))
                     {
-                        if (commandLine.Contains(localCassandraNodeNameMarker))
+                        if (anyCassandraProcessRegex.IsMatch(commandLine))
                             cassandraPids.Add(cassandraPid);
                     }
                     else
@@ -112,15 +110,23 @@ namespace SkbKontur.Cassandra.Local
             return cassandraPids;
         }
 
-        private static string GetLocalCassandraNodeName(Process cassandraShellProcess)
+        private static string GetLocalCassandraNodeName(Process cassandraShellProcess, TimeSpan? timeout)
+        {
+            string javaCommandLine = null;
+            WaitFor($"get java command line for cassandra shell process #{cassandraShellProcess.Id}", timeout, () => TryGetLocalCassandraJavaCommandLine(cassandraShellProcess, out javaCommandLine));
+            var patternToMatch = $"{localCassandraNodeNameMarker}=";
+            var startPos = javaCommandLine.IndexOf(patternToMatch, StringComparison.InvariantCultureIgnoreCase) + patternToMatch.Length;
+            var endPos = javaCommandLine.IndexOf(' ', startPos);
+            return javaCommandLine.Substring(startPos, endPos - startPos);
+        }
+
+        private static bool TryGetLocalCassandraJavaCommandLine(Process cassandraShellProcess, out string javaCommandLine)
         {
             using (var searcher = new ManagementObjectSearcher($"SELECT CommandLine FROM Win32_Process WHERE ParentProcessId = {cassandraShellProcess.Id}"))
             {
-                var commandLine = searcher.Get().Cast<ManagementObject>().Single()["CommandLine"].ToString();
-                var patternToMatch= $"{localCassandraNodeNameMarker}=";
-                var startPos = commandLine.IndexOf(patternToMatch, StringComparison.InvariantCultureIgnoreCase) + patternToMatch.Length;
-                var endPos = commandLine.IndexOf(' ', startPos);
-                return commandLine.Substring(startPos, endPos - startPos);
+                var commandLines = searcher.Get().Cast<ManagementObject>().Select(x => x?["CommandLine"]?.ToString()).ToList();
+                javaCommandLine = commandLines.SingleOrDefault(x => x != null && x.IndexOf("java", StringComparison.InvariantCultureIgnoreCase) != -1);
+                return !string.IsNullOrEmpty(javaCommandLine);
             }
         }
     }

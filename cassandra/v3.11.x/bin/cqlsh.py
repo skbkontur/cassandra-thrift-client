@@ -622,9 +622,9 @@ class Shell(cmd.Cmd):
         result, = self.session.execute("select * from system.local where key = 'local'")
         vers = {
             'build': result['release_version'],
-            'protocol': result['native_protocol_version'],
             'cql': result['cql_version'],
         }
+        vers['protocol'] = self.conn.protocol_version
         self.connection_versions = vers
 
     def get_keyspace_names(self):
@@ -1123,7 +1123,7 @@ class Shell(cmd.Cmd):
             ks_meta = self.conn.metadata.keyspaces.get(ks_name, None)
             cql_types = [CqlType(cql_typename(t), ks_meta) for t in result.column_types]
 
-        formatted_values = [map(self.myformat_value, row.values(), cql_types) for row in result.current_rows]
+        formatted_values = [map(self.myformat_value, [row[column] for column in column_names], cql_types) for row in result.current_rows]
 
         if self.expand_enabled:
             self.print_formatted_result_vertically(formatted_names, formatted_values)
@@ -2244,7 +2244,7 @@ def read_options(cmdlineargs, environment):
 
     optvalues.debug = False
     optvalues.file = None
-    optvalues.ssl = False
+    optvalues.ssl = option_with_default(configs.getboolean, 'connection', 'ssl', DEFAULT_SSL)
     optvalues.no_compact = False
     optvalues.encoding = option_with_default(configs.get, 'ui', 'encoding', UTF8)
 
