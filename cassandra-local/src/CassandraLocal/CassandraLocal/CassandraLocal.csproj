@@ -1,21 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.Local</AssemblyName>
-    <RootNamespace>SkbKontur.Cassandra.Local</RootNamespace>
-    <PackageId>SkbKontur.Cassandra.Local</PackageId>
-    <Version>1.0.3</Version>
-    <AssemblyVersion>1.0.3.0</AssemblyVersion>
-    <Authors>SKB Kontur</Authors>
-    <Copyright>SKB Kontur 2018</Copyright>
-    <RequireLicenseAcceptance>false</RequireLicenseAcceptance>
-    <PackageTags>cassandra</PackageTags>
-    <PackageProjectUrl>https://github.com/skbkontur/cassandra-local</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/skbkontur/cassandra-local</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="System.Management" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.6.0" />
+    <PackageReference Include="System.Management" Version="4.6.0" />
   </ItemGroup>
+
 </Project>
