@@ -7,14 +7,13 @@ using System.Threading;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils;
-
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Utils;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
+namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 {
     internal class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
     {

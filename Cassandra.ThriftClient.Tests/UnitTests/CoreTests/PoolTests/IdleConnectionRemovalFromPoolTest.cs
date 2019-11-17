@@ -5,8 +5,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;

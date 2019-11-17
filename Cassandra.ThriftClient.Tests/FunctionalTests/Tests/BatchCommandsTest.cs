@@ -3,8 +3,8 @@ using System.Text;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.ThriftClient</AssemblyName>
-    <RootNamespace>SKBKontur.Cassandra.CassandraClient</RootNamespace>
+    <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

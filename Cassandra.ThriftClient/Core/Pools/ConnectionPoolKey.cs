@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.Pools
+namespace SkbKontur.Cassandra.ThriftClient.Core.Pools
 {
     public class ConnectionPoolKey
     {

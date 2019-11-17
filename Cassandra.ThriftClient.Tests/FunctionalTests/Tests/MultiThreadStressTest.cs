@@ -5,8 +5,7 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests

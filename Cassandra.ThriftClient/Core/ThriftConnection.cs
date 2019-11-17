@@ -2,9 +2,8 @@ using System;
 using System.Net;
 using System.Net.Sockets;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Thrift.Protocol;
@@ -12,7 +11,7 @@ using Thrift.Transport;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core
+namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class ThriftConnection : IThriftConnection
     {

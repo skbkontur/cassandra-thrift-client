@@ -2,7 +2,7 @@ using Apache.Cassandra;
 
 using PreciseTimestamp = SkbKontur.Cassandra.TimeBasedUuid.Timestamp;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions.Internal
 {
     internal class DeletionMutation : IMutation
     {

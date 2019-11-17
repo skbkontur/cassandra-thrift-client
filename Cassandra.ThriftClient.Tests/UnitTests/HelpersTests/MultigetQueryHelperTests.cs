@@ -7,8 +7,8 @@ using Apache.Cassandra;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 
 using Vostok.Logging.Abstractions;
 

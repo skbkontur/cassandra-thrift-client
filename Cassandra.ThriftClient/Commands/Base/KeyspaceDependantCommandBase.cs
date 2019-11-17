@@ -1,6 +1,6 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
+﻿using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Base
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Base
 {
     internal abstract class KeyspaceDependantCommandBase : CommandBase
     {

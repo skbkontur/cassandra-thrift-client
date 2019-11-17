@@ -4,11 +4,11 @@ using JetBrains.Annotations;
 
 using Metrics;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
+namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
     internal static class CommandMetricsFactory
     {

@@ -1,6 +1,6 @@
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener
+namespace SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener
 {
     internal class EmptyCassandraActualizerEventListener : ICassandraActualizerEventListener
     {

@@ -1,8 +1,7 @@
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal static class ColumnExtensions
     {

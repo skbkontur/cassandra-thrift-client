@@ -2,7 +2,7 @@ using System;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests
 {

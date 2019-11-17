@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using System.Globalization;
 
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     public class SimpleReplicationStrategy : IReplicationStrategy
     {

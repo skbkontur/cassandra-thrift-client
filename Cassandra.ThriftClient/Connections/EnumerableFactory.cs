@@ -3,9 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     internal class EnumerableFactory : IEnumerableFactory
     {

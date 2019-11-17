@@ -4,7 +4,7 @@ using JetBrains.Annotations;
 
 using Metrics;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
+namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
     internal abstract class CommandMetricsBase : ICommandMetrics
     {

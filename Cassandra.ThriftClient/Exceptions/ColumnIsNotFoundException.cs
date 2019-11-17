@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SKBKontur.Cassandra.CassandraClient.Exceptions
+namespace SkbKontur.Cassandra.ThriftClient.Exceptions
 {
     public class ColumnIsNotFoundException : CassandraClientException
     {

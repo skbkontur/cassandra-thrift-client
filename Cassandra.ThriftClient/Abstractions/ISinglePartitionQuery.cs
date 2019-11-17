@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal interface ISinglePartitionQuery
     {

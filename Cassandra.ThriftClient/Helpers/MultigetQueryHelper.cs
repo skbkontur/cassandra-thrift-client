@@ -6,13 +6,12 @@ using Apache.Cassandra;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
 using SkbKontur.Cassandra.TimeBasedUuid.Bits;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Helpers
+namespace SkbKontur.Cassandra.ThriftClient.Helpers
 {
     /// <summary>
     ///     There is a bug in the Cassandra that was introduced in the multiget_slice/multiget_count Thrift queries since version 3.0.

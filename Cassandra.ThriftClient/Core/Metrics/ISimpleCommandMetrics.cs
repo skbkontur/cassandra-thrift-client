@@ -1,8 +1,8 @@
 ﻿using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
+namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
     internal interface ISimpleCommandMetrics : ICommandMetrics
     {

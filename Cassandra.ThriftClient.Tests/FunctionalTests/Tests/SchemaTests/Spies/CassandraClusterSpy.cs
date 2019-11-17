@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
-using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.CassandraClient.Core.Pools;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Core.Pools;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {

@@ -3,9 +3,9 @@ using System.Linq;
 
 using Apache.Cassandra;
 
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal class ReplicationStrategyFactory : IReplicationStrategyFactory
     {

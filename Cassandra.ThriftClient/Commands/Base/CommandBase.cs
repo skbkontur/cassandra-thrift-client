@@ -1,8 +1,8 @@
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Base
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Base
 {
     internal abstract class CommandBase : ICommand
     {

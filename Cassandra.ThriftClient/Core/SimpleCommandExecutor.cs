@@ -2,15 +2,15 @@ using System;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core
+namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class SimpleCommandExecutor : CommandExecutorBase<ISimpleCommand>
     {

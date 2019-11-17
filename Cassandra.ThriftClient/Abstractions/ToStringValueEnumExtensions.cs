@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal static class ToStringValueEnumExtensions
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions
+namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions
 {
     public class RemoveFromPoolFailedException : Exception
     {

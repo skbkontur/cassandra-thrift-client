@@ -2,7 +2,7 @@ using System;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 

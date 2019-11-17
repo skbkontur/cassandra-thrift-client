@@ -1,6 +1,6 @@
 using System;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     // ReSharper disable InconsistentNaming
     public enum ConsistencyLevel

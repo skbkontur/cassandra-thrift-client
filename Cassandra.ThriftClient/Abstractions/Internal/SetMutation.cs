@@ -1,6 +1,6 @@
 using Apache.Cassandra;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions.Internal
 {
     internal class SetMutation : IMutation
     {

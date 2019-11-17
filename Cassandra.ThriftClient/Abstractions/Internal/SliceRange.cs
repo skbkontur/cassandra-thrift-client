@@ -1,4 +1,4 @@
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions.Internal
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions.Internal
 {
     internal class SliceRange
     {

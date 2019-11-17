@@ -1,9 +1,9 @@
 using System;
 using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Scheme
+namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
     internal class ColumnFamilyEqualityByPropertiesComparer
     {

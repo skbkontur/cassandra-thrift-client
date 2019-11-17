@@ -5,16 +5,16 @@ using Apache.Cassandra;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions.Internal;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
 
 using Vostok.Logging.Abstractions;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
-using SlicePredicate = SKBKontur.Cassandra.CassandraClient.Abstractions.Internal.SlicePredicate;
+using SlicePredicate = SkbKontur.Cassandra.ThriftClient.Abstractions.Internal.SlicePredicate;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Simple.Read
 {
     internal class GetSliceCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery, ISimpleCommand
     {

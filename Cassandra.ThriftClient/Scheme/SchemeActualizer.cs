@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Clusters.ActualizationEventListener;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Scheme
+namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
     internal class SchemeActualizer
     {

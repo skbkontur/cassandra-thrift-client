@@ -6,15 +6,14 @@ using System.Threading;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Core.Pools;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Core.Pools;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
+namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 {
     internal class ReplicaSetPool<TItem, TItemKey, TReplicaKey> : IPoolSet<TItem, TItemKey>
         where TItem : class, IDisposable, ILiveness

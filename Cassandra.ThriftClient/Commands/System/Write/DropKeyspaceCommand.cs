@@ -1,9 +1,9 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+﻿using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Write
+namespace SkbKontur.Cassandra.ThriftClient.Commands.System.Write
 {
     internal class DropKeyspaceCommand : CommandBase, IFierceCommand
     {

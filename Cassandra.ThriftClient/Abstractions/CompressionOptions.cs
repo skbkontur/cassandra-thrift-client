@@ -1,4 +1,4 @@
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     public class CompressionOptions
     {

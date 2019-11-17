@@ -1,6 +1,6 @@
 using System;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     internal sealed class StringValueAttribute : Attribute

@@ -2,7 +2,7 @@
 
 using JetBrains.Annotations;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
+namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
     internal interface ICommandMetrics
     {

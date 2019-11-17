@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SKBKontur.Cassandra.CassandraClient.Exceptions
+namespace SkbKontur.Cassandra.ThriftClient.Exceptions
 {
     public class CassandraClientUnavailableException : CassandraClientException
     {

@@ -1,15 +1,15 @@
 ﻿using System.Collections.Generic;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions.Internal;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 
 using Vostok.Logging.Abstractions;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Simple.Read
 {
     internal class MultiGetCountCommand : KeyspaceColumnFamilyDependantCommandBase, ISimpleCommand
     {

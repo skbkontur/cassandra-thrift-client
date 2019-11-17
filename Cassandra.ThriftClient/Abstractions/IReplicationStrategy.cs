@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     public interface IReplicationStrategy
     {

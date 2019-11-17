@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace SKBKontur.Cassandra.CassandraClient.Helpers
+namespace SkbKontur.Cassandra.ThriftClient.Helpers
 {
     internal static class StringExtensions
     {

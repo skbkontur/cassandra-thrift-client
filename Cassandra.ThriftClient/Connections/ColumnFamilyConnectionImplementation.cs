@@ -3,21 +3,20 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read;
-using SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write;
-using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
-using SKBKontur.Cassandra.CassandraClient.Core;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions.Internal;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Commands.Simple.Read;
+using SkbKontur.Cassandra.ThriftClient.Commands.Simple.Write;
+using SkbKontur.Cassandra.ThriftClient.Commands.System.Write;
+using SkbKontur.Cassandra.ThriftClient.Core;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
 using SkbKontur.Cassandra.TimeBasedUuid;
 using SkbKontur.Cassandra.TimeBasedUuid.Bits;
 
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     internal class ColumnFamilyConnectionImplementation : IColumnFamilyConnectionImplementation
     {

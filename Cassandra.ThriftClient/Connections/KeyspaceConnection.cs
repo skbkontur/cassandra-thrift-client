@@ -1,9 +1,9 @@
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Commands.System.Read;
-using SKBKontur.Cassandra.CassandraClient.Commands.System.Write;
-using SKBKontur.Cassandra.CassandraClient.Core;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Commands.System.Read;
+using SkbKontur.Cassandra.ThriftClient.Commands.System.Write;
+using SkbKontur.Cassandra.ThriftClient.Core;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     internal class KeyspaceConnection : IKeyspaceConnection
     {

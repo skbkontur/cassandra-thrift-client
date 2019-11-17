@@ -1,6 +1,6 @@
 ﻿using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal interface ICommand
     {

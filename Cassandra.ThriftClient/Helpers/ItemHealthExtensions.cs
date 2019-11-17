@@ -4,7 +4,7 @@ using System.Linq;
 
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-namespace SKBKontur.Cassandra.CassandraClient.Helpers
+namespace SkbKontur.Cassandra.ThriftClient.Helpers
 {
     internal static class ItemHealthExtensions
     {

@@ -1,14 +1,14 @@
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions.Internal;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
 
 using Vostok.Logging.Abstractions;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Read
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Simple.Read
 {
     internal class GetCountCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery, ISimpleCommand
     {

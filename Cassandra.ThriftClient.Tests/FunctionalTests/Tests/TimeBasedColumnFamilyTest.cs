@@ -8,10 +8,9 @@ using MoreLinq;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests

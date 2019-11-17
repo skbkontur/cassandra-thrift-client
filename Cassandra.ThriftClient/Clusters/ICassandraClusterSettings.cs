@@ -1,9 +1,9 @@
 using System;
 using System.Net;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Clusters
+namespace SkbKontur.Cassandra.ThriftClient.Clusters
 {
     public interface ICassandraClusterSettings
     {

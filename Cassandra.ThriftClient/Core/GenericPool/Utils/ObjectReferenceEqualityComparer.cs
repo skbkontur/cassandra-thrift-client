@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Utils
+namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Utils
 {
     internal class ObjectReferenceEqualityComparer<T> : EqualityComparer<T> where T : class
     {

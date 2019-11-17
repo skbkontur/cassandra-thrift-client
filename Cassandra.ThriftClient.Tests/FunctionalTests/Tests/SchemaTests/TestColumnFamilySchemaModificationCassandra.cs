@@ -3,10 +3,10 @@ using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 {

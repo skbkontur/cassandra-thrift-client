@@ -1,15 +1,15 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 using Apache.Cassandra;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.System.Read
+namespace SkbKontur.Cassandra.ThriftClient.Commands.System.Read
 {
     internal class RetrieveKeyspacesCommand : CommandBase, IFierceCommand
     {

@@ -3,11 +3,10 @@ using System.Collections.Generic;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     public interface ITimeBasedColumnFamilyConnection
     {

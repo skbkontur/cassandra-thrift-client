@@ -6,8 +6,8 @@ using Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {

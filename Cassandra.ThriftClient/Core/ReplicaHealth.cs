@@ -1,6 +1,6 @@
 using System.Threading;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core
+namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class ReplicaHealth<TReplicaKey>
     {

@@ -2,7 +2,7 @@ using System.Text;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Helpers;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 {

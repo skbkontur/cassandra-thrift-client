@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.2.x - 2019.11.??
+- Adjust root namespace name to match assembly name.
+
 ## v2.2.9 - 2019.11.13
 - Add `TimeBasedColumnFamilyConnection` to support `TimeUUID` clustering keys.
 - Use monotonic timestamp from [SkbKontur.Cassandra.TimeGuid](https://github.com/skbkontur/cassandra-time-guid) package.

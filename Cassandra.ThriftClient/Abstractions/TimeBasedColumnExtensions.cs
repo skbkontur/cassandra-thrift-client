@@ -2,7 +2,7 @@ using JetBrains.Annotations;
 
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal static class TimeBasedColumnExtensions
     {

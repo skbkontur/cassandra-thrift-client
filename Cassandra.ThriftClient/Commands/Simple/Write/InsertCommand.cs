@@ -1,13 +1,13 @@
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
 
 using Vostok.Logging.Abstractions;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Simple.Write
 {
     internal class InsertCommand : KeyspaceColumnFamilyDependantCommandBase, ISinglePartitionQuery, ISimpleCommand
     {

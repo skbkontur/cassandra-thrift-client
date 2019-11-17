@@ -2,9 +2,9 @@ using JetBrains.Annotations;
 
 using Metrics;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.Metrics
+namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
     internal class SimpleCommandMetrics : CommandMetricsBase, ISimpleCommandMetrics
     {

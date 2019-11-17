@@ -2,12 +2,12 @@
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.Metrics;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core
+namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class FierceCommandExecutor : CommandExecutorBase<IFierceCommand>
     {

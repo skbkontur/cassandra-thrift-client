@@ -4,9 +4,9 @@ using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 {

@@ -5,8 +5,8 @@ using System.Threading;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool;
-using SKBKontur.Cassandra.CassandraClient.Core.GenericPool.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
+using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
 
 using Vostok.Logging.Abstractions;
 

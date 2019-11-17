@@ -1,6 +1,6 @@
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     public class TimeBasedColumn
     {

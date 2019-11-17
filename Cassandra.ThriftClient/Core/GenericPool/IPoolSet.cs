@@ -2,7 +2,7 @@
 
 using JetBrains.Annotations;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
+namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 {
     internal interface IPoolSet<TItem, in TItemKey> : IDisposable
         where TItem : class, IDisposable, ILiveness

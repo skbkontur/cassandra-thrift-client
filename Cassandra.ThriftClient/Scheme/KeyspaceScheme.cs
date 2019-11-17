@@ -1,4 +1,4 @@
-namespace SKBKontur.Cassandra.CassandraClient.Scheme
+namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
     public class KeyspaceScheme
     {

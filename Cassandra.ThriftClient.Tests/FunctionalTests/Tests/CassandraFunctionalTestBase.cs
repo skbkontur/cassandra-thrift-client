@@ -6,12 +6,12 @@ using Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-using SKBKontur.Cassandra.CassandraClient.Connections;
-using SKBKontur.Cassandra.CassandraClient.Exceptions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-using SKBKontur.Cassandra.CassandraClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
+using SkbKontur.Cassandra.ThriftClient.Connections;
+using SkbKontur.Cassandra.ThriftClient.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
+using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {

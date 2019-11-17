@@ -6,8 +6,7 @@ using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
 using NUnit.Framework;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;

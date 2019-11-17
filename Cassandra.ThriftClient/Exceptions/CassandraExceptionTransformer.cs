@@ -6,7 +6,7 @@ using Apache.Cassandra;
 using Thrift;
 using Thrift.Transport;
 
-namespace SKBKontur.Cassandra.CassandraClient.Exceptions
+namespace SkbKontur.Cassandra.ThriftClient.Exceptions
 {
     public static class CassandraExceptionTransformer
     {

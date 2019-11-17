@@ -4,12 +4,11 @@ using System.Linq;
 
 using JetBrains.Annotations;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Helpers;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Helpers;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     internal class TimeBasedColumnFamilyConnection : ITimeBasedColumnFamilyConnection
     {

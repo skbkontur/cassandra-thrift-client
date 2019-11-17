@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     public interface IColumnFamilyConnection
     {

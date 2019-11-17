@@ -1,6 +1,6 @@
 using Apache.Cassandra;
 
-namespace SKBKontur.Cassandra.CassandraClient.Abstractions
+namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {
     internal interface IReplicationStrategyFactory
     {

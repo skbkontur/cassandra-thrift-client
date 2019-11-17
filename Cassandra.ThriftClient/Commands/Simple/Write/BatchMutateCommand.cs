@@ -3,17 +3,16 @@ using System.Linq;
 
 using Apache.Cassandra;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Abstractions.Internal;
-using SKBKontur.Cassandra.CassandraClient.Commands.Base;
-
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions.Internal;
+using SkbKontur.Cassandra.ThriftClient.Commands.Base;
 using SkbKontur.Cassandra.TimeBasedUuid.Bits;
 
 using Vostok.Logging.Abstractions;
 
 using ConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
-namespace SKBKontur.Cassandra.CassandraClient.Commands.Simple.Write
+namespace SkbKontur.Cassandra.ThriftClient.Commands.Simple.Write
 {
     internal class BatchMutateCommand : KeyspaceColumnFamilyDependantCommandBase, ISimpleCommand
     {

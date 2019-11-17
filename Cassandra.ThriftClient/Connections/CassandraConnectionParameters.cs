@@ -1,6 +1,6 @@
-﻿using SKBKontur.Cassandra.CassandraClient.Clusters;
+﻿using SkbKontur.Cassandra.ThriftClient.Clusters;
 
-namespace SKBKontur.Cassandra.CassandraClient.Connections
+namespace SkbKontur.Cassandra.ThriftClient.Connections
 {
     public interface ICassandraConnectionParameters
     {

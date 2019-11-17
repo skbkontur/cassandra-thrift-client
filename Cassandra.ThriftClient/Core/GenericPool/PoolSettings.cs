@@ -1,6 +1,6 @@
 using System;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core.GenericPool
+namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 {
     public class PoolSettings
     {

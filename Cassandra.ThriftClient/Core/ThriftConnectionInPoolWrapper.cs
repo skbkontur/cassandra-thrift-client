@@ -1,10 +1,10 @@
 using System.Net;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 using Vostok.Logging.Abstractions;
 
-namespace SKBKontur.Cassandra.CassandraClient.Core
+namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class ThriftConnectionInPoolWrapper : IThriftConnection
     {

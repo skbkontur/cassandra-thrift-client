@@ -2,7 +2,7 @@
 
 using Thrift;
 
-namespace SKBKontur.Cassandra.CassandraClient.Exceptions
+namespace SkbKontur.Cassandra.ThriftClient.Exceptions
 {
     public class CassandraClientApplicationException : CassandraClientException
     {

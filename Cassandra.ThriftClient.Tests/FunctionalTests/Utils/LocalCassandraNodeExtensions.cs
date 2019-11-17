@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Net;
 
-using SKBKontur.Cassandra.CassandraClient.Abstractions;
-using SKBKontur.Cassandra.CassandraClient.Clusters;
-
 using SkbKontur.Cassandra.Local;
+using SkbKontur.Cassandra.ThriftClient.Abstractions;
+using SkbKontur.Cassandra.ThriftClient.Clusters;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
