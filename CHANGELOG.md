@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.2.x - 2019.11.??
+## v2.2.14 - 2019.12.23
 - Adjust root namespace name to match assembly name.
 
 ## v2.2.9 - 2019.11.13
