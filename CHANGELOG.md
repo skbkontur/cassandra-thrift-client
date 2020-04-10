@@ -1,6 +1,6 @@
 # Changelog
 
-## v2.2.x - 2020.04.10
+## v2.2.19 - 2020.04.10
 - Add ability to pass custom timeout to `SchemeActualizer` (PR [#9](https://github.com/skbkontur/cassandra-thrift-client/pull/9)).
 
 ## v2.2.14 - 2019.12.23
