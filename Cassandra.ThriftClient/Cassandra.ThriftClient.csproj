@@ -4,12 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>SkbKontur.Cassandra.ThriftClient</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
+    <PackageId>SkbKontur.Cassandra.ThriftClient</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="SkbKontur.Cassandra.TimeGuid" Version="1.0.16" />
     <PackageReference Include="SkbKontur.Metrics.Net" Version="1.0.15" />
-    <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.4" />
+    <PackageReference Include="Vostok.Logging.Abstractions" Version="1.0.9" />
   </ItemGroup>
 
   <ItemGroup>
