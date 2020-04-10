@@ -22,7 +22,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata, TimeSpan? timeout = null)
         {
             if (keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
@@ -30,7 +30,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
                 return;
             }
             var sw = Stopwatch.StartNew();
-            var timeout = TimeSpan.FromMinutes(5);
+            timeout = timeout ?? TimeSpan.FromMinutes(5);
             do
             {
                 try
