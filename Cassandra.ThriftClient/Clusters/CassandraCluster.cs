@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -68,9 +69,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
             return result;
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false, TimeSpan? timeout = null)
         {
-            new SchemeActualizer(this, eventListener, logger).ActualizeKeyspaces(keyspaces, changeExistingKeyspaceMetadata);
+            new SchemeActualizer(this, eventListener, logger).ActualizeKeyspaces(keyspaces, changeExistingKeyspaceMetadata, timeout);
         }
 
         public void Dispose()
