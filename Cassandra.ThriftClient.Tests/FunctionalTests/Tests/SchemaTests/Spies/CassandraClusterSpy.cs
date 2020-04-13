@@ -56,9 +56,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
             return innerCluster.GetKnowledges();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false, TimeSpan? timeout = null)
         {
-            innerCluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
+            innerCluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata, timeout);
         }
 
         private readonly ICassandraCluster innerCluster;
