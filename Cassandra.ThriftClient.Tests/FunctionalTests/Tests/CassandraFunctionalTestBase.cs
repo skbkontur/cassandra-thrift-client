@@ -121,6 +121,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         protected ICassandraCluster cassandraCluster;
         protected IColumnFamilyConnection columnFamilyConnection;
         protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
-        protected CassandraSchemaActualizer cassandraSchemaActualizer;
+        protected ICassandraSchemaActualizer cassandraSchemaActualizer;
     }
 }

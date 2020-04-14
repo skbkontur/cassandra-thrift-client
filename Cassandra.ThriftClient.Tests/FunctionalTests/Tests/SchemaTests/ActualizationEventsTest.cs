@@ -112,7 +112,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         }
 
         private CassandraCluster cluster;
-        private CassandraSchemaActualizer cassandraSchemaActualizer;
+        private ICassandraSchemaActualizer cassandraSchemaActualizer;
         private CassandraActualizerEventListener cassandraActualizerEventListener;
 
         private class CassandraActualizerEventListener : ICassandraActualizerEventListener

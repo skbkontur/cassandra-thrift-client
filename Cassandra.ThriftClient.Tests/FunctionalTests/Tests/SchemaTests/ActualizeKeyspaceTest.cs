@@ -207,6 +207,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         }
 
         private CassandraClusterSpy cluster;
-        private CassandraSchemaActualizer cassandraSchemaActualizer;
+        private ICassandraSchemaActualizer cassandraSchemaActualizer;
     }
 }
