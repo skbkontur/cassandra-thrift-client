@@ -44,7 +44,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                }, false);
+                }, changeExistingKeyspaceMetadata : false);
 
             var keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
             AssertKeyspacesEquals(new Keyspace
@@ -120,12 +120,12 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                 }
                         }
                 };
-            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {keyspaceScheme}, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {keyspaceScheme}, changeExistingKeyspaceMetadata : false);
             var actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
             Assert.AreEqual(0.01d, actualColumnFamily.BloomFilterFpChance);
 
             keyspaceScheme.Configuration.ColumnFamilies.First().BloomFilterFpChance = 0.02;
-            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {keyspaceScheme}, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {keyspaceScheme}, changeExistingKeyspaceMetadata : false);
 
             actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
             Assert.AreEqual(0.02d, actualColumnFamily.BloomFilterFpChance);
