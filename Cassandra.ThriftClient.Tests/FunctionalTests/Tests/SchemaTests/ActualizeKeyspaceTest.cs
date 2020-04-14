@@ -187,22 +187,22 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                         }
                 };
 
-            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, changeExistingKeyspaceMetadata : false);
 
             originalColumnFamily.Caching = ColumnFamilyCaching.None;
-            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, changeExistingKeyspaceMetadata : false);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.None));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.KeysOnly;
-            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, changeExistingKeyspaceMetadata : false);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.RowsOnly;
-            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, changeExistingKeyspaceMetadata : false);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.RowsOnly));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.All;
-            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, false);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes, changeExistingKeyspaceMetadata : false);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.All));
         }
 
