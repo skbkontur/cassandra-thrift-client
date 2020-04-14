@@ -30,8 +30,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
-            schemeActualizer = new SchemeActualizer(cassandraCluster, null, new SilentLog());
-            schemeActualizer.ActualizeKeyspaces(new[]
+            cassandraSchemaActualizer = new CassandraSchemaActualizer(cassandraCluster, null, new SilentLog());
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
                         {
@@ -123,6 +123,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         protected ICassandraCluster cassandraCluster;
         protected IColumnFamilyConnection columnFamilyConnection;
         protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
-        protected SchemeActualizer schemeActualizer;
+        protected CassandraSchemaActualizer cassandraSchemaActualizer;
     }
 }

@@ -17,7 +17,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         public void SetUp()
         {
             cluster = new CassandraClusterSpy(() => new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance));
-            actualize = new SchemeActualizer(cluster, null, Logger.Instance);
+            actualize = new CassandraSchemaActualizer(cluster, null, Logger.Instance);
         }
 
         [TearDown]
@@ -207,6 +207,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         }
 
         private CassandraClusterSpy cluster;
-        private SchemeActualizer actualize;
+        private CassandraSchemaActualizer actualize;
     }
 }

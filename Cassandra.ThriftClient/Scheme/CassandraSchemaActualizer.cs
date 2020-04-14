@@ -10,9 +10,9 @@ using Vostok.Logging.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
-    public class SchemeActualizer
+    public class CassandraSchemaActualizer
     {
-        public SchemeActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
+        public CassandraSchemaActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
         {
             this.cassandraCluster = cassandraCluster;
             this.logger = logger;

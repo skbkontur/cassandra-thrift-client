@@ -20,7 +20,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         {
             cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance);
             cassandraActualizerEventListener = new CassandraActualizerEventListener();
-            actualizer = new SchemeActualizer(cluster, cassandraActualizerEventListener, Logger.Instance);
+            actualizer = new CassandraSchemaActualizer(cluster, cassandraActualizerEventListener, Logger.Instance);
         }
 
         [TearDown]
@@ -112,7 +112,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         }
 
         private CassandraCluster cluster;
-        private SchemeActualizer actualizer;
+        private CassandraSchemaActualizer actualizer;
         private CassandraActualizerEventListener cassandraActualizerEventListener;
 
         private class CassandraActualizerEventListener : ICassandraActualizerEventListener
