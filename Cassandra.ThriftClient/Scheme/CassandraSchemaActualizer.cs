@@ -20,7 +20,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata = false)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
         {
             if (keyspaceShemas == null || keyspaceShemas.Length == 0)
             {

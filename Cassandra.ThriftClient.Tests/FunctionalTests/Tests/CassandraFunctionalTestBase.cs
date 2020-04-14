@@ -51,7 +51,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                });
+                }, false);
         }
 
         [TearDown]

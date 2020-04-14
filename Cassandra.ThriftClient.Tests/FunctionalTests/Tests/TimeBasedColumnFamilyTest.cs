@@ -39,7 +39,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                });
+                }, false);
             cfConnection = cassandraCluster.RetrieveColumnFamilyConnectionImplementation(KeyspaceName, cfName);
         }
 
