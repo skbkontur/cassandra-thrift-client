@@ -10,7 +10,7 @@ using Vostok.Logging.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
-    public class CassandraSchemaActualizer
+    public class CassandraSchemaActualizer : ICassandraSchemaActualizer
     {
         public CassandraSchemaActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
         {
