@@ -36,7 +36,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                }, false);
+                }, changeExistingKeyspaceMetadata : false);
             cfConnection = cassandraCluster.RetrieveTimeBasedColumnFamilyConnection(KeyspaceName, cfName);
         }
 
