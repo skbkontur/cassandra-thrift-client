@@ -15,7 +15,7 @@
       <RepositoryType>git</RepositoryType>
       <RepositoryUrl>https://github.com/skbkontur/cassandra-thrift-client</RepositoryUrl>
       <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
-      <PackageReleaseNotes>$(RepositoryUrl)/releases/tag/v$(MajorMinorVersion)-release</PackageReleaseNotes>
+      <PackageReleaseNotes>$(RepositoryUrl)/releases/tag/v$(NuGetPackageVersion)-release</PackageReleaseNotes>
     </PropertyGroup>
   </Target>
 
