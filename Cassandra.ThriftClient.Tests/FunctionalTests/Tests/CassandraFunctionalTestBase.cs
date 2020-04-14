@@ -13,8 +13,6 @@ using SkbKontur.Cassandra.ThriftClient.Exceptions;
 using SkbKontur.Cassandra.ThriftClient.Helpers;
 using SkbKontur.Cassandra.ThriftClient.Scheme;
 
-using Vostok.Logging.Abstractions;
-
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestBase
@@ -30,7 +28,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
-            cassandraSchemaActualizer = new CassandraSchemaActualizer(cassandraCluster, null, new SilentLog());
+            cassandraSchemaActualizer = new CassandraSchemaActualizer(cassandraCluster, null, Logger.Instance);
             cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
