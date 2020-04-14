@@ -12,7 +12,7 @@ using Vostok.Logging.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
-    internal class SchemeActualizer
+    public class SchemeActualizer
     {
         public SchemeActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
         {
@@ -22,7 +22,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata, TimeSpan? timeout = null)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata = false, TimeSpan? timeout = null)
         {
             if (keyspaceShemas == null || keyspaceShemas.Length == 0)
             {

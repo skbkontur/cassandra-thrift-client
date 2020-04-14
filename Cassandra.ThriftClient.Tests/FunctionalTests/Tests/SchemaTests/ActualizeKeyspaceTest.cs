@@ -187,22 +187,22 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                         }
                 };
 
-            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            actualize.ActualizeKeyspaces(keyspaceSchemes);
 
             originalColumnFamily.Caching = ColumnFamilyCaching.None;
-            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            actualize.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.None));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.KeysOnly;
-            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            actualize.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.RowsOnly;
-            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            actualize.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.RowsOnly));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.All;
-            cluster.ActualizeKeyspaces(keyspaceSchemes);
+            actualize.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.All));
         }
 

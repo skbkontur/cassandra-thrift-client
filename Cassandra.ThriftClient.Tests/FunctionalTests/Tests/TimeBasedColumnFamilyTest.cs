@@ -21,7 +21,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             base.SetUp();
             var cfName = Guid.NewGuid().ToString("N").Substring(10);
-            cassandraCluster.ActualizeKeyspaces(new[]
+            schemeActualizer.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
                         {
