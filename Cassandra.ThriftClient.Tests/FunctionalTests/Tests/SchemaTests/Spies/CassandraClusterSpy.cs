@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 using SkbKontur.Cassandra.ThriftClient.Clusters;
-using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {
@@ -54,11 +52,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
         public Dictionary<ConnectionPoolKey, KeyspaceConnectionPoolKnowledge> GetKnowledges()
         {
             return innerCluster.GetKnowledges();
-        }
-
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
-        {
-            innerCluster.ActualizeKeyspaces(keyspaces, eventListener, changeExistingKeyspaceMetadata);
         }
 
         private readonly ICassandraCluster innerCluster;

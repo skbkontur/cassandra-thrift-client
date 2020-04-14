@@ -21,7 +21,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             base.SetUp();
             var cfName = Guid.NewGuid().ToString("N").Substring(10);
-            cassandraCluster.ActualizeKeyspaces(new[]
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
                         {
@@ -39,7 +39,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                });
+                }, changeExistingKeyspaceMetadata : false);
             cfConnection = cassandraCluster.RetrieveColumnFamilyConnectionImplementation(KeyspaceName, cfName);
         }
 

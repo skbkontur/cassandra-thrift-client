@@ -18,7 +18,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public void TestUpdateKeyspace(bool durableWrites)
         {
             var keyspaceName = Guid.NewGuid().ToString("N");
-            cassandraCluster.ActualizeKeyspaces(new[]
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
                         {
@@ -44,7 +44,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                });
+                }, changeExistingKeyspaceMetadata : false);
 
             var keyspaces = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().ToArray();
             AssertKeyspacesEquals(new Keyspace
@@ -120,12 +120,12 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                 }
                         }
                 };
-            cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {keyspaceScheme}, changeExistingKeyspaceMetadata : false);
             var actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
             Assert.AreEqual(0.01d, actualColumnFamily.BloomFilterFpChance);
 
             keyspaceScheme.Configuration.ColumnFamilies.First().BloomFilterFpChance = 0.02;
-            cassandraCluster.ActualizeKeyspaces(new[] {keyspaceScheme});
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {keyspaceScheme}, changeExistingKeyspaceMetadata : false);
 
             actualColumnFamily = cassandraCluster.RetrieveClusterConnection().RetrieveKeyspaces().First(x => x.Name == keyspaceName).ColumnFamilies[columnFamilyName];
             Assert.AreEqual(0.02d, actualColumnFamily.BloomFilterFpChance);

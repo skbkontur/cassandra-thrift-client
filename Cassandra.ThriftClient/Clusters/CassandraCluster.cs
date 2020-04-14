@@ -3,12 +3,10 @@ using System.Linq;
 using System.Net;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
-using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
 
 using Vostok.Logging.Abstractions;
 
@@ -66,11 +64,6 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
                 result.Add(new ConnectionPoolKey {IsFierce = true, IpEndPoint = knowledgePair.Key.ReplicaKey, Keyspace = knowledgePair.Key.ItemKey}, knowledgePair.Value);
 
             return result;
-        }
-
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaces, ICassandraActualizerEventListener eventListener = null, bool changeExistingKeyspaceMetadata = false)
-        {
-            new SchemeActualizer(this, eventListener, logger).ActualizeKeyspaces(keyspaces, changeExistingKeyspaceMetadata);
         }
 
         public void Dispose()

@@ -28,7 +28,8 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             cassandraCluster = new CassandraCluster(cassandraClusterSettings, Logger.Instance);
             columnFamilyConnection = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.ColumnFamilyName);
             columnFamilyConnectionDefaultTtl = cassandraCluster.RetrieveColumnFamilyConnection(KeyspaceName, Constants.DefaultTtlColumnFamilyName);
-            cassandraCluster.ActualizeKeyspaces(new[]
+            cassandraSchemaActualizer = new CassandraSchemaActualizer(cassandraCluster, null, Logger.Instance);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
                     new KeyspaceScheme
                         {
@@ -50,7 +51,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
                                         }
                                 }
                         }
-                });
+                }, changeExistingKeyspaceMetadata : false);
         }
 
         [TearDown]
@@ -120,5 +121,6 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         protected ICassandraCluster cassandraCluster;
         protected IColumnFamilyConnection columnFamilyConnection;
         protected IColumnFamilyConnection columnFamilyConnectionDefaultTtl;
+        protected ICassandraSchemaActualizer cassandraSchemaActualizer;
     }
 }

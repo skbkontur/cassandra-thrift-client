@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
-using SkbKontur.Cassandra.ThriftClient.Exceptions;
 
 using Vostok.Logging.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Scheme
 {
-    internal class SchemeActualizer
+    public class CassandraSchemaActualizer : ICassandraSchemaActualizer
     {
-        public SchemeActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
+        public CassandraSchemaActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
         {
             this.cassandraCluster = cassandraCluster;
             this.logger = logger;
@@ -22,36 +20,14 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
             columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata, TimeSpan? timeout = null)
+        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
         {
             if (keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
                 logger.Info("Found 0 keyspaces in scheme, skip applying scheme");
                 return;
             }
-            var sw = Stopwatch.StartNew();
-            timeout = timeout ?? TimeSpan.FromMinutes(5);
-            do
-            {
-                try
-                {
-                    DoActualizeKeyspaces(keyspaceShemas, changeExistingKeyspaceMetadata);
-                    return;
-                }
-                catch (CassandraClientIOException e)
-                {
-                    logger.Warn("CassandraClientIOException (e.g. socket timeout) occured during scheme actualization", e);
-                }
-                catch (CassandraClientTimedOutException e)
-                {
-                    logger.Warn("CassandraClientTimedOutException occured during scheme actualization", e);
-                }
-            } while (sw.Elapsed < timeout);
-            throw new InvalidOperationException($"Failed to actualize cassandra scheme in {timeout}");
-        }
-
-        private void DoActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
-        {
+            
             logger.Info("Start apply scheme...");
             eventListener.ActualizationStarted();
             var clusterConnection = cassandraCluster.RetrieveClusterConnection();
