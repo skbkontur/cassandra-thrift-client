@@ -17,7 +17,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         public void SetUp()
         {
             cluster = new CassandraClusterSpy(() => new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance));
-            actualize = new CassandraSchemaActualizer(cluster, null, Logger.Instance);
+            cassandraSchemaActualizer = new CassandraSchemaActualizer(cluster, null, Logger.Instance);
         }
 
         [TearDown]
@@ -28,7 +28,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 
         private void ActualizeKeyspaces(KeyspaceScheme scheme)
         {
-            actualize.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
         }
 
         [Test]
@@ -187,26 +187,26 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                         }
                 };
 
-            actualize.ActualizeKeyspaces(keyspaceSchemes);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes);
 
             originalColumnFamily.Caching = ColumnFamilyCaching.None;
-            actualize.ActualizeKeyspaces(keyspaceSchemes);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.None));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.KeysOnly;
-            actualize.ActualizeKeyspaces(keyspaceSchemes);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.KeysOnly));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.RowsOnly;
-            actualize.ActualizeKeyspaces(keyspaceSchemes);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.RowsOnly));
 
             originalColumnFamily.Caching = ColumnFamilyCaching.All;
-            actualize.ActualizeKeyspaces(keyspaceSchemes);
+            cassandraSchemaActualizer.ActualizeKeyspaces(keyspaceSchemes);
             Assert.That(cluster.RetrieveKeyspaceConnection(keyspaceName).DescribeKeyspace().ColumnFamilies[name].Caching, Is.EqualTo(ColumnFamilyCaching.All));
         }
 
         private CassandraClusterSpy cluster;
-        private CassandraSchemaActualizer actualize;
+        private CassandraSchemaActualizer cassandraSchemaActualizer;
     }
 }

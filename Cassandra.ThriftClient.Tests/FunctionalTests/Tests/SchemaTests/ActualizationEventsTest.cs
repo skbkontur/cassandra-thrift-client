@@ -20,7 +20,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         {
             cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance);
             cassandraActualizerEventListener = new CassandraActualizerEventListener();
-            actualizer = new CassandraSchemaActualizer(cluster, cassandraActualizerEventListener, Logger.Instance);
+            cassandraSchemaActualizer = new CassandraSchemaActualizer(cluster, cassandraActualizerEventListener, Logger.Instance);
         }
 
         [TearDown]
@@ -47,7 +47,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
                         }
                 };
             Assert.That(cassandraActualizerEventListener.KeyspaceAddedInvokeCount, Is.EqualTo(0));
-            actualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
             Assert.That(cassandraActualizerEventListener.KeyspaceAddedInvokeCount, Is.EqualTo(1));
             Assert.That(cassandraActualizerEventListener.ColumnFamilyAddedInvokeCount, Is.EqualTo(0));
             Assert.That(cassandraActualizerEventListener.ColumnFamilyUpdatedInvokeCount, Is.EqualTo(0));
@@ -108,11 +108,11 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 
         private void ActualizeKeyspaces(KeyspaceScheme scheme)
         {
-            actualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
         }
 
         private CassandraCluster cluster;
-        private CassandraSchemaActualizer actualizer;
+        private CassandraSchemaActualizer cassandraSchemaActualizer;
         private CassandraActualizerEventListener cassandraActualizerEventListener;
 
         private class CassandraActualizerEventListener : ICassandraActualizerEventListener
