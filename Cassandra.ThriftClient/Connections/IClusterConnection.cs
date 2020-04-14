@@ -12,6 +12,6 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
         void UpdateKeyspace(Keyspace keyspace);
         void RemoveKeyspace(string keyspace);
         string DescribeVersion();
-        void WaitUntilSchemeAgreementIsReached(TimeSpan timeout);
+        void WaitUntilSchemaAgreementIsReached(TimeSpan timeout);
     }
 }

@@ -10,7 +10,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Connections;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
@@ -23,7 +23,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var cfName = Guid.NewGuid().ToString("N").Substring(10);
             cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
-                    new KeyspaceScheme
+                    new KeyspaceSchema
                         {
                             Name = KeyspaceName,
                             Configuration = new KeyspaceConfiguration

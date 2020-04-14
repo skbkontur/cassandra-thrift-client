@@ -3,7 +3,7 @@ using System.Linq;
 
 using Apache.Cassandra;
 
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace SkbKontur.Cassandra.ThriftClient.Abstractions
 {

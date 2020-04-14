@@ -3,7 +3,7 @@ using System;
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 {

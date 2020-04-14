@@ -326,6 +326,11 @@ public void SetUp()&#xD;
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F215A33823F30E4AA50E54C6D36897F6/Shortcut/@EntryValue">ipse</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F215A33823F30E4AA50E54C6D36897F6/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=F215A33823F30E4AA50E54C6D36897F6/Text/@EntryValue">throw new InvalidProgramStateException("$TODO$");</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=actualizer/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=keyspace/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=keyspaces/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=kontur/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=shemas/@EntryIndexedValue">True</s:Boolean>
 	
 	
 	

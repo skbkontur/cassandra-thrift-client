@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.3.x - 2020.04.14
+- Separate `ICassandraSchemaActualizer` API from `ICassandraCluster` (PR [#10](https://github.com/skbkontur/cassandra-thrift-client/pull/10)).
+
+Note that `ICassandraCluster.ActualizeKeyspaces()` method was removed. Use `CassandraSchemaActualizer` directly to modify thrift db schema.
+
 ## v2.2.19 - 2020.04.10
 - Add ability to pass custom timeout to `SchemeActualizer` (PR [#9](https://github.com/skbkontur/cassandra-thrift-client/pull/9)).
 

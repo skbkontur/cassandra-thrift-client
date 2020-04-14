@@ -3,7 +3,7 @@ using System.Linq;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace SkbKontur.Cassandra.ThriftClient.Scheme
+namespace SkbKontur.Cassandra.ThriftClient.Schema
 {
     internal class ColumnFamilyEqualityByPropertiesComparer
     {

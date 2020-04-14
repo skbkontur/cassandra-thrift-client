@@ -8,7 +8,7 @@ using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
 
 using Vostok.Logging.Abstractions;
 
-namespace SkbKontur.Cassandra.ThriftClient.Scheme
+namespace SkbKontur.Cassandra.ThriftClient.Schema
 {
     public class CassandraSchemaActualizer : ICassandraSchemaActualizer
     {
@@ -17,55 +17,54 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
             this.cassandraCluster = cassandraCluster;
             this.logger = logger;
             this.eventListener = eventListener ?? EmptyCassandraActualizerEventListener.Instance;
-            columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
         }
 
-        public void ActualizeKeyspaces(KeyspaceScheme[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
+        public void ActualizeKeyspaces(KeyspaceSchema[] keyspaceShemas, bool changeExistingKeyspaceMetadata)
         {
             if (keyspaceShemas == null || keyspaceShemas.Length == 0)
             {
-                logger.Info("Found 0 keyspaces in scheme, skip applying scheme");
+                logger.Info("Nothing to actualize since keyspaceShemas is empty");
                 return;
             }
-            
-            logger.Info("Start apply scheme...");
+
+            logger.Info("Start schema actualization...");
             eventListener.ActualizationStarted();
             var clusterConnection = cassandraCluster.RetrieveClusterConnection();
-            clusterConnection.WaitUntilSchemeAgreementIsReached(TimeSpan.FromMinutes(1));
-            logger.Info("Found {0} keyspaces in scheme", keyspaceShemas.Length);
+            clusterConnection.WaitUntilSchemaAgreementIsReached(schemaAgreementWaitTimeout);
+            logger.Info("Found {0} keyspaces in schema", keyspaceShemas.Length);
             var keyspaces = clusterConnection.RetrieveKeyspaces().ToDictionary(keyspace => keyspace.Name, StringComparer.OrdinalIgnoreCase);
             eventListener.SchemaRetrieved(keyspaces.Values.ToArray());
             logger.Info("Found {0} keyspaces in database", keyspaces.Count);
-            foreach (var keyspaceScheme in keyspaceShemas)
+            foreach (var keyspaceSchema in keyspaceShemas)
             {
-                logger.Info("Start actualize scheme for keyspace {0}", keyspaceScheme.Name);
-                eventListener.KeyspaceActualizationStarted(keyspaceScheme.Name);
+                logger.Info("Start schema actualization for keyspace: {0}", keyspaceSchema.Name);
+                eventListener.KeyspaceActualizationStarted(keyspaceSchema.Name);
                 var keyspace = new Keyspace
                     {
-                        Name = keyspaceScheme.Name,
-                        DurableWrites = keyspaceScheme.Configuration.DurableWrites,
-                        ReplicationStrategy = keyspaceScheme.Configuration.ReplicationStrategy,
+                        Name = keyspaceSchema.Name,
+                        DurableWrites = keyspaceSchema.Configuration.DurableWrites,
+                        ReplicationStrategy = keyspaceSchema.Configuration.ReplicationStrategy,
                     };
-                if (keyspaces.ContainsKey(keyspaceScheme.Name))
+                if (keyspaces.ContainsKey(keyspaceSchema.Name))
                 {
                     if (changeExistingKeyspaceMetadata)
                     {
-                        logger.Info("Keyspace {0} already exists in the database, so run update keyspace command", keyspaceScheme.Name);
+                        logger.Info("Keyspace {0} already exists in the database, so run update keyspace command", keyspaceSchema.Name);
                         clusterConnection.UpdateKeyspace(keyspace);
                     }
                     else
-                        logger.Info("Keyspace {0} already exists in the database, changeExistingKeyspaceMetadata is set to False, so do not run update keyspace command", keyspaceScheme.Name);
-                    ActualizeColumnFamilies(keyspaceScheme.Name, keyspaceScheme.Configuration.ColumnFamilies);
+                        logger.Info("Keyspace {0} already exists in the database, changeExistingKeyspaceMetadata is set to False, so do not run update keyspace command", keyspaceSchema.Name);
+                    ActualizeColumnFamilies(keyspaceSchema.Name, keyspaceSchema.Configuration.ColumnFamilies);
                 }
                 else
                 {
-                    logger.Info("Keyspace {0} is new, so run add keyspace command", keyspaceScheme.Name);
-                    keyspace.ColumnFamilies = keyspaceScheme.Configuration.ColumnFamilies.ToDictionary(family => family.Name);
+                    logger.Info("Keyspace {0} is new, so run add keyspace command", keyspaceSchema.Name);
+                    keyspace.ColumnFamilies = keyspaceSchema.Configuration.ColumnFamilies.ToDictionary(family => family.Name);
                     clusterConnection.AddKeyspace(keyspace);
                     eventListener.KeyspaceAdded(keyspace);
                 }
             }
-            clusterConnection.WaitUntilSchemeAgreementIsReached(TimeSpan.FromMinutes(1));
+            clusterConnection.WaitUntilSchemaAgreementIsReached(schemaAgreementWaitTimeout);
             eventListener.ActualizationCompleted();
         }
 
@@ -100,7 +99,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Scheme
 
         private readonly ICassandraCluster cassandraCluster;
         private readonly ILog logger;
-        private readonly ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer;
         private readonly ICassandraActualizerEventListener eventListener;
+        private readonly ColumnFamilyEqualityByPropertiesComparer columnFamilyComparer = new ColumnFamilyEqualityByPropertiesComparer();
+        private readonly TimeSpan schemaAgreementWaitTimeout = TimeSpan.FromMinutes(1);
     }
 }

@@ -53,7 +53,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
             logger.Info("Keyspace adding result: {0}", addKeyspaceCommand.Output);
         }
 
-        public void WaitUntilSchemeAgreementIsReached(TimeSpan timeout)
+        public void WaitUntilSchemaAgreementIsReached(TimeSpan timeout)
         {
             var sw = Stopwatch.StartNew();
             do
@@ -64,15 +64,15 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
                     return;
                 LogVersions(schemaAgreementCommand.Output);
             } while (sw.Elapsed < timeout);
-            throw new InvalidOperationException($"WaitUntilSchemeAgreementIsReached didn't complete in {timeout}");
+            throw new InvalidOperationException($"WaitUntilSchemaAgreementIsReached didn't complete in {timeout}");
         }
 
         private void LogVersions(IDictionary<string, List<string>> versions)
         {
             var stringBuilder = new StringBuilder();
-            stringBuilder.AppendLine("Cassandra scheme is not synchronized:");
+            stringBuilder.AppendLine("Cassandra schema is not synchronized:");
             foreach (var kvp in versions)
-                stringBuilder.AppendLine($"\tVerson: {kvp.Key}, Nodes: {string.Join(",", kvp.Value)}");
+                stringBuilder.AppendLine($"\tVersion: {kvp.Key}, Nodes: {string.Join(",", kvp.Value)}");
             logger.Info(stringBuilder.ToString());
         }
 

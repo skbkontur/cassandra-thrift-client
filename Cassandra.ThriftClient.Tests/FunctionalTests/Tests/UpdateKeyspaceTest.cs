@@ -7,7 +7,7 @@ using Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -20,7 +20,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             var keyspaceName = Guid.NewGuid().ToString("N");
             cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
-                    new KeyspaceScheme
+                    new KeyspaceSchema
                         {
                             Name = keyspaceName,
                             Configuration = new KeyspaceConfiguration
@@ -104,7 +104,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         {
             var keyspaceName = Guid.NewGuid().ToString("N");
             const string columnFamilyName = "1";
-            var keyspaceScheme = new KeyspaceScheme
+            var keyspaceScheme = new KeyspaceSchema
                 {
                     Name = keyspaceName,
                     Configuration = new KeyspaceConfiguration

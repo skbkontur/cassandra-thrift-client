@@ -8,7 +8,7 @@ using NUnit.Framework;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 {
@@ -32,7 +32,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestDoubleActualizeWithoutChangingSchema()
         {
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = TestSchemaUtils.GetRandomKeyspaceName(),
                     Configuration = new KeyspaceConfiguration
@@ -56,7 +56,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestUpdateColumnFamilyProperty()
         {
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = TestSchemaUtils.GetRandomKeyspaceName(),
                     Configuration = new KeyspaceConfiguration
@@ -79,7 +79,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestAddNewColumnFamily()
         {
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = TestSchemaUtils.GetRandomKeyspaceName(),
                     Configuration = new KeyspaceConfiguration
@@ -106,9 +106,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             Assert.That(cassandraActualizerEventListener.ColumnFamilyAddedInvokeCount, Is.EqualTo(1));
         }
 
-        private void ActualizeKeyspaces(KeyspaceScheme scheme)
+        private void ActualizeKeyspaces(KeyspaceSchema schema)
         {
-            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {schema}, changeExistingKeyspaceMetadata : true);
         }
 
         private CassandraCluster cluster;

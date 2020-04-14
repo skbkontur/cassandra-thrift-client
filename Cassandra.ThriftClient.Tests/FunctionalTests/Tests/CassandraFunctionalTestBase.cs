@@ -11,7 +11,7 @@ using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Exceptions;
 using SkbKontur.Cassandra.ThriftClient.Helpers;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
@@ -31,7 +31,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             cassandraSchemaActualizer = new CassandraSchemaActualizer(cassandraCluster, null, Logger.Instance);
             cassandraSchemaActualizer.ActualizeKeyspaces(new[]
                 {
-                    new KeyspaceScheme
+                    new KeyspaceSchema
                         {
                             Name = KeyspaceName,
                             Configuration = new KeyspaceConfiguration

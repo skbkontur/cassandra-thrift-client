@@ -6,7 +6,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
-using SkbKontur.Cassandra.ThriftClient.Scheme;
+using SkbKontur.Cassandra.ThriftClient.Schema;
 
 namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 {
@@ -26,16 +26,16 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             cluster.Dispose();
         }
 
-        private void ActualizeKeyspaces(KeyspaceScheme scheme)
+        private void ActualizeKeyspaces(KeyspaceSchema schema)
         {
-            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {scheme}, changeExistingKeyspaceMetadata : true);
+            cassandraSchemaActualizer.ActualizeKeyspaces(new[] {schema}, changeExistingKeyspaceMetadata : true);
         }
 
         [Test]
         public void TestActualizeWithNullProperties()
         {
             var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = keyspaceName,
                     Configuration = new KeyspaceConfiguration
@@ -67,7 +67,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestChangeCompactionProperties()
         {
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = TestSchemaUtils.GetRandomKeyspaceName(),
                     Configuration = new KeyspaceConfiguration
@@ -115,7 +115,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestChangeCompressionProperty()
         {
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = TestSchemaUtils.GetRandomKeyspaceName(),
                     Configuration = new KeyspaceConfiguration
@@ -139,7 +139,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
         [Test]
         public void TestDoubleActualizeWithoutChangingSchema()
         {
-            var scheme = new KeyspaceScheme
+            var scheme = new KeyspaceSchema
                 {
                     Name = TestSchemaUtils.GetRandomKeyspaceName(),
                     Configuration = new KeyspaceConfiguration
@@ -174,7 +174,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
             var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();
             var keyspaceSchemes = new[]
                 {
-                    new KeyspaceScheme
+                    new KeyspaceSchema
                         {
                             Name = keyspaceName,
                             Configuration = new KeyspaceConfiguration
