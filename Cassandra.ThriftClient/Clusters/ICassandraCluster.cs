@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Generic;
 
+using JetBrains.Annotations;
+
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
 
 namespace SkbKontur.Cassandra.ThriftClient.Clusters
 {
+    [PublicAPI]
     public interface ICassandraCluster : IDisposable
     {
         IClusterConnection RetrieveClusterConnection();

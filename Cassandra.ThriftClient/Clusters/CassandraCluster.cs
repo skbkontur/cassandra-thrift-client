@@ -2,6 +2,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
+using JetBrains.Annotations;
+
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core;
@@ -12,6 +14,7 @@ using Vostok.Logging.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Clusters
 {
+    [PublicAPI]
     public class CassandraCluster : ICassandraCluster
     {
         public CassandraCluster(ICassandraClusterSettings settings, ILog logger)

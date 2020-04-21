@@ -1,10 +1,13 @@
 using System;
 using System.Net;
 
+using JetBrains.Annotations;
+
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Clusters
 {
+    [PublicAPI]
     public interface ICassandraClusterSettings
     {
         string ClusterName { get; }
