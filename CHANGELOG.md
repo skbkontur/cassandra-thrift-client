@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.3.6 - 2020.04.21
+- Fix `CassandraSchemaActualizer` logging context to be `"CassandraThriftClient"` as it was before making this class public.
+
 ## v2.3.3 - 2020.04.14
 - Separate `ICassandraSchemaActualizer` API from `ICassandraCluster` (PR [#10](https://github.com/skbkontur/cassandra-thrift-client/pull/10)).
 
