@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
+using JetBrains.Annotations;
+
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Clusters.ActualizationEventListener;
@@ -10,12 +12,13 @@ using Vostok.Logging.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Schema
 {
+    [PublicAPI]
     public class CassandraSchemaActualizer : ICassandraSchemaActualizer
     {
         public CassandraSchemaActualizer(ICassandraCluster cassandraCluster, ICassandraActualizerEventListener eventListener, ILog logger)
         {
             this.cassandraCluster = cassandraCluster;
-            this.logger = logger;
+            this.logger = logger.ForContext("CassandraThriftClient");
             this.eventListener = eventListener ?? EmptyCassandraActualizerEventListener.Instance;
         }
 
