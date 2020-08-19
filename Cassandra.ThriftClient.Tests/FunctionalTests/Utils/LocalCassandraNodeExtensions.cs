@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Net;
 
 using SkbKontur.Cassandra.Local;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class LocalCassandraNodeExtensions
     {

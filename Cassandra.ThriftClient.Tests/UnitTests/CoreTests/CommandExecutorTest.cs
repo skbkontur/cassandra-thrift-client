@@ -19,7 +19,7 @@ using Thrift.Transport;
 
 using Vostok.Logging.Abstractions;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 {
     public class CommandExecutorTest : TestBase
     {

@@ -7,7 +7,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class ConnectionPoolTest : CassandraFunctionalTestBase
     {

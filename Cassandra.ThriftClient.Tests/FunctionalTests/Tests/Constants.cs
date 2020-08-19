@@ -1,4 +1,4 @@
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public static class Constants
     {

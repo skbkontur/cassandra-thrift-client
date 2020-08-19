@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests
 {
     public class ToStringValueEnumExtensionsTest : TestBase
     {

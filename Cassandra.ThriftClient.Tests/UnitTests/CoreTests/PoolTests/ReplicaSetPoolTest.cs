@@ -10,7 +10,7 @@ using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
 
 using Vostok.Logging.Abstractions;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
 {
     [TestFixture]
     public class ReplicaSetPoolTest

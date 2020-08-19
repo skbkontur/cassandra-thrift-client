@@ -6,7 +6,7 @@ using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {
     public class CassandraClusterSpy : ICassandraCluster
     {

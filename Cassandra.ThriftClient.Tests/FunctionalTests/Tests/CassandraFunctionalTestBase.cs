@@ -1,9 +1,6 @@
 using System;
 using System.Threading;
 
-using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
-using Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
-
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
@@ -12,8 +9,10 @@ using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Exceptions;
 using SkbKontur.Cassandra.ThriftClient.Helpers;
 using SkbKontur.Cassandra.ThriftClient.Schema;
+using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
+using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public abstract class CassandraFunctionalTestBase
     {

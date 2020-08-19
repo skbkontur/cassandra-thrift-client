@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.Local;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     [SetUpFixture]
     public class SingleCassandraNodeSetUpFixture

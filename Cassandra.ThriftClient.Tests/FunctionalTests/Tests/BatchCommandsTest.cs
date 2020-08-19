@@ -6,7 +6,7 @@ using NUnit.Framework;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Helpers;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class BatchCommandsTest : CassandraFunctionalTestBase
     {
