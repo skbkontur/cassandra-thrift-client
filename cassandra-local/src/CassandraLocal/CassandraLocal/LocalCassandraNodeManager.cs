@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,10 +53,10 @@ namespace SkbKontur.Cassandra.Local
         private static void ExpandSettingsTemplates(LocalCassandraNode node)
         {
             var templateFiles = new[]
-                {
-                    @"conf/cassandra.yaml",
-                    @"bin/cassandra.bat"
-                };
+            {
+                @"conf/cassandra.yaml",
+                @"bin/cassandra.bat"
+            };
             foreach (var templateFile in templateFiles)
                 ExpandSettingsTemplate(Path.Combine(node.DeployDirectory, templateFile), node);
         }
@@ -64,18 +64,19 @@ namespace SkbKontur.Cassandra.Local
         private static void ExpandSettingsTemplate(string templateFilePath, LocalCassandraNode node)
         {
             ExpandSettingsTemplate(templateFilePath, new Dictionary<string, string>
-                {
-                    {"ClusterName", node.ClusterName},
-                    {"LocalNodeName", node.LocalNodeName},
-                    {"HeapSize", node.HeapSize},
-                    {"RpcAddress", node.RpcAddress},
-                    {"ListenAddress", node.ListenAddress},
-                    {"SeedAddresses", string.Join(",", node.SeedAddresses)},
-                    {"RpcPort", node.RpcPort.ToString()},
-                    {"CqlPort", node.CqlPort.ToString()},
-                    {"JmxPort", node.JmxPort.ToString()},
-                    {"GossipPort", node.GossipPort.ToString()}
-                });
+            {
+                {"ClusterName", node.ClusterName},
+                {"LocalNodeName", node.LocalNodeName},
+                {"HeapSize", node.HeapSize},
+                {"RpcAddress", node.RpcAddress},
+                {"ListenAddress", node.ListenAddress},
+                {"SeedAddresses", string.Join(",", node.SeedAddresses)},
+                {"RpcPort", node.RpcPort.ToString()},
+                {"CqlPort", node.CqlPort.ToString()},
+                {"JmxPort", node.JmxPort.ToString()},
+                {"GossipPort", node.GossipPort.ToString()},
+                {"Authenticator", node.Authenticator.ToString()}
+            });
         }
 
         private static void ExpandSettingsTemplate(string templateFilePath, Dictionary<string, string> values)

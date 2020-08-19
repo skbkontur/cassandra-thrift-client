@@ -1,11 +1,12 @@
-﻿namespace SkbKontur.Cassandra.Local
+namespace SkbKontur.Cassandra.Local
 {
     public class LocalCassandraNode
     {
-        public LocalCassandraNode(string templateDirectory, string deployDirectory)
+        public LocalCassandraNode(string templateDirectory, string deployDirectory, Authenticator authenticator = Authenticator.AllowAllAuthenticator)
         {
             TemplateDirectory = templateDirectory;
             DeployDirectory = deployDirectory;
+            Authenticator = authenticator;
             ClusterName = "local_cluster";
             LocalNodeName = "local_node";
             HeapSize = "1024M";
@@ -21,6 +22,7 @@
 
         public string TemplateDirectory { get; }
         public string DeployDirectory { get; }
+        public Authenticator Authenticator { get; }
         public string ClusterName { get; set; }
         public string LocalNodeName { get; set; }
         public string HeapSize { get; set; }

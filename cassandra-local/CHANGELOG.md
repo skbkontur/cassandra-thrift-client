@@ -1,4 +1,6 @@
 # Changelog
+## v1.4.1 - 2020.08.19
+- Allow to configure authenticator
 
 ## v1.3.3 - 2019.11.14
 - Update Cassandra v3.11.x to [v3.11.5](http://archive.apache.org/dist/cassandra/3.11.5/).
