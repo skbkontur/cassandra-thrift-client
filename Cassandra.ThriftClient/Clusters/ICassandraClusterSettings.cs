@@ -21,5 +21,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
         int FierceTimeout { get; }
         TimeSpan? ConnectionIdleTimeout { get; }
         bool EnableMetrics { get; }
+
+        [CanBeNull]
+        Credentials Credentials { get; }
     }
 }

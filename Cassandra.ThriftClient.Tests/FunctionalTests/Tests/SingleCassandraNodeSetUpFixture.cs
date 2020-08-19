@@ -29,7 +29,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Node.Restart(timeout : TimeSpan.FromMinutes(1));
         }
 
-        private static string FindCassandraTemplateDirectory(string currentDir)
+        internal static string FindCassandraTemplateDirectory(string currentDir)
         {
             if (currentDir == null)
                 throw new Exception("Невозможно найти каталог с Cassandra-шаблонами");

@@ -8,9 +8,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class ThriftConnectionInPoolWrapper : IThriftConnection
     {
-        public ThriftConnectionInPoolWrapper(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ILog logger)
+        public ThriftConnectionInPoolWrapper(int timeout, IPEndPoint ipEndPoint, string keyspaceName, Credentials credentials, ILog logger)
         {
-            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName, logger);
+            thriftConnection = new ThriftConnection(timeout, ipEndPoint, keyspaceName, credentials, logger);
             ReplicaKey = ipEndPoint;
             KeyspaceName = keyspaceName;
         }
