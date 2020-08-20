@@ -5,7 +5,7 @@ using Moq;
 
 using NUnit.Framework;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests
 {
     public abstract class TestBase
     {

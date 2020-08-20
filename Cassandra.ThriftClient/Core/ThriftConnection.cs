@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+
+using Apache.Cassandra;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Exceptions;
@@ -15,13 +18,14 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
 {
     internal class ThriftConnection : IThriftConnection
     {
-        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, ILog logger)
+        public ThriftConnection(int timeout, IPEndPoint ipEndPoint, string keyspaceName, Credentials credentials, ILog logger)
         {
             isDisposed = false;
             isAlive = true;
             this.ipEndPoint = ipEndPoint;
             this.keyspaceName = keyspaceName;
             this.logger = logger;
+            this.credentials = credentials;
             var address = ipEndPoint.Address.ToString();
             var port = ipEndPoint.Port;
             var tsocket = timeout == 0 ? new TSocket(address, port) : new TSocket(address, port, timeout);
@@ -105,6 +109,14 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
                 cassandraClient.InputProtocol.Transport.Open();
                 if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                     cassandraClient.OutputProtocol.Transport.Open();
+
+                if (credentials != null)
+                    cassandraClient.login(new AuthenticationRequest(new Dictionary<string, string>
+                        {
+                            ["username"] = credentials.Username,
+                            ["password"] = credentials.Password,
+                        }));
+
                 if (!string.IsNullOrEmpty(keyspaceName))
                     cassandraClient.set_keyspace(keyspaceName);
             }
@@ -125,6 +137,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
 
         private readonly string keyspaceName;
         private readonly ILog logger;
+        private readonly Credentials credentials;
         private readonly IPEndPoint ipEndPoint;
         private readonly Apache.Cassandra.Cassandra.Client cassandraClient;
         private readonly Timestamp creationTimestamp;

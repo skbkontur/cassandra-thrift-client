@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.Local;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     [SetUpFixture]
     public class SingleCassandraNodeSetUpFixture
@@ -29,7 +29,7 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
             Node.Restart(timeout : TimeSpan.FromMinutes(1));
         }
 
-        private static string FindCassandraTemplateDirectory(string currentDir)
+        internal static string FindCassandraTemplateDirectory(string currentDir)
         {
             if (currentDir == null)
                 throw new Exception("Невозможно найти каталог с Cassandra-шаблонами");

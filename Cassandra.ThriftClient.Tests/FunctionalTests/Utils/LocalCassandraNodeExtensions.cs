@@ -1,11 +1,13 @@
-﻿using System;
+using System;
 using System.Net;
+
+using JetBrains.Annotations;
 
 using SkbKontur.Cassandra.Local;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class LocalCassandraNodeExtensions
     {
@@ -41,6 +43,9 @@ namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
             public int FierceTimeout { get; set; }
             public TimeSpan? ConnectionIdleTimeout { get; set; }
             public bool EnableMetrics { get; set; }
+
+            [CanBeNull]
+            public Credentials Credentials { get; set; }
         }
     }
 }

@@ -1,7 +1,7 @@
 using System;
 using System.Xml;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 {
     public class NullableTypeWriter : ITypeWriter
     {

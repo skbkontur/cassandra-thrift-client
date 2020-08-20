@@ -6,7 +6,7 @@ using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 using ApacheConsistencyLevel = Apache.Cassandra.ConsistencyLevel;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 {
     public class ConsistencyLevelConverterTest : TestBase
     {

@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class ConnectionPropertiesTest : CassandraFunctionalTestBase
     {

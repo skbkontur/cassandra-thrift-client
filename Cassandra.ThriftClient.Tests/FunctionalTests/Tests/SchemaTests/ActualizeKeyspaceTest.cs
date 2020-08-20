@@ -1,14 +1,13 @@
-﻿using Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies;
-using Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Utils;
-using Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
-
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Schema;
+using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies;
+using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Utils;
+using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests
 {
     [TestFixture]
     public class ActualizeKeyspaceTest

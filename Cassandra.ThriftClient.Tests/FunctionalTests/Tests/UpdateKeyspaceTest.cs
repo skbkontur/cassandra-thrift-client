@@ -2,14 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
-
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Schema;
+using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
 {
     public class UpdateKeyspaceTest : CassandraFunctionalTestBase
     {

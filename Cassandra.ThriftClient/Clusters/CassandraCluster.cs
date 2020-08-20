@@ -103,21 +103,21 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
 
         private Pool<IThriftConnection> GetDataConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.Timeout), logger);
+            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.Timeout, settings.Credentials), logger);
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
             return result;
         }
 
-        private ThriftConnectionInPoolWrapper CreateThriftConnection(IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
+        private ThriftConnectionInPoolWrapper CreateThriftConnection(IPEndPoint nodeEndpoint, string keyspaceName, int timeout, Credentials credentials)
         {
-            var result = new ThriftConnectionInPoolWrapper(timeout, nodeEndpoint, keyspaceName, logger);
+            var result = new ThriftConnectionInPoolWrapper(timeout, nodeEndpoint, keyspaceName, credentials, logger);
             logger.Debug("Connection {0} was created.", result);
             return result;
         }
 
         private Pool<IThriftConnection> CreateFiercePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.FierceTimeout), logger);
+            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.FierceTimeout, settings.Credentials), logger);
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
             return result;
         }

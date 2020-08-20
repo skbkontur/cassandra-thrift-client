@@ -2,7 +2,7 @@ using System;
 using System.Text;
 using System.Xml;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 {
     public static class XmlHelpers
     {

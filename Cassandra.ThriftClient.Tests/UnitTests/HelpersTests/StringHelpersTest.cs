@@ -4,7 +4,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Helpers;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 {
     public class StringHelpersTest : TestBase
     {

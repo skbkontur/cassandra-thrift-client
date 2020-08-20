@@ -2,7 +2,7 @@ using System;
 
 using JetBrains.Annotations;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class RandomExtensions
     {

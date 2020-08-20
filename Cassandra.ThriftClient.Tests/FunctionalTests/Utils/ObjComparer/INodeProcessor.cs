@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjComparer
 {
     public interface INodeProcessor
     {

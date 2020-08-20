@@ -1,7 +1,7 @@
 ﻿using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 
-namespace Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
+namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTests.Spies
 {
     public class KeyspaceConnectionSpy : IKeyspaceConnection
     {

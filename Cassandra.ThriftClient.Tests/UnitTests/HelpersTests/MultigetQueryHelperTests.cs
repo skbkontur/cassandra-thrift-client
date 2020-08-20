@@ -12,7 +12,7 @@ using SkbKontur.Cassandra.ThriftClient.Helpers;
 
 using Vostok.Logging.Abstractions;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.HelpersTests
 {
     public class MultigetQueryHelperTests : TestBase
     {

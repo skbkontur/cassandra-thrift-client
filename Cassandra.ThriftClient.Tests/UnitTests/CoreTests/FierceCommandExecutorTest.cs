@@ -10,7 +10,7 @@ using SkbKontur.Cassandra.ThriftClient.Core;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
 using SkbKontur.Cassandra.ThriftClient.Exceptions;
 
-namespace Cassandra.ThriftClient.Tests.UnitTests.CoreTests
+namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests
 {
     public class FierceCommandExecutorTest : TestBase
     {
