@@ -28,12 +28,15 @@ nuget:
 before_build:
   - cmd: dotnet --info
   - cmd: dotnet restore ./Cassandra.ThriftClient.sln --verbosity minimal
+  - cmd: dotnet tool restore
 
 build_script:
   - cmd: dotnet build --configuration Release ./Cassandra.ThriftClient.sln
   - cmd: dotnet pack --no-build --configuration Release ./Cassandra.ThriftClient.sln
 
 test_script:
+  - cmd: dotnet jb cleanupcode Cassandra.ThriftClient.sln --profile=CatalogueCleanup --exclude=Cassandra.ThriftClient/Internal/**/*.cs --verbosity=WARN
+  - cmd: git diff --exit-code
   - cmd: dotnet test --no-build --verbosity normal --configuration Release ./Cassandra.ThriftClient.Tests/Cassandra.ThriftClient.Tests.csproj
 
 artifacts:
