@@ -34,11 +34,12 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
                     GossipPort = 8400
                 };
             node.Restart(TimeSpan.FromMinutes(1));
-            var cluster = GetClusterBuilder().Build();
+
             Waiter.Wait(() =>
                 {
                     try
                     {
+                        using (var cluster = GetClusterBuilder().Build())
                         using (cluster.Connect())
                             return true;
                     }
@@ -64,11 +65,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
         [Test]
         public void TestAuthenticatedConnectionNonDefaultCredentials()
         {
-            var session = GetClusterBuilder().Build()
-                                             .Connect();
-
             string user = "dba", password = "super";
-            session.Execute($"CREATE ROLE {user} WITH SUPERUSER = true AND LOGIN = true AND PASSWORD = '{password}'");
+            using (var cluster = GetClusterBuilder().Build())
+            using (var session = cluster.Connect())
+                session.Execute($"CREATE ROLE {user} WITH SUPERUSER = true AND LOGIN = true AND PASSWORD = '{password}'");
 
             Assert.DoesNotThrow(() => SomeActionThatRequiresAuthentication(user, password));
         }
@@ -88,8 +88,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
         {
             var settings = node.CreateSettings();
             settings.Credentials = new Credentials(username, password);
-            var cluster = new CassandraCluster(settings, new SilentLog());
-            cluster.RetrieveClusterConnection().RetrieveKeyspaces();
+            using (var cluster = new CassandraCluster(settings, new SilentLog()))
+                cluster.RetrieveClusterConnection().RetrieveKeyspaces();
         }
 
         private Builder GetClusterBuilder()
