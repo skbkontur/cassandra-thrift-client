@@ -1,8 +1,5 @@
 # Changelog
 
-## v2.4.1 - 2020.08.19
-- Add `Credentials` to `ICassandraClusterSettings`. PasswordAuthenticator now supported.
-
 ## v2.3.6 - 2020.04.21
 - Fix `CassandraSchemaActualizer` logging context to be `"CassandraThriftClient"` as it was before making this class public.
 
