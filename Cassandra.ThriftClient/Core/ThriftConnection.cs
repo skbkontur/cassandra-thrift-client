@@ -35,7 +35,29 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
             var transport = new TFramedTransport(tsocket);
             cassandraClient = new Apache.Cassandra.Cassandra.Client(new TBinaryProtocol(transport));
             creationTimestamp = Timestamp.Now;
-            OpenTransport();
+
+            try
+            {
+                OpenTransport();
+            }
+            catch (Exception openException)
+            {
+                this.logger.Error(openException, "Error while opening connection. Will try to close.");
+                TryCloseTransport();
+                throw;
+            }
+        }
+
+        private void TryCloseTransport()
+        {
+            try
+            {
+                CloseTransport();
+            }
+            catch (Exception closeException)
+            {
+                logger.Error(closeException, "Error while closing connection.");
+            }
         }
 
         public void Dispose()

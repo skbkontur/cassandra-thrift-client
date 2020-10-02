@@ -3,6 +3,8 @@ using System.IO;
 
 using Cassandra;
 
+using Moq;
+
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.Local;
@@ -84,11 +86,26 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
             Assert.AreEqual("Provided username non-existent and/or password are incorrect", authenticationException.Why);
         }
 
-        private void SomeActionThatRequiresAuthentication(string username, string password)
+        [Test]
+        public void TestThriftConnectionClosedAfterNonSuccessfulAuthentication()
+        {
+            var logger = new Mock<ILog>(MockBehavior.Strict);
+            logger.Setup(l => l.ForContext(It.IsAny<string>()))
+                  .Returns(logger.Object);
+
+            logger.Setup(l => l.IsEnabledFor(It.IsAny<LogLevel>()))
+                  .Returns<LogLevel>(level => level == LogLevel.Error);
+
+            logger.Setup(l => l.Log(It.Is<LogEvent>(e => e.MessageTemplate == "Error while opening connection. Will try to close.")));
+
+            Assert.Throws<AllItemsIsDeadExceptions>(() => SomeActionThatRequiresAuthentication("cassandra", "wrong_password", logger.Object));
+        }
+
+        private void SomeActionThatRequiresAuthentication(string username, string password, ILog logger = null)
         {
             var settings = node.CreateSettings();
             settings.Credentials = new Credentials(username, password);
-            using (var cluster = new CassandraCluster(settings, new SilentLog()))
+            using (var cluster = new CassandraCluster(settings, logger ?? new SilentLog()))
                 cluster.RetrieveClusterConnection().RetrieveKeyspaces();
         }
 
