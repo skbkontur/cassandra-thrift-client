@@ -110,26 +110,61 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
                 if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                     cassandraClient.OutputProtocol.Transport.Open();
 
-                if (credentials != null)
-                    cassandraClient.login(new AuthenticationRequest(new Dictionary<string, string>
-                        {
-                            ["username"] = credentials.Username,
-                            ["password"] = credentials.Password,
-                        }));
-
-                if (!string.IsNullOrEmpty(keyspaceName))
-                    cassandraClient.set_keyspace(keyspaceName);
+                WithCloseTransportOnError(Login, "login");
+                WithCloseTransportOnError(SetKeyspace, "set keyspace");
             }
+        }
+
+        private void WithCloseTransportOnError(Action action, string actionName)
+        {
+            try
+            {
+                action();
+            }
+            catch (Exception e)
+            {
+                logger.Error(e, "Error occured while opening thrift connection. Will try to close open transports. Failed action: {ActionName}.", new {ActionName = actionName});
+                try
+                {
+                    DoCloseTransport();
+                }
+                catch (Exception closeException)
+                {
+                    logger.Error(closeException, "Error occured while closing connection's transports.");
+                }
+                throw;
+            }
+        }
+
+        private void Login()
+        {
+            if (credentials != null)
+                cassandraClient.login(new AuthenticationRequest(new Dictionary<string, string>
+                    {
+                        ["username"] = credentials.Username,
+                        ["password"] = credentials.Password,
+                    }));
+        }
+
+        private void SetKeyspace()
+        {
+            if (!string.IsNullOrEmpty(keyspaceName))
+                cassandraClient.set_keyspace(keyspaceName);
         }
 
         private void CloseTransport()
         {
             lock (locker)
             {
-                cassandraClient.InputProtocol.Transport.Close();
-                if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
-                    cassandraClient.OutputProtocol.Transport.Close();
+                DoCloseTransport();
             }
+        }
+
+        private void DoCloseTransport()
+        {
+            cassandraClient.InputProtocol.Transport.Close();
+            if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
+                cassandraClient.OutputProtocol.Transport.Close();
         }
 
         private Timestamp lastSuccessPingTimestamp;

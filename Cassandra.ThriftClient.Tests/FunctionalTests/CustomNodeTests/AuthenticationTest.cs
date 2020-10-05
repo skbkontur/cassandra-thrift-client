@@ -1,7 +1,10 @@
 using System;
 using System.IO;
+using System.Linq.Expressions;
 
 using Cassandra;
+
+using Moq;
 
 using NUnit.Framework;
 
@@ -84,11 +87,34 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
             Assert.AreEqual("Provided username non-existent and/or password are incorrect", authenticationException.Why);
         }
 
-        private void SomeActionThatRequiresAuthentication(string username, string password)
+        [Test]
+        public void TestThriftConnectionClosedAfterNonSuccessfulAuthentication()
+        {
+            var logger = new Mock<ILog>(MockBehavior.Strict);
+            logger.Setup(l => l.ForContext(It.IsAny<string>()))
+                  .Returns(logger.Object);
+
+            logger.Setup(l => l.IsEnabledFor(It.IsAny<LogLevel>()))
+                  .Returns((LogLevel level) => level == LogLevel.Error);
+
+            Expression<Action<ILog>> logAuthFailSetup = l =>
+                l.Log(It.Is<LogEvent>(
+                    e => e.Exception is AuthenticationException
+                         && e.MessageTemplate == "Error occured while opening thrift connection. Will try to close open transports. Failed action: {ActionName}."
+                         && e.Properties != null
+                         && e.Properties.ContainsKey("ActionName")
+                         && e.Properties["ActionName"] as string == "login"));
+
+            logger.Setup(logAuthFailSetup).Verifiable();
+            Assert.Throws<AllItemsIsDeadExceptions>(() => SomeActionThatRequiresAuthentication("cassandra", "wrong_password", logger.Object));
+            logger.Verify(logAuthFailSetup, Times.Exactly(2));
+        }
+
+        private void SomeActionThatRequiresAuthentication(string username, string password, ILog logger = null)
         {
             var settings = node.CreateSettings();
             settings.Credentials = new Credentials(username, password);
-            using (var cluster = new CassandraCluster(settings, new SilentLog()))
+            using (var cluster = new CassandraCluster(settings, logger ?? new SilentLog()))
                 cluster.RetrieveClusterConnection().RetrieveKeyspaces();
         }
 
