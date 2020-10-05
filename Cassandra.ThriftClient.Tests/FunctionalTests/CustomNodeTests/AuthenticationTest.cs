@@ -96,7 +96,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
             logger.Setup(l => l.IsEnabledFor(It.IsAny<LogLevel>()))
                   .Returns<LogLevel>(level => level == LogLevel.Error);
 
-            logger.Setup(l => l.Log(It.Is<LogEvent>(e => e.MessageTemplate == "Error while opening connection. Will try to close.")));
+            logger.Setup(l => l.Log(It.Is<LogEvent>(e => e.MessageTemplate == "Error occured while opening thrift connection. Will try to close open transports.")));
 
             Assert.Throws<AllItemsIsDeadExceptions>(() => SomeActionThatRequiresAuthentication("cassandra", "wrong_password", logger.Object));
         }
