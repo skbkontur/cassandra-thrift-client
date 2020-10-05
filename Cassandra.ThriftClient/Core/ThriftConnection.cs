@@ -110,12 +110,12 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
                 if (!cassandraClient.InputProtocol.Transport.Equals(cassandraClient.OutputProtocol.Transport))
                     cassandraClient.OutputProtocol.Transport.Open();
 
-                WithCloseTransportOnError(Login);
-                WithCloseTransportOnError(SetKeyspace);
+                WithCloseTransportOnError(Login, "login");
+                WithCloseTransportOnError(SetKeyspace, "set keyspace");
             }
         }
 
-        private void WithCloseTransportOnError(Action action)
+        private void WithCloseTransportOnError(Action action, string actionName)
         {
             try
             {
@@ -123,7 +123,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core
             }
             catch (Exception e)
             {
-                logger.Error(e, "Error occured while opening thrift connection. Will try to close open transports.");
+                logger.Error(e, "Error occured while opening thrift connection. Will try to close open transports. Failed action: {ActionName}.", new {ActionName = actionName});
                 try
                 {
                     DoCloseTransport();
