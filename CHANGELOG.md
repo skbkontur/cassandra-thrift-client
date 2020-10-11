@@ -1,7 +1,10 @@
 # Changelog
 
+## v2.4.16 - 2020.10.05
+- Fix connection leak (PR [#13](https://github.com/skbkontur/cassandra-thrift-client/pull/13)).
+
 ## v2.4.9 - 2020.08.21
-- Add `Credentials` to `ICassandraClusterSettings`. PasswordAuthenticator now supported.
+- Add `Credentials` to `ICassandraClusterSettings`. PasswordAuthenticator now supported (PR [#11](https://github.com/skbkontur/cassandra-thrift-client/pull/11)).
 
 ## v2.3.6 - 2020.04.21
 - Fix `CassandraSchemaActualizer` logging context to be `"CassandraThriftClient"` as it was before making this class public.
