@@ -6,7 +6,7 @@ using SkbKontur.Cassandra.ThriftClient.Abstractions;
 
 namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
-    internal sealed class NoOpMetrics : ISimpleCommandMetrics, IFierceCommandMetrics
+    internal sealed class NoOpMetrics : ISimpleCommandMetrics, IFierceCommandMetrics, IPoolMetrics
     {
         private NoOpMetrics()
         {
@@ -39,6 +39,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
         }
 
         public void RecordCommandExecutionInfo([NotNull] ISimpleCommand command)
+        {
+        }
+
+        public void RecordAcquireNewConnection()
         {
         }
 

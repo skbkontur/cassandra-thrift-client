@@ -8,6 +8,7 @@ using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Connections;
 using SkbKontur.Cassandra.ThriftClient.Core;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
 using SkbKontur.Cassandra.ThriftClient.Core.Pools;
 
 using Vostok.Logging.Abstractions;
@@ -103,7 +104,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
 
         private Pool<IThriftConnection> GetDataConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.Timeout, settings.Credentials), logger);
+            var result = CreatePool(settings, nodeEndpoint, keyspaceName, settings.Timeout);
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
             return result;
         }
@@ -117,9 +118,18 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
 
         private Pool<IThriftConnection> CreateFiercePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = new Pool<IThriftConnection>(pool => CreateThriftConnection(nodeEndpoint, keyspaceName, settings.FierceTimeout, settings.Credentials), logger);
+            var result = CreatePool(settings, nodeEndpoint, keyspaceName, settings.FierceTimeout);
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
             return result;
+        }
+
+        private Pool<IThriftConnection> CreatePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
+        {
+            var metrics = CommandMetricsFactory.GetPoolMetrics(settings, nodeEndpoint.Address.ToString().Replace('.', '_'), keyspaceName);
+            return new Pool<IThriftConnection>(
+                pool => CreateThriftConnection(nodeEndpoint, keyspaceName, timeout, settings.Credentials),
+                metrics,
+                logger);
         }
 
         private readonly ICassandraClusterSettings clusterSettings;

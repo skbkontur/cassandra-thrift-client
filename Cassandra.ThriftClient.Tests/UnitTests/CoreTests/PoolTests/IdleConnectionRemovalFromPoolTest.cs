@@ -6,6 +6,7 @@ using System.Threading;
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
@@ -18,7 +19,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveConnection()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -49,7 +50,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 {
                     Interlocked.Increment(ref newPoolItemsCreatedCount);
                     return new Item();
-                }, new SilentLog()))
+                }, NoOpMetrics.Instance, new SilentLog()))
             {
                 const int threadCount = 100;
                 const int initialPoolItemsCount = threadCount - 1;

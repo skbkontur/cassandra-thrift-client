@@ -7,6 +7,7 @@ using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
 
 using Vostok.Logging.Abstractions;
 
@@ -197,8 +198,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(
                 new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")},
                 (x, r) => r.Name == "replica2" ?
-                              new Pool<Item>(y => new Item(x, r) {IsAlive = false}, new SilentLog()) :
-                              new Pool<Item>(y => new Item(x, r), new SilentLog())))
+                              new Pool<Item>(y => new Item(x, r) {IsAlive = false}, NoOpMetrics.Instance, new SilentLog()) :
+                              new Pool<Item>(y => new Item(x, r), NoOpMetrics.Instance, new SilentLog())))
             {
                 var itemKey = new ItemKey("key1");
 
@@ -232,8 +233,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                                   {
                                       deadNodeAttemptCount++;
                                       return new Item(x, r) {IsAlive = false};
-                                  }, new SilentLog()) :
-                              new Pool<Item>(y => new Item(x, r), new SilentLog())))
+                                  }, NoOpMetrics.Instance, new SilentLog()) :
+                              new Pool<Item>(y => new Item(x, r), NoOpMetrics.Instance, new SilentLog())))
             {
                 var itemKey = new ItemKey("key1");
 
@@ -265,8 +266,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                                   {
                                       deadNodeAttemptCount++;
                                       return new Item(x, r) {IsAlive = false};
-                                  }, new SilentLog()) :
-                              new Pool<Item>(y => new Item(x, r), new SilentLog())))
+                                  }, NoOpMetrics.Instance, new SilentLog()) :
+                              new Pool<Item>(y => new Item(x, r), NoOpMetrics.Instance, new SilentLog())))
             {
                 Enumerable.Range(0, 100).ToList().ForEach(x => pool.BadReplica(new ReplicaKey("replica2"))); // Health: 0.01
 
@@ -298,9 +299,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                             {
                                 acquireFromDeadNodeCount++;
                                 return new Item(x, r) {IsAlive = false};
-                            }, new SilentLog());
+                            }, NoOpMetrics.Instance, new SilentLog());
                     }
-                    return new Pool<Item>(y => new Item(x, r), new SilentLog());
+                    return new Pool<Item>(y => new Item(x, r), NoOpMetrics.Instance, new SilentLog());
                 }))
             {
                 var itemKey = new ItemKey("key1");
@@ -344,7 +345,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNewWithDeadNodes()
         {
-            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}, new SilentLog())))
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => new Item(x, z) {IsAlive = false}, NoOpMetrics.Instance, new SilentLog())))
             {
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
                 Assert.Throws<AllItemsIsDeadExceptions>(() => pool.Acquire(new ItemKey("1")));
@@ -359,7 +360,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     if (z.Name == "replica1")
                         throw new Exception("FakeException");
                     return new Item(x, z);
-                }, new SilentLog())))
+                }, NoOpMetrics.Instance, new SilentLog())))
             {
                 for (var i = 0; i < 1000; i++)
                 {
@@ -372,7 +373,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestTryAcquireConnectionWithExceptionAllPools()
         {
-            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); }, new SilentLog())))
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1"), new ReplicaKey("replica2")}, (x, z) => new Pool<Item>(y => { throw new Exception("FakeException"); }, NoOpMetrics.Instance, new SilentLog())))
             {
                 for (var i = 0; i < 1000; i++)
                 {
@@ -396,7 +397,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveUnusedConnection()
         {
-            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog()), PoolSettings.CreateDefault(), TimeSpan.FromMilliseconds(100), new SilentLog()))
+            using (var pool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), NoOpMetrics.Instance, new SilentLog()), PoolSettings.CreateDefault(), TimeSpan.FromMilliseconds(100), new SilentLog()))
             {
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
@@ -417,7 +418,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestRemoveAcquiredConnectionFromPool()
         {
-            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog())))
+            using (var pool = CreatePool<Item, ItemKey, ReplicaKey>(new[] {new ReplicaKey("replica1")}, (x, z) => new Pool<Item>(y => new Item(x, z), NoOpMetrics.Instance, new SilentLog())))
             {
                 var item1 = pool.Acquire(null);
                 var item2 = pool.Acquire(null);
@@ -562,7 +563,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 .Select(n => string.Format(nameFormat, n))
                 .Select(x => new ReplicaKey(x))
                 .ToArray();
-            var pool = CreatePool<Item, ItemKey, ReplicaKey>(replicas, (x, z) => new Pool<Item>(y => new Item(x, z), new SilentLog()));
+            var pool = CreatePool<Item, ItemKey, ReplicaKey>(replicas, (x, z) => new Pool<Item>(y => new Item(x, z), NoOpMetrics.Instance, new SilentLog()));
             return pool;
         }
 
@@ -685,7 +686,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                     });
                 replicaSetPool = ReplicaSetPool.Create<Item, ItemKey, ReplicaKey>(
                     replicaInfos.Values.Select(x => x.Key).ToArray(),
-                    (x, z) => new Pool<Item>(y => CreateReplicaConnection(z, x), new SilentLog()),
+                    (x, z) => new Pool<Item>(y => CreateReplicaConnection(z, x), NoOpMetrics.Instance, new SilentLog()),
                     poolSettings, new SilentLog());
             }
 
