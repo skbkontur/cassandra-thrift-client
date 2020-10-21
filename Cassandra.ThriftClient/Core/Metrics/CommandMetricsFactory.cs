@@ -32,7 +32,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
         {
             return !settings.EnableMetrics
                        ? (IPoolMetrics)NoOpMetrics.Instance
-                       : new PoolMetrics(GetMetricsContext(command : null, "Pool").Context(host).Context(keyspaceName));
+                       : new PoolMetrics(GetMetricsContext(command : null, "ConnectionPool").Context(keyspaceName).Context(host));
         }
 
         [CanBeNull]

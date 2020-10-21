@@ -1,7 +1,12 @@
-﻿namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
+﻿using System;
+
+using JetBrains.Annotations;
+
+namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
     internal interface IPoolMetrics
     {
-        void RecordAcquireNewConnection();
+        [NotNull]
+        IDisposable AcquireNewConnectionContext();
     }
 }

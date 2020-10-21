@@ -62,8 +62,11 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 
         public T AcquireNew()
         {
-            var result = itemFactory(this);
-            poolMetrics.RecordAcquireNewConnection();
+            T result;
+            using (poolMetrics.AcquireNewConnectionContext())
+            {
+                result = itemFactory(this);
+            }
             MarkItemAsBusy(result);
             return result;
         }

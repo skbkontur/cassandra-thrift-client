@@ -42,8 +42,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
         {
         }
 
-        public void RecordAcquireNewConnection()
+        [NotNull]
+        public IDisposable AcquireNewConnectionContext()
         {
+            return NoOpContext.Instance;
         }
 
         [NotNull]

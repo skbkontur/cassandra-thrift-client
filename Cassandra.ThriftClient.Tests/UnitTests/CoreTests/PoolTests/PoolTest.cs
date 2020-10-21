@@ -115,14 +115,16 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         public void TestAcquireNew()
         {
             var metricsMock = new Mock<IPoolMetrics>(MockBehavior.Strict);
-            metricsMock.Setup(x => x.RecordAcquireNewConnection()).Verifiable();
+            metricsMock.Setup(x => x.AcquireNewConnectionContext())
+                       .Returns(NoOpContext.Instance)
+                       .Verifiable();
             using (var pool = new Pool<Item>(x => new Item(), metricsMock.Object, new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
                 var item2 = pool.AcquireNew();
                 Assert.That(item2, Is.Not.EqualTo(item1));
-                metricsMock.Verify(x => x.RecordAcquireNewConnection(), Times.Exactly(2));
+                metricsMock.Verify(x => x.AcquireNewConnectionContext(), Times.Exactly(2));
             }
         }
 
@@ -130,7 +132,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         public void TestAcquireExists()
         {
             var metricsMock = new Mock<IPoolMetrics>(MockBehavior.Strict);
-            metricsMock.Setup(x => x.RecordAcquireNewConnection()).Verifiable();
+            metricsMock.Setup(x => x.AcquireNewConnectionContext())
+                       .Returns(NoOpContext.Instance)
+                       .Verifiable();
             using (var pool = new Pool<Item>(x => new Item(), metricsMock.Object, new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
@@ -138,7 +142,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 Assert.That(pool.TryAcquireExists(out var item2));
                 Assert.That(item2, Is.EqualTo(item1));
                 Assert.That(!pool.TryAcquireExists(out _));
-                metricsMock.Verify(x => x.RecordAcquireNewConnection(), Times.Exactly(1));
+                metricsMock.Verify(x => x.AcquireNewConnectionContext(), Times.Exactly(1));
             }
         }
 

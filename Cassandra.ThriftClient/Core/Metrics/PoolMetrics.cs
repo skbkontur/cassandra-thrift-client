@@ -1,4 +1,6 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+
+using JetBrains.Annotations;
 
 using Metrics;
 
@@ -8,14 +10,15 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
     {
         public PoolMetrics([NotNull] MetricsContext context)
         {
-            newConnections = context.Meter("AcquireNewConnection", Unit.Items, TimeUnit.Minutes);
+            newConnections = context.Timer("AcquireNewConnection", Unit.Items, SamplingType.ExponentiallyDecaying, TimeUnit.Minutes);
         }
 
-        public void RecordAcquireNewConnection()
+        [NotNull]
+        public IDisposable AcquireNewConnectionContext()
         {
-            newConnections.Mark();
+            return newConnections.NewContext();
         }
 
-        private readonly Meter newConnections;
+        private readonly Timer newConnections;
     }
 }
