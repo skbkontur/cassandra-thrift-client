@@ -6,9 +6,9 @@ using Metrics;
 
 namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
 {
-    internal class PoolMetrics : IPoolMetrics
+    internal class ConnectionPoolMetrics : IConnectionPoolMetrics
     {
-        public PoolMetrics([NotNull] MetricsContext context)
+        public ConnectionPoolMetrics([NotNull] MetricsContext context)
         {
             newConnections = context.Timer("AcquireNewConnection", Unit.Items, SamplingType.ExponentiallyDecaying, TimeUnit.Minutes);
         }

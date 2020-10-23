@@ -125,10 +125,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
 
         private Pool<IThriftConnection> CreatePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
         {
-            var metrics = CommandMetricsFactory.GetPoolMetrics(settings, nodeEndpoint.Address.ToString().Replace('.', '_'), keyspaceName);
+            var connectionPoolMetrics = CommandMetricsFactory.GetConnectionPoolMetrics(settings, nodeEndpoint.Address.ToString().Replace('.', '_'), keyspaceName);
             return new Pool<IThriftConnection>(
                 pool => CreateThriftConnection(nodeEndpoint, keyspaceName, timeout, settings.Credentials),
-                metrics,
+                connectionPoolMetrics,
                 logger);
         }
 

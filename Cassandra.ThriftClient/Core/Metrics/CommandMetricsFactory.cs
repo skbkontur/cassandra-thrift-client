@@ -28,11 +28,11 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
                        : new SimpleCommandMetrics(GetMetricsContext(command, "Simple"), FormatSinglePartitionKey(command));
         }
 
-        public static IPoolMetrics GetPoolMetrics([NotNull] ICassandraClusterSettings settings, [NotNull] string host, [NotNull] string keyspaceName)
+        public static IConnectionPoolMetrics GetConnectionPoolMetrics([NotNull] ICassandraClusterSettings settings, [NotNull] string host, [NotNull] string keyspaceName)
         {
             return !settings.EnableMetrics
-                       ? (IPoolMetrics)NoOpMetrics.Instance
-                       : new PoolMetrics(GetMetricsContext(command : null, "ConnectionPool").Context(keyspaceName).Context(host));
+                       ? (IConnectionPoolMetrics)NoOpMetrics.Instance
+                       : new ConnectionPoolMetrics(GetMetricsContext(command : null, "ConnectionPool").Context(keyspaceName).Context(host));
         }
 
         [CanBeNull]

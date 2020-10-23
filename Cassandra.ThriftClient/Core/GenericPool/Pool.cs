@@ -18,10 +18,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 {
     internal class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
     {
-        public Pool(Func<Pool<T>, T> itemFactory, IPoolMetrics poolMetrics, ILog logger)
+        public Pool(Func<Pool<T>, T> itemFactory, IConnectionPoolMetrics connectionPoolMetrics, ILog logger)
         {
             this.itemFactory = itemFactory;
-            this.poolMetrics = poolMetrics;
+            this.connectionPoolMetrics = connectionPoolMetrics;
             this.logger = logger;
         }
 
@@ -63,7 +63,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
         public T AcquireNew()
         {
             T result;
-            using (poolMetrics.AcquireNewConnectionContext())
+            using (connectionPoolMetrics.AcquireNewConnectionContext())
             {
                 result = itemFactory(this);
             }
@@ -147,7 +147,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
         private int busyItemCount;
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
         private readonly Func<Pool<T>, T> itemFactory;
-        private readonly IPoolMetrics poolMetrics;
+        private readonly IConnectionPoolMetrics connectionPoolMetrics;
         private readonly ILog logger;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
         private readonly ConcurrentDictionary<T, object> busyItems = new ConcurrentDictionary<T, object>(ObjectReferenceEqualityComparer<T>.Default);

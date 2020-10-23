@@ -114,7 +114,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNew()
         {
-            var metricsMock = new Mock<IPoolMetrics>(MockBehavior.Strict);
+            var metricsMock = new Mock<IConnectionPoolMetrics>(MockBehavior.Strict);
             metricsMock.Setup(x => x.AcquireNewConnectionContext())
                        .Returns(NoOpContext.Instance)
                        .Verifiable();
@@ -131,7 +131,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireExists()
         {
-            var metricsMock = new Mock<IPoolMetrics>(MockBehavior.Strict);
+            var metricsMock = new Mock<IConnectionPoolMetrics>(MockBehavior.Strict);
             metricsMock.Setup(x => x.AcquireNewConnectionContext())
                        .Returns(NoOpContext.Instance)
                        .Verifiable();
