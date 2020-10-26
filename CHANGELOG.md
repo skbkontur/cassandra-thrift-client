@@ -1,5 +1,8 @@
 # Changelog
 
+## v2.4.23 - 2020.10.27
+- Add new 'timer' metric measures new connection aquirement time (PR [#14](https://github.com/skbkontur/cassandra-thrift-client/pull/14)).
+
 ## v2.4.16 - 2020.10.05
 - Fix connection leak (PR [#13](https://github.com/skbkontur/cassandra-thrift-client/pull/13)).
 
