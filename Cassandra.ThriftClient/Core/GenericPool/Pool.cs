@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Utils;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
@@ -17,9 +18,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 {
     internal class Pool<T> : IDisposable where T : class, IDisposable, ILiveness
     {
-        public Pool(Func<Pool<T>, T> itemFactory, ILog logger)
+        public Pool(Func<Pool<T>, T> itemFactory, IConnectionPoolMetrics connectionPoolMetrics, ILog logger)
         {
             this.itemFactory = itemFactory;
+            this.connectionPoolMetrics = connectionPoolMetrics;
             this.logger = logger;
         }
 
@@ -60,7 +62,11 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
 
         public T AcquireNew()
         {
-            var result = itemFactory(this);
+            T result;
+            using (connectionPoolMetrics.AcquireNewConnectionContext())
+            {
+                result = itemFactory(this);
+            }
             MarkItemAsBusy(result);
             return result;
         }
@@ -141,6 +147,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
         private int busyItemCount;
         private readonly ReaderWriterLockSlim unusedItemCollectorLock = new ReaderWriterLockSlim();
         private readonly Func<Pool<T>, T> itemFactory;
+        private readonly IConnectionPoolMetrics connectionPoolMetrics;
         private readonly ILog logger;
         private readonly ConcurrentStack<FreeItemInfo> freeItems = new ConcurrentStack<FreeItemInfo>();
         private readonly ConcurrentDictionary<T, object> busyItems = new ConcurrentDictionary<T, object>(ObjectReferenceEqualityComparer<T>.Default);

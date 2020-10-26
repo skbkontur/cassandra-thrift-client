@@ -2,10 +2,13 @@ using System;
 using System.Linq;
 using System.Threading;
 
+using Moq;
+
 using NUnit.Framework;
 
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
+using SkbKontur.Cassandra.ThriftClient.Core.Metrics;
 using SkbKontur.Cassandra.TimeBasedUuid;
 
 using Vostok.Logging.Abstractions;
@@ -25,7 +28,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 {
                     factoryInvokeCount++;
                     return lastFactoryResult = new Item();
-                }, new SilentLog()))
+                }, NoOpMetrics.Instance, new SilentLog()))
             {
                 var item = pool.Acquire();
                 Assert.That(item, Is.EqualTo(lastFactoryResult));
@@ -36,7 +39,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void DisposeAndReleaseDeadItemsThroughAcquire()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
@@ -50,12 +53,12 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void DisposeAndReleaseDeadItemsThroughAcquireExists()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 item1.IsAlive = false;
                 pool.Release(item1);
-                Assert.That(!pool.TryAcquireExists(out var item2));
+                Assert.That(!pool.TryAcquireExists(out _));
                 Assert.That(item1.Disposed);
             }
         }
@@ -69,7 +72,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 {
                     factoryInvokeCount++;
                     return new Item();
-                }, new SilentLog()))
+                }, NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -83,7 +86,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TryReleaseItemTwice()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -96,7 +99,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         {
             Item item1;
             Item item2;
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 item1 = pool.Acquire();
                 item2 = pool.Acquire();
@@ -111,32 +114,42 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestAcquireNew()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            var metricsMock = new Mock<IConnectionPoolMetrics>(MockBehavior.Strict);
+            metricsMock.Setup(x => x.AcquireNewConnectionContext())
+                       .Returns(NoOpContext.Instance)
+                       .Verifiable();
+            using (var pool = new Pool<Item>(x => new Item(), metricsMock.Object, new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
                 var item2 = pool.AcquireNew();
                 Assert.That(item2, Is.Not.EqualTo(item1));
+                metricsMock.Verify(x => x.AcquireNewConnectionContext(), Times.Exactly(2));
             }
         }
 
         [Test]
         public void TestAcquireExists()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            var metricsMock = new Mock<IConnectionPoolMetrics>(MockBehavior.Strict);
+            metricsMock.Setup(x => x.AcquireNewConnectionContext())
+                       .Returns(NoOpContext.Instance)
+                       .Verifiable();
+            using (var pool = new Pool<Item>(x => new Item(), metricsMock.Object, new SilentLog()))
             {
                 var item1 = pool.AcquireNew();
                 pool.Release(item1);
                 Assert.That(pool.TryAcquireExists(out var item2));
                 Assert.That(item2, Is.EqualTo(item1));
-                Assert.That(!pool.TryAcquireExists(out var item3));
+                Assert.That(!pool.TryAcquireExists(out _));
+                metricsMock.Verify(x => x.AcquireNewConnectionContext(), Times.Exactly(1));
             }
         }
 
         [Test]
         public void TestRemoveItemFromPool()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -153,7 +166,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestTryRemoveReleasedItemFromPool()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 var item2 = pool.Acquire();
@@ -166,7 +179,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void TestTryRemoveItemDoesNotBelongInPool()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var item1 = pool.Acquire();
                 pool.Release(item1);
@@ -177,7 +190,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         [Test]
         public void MultiThreadTest()
         {
-            using (var pool = new Pool<Item>(x => new Item(), new SilentLog()))
+            using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var threads = Enumerable
                     .Range(0, 100)

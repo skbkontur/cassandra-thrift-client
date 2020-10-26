@@ -28,6 +28,13 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
                        : new SimpleCommandMetrics(GetMetricsContext(command, "Simple"), FormatSinglePartitionKey(command));
         }
 
+        public static IConnectionPoolMetrics GetConnectionPoolMetrics([NotNull] ICassandraClusterSettings settings, [NotNull] string host, [NotNull] string keyspaceName)
+        {
+            return !settings.EnableMetrics
+                       ? (IConnectionPoolMetrics)NoOpMetrics.Instance
+                       : new ConnectionPoolMetrics(GetMetricsContext(command : null, "ConnectionPool").Context(keyspaceName).Context(host));
+        }
+
         [CanBeNull]
         private static string FormatSinglePartitionKey([NotNull] ICommand command)
         {
@@ -45,9 +52,11 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.Metrics
         }
 
         [NotNull]
-        private static MetricsContext GetMetricsContext([NotNull] ICommand command, [NotNull] string commandCategory)
+        private static MetricsContext GetMetricsContext([CanBeNull] ICommand command, [NotNull] string commandCategory)
         {
             var metricsContext = Metric.Context("CassandraClient").Context(commandCategory);
+            if (command == null)
+                return metricsContext;
             if (!string.IsNullOrEmpty(command.CommandContext.KeyspaceName))
                 metricsContext = metricsContext.Context(command.CommandContext.KeyspaceName);
             if (!string.IsNullOrEmpty(command.CommandContext.ColumnFamilyName))
