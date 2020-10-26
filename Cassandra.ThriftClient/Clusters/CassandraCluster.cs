@@ -104,7 +104,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
 
         private Pool<IThriftConnection> GetDataConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = CreatePool(settings, nodeEndpoint, keyspaceName, settings.Timeout);
+            var result = CreateConnectionPool(settings, nodeEndpoint, keyspaceName, settings.Timeout);
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}' was created.", nodeEndpoint, keyspaceName);
             return result;
         }
@@ -118,12 +118,12 @@ namespace SkbKontur.Cassandra.ThriftClient.Clusters
 
         private Pool<IThriftConnection> CreateFiercePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName)
         {
-            var result = CreatePool(settings, nodeEndpoint, keyspaceName, settings.FierceTimeout);
+            var result = CreateConnectionPool(settings, nodeEndpoint, keyspaceName, settings.FierceTimeout);
             logger.Debug("Pool for node with endpoint {0} for keyspace '{1}'[Fierce] was created.", nodeEndpoint, keyspaceName);
             return result;
         }
 
-        private Pool<IThriftConnection> CreatePool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
+        private Pool<IThriftConnection> CreateConnectionPool(ICassandraClusterSettings settings, IPEndPoint nodeEndpoint, string keyspaceName, int timeout)
         {
             var connectionPoolMetrics = CommandMetricsFactory.GetConnectionPoolMetrics(settings, nodeEndpoint.Address.ToString().Replace('.', '_'), keyspaceName);
             return new Pool<IThriftConnection>(
