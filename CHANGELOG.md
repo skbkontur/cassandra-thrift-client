@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.4.25 - 2021.03.13
+- Update dependencies.
+- Run tests against net5.0 tfm.
+
 ## v2.4.23 - 2020.10.27
 - Add new 'timer' metric measures new connection aquirement time (PR [#14](https://github.com/skbkontur/cassandra-thrift-client/pull/14)).
 
