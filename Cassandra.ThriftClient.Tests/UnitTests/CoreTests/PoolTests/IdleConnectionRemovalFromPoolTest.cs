@@ -64,18 +64,18 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 const int acquisitionsPerThreadCount = 1000;
                 newPoolItemsCreatedCount = 0;
                 var threads = Enumerable
-                    .Range(0, threadCount)
-                    .Select(n => (ThreadStart)(() =>
-                        {
-                            for (var i = 0; i < acquisitionsPerThreadCount; i++)
-                            {
-                                var item = pool.Acquire();
-                                Thread.Sleep(ThreadLocalRandom.Instance.Next(10));
-                                pool.Release(item);
-                            }
-                        }))
-                    .Select(x => new Thread(x))
-                    .ToList();
+                              .Range(0, threadCount)
+                              .Select(n => (ThreadStart)(() =>
+                                                                {
+                                                                    for (var i = 0; i < acquisitionsPerThreadCount; i++)
+                                                                    {
+                                                                        var item = pool.Acquire();
+                                                                        Thread.Sleep(ThreadLocalRandom.Instance.Next(10));
+                                                                        pool.Release(item);
+                                                                    }
+                                                                }))
+                              .Select(x => new Thread(x))
+                              .ToList();
 
                 var minIdleTimeSpan = TimeSpan.FromMilliseconds(20);
                 var stopSignal = new ManualResetEventSlim();

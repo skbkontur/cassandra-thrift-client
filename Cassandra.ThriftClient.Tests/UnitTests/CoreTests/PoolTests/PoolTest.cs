@@ -193,42 +193,42 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
             using (var pool = new Pool<Item>(x => new Item(), NoOpMetrics.Instance, new SilentLog()))
             {
                 var threads = Enumerable
-                    .Range(0, 100)
-                    .Select(n => (Action)(() =>
-                        {
-                            // ReSharper disable AccessToDisposedClosure
-                            for (var i = 0; i < 100; i++)
-                            {
-                                var item = pool.Acquire();
-                                try
-                                {
-                                    Assert.That(!item.IsUse);
-                                    Assert.That(!item.Disposed);
-                                    var item2 = pool.Acquire();
-                                    try
-                                    {
-                                        Assert.That(!item2.IsUse);
-                                        Assert.That(!item2.Disposed);
-                                        item2.Use(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
-                                    }
-                                    finally
-                                    {
-                                        pool.Release(item2);
-                                    }
-                                    item.Use(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
-                                    Assert.That(!item.IsUse);
-                                    Assert.That(!item.Disposed);
-                                }
-                                finally
-                                {
-                                    pool.Release(item);
-                                }
-                                Thread.Sleep(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
-                            }
-                            // ReSharper restore AccessToDisposedClosure
-                        }))
-                    .Select(x => new Thread(() => x()))
-                    .ToList();
+                              .Range(0, 100)
+                              .Select(n => (Action)(() =>
+                                                           {
+                                                               // ReSharper disable AccessToDisposedClosure
+                                                               for (var i = 0; i < 100; i++)
+                                                               {
+                                                                   var item = pool.Acquire();
+                                                                   try
+                                                                   {
+                                                                       Assert.That(!item.IsUse);
+                                                                       Assert.That(!item.Disposed);
+                                                                       var item2 = pool.Acquire();
+                                                                       try
+                                                                       {
+                                                                           Assert.That(!item2.IsUse);
+                                                                           Assert.That(!item2.Disposed);
+                                                                           item2.Use(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
+                                                                       }
+                                                                       finally
+                                                                       {
+                                                                           pool.Release(item2);
+                                                                       }
+                                                                       item.Use(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
+                                                                       Assert.That(!item.IsUse);
+                                                                       Assert.That(!item.Disposed);
+                                                                   }
+                                                                   finally
+                                                                   {
+                                                                       pool.Release(item);
+                                                                   }
+                                                                   Thread.Sleep(TimeSpan.FromMilliseconds(ThreadLocalRandom.Instance.Next(100)));
+                                                               }
+                                                               // ReSharper restore AccessToDisposedClosure
+                                                           }))
+                              .Select(x => new Thread(() => x()))
+                              .ToList();
                 threads.ForEach(x => x.Start());
                 threads.ForEach(x => x.Join());
                 Console.WriteLine(pool.TotalCount);

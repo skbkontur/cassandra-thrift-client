@@ -99,11 +99,11 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
 
             Expression<Action<ILog>> logAuthFailSetup = l =>
                 l.Log(It.Is<LogEvent>(
-                    e => e.Exception is AuthenticationException
-                         && e.MessageTemplate == "Error occured while opening thrift connection. Will try to close open transports. Failed action: {ActionName}."
-                         && e.Properties != null
-                         && e.Properties.ContainsKey("ActionName")
-                         && e.Properties["ActionName"] as string == "login"));
+                          e => e.Exception is AuthenticationException
+                               && e.MessageTemplate == "Error occured while opening thrift connection. Will try to close open transports. Failed action: {ActionName}."
+                               && e.Properties != null
+                               && e.Properties.ContainsKey("ActionName")
+                               && e.Properties["ActionName"] as string == "login"));
 
             logger.Setup(logAuthFailSetup).Verifiable();
             Assert.Throws<AllItemsIsDeadExceptions>(() => SomeActionThatRequiresAuthentication("cassandra", "wrong_password", logger.Object));

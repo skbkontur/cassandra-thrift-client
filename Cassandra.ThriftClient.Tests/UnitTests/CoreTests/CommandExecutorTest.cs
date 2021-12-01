@@ -85,7 +85,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests
                 typeof(TTransportException),
                 typeof(IOException),
                 typeof(Exception)
-                )] Type commandExecutionException)
+            )]
+            Type commandExecutionException)
         {
             InternalTestReleaseConnectionOnException((Exception)Activator.CreateInstance(commandExecutionException), true, true);
         }
@@ -95,7 +96,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests
             [Values(
                 typeof(NotFoundException),
                 typeof(UnavailableException)
-                )] Type commandExecutionException)
+            )]
+            Type commandExecutionException)
         {
             InternalTestReleaseConnectionOnException((Exception)Activator.CreateInstance(commandExecutionException), false, false);
         }
@@ -107,14 +109,16 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests
                 typeof(AuthenticationException),
                 typeof(AuthorizationException),
                 typeof(SchemaDisagreementException)
-                )] Type commandExecutionException,
+            )]
+            Type commandExecutionException,
             [Values(
                 typeof(CassandraClientInvalidRequestException),
                 typeof(CassandraClientAuthenticationException),
                 typeof(CassandraClientAuthorizationException),
                 typeof(CassandraClientSchemaDisagreementException)
-                )] Type excpectedExceptionType
-            )
+            )]
+            Type excpectedExceptionType
+        )
         {
             InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), excpectedExceptionType);
         }
@@ -130,8 +134,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests
                 typeof(TTransportException),
                 typeof(IOException),
                 typeof(Exception)
-                )] Type commandExecutionException
-            )
+            )]
+            Type commandExecutionException
+        )
         {
             InternalTestExceptionTransformation((Exception)Activator.CreateInstance(commandExecutionException), typeof(CassandraAttemptsException));
         }

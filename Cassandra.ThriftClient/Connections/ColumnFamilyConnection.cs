@@ -193,9 +193,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
             var rawStartcolumnName = StringExtensions.StringToBytes(startColumnName);
             var rawFinishColumnName = StringExtensions.StringToBytes(finishColumnName);
             return implementation
-                .GetRegion(rawKeys, rawStartcolumnName, rawFinishColumnName, limitPerRow)
-                .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn).ToArray()))
-                .ToList();
+                   .GetRegion(rawKeys, rawStartcolumnName, rawFinishColumnName, limitPerRow)
+                   .Select(row => new KeyValuePair<string, Column[]>(StringExtensions.BytesToString(row.Key), row.Value.Select(ColumnExtensions.ToColumn).ToArray()))
+                   .ToList();
         }
 
         public List<KeyValuePair<string, Column[]>> GetRowsExclusive(IEnumerable<string> keys, string exclusiveStartColumnName, int count)

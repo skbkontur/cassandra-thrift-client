@@ -141,8 +141,8 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
             }
             var deadReplicaInfo = replicaPingInfos[deadReplica];
             var nextInterval = TimeSpan.FromMilliseconds(Math.Min(
-                poolSettings.MaxCheckInterval.TotalMilliseconds,
-                (long)Math.Round(poolSettings.CheckIntervalIncreaseBasis.TotalMilliseconds * Math.Pow(2, Math.Min(20, deadReplicaInfo.Attempts)))));
+                                                             poolSettings.MaxCheckInterval.TotalMilliseconds,
+                                                             (long)Math.Round(poolSettings.CheckIntervalIncreaseBasis.TotalMilliseconds * Math.Pow(2, Math.Min(20, deadReplicaInfo.Attempts)))));
             return Timestamp.Now - deadReplicaInfo.LastPingTimestamp >= nextInterval;
         }
 
@@ -173,12 +173,12 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
             var totalReplicaHealth = replicaHealths.Select(x => x.Value).Sum();
 
             var existingAcquired = replicaHealths
-                .Where(x => IsAliveReplica(x.Value))
-                .ShuffleByHealth(x => x.Value, x => new {Health = x.Value, x.ReplicaKey})
-                .Any(poolInfo => TryAcquireExistsOrNew(
-                    new PoolKey(itemKey, poolInfo.ReplicaKey),
-                    GetDesiredActiveItemCountForReplica(poolInfo.Health, totalReplicaHealth, totalReplicaCount),
-                    out result));
+                                   .Where(x => IsAliveReplica(x.Value))
+                                   .ShuffleByHealth(x => x.Value, x => new {Health = x.Value, x.ReplicaKey})
+                                   .Any(poolInfo => TryAcquireExistsOrNew(
+                                            new PoolKey(itemKey, poolInfo.ReplicaKey),
+                                            GetDesiredActiveItemCountForReplica(poolInfo.Health, totalReplicaHealth, totalReplicaCount),
+                                            out result));
 
             if (!existingAcquired)
             {
@@ -203,7 +203,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
                 throw new AllItemsIsDeadExceptions(
                     $"Cannot acquire connection from any of pool with keys [{string.Join(", ", pools.Keys.Select(x => x.ToString()))}]",
                     exceptions
-                    );
+                );
             }
 
             return result;
@@ -427,7 +427,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory,
             PoolSettings poolSettings,
             ILog logger
-            )
+        )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>
@@ -443,7 +443,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
             TimeSpan? unusedItemsIdleTimeout,
             PoolSettings poolSettings,
             ILog logger
-            )
+        )
             where TItem : class, IDisposable, ILiveness
             where TItemKey : IEquatable<TItemKey>
         {
@@ -456,7 +456,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Core.GenericPool
             PoolSettings poolSettings,
             TimeSpan unusedItemsIdleTimeout,
             ILog logger
-            )
+        )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>

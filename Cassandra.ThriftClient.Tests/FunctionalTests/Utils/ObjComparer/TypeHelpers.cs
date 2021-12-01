@@ -12,9 +12,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjCompar
             const BindingFlags fieldFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.SetField | BindingFlags.Instance | BindingFlags.Static;
 
             return type
-                .GetFields(fieldFlags)
-                .Where(info => !info.IsStatic && !info.IsLiteral)
-                .ToList();
+                   .GetFields(fieldFlags)
+                   .Where(info => !info.IsStatic && !info.IsLiteral)
+                   .ToList();
         }
 
         public static List<FieldInfo> GetFields(Type type)

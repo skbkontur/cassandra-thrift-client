@@ -107,18 +107,18 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 var itemKey = new ItemKey("key1");
 
                 var acquiredItems = Enumerable
-                    .Range(0, 100)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            return new[] {item1, item2};
-                        })
-                    .ToList();
+                                    .Range(0, 100)
+                                    .SelectMany(n =>
+                                        {
+                                            var item1 = pool.Acquire(itemKey);
+                                            var item2 = pool.Acquire(itemKey);
+                                            return new[] {item1, item2};
+                                        })
+                                    .ToList();
 
                 var acquiredItemCount = acquiredItems
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
+                                        .GroupBy(x => x.ReplicaKey)
+                                        .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
                 Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(80, 120));
                 Assert.That(acquiredItemCount[new ReplicaKey("replica2")], Is.InRange(80, 120));
@@ -126,17 +126,17 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 acquiredItems.ForEach(pool.Release);
 
                 var reacquiredItems = Enumerable
-                    .Range(0, 10000)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            pool.Release(item1);
-                            pool.Release(item2);
-                            return new[] {item1, item2};
-                        })
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
+                                      .Range(0, 10000)
+                                      .SelectMany(n =>
+                                          {
+                                              var item1 = pool.Acquire(itemKey);
+                                              var item2 = pool.Acquire(itemKey);
+                                              pool.Release(item1);
+                                              pool.Release(item2);
+                                              return new[] {item1, item2};
+                                          })
+                                      .GroupBy(x => x.ReplicaKey)
+                                      .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
                 Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(9000, 11000));
                 Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(9000, 11000));
@@ -156,18 +156,18 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 pool.BadReplica(new ReplicaKey("replica2")); // Health: 0.168
 
                 var acquiredItems = Enumerable
-                    .Range(0, 100)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            return new[] {item1, item2};
-                        })
-                    .ToList();
+                                    .Range(0, 100)
+                                    .SelectMany(n =>
+                                        {
+                                            var item1 = pool.Acquire(itemKey);
+                                            var item2 = pool.Acquire(itemKey);
+                                            return new[] {item1, item2};
+                                        })
+                                    .ToList();
 
                 var acquiredItemCount = acquiredItems
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
+                                        .GroupBy(x => x.ReplicaKey)
+                                        .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
                 Assert.That(acquiredItemCount[new ReplicaKey("replica1")], Is.InRange(160, 180));
                 Assert.That(acquiredItemCount[new ReplicaKey("replica2")], Is.InRange(20, 40));
@@ -175,17 +175,17 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 acquiredItems.ForEach(pool.Release);
 
                 var reacquiredItems = Enumerable
-                    .Range(0, 10000)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            pool.Release(item1);
-                            pool.Release(item2);
-                            return new[] {item1, item2};
-                        })
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
+                                      .Range(0, 10000)
+                                      .SelectMany(n =>
+                                          {
+                                              var item1 = pool.Acquire(itemKey);
+                                              var item2 = pool.Acquire(itemKey);
+                                              pool.Release(item1);
+                                              pool.Release(item2);
+                                              return new[] {item1, item2};
+                                          })
+                                      .GroupBy(x => x.ReplicaKey)
+                                      .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
                 Assert.That(reacquiredItems[new ReplicaKey("replica1")], Is.InRange(16500, 17500));
                 Assert.That(reacquiredItems[new ReplicaKey("replica2")], Is.InRange(2500, 3500));
@@ -204,16 +204,16 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 var itemKey = new ItemKey("key1");
 
                 var items = Enumerable
-                    .Range(0, 1)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            Assert.That(item1.IsAlive);
-                            Assert.That(item2.IsAlive);
-                            return new[] {item1, item2};
-                        })
-                    .ToList();
+                            .Range(0, 1)
+                            .SelectMany(n =>
+                                {
+                                    var item1 = pool.Acquire(itemKey);
+                                    var item2 = pool.Acquire(itemKey);
+                                    Assert.That(item1.IsAlive);
+                                    Assert.That(item2.IsAlive);
+                                    return new[] {item1, item2};
+                                })
+                            .ToList();
 
                 items.ForEach(pool.Release);
             }
@@ -307,35 +307,35 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
                 var itemKey = new ItemKey("key1");
 
                 var acquiredItems = Enumerable
-                    .Range(0, 100)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            Assert.That(item1.IsAlive);
-                            Assert.That(item2.IsAlive);
-                            return new[] {item1, item2};
-                        })
-                    .ToList();
+                                    .Range(0, 100)
+                                    .SelectMany(n =>
+                                        {
+                                            var item1 = pool.Acquire(itemKey);
+                                            var item2 = pool.Acquire(itemKey);
+                                            Assert.That(item1.IsAlive);
+                                            Assert.That(item2.IsAlive);
+                                            return new[] {item1, item2};
+                                        })
+                                    .ToList();
 
                 Assert.That(acquireFromDeadNodeCount, Is.InRange(0, 20));
 
                 acquiredItems.ForEach(pool.Release);
 
                 var reacquiredItems = Enumerable
-                    .Range(0, 2000)
-                    .SelectMany(n =>
-                        {
-                            var item1 = pool.Acquire(itemKey);
-                            var item2 = pool.Acquire(itemKey);
-                            pool.Good(item1);
-                            pool.Good(item2);
-                            pool.Release(item1);
-                            pool.Release(item2);
-                            return new[] {item1, item2};
-                        })
-                    .GroupBy(x => x.ReplicaKey)
-                    .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
+                                      .Range(0, 2000)
+                                      .SelectMany(n =>
+                                          {
+                                              var item1 = pool.Acquire(itemKey);
+                                              var item2 = pool.Acquire(itemKey);
+                                              pool.Good(item1);
+                                              pool.Good(item2);
+                                              pool.Release(item1);
+                                              pool.Release(item2);
+                                              return new[] {item1, item2};
+                                          })
+                                      .GroupBy(x => x.ReplicaKey)
+                                      .ToDictionary(x => x.Key, x => x.Count(), EqualityComparer<ReplicaKey>.Default);
 
                 Assert.That(acquireFromDeadNodeCount, Is.InRange(0, 20));
                 Assert.That(!reacquiredItems.ContainsKey(new ReplicaKey("replica2")));
@@ -559,10 +559,10 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         private static ReplicaSetPool<Item, ItemKey, ReplicaKey> CreateReplicaSetPool(int replicaCount = 1, string nameFormat = "replica{0}")
         {
             var replicas = Enumerable
-                .Range(1, replicaCount)
-                .Select(n => string.Format(nameFormat, n))
-                .Select(x => new ReplicaKey(x))
-                .ToArray();
+                           .Range(1, replicaCount)
+                           .Select(n => string.Format(nameFormat, n))
+                           .Select(x => new ReplicaKey(x))
+                           .ToArray();
             var pool = CreatePool<Item, ItemKey, ReplicaKey>(replicas, (x, z) => new Pool<Item>(y => new Item(x, z), NoOpMetrics.Instance, new SilentLog()));
             return pool;
         }
@@ -570,7 +570,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.UnitTests.CoreTests.PoolTests
         private static ReplicaSetPool<TItem, TItemKey, TReplicaKey> CreatePool<TItem, TItemKey, TReplicaKey>(
             TReplicaKey[] replicas,
             Func<TItemKey, TReplicaKey, Pool<TItem>> poolFactory
-            )
+        )
             where TItem : class, IDisposable, IPoolKeyContainer<TItemKey, TReplicaKey>, ILiveness
             where TItemKey : IEquatable<TItemKey>
             where TReplicaKey : IEquatable<TReplicaKey>

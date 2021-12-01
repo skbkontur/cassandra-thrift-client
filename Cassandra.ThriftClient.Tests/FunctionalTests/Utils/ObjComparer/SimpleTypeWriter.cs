@@ -35,12 +35,11 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils.ObjCompar
             if (collection != null)
             {
                 list.AddRange(
-                    collection.Cast<object>().
-                               Select((t, i) => new CollectionSlot
-                                   {
-                                       Key = collection.GetKey(i),
-                                       Values = collection.GetValues(i)
-                                   }));
+                    collection.Cast<object>().Select((t, i) => new CollectionSlot
+                        {
+                            Key = collection.GetKey(i),
+                            Values = collection.GetValues(i)
+                        }));
             }
             list.Sort((x, y) => String.CompareOrdinal(x.Key, y.Key));
 
