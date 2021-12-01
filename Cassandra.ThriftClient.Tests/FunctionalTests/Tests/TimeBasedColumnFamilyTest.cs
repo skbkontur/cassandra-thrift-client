@@ -115,34 +115,34 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         private static TimeBasedColumn[] RandomColumnsByTimestamp(int count)
         {
             var now = Timestamp.Now;
-            return Enumerable.Range(0, int.MaxValue).Select(x => new TimeBasedColumn
+            return MoreEnumerable.DistinctBy(Enumerable.Range(0, int.MaxValue).Select(x => new TimeBasedColumn
                 {
                     Timestamp = now.Ticks,
                     Name = new TimeGuid(TimeGuidBitsLayout.Format(now + ThreadLocalRandom.Instance.NextTimeSpan(TimeSpan.FromDays(1)), 0, new byte[6])),
                     Value = new byte[0],
-                }).DistinctBy(x => x.Name).Take(count).ToArray();
+                }), x => x.Name).Take(count).ToArray();
         }
 
         private static TimeBasedColumn[] RandomColumnsByClockSequence(int count)
         {
             var now = Timestamp.Now;
-            return Enumerable.Range(0, int.MaxValue).Select(x => new TimeBasedColumn
+            return MoreEnumerable.DistinctBy(Enumerable.Range(0, int.MaxValue).Select(x => new TimeBasedColumn
                 {
                     Timestamp = now.Ticks,
                     Name = new TimeGuid(TimeGuidBitsLayout.Format(now, ThreadLocalRandom.Instance.NextUshort(TimeGuidBitsLayout.MinClockSequence, TimeGuidBitsLayout.MaxClockSequence + 1), new byte[6])),
                     Value = new byte[0],
-                }).DistinctBy(x => x.Name).Take(count).ToArray();
+                }), x => x.Name).Take(count).ToArray();
         }
 
         private static TimeBasedColumn[] RandomColumnsByNode(int count)
         {
             var now = Timestamp.Now;
-            return Enumerable.Range(0, int.MaxValue).Select(x => new TimeBasedColumn
+            return MoreEnumerable.DistinctBy(Enumerable.Range(0, int.MaxValue).Select(x => new TimeBasedColumn
                 {
                     Timestamp = now.Ticks,
                     Name = new TimeGuid(TimeGuidBitsLayout.Format(now, 0, ThreadLocalRandom.Instance.NextBytes(6))),
                     Value = new byte[0],
-                }).DistinctBy(x => x.Name).Take(count).ToArray();
+                }), x => x.Name).Take(count).ToArray();
         }
 
         private IColumnFamilyConnectionImplementation cfConnection;
