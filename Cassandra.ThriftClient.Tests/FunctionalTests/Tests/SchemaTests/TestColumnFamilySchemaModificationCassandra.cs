@@ -15,7 +15,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTes
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance);
+            cluster = new CassandraCluster(LocalCassandraNodeExtensions.CreateSettings(), Logger.Instance);
 
             var clusterConnection = cluster.RetrieveClusterConnection();
             var keyspaceName = TestSchemaUtils.GetRandomKeyspaceName();

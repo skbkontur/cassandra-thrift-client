@@ -13,7 +13,6 @@
     <PackageReference Include="morelinq" Version="3.3.2" />
     <PackageReference Include="NUnit" Version="3.13.1" />
     <PackageReference Include="NUnit3TestAdapter" Version="4.1.0" />
-    <PackageReference Include="SkbKontur.Cassandra.Local" Version="1.4.12" />
     <PackageReference Include="Vostok.Logging.File" Version="1.0.16" />
   </ItemGroup>
 

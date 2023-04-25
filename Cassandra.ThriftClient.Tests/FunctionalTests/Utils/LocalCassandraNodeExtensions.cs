@@ -1,9 +1,9 @@
 using System;
+using System.Linq;
 using System.Net;
 
 using JetBrains.Annotations;
 
-using SkbKontur.Cassandra.Local;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 
@@ -11,12 +11,12 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils
 {
     public static class LocalCassandraNodeExtensions
     {
-        public static SingleNodeCassandraClusterSettings CreateSettings(this LocalCassandraNode node)
+        public static SingleNodeCassandraClusterSettings CreateSettings()
         {
-            var thriftEndpoint = new IPEndPoint(IPAddress.Parse(node.RpcAddress), node.RpcPort);
+            var thriftEndpoint = new IPEndPoint(GetIpV4Address("127.0.0.1"), 9160);
             return new SingleNodeCassandraClusterSettings
                 {
-                    ClusterName = node.ClusterName,
+                    ClusterName = "TestCluster",
                     ReadConsistencyLevel = ConsistencyLevel.QUORUM,
                     WriteConsistencyLevel = ConsistencyLevel.QUORUM,
                     Endpoints = new[] {thriftEndpoint},
@@ -26,8 +26,17 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils
                     Timeout = (int)TimeSpan.FromSeconds(6).TotalMilliseconds,
                     FierceTimeout = (int)TimeSpan.FromSeconds(10).TotalMilliseconds,
                     ConnectionIdleTimeout = TimeSpan.FromSeconds(30),
-                    EnableMetrics = false
+                    EnableMetrics = false,
+                    Credentials = new Credentials("cassandra", "cassandra"),
                 };
+        }
+
+        private static IPAddress GetIpV4Address([NotNull] string hostNameOrIpAddress)
+        {
+            if (IPAddress.TryParse(hostNameOrIpAddress, out var res))
+                return res;
+
+            return Dns.GetHostEntry(hostNameOrIpAddress).AddressList.First(address => !address.ToString().Contains(':'));
         }
 
         public class SingleNodeCassandraClusterSettings : ICassandraClusterSettings

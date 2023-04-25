@@ -20,7 +20,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests
         public virtual void SetUp()
         {
             KeyspaceName = $"TestKeyspace_{Guid.NewGuid():N}";
-            var cassandraClusterSettings = SingleCassandraNodeSetUpFixture.Node.CreateSettings();
+            var cassandraClusterSettings = LocalCassandraNodeExtensions.CreateSettings();
             cassandraClusterSettings.AllowNullTimestamp = true;
             cassandraClusterSettings.ReadConsistencyLevel = ConsistencyLevel.ALL;
             cassandraClusterSettings.WriteConsistencyLevel = ConsistencyLevel.ALL;
