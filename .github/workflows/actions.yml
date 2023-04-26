@@ -5,6 +5,7 @@ on:
   pull_request:
     paths-ignore:
       - "**/*.md"
+  workflow_dispatch:
 env:
   DOTNET_VERSION: 6.0.x
   SOLUTION_FILE: Cassandra.ThriftClient.sln
