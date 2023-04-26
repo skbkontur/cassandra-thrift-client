@@ -15,7 +15,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests.SchemaTes
         [SetUp]
         public void SetUp()
         {
-            cluster = new CassandraClusterSpy(() => new CassandraCluster(SingleCassandraNodeSetUpFixture.Node.CreateSettings(), Logger.Instance));
+            cluster = new CassandraClusterSpy(() => new CassandraCluster(LocalCassandraNodeExtensions.CreateSettings(), Logger.Instance));
             cassandraSchemaActualizer = new CassandraSchemaActualizer(cluster, null, Logger.Instance);
         }
 

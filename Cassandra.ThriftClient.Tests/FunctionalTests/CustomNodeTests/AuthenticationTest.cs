@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Linq.Expressions;
 
 using Cassandra;
@@ -8,11 +7,9 @@ using Moq;
 
 using NUnit.Framework;
 
-using SkbKontur.Cassandra.Local;
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
 using SkbKontur.Cassandra.ThriftClient.Clusters;
 using SkbKontur.Cassandra.ThriftClient.Core.GenericPool.Exceptions;
-using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Tests;
 using SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.Utils;
 
 using Vostok.Logging.Abstractions;
@@ -23,41 +20,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
 {
     public class AuthenticationTest
     {
-        [OneTimeSetUp]
-        public void OneTimeSetUp()
-        {
-            var templateDirectory = SingleCassandraNodeSetUpFixture.FindCassandraTemplateDirectory(AppDomain.CurrentDomain.BaseDirectory);
-            var deployDirectory = Path.Combine(Path.GetTempPath(), "deployed_cassandra_with_authentication_v3.11.x");
-            node = new LocalCassandraNode(templateDirectory, deployDirectory, Authenticator.PasswordAuthenticator)
-                {
-                    LocalNodeName = "local_node_with_authentication",
-                    RpcPort = 10360,
-                    CqlPort = 10343,
-                    JmxPort = 8399,
-                    GossipPort = 8400
-                };
-            node.Restart(TimeSpan.FromMinutes(1));
-
-            Waiter.Wait(() =>
-                {
-                    try
-                    {
-                        using (var cluster = GetClusterBuilder().Build())
-                        using (cluster.Connect())
-                            return true;
-                    }
-                    catch
-                    {
-                        return false;
-                    }
-                }, timeout : TimeSpan.FromSeconds(30));
-        }
-
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            node?.Stop(TimeSpan.FromMinutes(1));
-        }
+        private const int cqlPort = 9042;
 
         [Test]
         public void TestAuthenticatedConnectionDefaultCredentials()
@@ -69,9 +32,9 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
         public void TestAuthenticatedConnectionNonDefaultCredentials()
         {
             string user = "dba", password = "super";
-            using (var cluster = GetClusterBuilder().Build())
+            using (var cluster = GetCluster())
             using (var session = cluster.Connect())
-                session.Execute($"CREATE ROLE {user} WITH SUPERUSER = true AND LOGIN = true AND PASSWORD = '{password}'");
+                session.Execute($"CREATE ROLE IF NOT EXISTS {user} WITH SUPERUSER = true AND LOGIN = true AND PASSWORD = '{password}'");
 
             Assert.DoesNotThrow(() => SomeActionThatRequiresAuthentication(user, password));
         }
@@ -82,7 +45,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
             var outerException = Assert.Throws<AllItemsIsDeadExceptions>(
                 () => SomeActionThatRequiresAuthentication("non-existent", "weak_pa$$w0rd"));
 
-            var authenticationException = outerException.InnerException as AuthenticationException;
+            var authenticationException = outerException?.InnerException as AuthenticationException;
             Assert.NotNull(authenticationException);
             Assert.AreEqual("Provided username non-existent and/or password are incorrect", authenticationException.Why);
         }
@@ -112,20 +75,20 @@ namespace SkbKontur.Cassandra.ThriftClient.Tests.FunctionalTests.CustomNodeTests
 
         private void SomeActionThatRequiresAuthentication(string username, string password, ILog logger = null)
         {
-            var settings = node.CreateSettings();
+            var settings = LocalCassandraNodeExtensions.CreateSettings();
             settings.Credentials = new Credentials(username, password);
             using (var cluster = new CassandraCluster(settings, logger ?? new SilentLog()))
                 cluster.RetrieveClusterConnection().RetrieveKeyspaces();
         }
 
-        private Builder GetClusterBuilder()
+        private Cluster GetCluster()
         {
+            var clusterSettings = LocalCassandraNodeExtensions.CreateSettings();
             return Cluster.Builder()
-                          .AddContactPoint("127.0.0.1")
-                          .WithPort(node.CqlPort)
-                          .WithCredentials("cassandra", "cassandra");
+                          .AddContactPoints(clusterSettings.Endpoints)
+                          .WithPort(cqlPort)
+                          .WithCredentials(clusterSettings.Credentials?.Username, clusterSettings.Credentials?.Password)
+                          .Build();
         }
-
-        private LocalCassandraNode node;
     }
 }
