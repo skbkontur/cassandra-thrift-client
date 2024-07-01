@@ -61,7 +61,13 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
             {
                 var schemaAgreementCommand = new SchemaAgreementCommand();
                 commandExecutor.Execute(schemaAgreementCommand);
-                if (schemaAgreementCommand.Output.Keys.Count(x => x != "UNREACHABLE") == 1)
+                if (schemaAgreementCommand.Output.ContainsKey(unreachableVersion))
+                {
+                    logger.Warn("Found unreachable version");
+                    LogVersions(schemaAgreementCommand.Output);
+                }
+
+                if (schemaAgreementCommand.Output.Keys.Count(x => x != unreachableVersion) == 1)
                     return;
                 LogVersions(schemaAgreementCommand.Output);
             } while (sw.Elapsed < timeout);
@@ -77,6 +83,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
             logger.Info(stringBuilder.ToString());
         }
 
+        private const string unreachableVersion = "UNREACHABLE";
         private readonly ICommandExecutor<IFierceCommand> commandExecutor;
         private readonly ILog logger;
     }
