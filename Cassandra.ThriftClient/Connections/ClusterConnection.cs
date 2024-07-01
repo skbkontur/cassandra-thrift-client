@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 
 using SkbKontur.Cassandra.ThriftClient.Abstractions;
@@ -60,7 +61,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
             {
                 var schemaAgreementCommand = new SchemaAgreementCommand();
                 commandExecutor.Execute(schemaAgreementCommand);
-                if (schemaAgreementCommand.Output.Count == 1)
+                if (schemaAgreementCommand.Output.Keys.Count(x => x != "UNREACHABLE") == 1)
                     return;
                 LogVersions(schemaAgreementCommand.Output);
             } while (sw.Elapsed < timeout);
