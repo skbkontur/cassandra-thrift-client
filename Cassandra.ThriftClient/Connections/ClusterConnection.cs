@@ -63,7 +63,7 @@ namespace SkbKontur.Cassandra.ThriftClient.Connections
                 commandExecutor.Execute(schemaAgreementCommand);
                 if (schemaAgreementCommand.Output.ContainsKey(unreachableVersion))
                 {
-                    logger.Warn("Found unreachable version");
+                    logger.Error("Found unreachable version");
                     LogVersions(schemaAgreementCommand.Output);
                 }
 
